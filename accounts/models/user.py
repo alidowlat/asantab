@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.validators import RegexValidator
+from accounts.managers import UserManager
 
 phone_regex = RegexValidator(regex=r'^09\d{9}$', message="لطفا شماره تماس خود را به درستی وارد کنید.")
 otp_regex = RegexValidator(regex=r'^\d{6}$', message='کد تایید باید دقیقا ۶ رقم عددی باشد.')
@@ -16,6 +17,8 @@ class User(AbstractUser):
     username = None
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = []
+
+    objects = UserManager()
 
     first_name = models.CharField(
         max_length=40,
