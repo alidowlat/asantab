@@ -4,7 +4,6 @@ from django.utils.text import slugify
 from .user import User
 from core.media_path import get_image_upload_to
 
-
 STATUS_CHOICES = (
     ('pending', 'در انتظار تایید'),
     ('active', 'فعال'),
@@ -16,7 +15,7 @@ card_regex = RegexValidator(regex=r'^\d{16}$', message='شماره کارت با
 
 
 class Provider(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='provider')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='providers')
     username = models.CharField(max_length=60, unique=True, null=False, blank=False, verbose_name='نام کاربری')
     slug = models.SlugField(
         max_length=60,
@@ -29,17 +28,25 @@ class Provider(models.Model):
     province = models.CharField(
         max_length=100,
         # choices=PROVINCES,
-        verbose_name="استان محل سکونت"
+        verbose_name="استان محل سکونت",
+        null=True,
+        blank=True
     )
     city = models.CharField(
         max_length=100,
         # choices=CITIES.get(province, []),
-        verbose_name="شهر محل سکونت"
+        verbose_name="شهر محل سکونت",
+        null=True,
+        blank=True
     )
-    profile_image = models.ImageField(upload_to=get_image_upload_to, null=True, blank=True, verbose_name='تصویر پروفایل')
-    iban_number = models.CharField(max_length=24, validators=[iban_regex], null=True, blank=True, verbose_name='شماره شبا')
-    card_number = models.CharField(max_length=16, validators=[card_regex], null=True, blank=True, verbose_name='شماره کارت')
-    national_card_image = models.ImageField(upload_to=get_image_upload_to, null=True, blank=True, verbose_name='تصویر کارت ملی')
+    profile_image = models.ImageField(upload_to=get_image_upload_to, null=True, blank=True,
+                                      verbose_name='تصویر پروفایل')
+    iban_number = models.CharField(max_length=24, validators=[iban_regex], null=True, blank=True,
+                                   verbose_name='شماره شبا')
+    card_number = models.CharField(max_length=16, validators=[card_regex], null=True, blank=True,
+                                   verbose_name='شماره کارت')
+    national_card_image = models.ImageField(upload_to=get_image_upload_to, null=True, blank=True,
+                                            verbose_name='تصویر کارت ملی')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name='وضعیت')
     is_verified = models.BooleanField(default=False, verbose_name='تایید شده؟')
 
