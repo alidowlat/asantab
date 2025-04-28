@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'core',
     'dashboard',
     'discounts',
+    'locations',
     'notifications',
     'orders',
     'reviews',
