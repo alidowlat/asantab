@@ -2,6 +2,10 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
+
+# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-+3dsd!*40*i!&fp%)x&eh=ny0*q5y#am!a6r1=umkywo951-3v'
 
 DEBUG = True
@@ -23,7 +27,7 @@ INSTALLED_APPS = [
     'core',
     'dashboard',
     'discounts',
-    'locations',
+    'home',
     'notifications',
     'orders',
     'reviews',
@@ -31,6 +35,9 @@ INSTALLED_APPS = [
     'stats',
     'tickets',
     'wallet',
+
+    # libs and packages
+    'django_render_partial',
 ]
 
 MIDDLEWARE = [
@@ -48,7 +55,7 @@ ROOT_URLCONF = 'main.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -59,8 +66,6 @@ TEMPLATES = [
         },
     },
 ]
-
-AUTH_USER_MODEL = 'accounts.User'
 
 WSGI_APPLICATION = 'main.wsgi.application'
 
