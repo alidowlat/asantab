@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'core',
     'dashboard',
     'discounts',
+    'home',
     'notifications',
     'orders',
     'reviews',
@@ -34,6 +35,9 @@ INSTALLED_APPS = [
     'stats',
     'tickets',
     'wallet',
+
+    # libs and packages
+    'django_render_partial',
 ]
 
 MIDDLEWARE = [
@@ -51,7 +55,7 @@ ROOT_URLCONF = 'main.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
