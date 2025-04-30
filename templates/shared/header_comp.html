@@ -1,0 +1,671 @@
+<header class="fixed inset-x-0 top-0 z-30 bg-muted">
+    <!-- Ad Banner -->
+    <div class="hidden lg:block">
+        <img src="/static/images/ad-banner.gif" alt="ad gif" class="inline-block w-full object-cover">
+    </div>
+    <!-- Desktop -->
+    <div class="hidden lg:block">
+        <!-- Top -->
+        <div class="container relative z-30 flex items-center justify-between gap-6 bg-muted py-4">
+            <!-- Logo -->
+            <a href="./index.html">
+                <img src="/static/images/logo.png" alt="Logo" class="w-40">
+            </a>
+            <!-- Search Wrapper -->
+            <div class="flex-grow">
+                <div class="relative">
+                    <div id="desktopSearchInputWrapper"
+                         class="group relative z-20 flex items-center overflow-hidden rounded-lg border bg-background pr-2 duration-150">
+                        <div class="i-carbon-search h-6 w-6 text-text/60"></div>
+                        <label for="desktopSearchInput" class="sr-only">header Search Label</label>
+                        <input id="desktopSearchInput" onfocus="desktopSearchFocus()" onkeyup="desktopSearchOnType(event)" type="text"
+                               placeholder="جستجو در بلسر"
+                               class="h-12 w-full bg-transparent px-2 outline-none placeholder:text-sm placeholder:text-text/60 placeholder:duration-200 group-focus-within:placeholder:-translate-x-2">
+                        <button id="desktopSearchClearButton" onclick="desktopSearchClearValue()"
+                                class="ml-2 hidden h-6 w-6 items-center justify-center rounded-lg border bg-muted p-px text-text/60 duration-200 hover:border-primary hover:bg-background">
+                            <span class="i-lucide-x h-4 w-4"></span>
+                        </button>
+                    </div>
+                    <!-- Result Drop down -->
+                    <div id="desktopSearchResult" class="absolute left-0 top-16 z-20 hidden w-full space-y-8 rounded-lg bg-muted p-4">
+                        <!-- Product Result -->
+                        <div class="swiper search-result-slider swiper-initialized swiper-horizontal swiper-free-mode swiper-rtl">
+                            <div class="swiper-wrapper" id="swiper-wrapper-4b4e71001b3518930" aria-live="polite"
+                                 style="transition-duration: 0ms; transition-delay: 0ms;">
+                                <div class="swiper-slide">
+                                    <a href="./product-detail.html"
+                                       class="flex items-center gap-x-2 rounded-xl border p-2 hover:border-border/50">
+                                        <img src="/static/images/p1.png" alt="نایک زوم پگاسوس توربو مشکی"
+                                             class="h-20 w-20 rounded-lg object-cover">
+                                        <p class="line-clamp-2 text-text/95">
+                                            نایک زوم پگاسوس توربو مشکی
+                                        </p>
+                                    </a>
+                                </div>
+                            </div>
+                            <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div>
+                        <!-- Brand Result -->
+                        <ul class="space-y-2">
+                            <li>
+                                <a href="./shop.html" class="flex items-center gap-2 py-2 duration-200 hover:text-primary">
+                                    برند نایک
+                                    <span class="i-ic-outline-arrow-outward"></span>
+                                </a>
+                            </li>
+                        </ul>
+                        <!-- Search History-->
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-6">
+                                <div>جستجوهای اخیر شما</div>
+                                <button class="flex items-center gap-2 text-sm text-warning duration-200 hover:text-warning/80">
+                                    حذف همه
+                                    <i class="i-lucide-trash size-5"></i>
+                                </button>
+                            </div>
+
+                            <div class="flex flex-wrap gap-4 pt-3">
+                                <a href="#" class="rounded-2xl border px-2 py-1 text-sm text-text/80 duration-200 hover:bg-background">
+                                    کفش نایک
+                                </a>
+                            </div>
+                        </div>
+                        <!-- Popular Search -->
+                        <div class="space-y-2">
+                            <div>جستجوهای پرتکرار</div>
+                            <div class="flex flex-wrap gap-4 pt-3">
+                                <a href="#" class="rounded-2xl border px-2 py-1 text-sm text-text/80 duration-200 hover:bg-background">
+                                    کفش نایک
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div onclick="desktopSearchUnFocus()" id="desktopSearchResultOverlay" class="relative z-10 hidden">
+                    <div class="fixed inset-0 bg-black/40"></div>
+                </div>
+            </div>
+            <!-- Account, Cart, Theme -->
+            <div class="flex items-center gap-2">
+                <!-- Account Logged in -->
+                <div>
+                    <button type="button" data-dropdown-toggle="desktopAccountDropdown" class="icon-btn h-10 w-10">
+                        <div class="i-lucide-user-round h-6 w-6"></div>
+                    </button>
+
+                    <!-- Dropdown menu -->
+                    <div id="desktopAccountDropdown" class="z-10 hidden w-60 rounded-lg border bg-muted shadow"
+                         data-popper-placement="bottom"
+                         style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(344px, 116px);">
+                        <ul class="flex flex-col justify-between divide-y">
+                            <!-- user -->
+                            <li class="group">
+                                <a href="./profile-dashboard.html"
+                                   class="flex items-center justify-between px-5 py-4 transition-all group-hover:text-primary">
+                                    <div class="flex items-center gap-x-3">
+                                        <img class="h-8 w-8" src="/static/images/user.png" alt="Profile">
+                                        <p class="w-32 overflow-hidden font-semibold">
+                                            0900000000
+                                        </p>
+                                    </div>
+                                    <div class="i-lucide-chevron-left min-w-fit text-text/60 group-hover:text-primary"></div>
+                                </a>
+                            </li>
+                            <!-- order -->
+                            <li class="group">
+                                <a href="./profile-order.html"
+                                   class="flex items-center justify-between px-5 py-4 transition-all group-hover:text-primary">
+                                    <div class="flex items-center gap-x-3">
+                                        <svg class="i-mingcute-shopping-bag-3-line h-6 w-6 text-text/70 group-hover:text-primary"></svg>
+                                        <p>سفارش ها</p>
+                                    </div>
+                                    <svg class="i-lucide-chevron-left text-text/60 group-hover:text-primary"></svg>
+                                </a>
+                            </li>
+                            <!-- favorite -->
+                            <li class="group">
+                                <a href="./profile-favorite.html"
+                                   class="flex items-center justify-between px-5 py-4 transition-all group-hover:text-primary">
+                                    <div class="flex items-center gap-x-3">
+                                        <svg class="i-ic-baseline-favorite-border h-6 w-6 text-text/70 group-hover:text-primary"></svg>
+                                        <p>علاقه‌مندی ها</p>
+                                    </div>
+                                    <svg class="i-lucide-chevron-left text-text/60 group-hover:text-primary"></svg>
+                                </a>
+                            </li>
+                            <!-- recent searches -->
+                            <li class="group">
+                                <a href="./profile-recent.html"
+                                   class="flex items-center justify-between px-5 py-4 transition-all group-hover:text-primary">
+                                    <div class="flex items-center gap-x-3">
+                                        <svg class="i-lucide-mouse-pointer-click h-6 w-6 text-text/70 group-hover:text-primary"></svg>
+                                        <p>بازدید های‌ اخیر</p>
+                                    </div>
+                                    <svg class="i-lucide-chevron-left text-text/60 group-hover:text-primary"></svg>
+                                </a>
+                            </li>
+                            <!-- exit -->
+                            <li>
+                                <a href="#"
+                                   class="my-1 flex items-center justify-between px-5 py-3 text-warning duration-150 hover:bg-warning/10">
+                                    <div class="flex items-center gap-x-3">
+                                        <svg class="i-mingcute-exit-line h-6 w-6"></svg>
+                                        <p>خروج</p>
+                                    </div>
+                                    <svg class="i-lucide-chevron-left"></svg>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Account Logged out -->
+                <!--                    <div>-->
+                <!--                        <a href="./login.html"-->
+                <!--                           class="h-10 flex items-center gap-2 border px-4 rounded-lg text-text/80 hover:bg-background duration-200 ">-->
+                <!--                            <div class="i-lucide-user-round w-6 h-6"></div>-->
+                <!--                            ورود \ ثبت نام-->
+                <!--                        </a>-->
+
+                <!--                    </div>-->
+                <!-- Favorite -->
+                <div>
+                    <button data-dropdown-toggle="desktopFavoriteDropdown" class="icon-btn relative h-10 w-10 border-primary">
+                        <div class="i-lucide-heart h-6 w-6"></div>
+                        <div class="absolute -right-1.5 -top-2.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
+                            3
+                        </div>
+                    </button>
+
+                    <!-- Dropdown Shopping -->
+
+                    <div id="desktopFavoriteDropdown" class="left-10 z-10 !ml-5 hidden w-[420px] rounded-lg border bg-muted shadow"
+                         data-popper-placement="bottom"
+                         style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(296px, 116px);">
+                        <div>
+                            <div class="flex items-center justify-between px-4 pb-2 pt-3">
+                                <div>لیست علاقه‌مندی</div>
+                                <button class="btn-warning px-4 py-2 text-sm">
+                                    حذف همه
+                                </button>
+                            </div>
+                            <div class="h-60">
+                                <ul class="h-full space-y-2 divide-y overflow-y-auto p-5 pb-0 pl-2">
+                                    <li>
+                                        <div class="flex gap-x-2 py-5">
+                                            <div class="relative min-w-fit">
+                                                <a href="./product-detail.html">
+                                                    <img src="/static/images/p1.png" alt="نایک زوم پگاسوس توربو مشکی" loading="lazy"
+                                                         class="h-25 w-25 rounded-3xl">
+                                                </a>
+                                                <button class="absolute -top-2 right-0 rounded-lg border bg-muted duration-200 hover:bg-background">
+                                                    <div class="i-lucide-trash m-2 h-4 w-4 text-warning"></div>
+                                                </button>
+                                            </div>
+                                            <div class="w-full space-y-4">
+                                                <a href="./product-detail.html" class="line-clamp-2 text-text">نایک زوم پگاسوس توربو
+                                                    مشکی</a>
+                                                <div class="flex items-center justify-between gap-x-2">
+                                                    <div class="flex items-center gap-x-2 text-primary">
+                                                        <span class="text-lg font-bold">900,000</span><span
+                                                            class="text-sm">تومان</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Compare -->
+                <div>
+                    <button data-dropdown-toggle="desktopCompareDropdown" class="icon-btn relative h-10 w-10 border-primary">
+                        <div class="i-lucide-align-horizontal-justify-center h-6 w-6"></div>
+                        <div class="absolute -right-1.5 -top-2.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
+                            3
+                        </div>
+                    </button>
+
+                    <!-- Dropdown Shopping -->
+
+                    <div id="desktopCompareDropdown" class="left-10 z-10 !ml-5 hidden w-[420px] rounded-lg border bg-muted shadow"
+                         data-popper-placement="bottom"
+                         style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(248px, 116px);">
+                        <div>
+                            <div class="flex items-center justify-between px-4 pb-2 pt-3">
+                                <div>لیست مقایسه</div>
+                                <button class="btn-warning px-4 py-2 text-sm">
+                                    حذف همه
+                                </button>
+                            </div>
+                            <div class="h-60">
+                                <ul class="h-full space-y-2 divide-y overflow-y-auto p-5 pl-2">
+                                    <li>
+                                        <div class="flex gap-x-2 py-5">
+                                            <div class="relative min-w-fit">
+                                                <a href="./product-detail.html">
+                                                    <img src="/static/images/p1.png" alt="نایک زوم پگاسوس توربو مشکی" loading="lazy"
+                                                         class="h-25 w-25 rounded-3xl">
+                                                </a>
+                                                <button class="absolute -top-2 right-0 rounded-lg border bg-muted duration-200 hover:bg-background">
+                                                    <div class="i-lucide-trash m-2 h-4 w-4 text-warning"></div>
+                                                </button>
+                                            </div>
+                                            <div class="w-full space-y-4">
+                                                <a href="./product-detail.html" class="line-clamp-2 text-text">نایک زوم پگاسوس توربو
+                                                    مشکی</a>
+                                                <div class="flex items-center justify-between gap-x-2">
+                                                    <div class="flex items-center gap-x-2 text-primary">
+                                                        <span class="text-lg font-bold">900,000</span><span
+                                                            class="text-sm">تومان</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="border-t p-2">
+                                <a href="./compare.html" class="btn-primary block w-full py-2">
+                                    نمایش نتیجه
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Cart -->
+                <div>
+                    <button data-dropdown-toggle="desktopShoppingDropdown" class="icon-btn relative h-10 w-10 border-primary">
+                        <span class="i-lucide-shopping-cart h-6 w-6"></span>
+                        <span class="absolute -right-1.5 -top-2.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
+                    4
+                  </span>
+                    </button>
+
+                    <!-- Dropdown Shopping -->
+                    <div id="desktopShoppingDropdown" class="left-10 z-10 !ml-5 hidden w-[420px] rounded-lg border bg-muted shadow"
+                         data-popper-placement="bottom"
+                         style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(200px, 116px);">
+                        <div class="flex flex-col justify-between text-sm">
+                            <!-- header -->
+                            <div class="flex justify-between px-5 py-4">
+                                <div>2 مورد</div>
+                                <a href="./checkout-cart.html"
+                                   class="flex items-center text-primary duration-200 hover:text-primary/80">
+                                    <p>مشاهده سبد خرید</p>
+                                    <div class="i-lucide-chevron-left"></div>
+                                </a>
+                            </div>
+                            <!-- Products -->
+                            <ul class="max-h-60 divide-y overflow-y-auto p-5">
+                                <!-- product1 -->
+                                <li class="flex gap-x-3 pb-5 pt-8">
+                                    <!-- Image -->
+                                    <div class="relative min-w-fit">
+                                        <button class="absolute -top-2 right-0 rounded-lg border bg-muted duration-200 hover:bg-background">
+                                            <div class="i-lucide-trash m-2 h-4 w-4 text-warning"></div>
+                                        </button>
+                                        <a href="./product-detail.html">
+                                            <img class="h-[120px] w-[120px] rounded-2xl" src="/static/images/p1.png" alt="Blesser">
+                                        </a>
+                                    </div>
+                                    <!-- Information -->
+                                    <div class="flex w-full flex-col">
+                                        <a href="./product-detail.html" class="line-clamp-2 h-10">
+                                            کفش نیوبالانس NewBalanceوبالانس NewBalanceوبالانس
+                                            NewBalanceوبالانس NewBalanceوبالانس NewBalance
+                                        </a>
+                                        <div class="flex items-center gap-x-4 pt-3 text-text/80">
+                                            <p>تعداد : 1</p>
+                                            <div class="h-3 w-0.5 bg-secondary"></div>
+                                            <p>سایز : 44</p>
+                                        </div>
+                                        <div class="flex items-center justify-between gap-x-5 py-3">
+                                            <!-- price -->
+                                            <div class="flex items-center gap-x-2">
+                                                <div class="text-lg font-medium text-primary">
+                                                    1,300,000,000
+                                                </div>
+                                                <p class="text-sm text-primary">تومان</p>
+                                            </div>
+                                            <!-- Quantity -->
+
+                                            <div class="flex h-10 w-24 items-center justify-between rounded-lg border px-2 py-1">
+                                                <button type="button" class="i-lucide-plus size-8 text-success"></button>
+                                                <input value="1" disabled="" type="number"
+                                                       class="flex h-5 w-full grow select-none items-center justify-center bg-transparent text-center text-sm outline-none">
+                                                <button type="button" class="i-lucide-minus size-8 text-warning"></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                            <!-- footer -->
+                            <div class="flex items-center justify-between border-t p-5">
+                                <div class="flex flex-col items-center">
+                                    <p class="text-text/60">مبلغ قابل پرداخت</p>
+                                    <div class="flex items-center gap-x-1 text-primary">
+                                        <p class="text-lg font-bold">10,130,000</p>
+                                        <p class="text-sm">تومان</p>
+                                    </div>
+                                </div>
+                                <a href="checkout-shipping-not-selected.html">
+                                    <button class="w-32 rounded-md bg-primary-btn py-3 text-white duration-200 hover:bg-primary-btn/80">
+                                        ثبت سفارش
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Theme -->
+                <div>
+                    <button onclick="toggleDark(event)" class="icon-btn h-10 w-10">
+                        <span class="i-carbon-moon !h-6 !w-6 dark:i-carbon-sun"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Bottom -->
+        <div data-onscrollclass="-translate-y-full" class="absolute inset-x-0 top-full z-20 bg-muted duration-300">
+            <nav class="container flex items-center gap-2 text-text/80">
+                <!-- indicator -->
+                <div id="line" class="absolute bottom-0 end-0 top-full h-1 rounded-xl bg-primary transition-all duration-300"></div>
+                <!-- Mega Menu -->
+                <ul class="desktop-nav-item relative z-10" onmouseenter="desktopMegamenuShow()" onmouseleave="desktopMegamenuHidden()">
+                    <!-- category-->
+                    <div class="flex cursor-pointer items-center gap-2 pb-2 pl-2">
+                        <div class="i-lucide-align-justify h-4 w-4"></div>
+                        <div>دسته بندی‌ها</div>
+                    </div>
+
+                    <div id="desktop-mega-menu"
+                         class="absolute right-0 top-full h-[400px] w-[900px] overflow-hidden rounded-b-lg bg-muted hidden">
+                        <!-- menu -->
+                        <div class="flex">
+                            <!-- right Menu -->
+                            <div dir="ltr" class="max-h-[400px] min-h-[400px] min-w-[200px] overflow-y-auto bg-background">
+                                <ul id="desktopMegamenuCategory" dir="rtl" class="flex flex-col">
+                                    <li class="mega-menu-link-active">
+                                        <a href="./shop.html" class="mega-menu-link">مردانه</a>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <!-- left Menu -->
+                            <div dir="ltr" class="max-h-[400px] min-h-[400px] overflow-y-auto p-6">
+                                <div dir="rtl" id="desktopMegamenuSubCategory">
+                                    <!-- man menu -->
+                                    <div class="">
+                                        <div class="mb-6">
+                                            <a href="#"
+                                               class="flex items-center gap-x-1 text-sm text-primary duration-200 hover:text-primary/80">
+                                                <span>مشاهده همه</span>
+                                                <i class="i-lucide-chevron-left"></i>
+                                            </a>
+                                        </div>
+
+                                        <div class="flex flex-wrap gap-x-14 gap-y-8">
+                                            <!-- man menu 1 -->
+                                            <ul class="flex flex-col space-y-4">
+                                                <li>
+                                                    <a href="#"
+                                                       class="block flex items-center gap-x-2 duration-200 hover:text-primary">
+                                                        <span class="h-5 w-0.5 rounded-full bg-primary"></span>
+                                                        <span>لباس مردانه</span>
+                                                        <i class="i-lucide-chevron-left text-sm"></i>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" class="block text-sm duration-200 hover:text-primary">شلوار</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" class="block text-sm duration-200 hover:text-primary">لباس زیر</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" class="block text-sm duration-200 hover:text-primary">جوراب</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" class="block text-sm duration-200 hover:text-primary">جلیقه</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" class="block text-sm duration-200 hover:text-primary">شلوارک</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" class="block text-sm duration-200 hover:text-primary">هودی</a>
+                                                </li>
+                                            </ul>
+                                            <!-- man menu 2 -->
+                                            <ul class="flex flex-col space-y-4">
+                                                <li>
+                                                    <a href="#"
+                                                       class="block flex items-center gap-x-2 duration-200 hover:text-primary">
+                                                        <span class="h-5 w-0.5 rounded-full bg-primary"></span>
+                                                        <span>لباس مردانه</span>
+                                                        <i class="i-lucide-chevron-left text-sm"></i>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" class="block text-sm duration-200 hover:text-primary">شلوار</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" class="block text-sm duration-200 hover:text-primary">لباس زیر</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" class="block text-sm duration-200 hover:text-primary">جوراب</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" class="block text-sm duration-200 hover:text-primary">جلیقه</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" class="block text-sm duration-200 hover:text-primary">شلوارک</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" class="block text-sm duration-200 hover:text-primary">هودی</a>
+                                                </li>
+                                            </ul>
+                                            <!-- man menu 3 -->
+                                            <ul class="flex flex-col space-y-4">
+                                                <li>
+                                                    <a href="#"
+                                                       class="block flex items-center gap-x-2 duration-200 hover:text-primary">
+                                                        <span class="h-5 w-0.5 rounded-full bg-primary"></span>
+                                                        <span>اکسسوری</span>
+                                                        <i class="i-lucide-chevron-left text-sm"></i>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" class="block text-sm duration-200 hover:text-primary">ساعت</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" class="block text-sm duration-200 hover:text-primary">عینک</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" class="block text-sm duration-200 hover:text-primary">زیورآلات</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" class="block text-sm duration-200 hover:text-primary">کمربند</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" class="block text-sm duration-200 hover:text-primary">کلاه</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ul>
+                <ul class="desktop-nav-item">
+                    <a href="./why-us.html" class="inline-block px-2 pb-2">
+                        چرا بلسر
+                    </a>
+                </ul>
+                <ul class="desktop-nav-item" data-color="hsl(var(--warning))">
+                    <a href="./special-sale.html" class="inline-block px-2 pb-2">
+                        فروش ویژه
+                    </a>
+                </ul>
+                <ul class="desktop-nav-item z-10">
+                    <div class="group relative">
+                        <div class="flex cursor-pointer gap-2 px-2 pb-2">
+                            سایر
+                            <div class="text-primary">...</div>
+                        </div>
+                        <!-- Dropdown -->
+                        <div class="absolute right-0 top-full hidden w-40 rounded-b-lg bg-muted group-hover:block">
+                            <ul class="space-y-2">
+                                <li>
+                                    <a href="./contact.html" class="z-10 block rounded-lg px-4 py-3 duration-200 hover:text-primary">
+                                        تماس با ما
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="./faq.html" class="z-10 block rounded-lg px-4 py-3 duration-200 hover:text-primary">
+                                        سوالات متداول
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="./about.html" class="z-10 block rounded-lg px-4 py-3 duration-200 hover:text-primary">
+                                        درباره ما
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </ul>
+                <!-- Indicator -->
+                <div id="desktopNavbarIndicator"
+                     class="absolute bottom-0 end-0 z-0 h-[0.15625rem] w-0 touch-none rounded-full bg-primary transition-all duration-300 ease-[ease]"
+                     style="transform: translate3d(1015px, 0px, 0px); width: 0px;"></div>
+            </nav>
+        </div>
+    </div>
+    <!-- Mobile-->
+    <div class="block lg:hidden">
+        <!-- Top -->
+        <div id="headerMobileTop" class="container relative inset-x-0 z-30 bg-muted pb-4 pt-2 transition-transform duration-300">
+            <div class="flex items-center justify-between">
+                <!-- Image -->
+                <a href="./index.html">
+                    <img class="h-6" src="/static/images/logo.png" alt="Blesser">
+                </a>
+                <div class="flex gap-2">
+                    <!-- Favorite -->
+
+                    <button type="button" data-drawer-target="favorite-drawer" data-drawer-show="favorite-drawer"
+                            data-drawer-placement="bottom" aria-controls="favorite-drawer"
+                            class="icon-btn relative h-10 w-10 border-primary">
+                        <div class="i-lucide-heart h-6 w-6"></div>
+                        <div class="absolute -right-1.5 -top-1.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
+                            3
+                        </div>
+                    </button>
+
+                    <!-- Compare -->
+
+                    <button type="button" data-drawer-target="compare-drawer" data-drawer-show="compare-drawer"
+                            data-drawer-placement="bottom" aria-controls="compare-drawer"
+                            class="icon-btn relative h-10 w-10 border-primary">
+                        <div class="i-lucide-align-horizontal-justify-center h-6 w-6"></div>
+                        <div class="absolute -right-1.5 -top-1.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
+                            3
+                        </div>
+                    </button>
+
+                    <!-- Theme -->
+
+                    <button onclick="toggleDark(event)" class="icon-btn h-10 w-10">
+                        <span class="i-carbon-moon !h-6 !w-6 dark:i-carbon-sun"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Bottom -->
+        <div class="px-3">
+            <div id="headerMobileNavigation" data-onscrollclass="-translate-y-full"
+                 class="absolute inset-x-0 top-full flex-grow bg-muted pb-1.5 transition-all duration-200">
+                <div>
+                    <div class="container flex items-center">
+                        <div onclick="mobileSearchUnFocus()" id="headerMobileSearchCloseIcon"
+                             class="i-lucide-arrow-right h-0 w-0 text-text/80 duration-200"></div>
+                        <div class="group flex w-full items-center overflow-hidden rounded-lg border bg-background pr-2 duration-200 focus-within:border-primary">
+                            <div class="i-carbon-search h-6 w-6 text-text/60"></div>
+                            <label for="mobileSearchInput" class="sr-only">Mobile Search</label>
+                            <input id="mobileSearchInput" type="text" autocomplete="off" onkeyup="mobileSearchOnType(event)"
+                                   onfocus="mobileSearchOnFocus()" placeholder="جستجو در بلسر"
+                                   class="duration-400 h-10 w-full bg-transparent px-2 outline-none placeholder:text-sm placeholder:duration-200 focus:placeholder:-translate-x-2">
+                            <button id="mobileSearchClearButton" onclick="mobileSearchClearValue()"
+                                    class="ml-2 hidden h-6 w-6 items-center justify-center rounded-lg border bg-background p-px text-text/60">
+                                <span class="i-lucide-x h-4 w-4"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Search Result -->
+        <div id="headerMobileSearchResult" class="relative z-40 px-3 hidden">
+            <div class="fixed inset-0 mt-[64px] h-[calc(100dvh-64px)] bg-muted">
+                <div class="h-full space-y-6 overflow-y-auto p-5">
+                    <!-- Product Result -->
+                    <div class="swiper search-result-slider swiper-initialized swiper-horizontal swiper-free-mode swiper-rtl swiper-backface-hidden">
+                        <div class="swiper-wrapper" id="swiper-wrapper-a27bd3bd03ba87d1" aria-live="polite"
+                             style="transition-duration: 0ms; transition-delay: 0ms; transform: translate3d(0px, 0px, 0px);">
+
+
+                            <div class="swiper-slide" role="group" aria-label="4 / 4" style="width: 304px; margin-left: 10px;">
+                                <a href="./product-detail.html"
+                                   class="flex items-center gap-x-2 rounded-xl border p-2 hover:border-border/50">
+                                    <img src="/static/images/p1.png" alt="نایک زوم پگاسوس توربو مشکی"
+                                         class="h-20 w-20 rounded-lg object-cover">
+                                    <p class="line-clamp-2 text-text/95">
+                                        نایک زوم پگاسوس توربو مشکی
+                                    </p>
+                                </a>
+                            </div>
+                        </div>
+                        <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div>
+                    <!-- Brand Result -->
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="./shop.html" class="flex items-center gap-2 py-2 duration-200 hover:text-primary">
+                                برند نایک
+                                <span class="i-ic-outline-arrow-outward"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="./shop.html" class="flex items-center gap-2 py-2 duration-200 hover:text-primary">
+                                برند نیو بالانس
+                                <span class="i-ic-outline-arrow-outward"></span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <!-- User Recent Search -->
+                    <div>
+                        <div class="flex items-center justify-between">
+                            <div>جستجوهای اخیر شما</div>
+                            <button class="flex items-center gap-2 text-sm text-warning duration-200 hover:text-warning/80">
+                                حذف همه
+                                <i class="i-lucide-trash size-5"></i>
+                            </button>
+                        </div>
+
+                        <div class="flex flex-wrap gap-4 pt-3">
+                            <a href="#" class="rounded-2xl border px-2 py-1 text-sm text-text/80 duration-200 hover:bg-background">
+                                کفش نایک
+                            </a>
+
+
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
