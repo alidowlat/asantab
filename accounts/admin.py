@@ -7,9 +7,7 @@ from accounts.models import User, Provider
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    list_display = (
-        'id', 'phone_number', 'email', 'first_name', 'last_name', 'is_active', 'is_provider', 'gender', 'birth_date'
-    )
+    list_display = ('id', 'phone_number', 'email', 'first_name', 'last_name', 'is_active', 'is_provider', 'gender', 'birth_date')
     list_filter = ('is_active', 'is_staff', 'is_superuser', 'gender', 'is_provider')
     search_fields = ('phone_number', 'email', 'first_name', 'last_name', 'national_id')
     ordering = ('-date_joined',)
