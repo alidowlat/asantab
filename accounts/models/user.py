@@ -47,13 +47,13 @@ class User(AbstractUser):
         verbose_name='ایمیل'
     )
     otp = models.CharField(
-        max_length=6,
+        max_length=5,
         validators=[otp_regex],
         null=True,
         blank=True,
         verbose_name="کد تایید"
     )
-    otp_create_time = models.DateTimeField(auto_now=True)
+    otp_create_at = models.DateTimeField(auto_now=True)
     is_provider = models.BooleanField(
         default=False,
         verbose_name="فروشنده است؟"
@@ -78,6 +78,7 @@ class User(AbstractUser):
         blank=True,
         verbose_name="کد ملی"
     )
+    is_verified = models.BooleanField(default=False, verbose_name="تایید شده؟")
 
     def get_full_name(self):
         return f"{(self.first_name or '').strip()} {(self.last_name or '').strip()}".strip()
