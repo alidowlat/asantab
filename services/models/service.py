@@ -22,6 +22,7 @@ class Service(models.Model):
                                  verbose_name='دسته بندی')
     profession = models.ForeignKey('services.Profession', on_delete=models.CASCADE, related_name='services', verbose_name='صنف')
     tags = models.ManyToManyField('services.Tag', related_name='services', verbose_name='تگ / تگ ها')
+    locations = models.ManyToManyField('locations.City', related_name='services', verbose_name='شهر های قابل ارائه برای خدمات')
 
     # todo: get_absolute_url
 
