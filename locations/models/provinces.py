@@ -2,10 +2,11 @@ from django.db import models
 
 
 class Province(models.Model):
-    name = models.CharField(max_length=50, unique=True, verbose_name='نام استان')
+    name_fa = models.CharField(max_length=50, unique=True, null=True, blank=True, verbose_name='نام استان به فارسی')
+    name_en = models.CharField(max_length=50, unique=True, null=True, blank=True, verbose_name='نام استان به انگلیسی')
 
     def __str__(self):
-        return self.name
+        return f'{self.name_fa} - {self.name_en}'
 
     class Meta:
         verbose_name = 'Province'
