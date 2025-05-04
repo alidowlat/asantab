@@ -1,0 +1,114 @@
+from django import template
+from django.utils.timezone import now
+import pytz
+from jdatetime import datetime as jdatetime
+
+register = template.Library()
+
+
+@register.filter(name='convert_date')
+def time_since_custom(value):
+    if not value:
+        return "نامشخص"
+
+    current_time = now()
+    diff = current_time - value
+    years = diff.days // 365
+    months = (diff.days % 365) // 30
+    days = (diff.days % 365) % 30
+
+    if years > 0:
+        if months > 0:
+            return f"{years} سال و {months} ماه پیش"
+        return f"{years} سال پیش"
+    elif months > 0:
+        if days > 0:
+            return f"{months} ماه و {days} روز پیش"
+        return f"{months} ماه پیش"
+    elif days > 0:
+        return f"{days} روز پیش"
+    else:
+        return "امروز"
+
+
+@register.filter(name='cut')
+def cut(value, arg):
+    return value.replace(arg, '')
+
+
+@register.filter(name='show_date')
+def show_jalali_date(value):
+    if value:
+        iran_tz = pytz.timezone('Asia/Tehran')
+        localized_time = value.astimezone(iran_tz)
+        return jdatetime.fromgregorian(datetime=localized_time).strftime('%Y/%m/%d - %H:%M:%S')
+    return ""
+
+
+# @register.filter(name='persian_int')
+# def persian_int(english_int):
+#     devanagari_nums = ('۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹')
+#     number = str(english_int)
+#     return ''.join(devanagari_nums[int(digit)] for digit in number)
+#
+#
+# @register.filter(name='three_digits')
+# def three_digits(value: int):
+#     return '{:,}'.format(value) + ' تومان'
+
+
+@register.filter(name='three_digits')
+def three_digits_sp(value: int):
+    return '{:,}'.format(value)
+
+
+@register.filter(name='persian_int')
+def persian_int(english_int):
+    devanagari_nums = ('۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹')
+    number = str(english_int)
+    return ''.join(devanagari_nums[int(digit)] if digit.isdigit() else digit for digit in number)
+
+
+@register.filter(name='three_digits_toman')
+def three_digits(value):
+    try:
+        value = int(value)
+    except ValueError:
+        return value
+    return '{:,}'.format(value) + ' تومان'
+
+
+@register.filter(name='rounded')
+def rounded(value):
+    try:
+        value = int(value)
+        rounded_value = (value // 1000) * 1000
+        return rounded_value
+    except ValueError:
+        return value
+
+
+# @register.simple_tag
+# def multiply(quantity, price, *args, **kwargs):
+#     return three_digits(quantity * price)
+
+
+@register.filter(name='multiply')
+def multiply(value, arg):
+    try:
+        return value * arg
+    except (ValueError, TypeError):
+        return value
+
+
+@register.simple_tag
+def bask(quantity, price, x, *args, **kwargs):
+    return three_digits(quantity * price + x)
+
+
+@register.filter(name='sub')
+def sub(x, y):
+    try:
+        return x - y
+    except (ValueError, TypeError):
+        return x
