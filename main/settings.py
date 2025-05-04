@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     # libs and packages
     'django_render_partial',
     'widget_tweaks',
+    'jalali_date',
 ]
 
 MIDDLEWARE = [
