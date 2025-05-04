@@ -1,6 +1,10 @@
 from django.db import models
 from django.utils.text import slugify
 
+from core.media_path import get_image_upload_to
+
+from core.image_compressor import compress_and_convert_to_webp
+
 STATUS_CHOICES = [
     ('pending', 'در انتظار تایید'),
     ('approved', 'تایید شده'),
@@ -14,6 +18,7 @@ class Service(models.Model):
     url_title = models.CharField(max_length=120, verbose_name='عنوان خدمت در URL')
     slug = models.SlugField(default="", null=False, db_index=True, blank=True, max_length=120, unique=True)
     description = models.TextField(max_length=800, verbose_name='توضیحات')
+    image = models.ImageField(upload_to=get_image_upload_to, null=True, verbose_name='تصویر خدمت')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='ساخته شده در تاریخ')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='آپدیت شده در تاریخ')
     is_active = models.BooleanField(default=False, verbose_name='فعال است؟')
@@ -31,6 +36,18 @@ class Service(models.Model):
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.url_title)
+
+        try:
+            this = Service.objects.get(pk=self.pk)
+            if this.image and this.image != self.image:
+                this.image.delete(save=False)
+        except Service.DoesNotExist:
+            pass
+
+        if self.image:
+            name_part = getattr(self, 'username', None) or getattr(self, 'slug', None) or self.__class__.__name__.lower()
+            self.image = compress_and_convert_to_webp(self.image, name_part, quality=50)
+
         super().save(*args, **kwargs)
 
     class Meta:
