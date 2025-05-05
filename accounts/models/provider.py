@@ -26,7 +26,8 @@ class Provider(models.Model):
         blank=True,
         unique=True)
     bio = models.TextField(null=True, blank=True, verbose_name='بیوگرافی')
-    province = models.ForeignKey('locations.Province', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="استان محل سکونت")
+    province = models.ForeignKey('locations.Province', on_delete=models.SET_NULL, null=True, blank=True,
+                                 verbose_name="استان محل سکونت")
     city = models.ForeignKey('locations.City', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="شهر محل سکونت")
     profile_image = models.ImageField(upload_to=get_image_upload_to, null=True, blank=True,
                                       verbose_name='تصویر پروفایل')
@@ -45,9 +46,16 @@ class Provider(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.username)
 
+        try:
+            this = Provider.objects.get(pk=self.pk)
+            if this.profile_image and this.profile_image != self.profile_image:
+                this.profile_image.delete(save=False)
+        except Provider.DoesNotExist:
+            pass
+
         if self.profile_image:
-            name_part = self.username
-            self.profile_image = compress_and_convert_to_webp(self.profile_image, name_part)
+            name_part = getattr(self, 'username', None) or getattr(self, 'slug', None) or self.__class__.__name__.lower()
+            self.profile_image = compress_and_convert_to_webp(self.profile_image, name_part, quality=50)
 
         if self.national_card_image:
             name_part = f"national_card_{self.username}"
