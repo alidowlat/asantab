@@ -1,3 +1,5 @@
+from django.db.models import Max, Sum, Count, Min
+from django.http import HttpRequest
 from django.views.generic import ListView
 
 from accounts.models import Provider
@@ -9,7 +11,7 @@ class ServiceListView(ListView):
     model = Service
     context_object_name = 'services'
     ordering = ['-id']
-    paginate_by = 12
+    paginate_by = 4
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
@@ -23,7 +25,40 @@ class ServiceListView(ListView):
 
         return context
 
+    def get_queryset(self):
+        request = self.request
+        sort_by = request.GET.get('sort_by')
+        category = request.GET.get('category')
+        profession = request.GET.get('profession')
+        is_active = request.GET.get('is_active')
 
+        query = Service.objects.filter(options__is_active=True).annotate(
+            min_price=Min('options__unit_price'),
+            max_price=Max('options__unit_price')
+        ).distinct()
+
+        if category:
+            query = query.filter(category__url_title__in=category.split(','))
+
+        if profession:
+            query = query.filter(profession__url_title__in=profession.split(','))
+
+        if is_active == 'True':
+            query = query.filter(is_active=True)
+        elif is_active == 'False':
+            query = query.filter(is_active=False)
+
+        match sort_by:
+            case 'expensive':
+                query = query.order_by('-max_price', '-id')
+            case 'cheap':
+                query = query.order_by('min_price', '-id')
+            case 'newest':
+                query = query.order_by('-id')
+            case 'oldest':
+                query = query.order_by('id')
+
+        return query
 
         # db_max_price = Service.new_price if Service is not None else 0
         # context['start_price'] = self.request.GET.get('start_price') or 0
