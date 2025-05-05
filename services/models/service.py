@@ -1,8 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
-
 from core.media_path import get_image_upload_to
-
 from core.image_compressor import compress_and_convert_to_webp
 
 STATUS_CHOICES = [
@@ -22,6 +20,7 @@ class Service(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='ساخته شده در تاریخ')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='آپدیت شده در تاریخ')
     is_active = models.BooleanField(default=False, verbose_name='فعال است؟')
+    is_unique = models.BooleanField(default=False, verbose_name='ویژه است؟')
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending', verbose_name='وضعیت')
     category = models.ForeignKey('services.Category', on_delete=models.SET_NULL, null=True, related_name='services',
                                  verbose_name='دسته بندی')
