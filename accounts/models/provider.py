@@ -26,20 +26,8 @@ class Provider(models.Model):
         blank=True,
         unique=True)
     bio = models.TextField(null=True, blank=True, verbose_name='بیوگرافی')
-    province = models.CharField(
-        max_length=100,
-        # choices=PROVINCES,
-        verbose_name="استان محل سکونت",
-        null=True,
-        blank=True
-    )
-    city = models.CharField(
-        max_length=100,
-        # choices=CITIES.get(province, []),
-        verbose_name="شهر محل سکونت",
-        null=True,
-        blank=True
-    )
+    province = models.ForeignKey('locations.Province', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="استان محل سکونت")
+    city = models.ForeignKey('locations.City', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="شهر محل سکونت")
     profile_image = models.ImageField(upload_to=get_image_upload_to, null=True, blank=True,
                                       verbose_name='تصویر پروفایل')
     iban_number = models.CharField(max_length=24, validators=[iban_regex], null=True, blank=True,
@@ -54,7 +42,6 @@ class Provider(models.Model):
     def __str__(self):
         return self.user.get_full_name() or self.user.phone_number
 
-
     def save(self, *args, **kwargs):
         self.slug = slugify(self.username)
 
@@ -67,8 +54,6 @@ class Provider(models.Model):
             self.national_card_image = compress_and_convert_to_webp(self.national_card_image, name_part)
 
         super().save(*args, **kwargs)
-
-
 
     class Meta:
         verbose_name = 'Provider'
