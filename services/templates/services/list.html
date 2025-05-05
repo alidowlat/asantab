@@ -539,9 +539,9 @@
                                             </div>
 
                                             <span class="text-sm xs:text-base">
-                                                {% if min_price and max_price %}
-                                                    {{ min_price|three_digits }}{% if min_price < max_price %} الی
-                                                        {{ max_price|three_digits }}{% endif %}
+                                                {% if service.min_price and service.max_price %}
+                                                    {{ service.min_price|three_digits }}{% if service.min_price < service.max_price %} الی
+                                                        {{ service.max_price|three_digits }}{% endif %}
                                                 {% endif %}
                                             </span>
                                             <span class="text-sm font-light">تومان</span>
