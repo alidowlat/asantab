@@ -1,5 +1,7 @@
 from django.views.generic import ListView
-from services.models import Service
+
+from accounts.models import Provider
+from services.models import Service, Option
 
 
 class ServiceListView(ListView):
@@ -7,19 +9,21 @@ class ServiceListView(ListView):
     model = Service
     context_object_name = 'services'
     ordering = ['-id']
-    paginate_by = 8
+    paginate_by = 12
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
         latest_service = self.object_list.first()
         context['latest_service'] = latest_service
 
-        if latest_service:
-            prices = [opt.unit_price for opt in latest_service.options.all() if opt.unit_price is not None]
-            context['min_price'] = min(prices) if prices else None
-            context['max_price'] = max(prices) if prices else None
+        for service in context['services']:
+            prices = list(service.options.filter(unit_price__isnull=False).values_list('unit_price', flat=True))
+            service.min_price = min(prices) if prices else None
+            service.max_price = max(prices) if prices else None
 
         return context
+
+
 
         # db_max_price = Service.new_price if Service is not None else 0
         # context['start_price'] = self.request.GET.get('start_price') or 0
