@@ -1,9 +1,9 @@
-from django.db.models import Max, Sum, Count, Min
-from django.http import HttpRequest
+from django.contrib.admin.views.decorators import staff_member_required
+from django.db.models import Max, Min
+from django.shortcuts import get_object_or_404, redirect
+from django.views.decorators.http import require_POST
 from django.views.generic import ListView
-
-from accounts.models import Provider
-from services.models import Service, Option
+from services.models import Service
 
 
 class ServiceListView(ListView):
@@ -31,6 +31,7 @@ class ServiceListView(ListView):
         category = request.GET.get('category')
         profession = request.GET.get('profession')
         is_active = request.GET.get('is_active')
+        is_unique = request.GET.get('is_unique')
 
         query = Service.objects.filter(options__is_active=True).annotate(
             min_price=Min('options__unit_price'),
@@ -47,6 +48,9 @@ class ServiceListView(ListView):
             query = query.filter(is_active=True)
         elif is_active == 'False':
             query = query.filter(is_active=False)
+
+        if is_unique == 'True':
+            query = query.filter(is_unique=True)
 
         match sort_by:
             case 'expensive':
@@ -78,3 +82,12 @@ class ServiceListView(ListView):
         #
         # low_price_Services = Service.objects.filter(is_active=True, is_stock=True).order_by('new_price')[:13]
         # context['low_price_Services'] = low_price_Services
+
+
+@staff_member_required
+@require_POST
+def toggle_unique_status(request, pk):
+    service = get_object_or_404(Service, pk=pk)
+    service.is_unique = not service.is_unique
+    service.save()
+    return redirect(request.META.get('HTTP_REFERER', '/'))
