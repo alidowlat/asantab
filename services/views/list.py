@@ -3,7 +3,9 @@ from django.db.models import Max, Min
 from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.views.generic import ListView
-from services.models import Service
+
+from locations.models import City
+from services.models import Service, Category, Profession, Tag
 
 
 class ServiceListView(ListView):
@@ -23,6 +25,16 @@ class ServiceListView(ListView):
             service.min_price = min(prices) if prices else None
             service.max_price = max(prices) if prices else None
 
+        model_fields = [
+            ('categories', Category.objects.filter(is_active=True)),
+            ('professions', Profession.objects.all()),
+            ('tags', Tag.objects.all()),
+            ('locations', City.objects.filter(services__is_active=True).distinct())
+        ]
+
+        for field_name, queryset in model_fields:
+            context[field_name] = queryset
+
         return context
 
     def get_queryset(self):
@@ -30,8 +42,10 @@ class ServiceListView(ListView):
         sort_by = request.GET.get('sort_by')
         category = request.GET.get('category')
         profession = request.GET.get('profession')
-        is_active = request.GET.get('is_active')
-        is_unique = request.GET.get('is_unique')
+        location = request.GET.get('location')
+        tag = request.GET.get('tag')
+        available = request.GET.get('available')
+        featured = request.GET.get('featured')
 
         query = Service.objects.filter(options__is_active=True).annotate(
             min_price=Min('options__unit_price'),
@@ -44,12 +58,16 @@ class ServiceListView(ListView):
         if profession:
             query = query.filter(profession__url_title__in=profession.split(','))
 
-        if is_active == 'True':
-            query = query.filter(is_active=True)
-        elif is_active == 'False':
-            query = query.filter(is_active=False)
+        if location:
+            query = query.filter(locations__name_en__in=location.split(','))
 
-        if is_unique == 'True':
+        if tag:
+            query = query.filter(tags__url_title__in=tag.split(','))
+
+        if available == '1':
+            query = query.filter(is_active=True)
+
+        if featured == '1':
             query = query.filter(is_unique=True)
 
         match sort_by:
