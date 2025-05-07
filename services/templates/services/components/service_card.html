@@ -1,0 +1,90 @@
+{% load extra_filters %}
+<!-- Search Result -->
+<div class="border-gradient relative rounded-[--product-card-radius] p-px [--product-card-radius:theme(borderRadius.2xl)] before:absolute before:-inset-px before:h-[calc(100%+2px)] before:w-[calc(100%+2px)] before:rounded-[--product-card-radius] before:content-['']"
+     style="--x: 681.71875px; --y: -84px;">
+
+    <div class="relative block overflow-hidden rounded-[calc(var(--product-card-radius)-1px)] bg-muted">
+        <div onclick="window.open('{{ service.url_title }}')"
+             class="mb-4 bg-secondary p-2 lg:p-4 cursor-pointer">
+            <!-- Special Sale Percentage  -->
+            <div class="absolute right-2 top-0 rounded-b-full bg-warning px-1 py-1.5 text-center text-sm font-medium text-white md:text-base">
+                20%
+            </div>
+            <!-- Image -->
+            <img src="{{ service.image.url }}" draggable="false" alt="service image"
+                 class="aspect-[1/1] w-full rounded-xl object-cover">
+        </div>
+        <div class="mb-1 px-2 lg:px-4">
+            <p class="line-clamp-2 h-10 text-sm xs:h-12 xs:text-base">
+                {{ service.title }}
+            </p>
+
+            <div class="gap-x-1 text-end font-bold text-primary">
+                <div class="h-5 text-end text-sm text-text/50 xs:text-base">
+                    <del></del>
+                </div>
+
+                <span class="text-sm xs:text-base">
+                                                {% if service.min_price and service.max_price %}
+                                                    {{ service.min_price|three_digits }}{% if service.min_price < service.max_price %}
+                                                        الی
+                                                        {{ service.max_price|three_digits }}{% endif %}
+                                                {% endif %}
+                                            </span>
+                <span class="text-sm font-light">تومان</span>
+            </div>
+        </div>
+        <div class="h-8 px-2 lg:px-4">
+            <!-- Countdown -->
+
+
+            <!-- Proccess Bar -->
+
+        </div>
+        {% if request.user.is_superuser %}
+            <form method="POST" action="{% url 'toggle_unique' service.id %}">
+                {% csrf_token %}
+                <label class="flex cursor-pointer items-center justify-between px-4 py-5">
+                    <div class="relative inline-flex cursor-pointer items-center">
+                        <div>تبدیل به کالای ویژه</div>
+                        <input class="peer sr-only" type="checkbox" onchange="this.form.submit()"
+                               {% if service.is_unique %}checked{% endif %}>
+                        <div class="peer h-6 w-11 bg-black/40 mr-4 rounded-full bg-background after:absolute after:left-[2px] after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-muted after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full"></div>
+                    </div>
+                </label>
+            </form>
+        {% endif %}
+
+    </div>
+</div>
+
+<!-- Loading Product Card-->
+<!--                        <div class="relative bg-muted rounded-xl overflow-hidden">-->
+<!--                            <div class="flex flex-col">-->
+<!--                                <div class="mb-4 p-2 lg:p-4 bg-secondary flex justify-center">-->
+<!--                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"-->
+<!--                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"-->
+<!--                                         stroke-linejoin="round"-->
+<!--                                         class="lucide lucide-image-icon w-full h-auto max-w-50 max-h-50 text-text/60/10 animate-pulse">-->
+<!--                                        <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>-->
+<!--                                        <circle cx="9" cy="9" r="2"></circle>-->
+<!--                                        <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>-->
+<!--                                    </svg>-->
+<!--                                </div>-->
+<!--                                <div class="px-2 lg:px-4 flex flex-col justify-between gap-3 h-10 lg:h-12">-->
+<!--                                    <div class="animate-pulse rounded-md bg-background h-full"></div>-->
+<!--                                    <div class="animate-pulse rounded-md bg-background h-full"></div>-->
+<!--                                </div>-->
+<!--                                <div class="flex flex-col px-2 lg:px-4">-->
+<!--                                    <div class="h-5 flex justify-end items-center">-->
+<!--                                        <div class="animate-pulse rounded-md bg-background h-2 w-10"></div>-->
+<!--                                    </div>-->
+<!--                                    <div class="flex justify-end items-center">-->
+<!--                                        <div class="animate-pulse rounded-md bg-background h-5 w-2/3"></div>-->
+<!--                                    </div>-->
+<!--                                    <div class="h-8 flex justify-center items-center">-->
+<!--                                        <div class="animate-pulse rounded-md bg-background h-2 w-full"></div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
