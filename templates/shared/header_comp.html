@@ -1,14 +1,16 @@
 <header class="fixed inset-x-0 top-0 z-30 bg-muted">
     <!-- Ad Banner -->
-    <div class="hidden lg:block">
-        <img src="/static/images/ad-banner.gif" alt="ad gif" class="inline-block w-full object-cover">
-    </div>
+    {% if request.path == '/' %}
+        <div class="hidden lg:block">
+            <img src="/static/images/ad-banner.gif" alt="ad gif" class="inline-block w-full object-cover">
+        </div>
+    {% endif %}
     <!-- Desktop -->
     <div class="hidden lg:block">
         <!-- Top -->
         <div class="container relative z-30 flex items-center justify-between gap-6 bg-muted py-4">
             <!-- Logo -->
-            <a href="./index.html">
+            <a href="{% url 'index_page' %}">
                 <img src="/static/images/logo.png" alt="Logo" class="w-40">
             </a>
             <!-- Search Wrapper -->
@@ -88,192 +90,199 @@
             <!-- Account, Cart, Theme -->
             <div class="flex items-center gap-2">
                 <!-- Account Logged in -->
-                <div>
-                    <button type="button" data-dropdown-toggle="desktopAccountDropdown" class="icon-btn h-10 w-10">
-                        <div class="i-lucide-user-round h-6 w-6"></div>
-                    </button>
+                {% if request.user.is_authenticated %}
+                    <div>
+                        <button type="button" data-dropdown-toggle="desktopAccountDropdown" class="icon-btn h-10 w-10">
+                            <div class="i-lucide-user-round h-6 w-6"></div>
+                        </button>
 
-                    <!-- Dropdown menu -->
-                    <div id="desktopAccountDropdown" class="z-10 hidden w-60 rounded-lg border bg-muted shadow"
-                         data-popper-placement="bottom"
-                         style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(344px, 116px);">
-                        <ul class="flex flex-col justify-between divide-y">
-                            <!-- user -->
-                            <li class="group">
-                                <a href="./profile-dashboard.html"
-                                   class="flex items-center justify-between px-5 py-4 transition-all group-hover:text-primary">
-                                    <div class="flex items-center gap-x-3">
-                                        <img class="h-8 w-8" src="/static/images/user.png" alt="Profile">
-                                        <p class="w-32 overflow-hidden font-semibold">
-                                            0900000000
-                                        </p>
-                                    </div>
-                                    <div class="i-lucide-chevron-left min-w-fit text-text/60 group-hover:text-primary"></div>
-                                </a>
-                            </li>
-                            <!-- order -->
-                            <li class="group">
-                                <a href="./profile-order.html"
-                                   class="flex items-center justify-between px-5 py-4 transition-all group-hover:text-primary">
-                                    <div class="flex items-center gap-x-3">
-                                        <svg class="i-mingcute-shopping-bag-3-line h-6 w-6 text-text/70 group-hover:text-primary"></svg>
-                                        <p>سفارش ها</p>
-                                    </div>
-                                    <svg class="i-lucide-chevron-left text-text/60 group-hover:text-primary"></svg>
-                                </a>
-                            </li>
-                            <!-- favorite -->
-                            <li class="group">
-                                <a href="./profile-favorite.html"
-                                   class="flex items-center justify-between px-5 py-4 transition-all group-hover:text-primary">
-                                    <div class="flex items-center gap-x-3">
-                                        <svg class="i-ic-baseline-favorite-border h-6 w-6 text-text/70 group-hover:text-primary"></svg>
-                                        <p>علاقه‌مندی ها</p>
-                                    </div>
-                                    <svg class="i-lucide-chevron-left text-text/60 group-hover:text-primary"></svg>
-                                </a>
-                            </li>
-                            <!-- recent searches -->
-                            <li class="group">
-                                <a href="./profile-recent.html"
-                                   class="flex items-center justify-between px-5 py-4 transition-all group-hover:text-primary">
-                                    <div class="flex items-center gap-x-3">
-                                        <svg class="i-lucide-mouse-pointer-click h-6 w-6 text-text/70 group-hover:text-primary"></svg>
-                                        <p>بازدید های‌ اخیر</p>
-                                    </div>
-                                    <svg class="i-lucide-chevron-left text-text/60 group-hover:text-primary"></svg>
-                                </a>
-                            </li>
-                            <!-- exit -->
-                            <li>
-                                <a href="#"
-                                   class="my-1 flex items-center justify-between px-5 py-3 text-warning duration-150 hover:bg-warning/10">
-                                    <div class="flex items-center gap-x-3">
-                                        <svg class="i-mingcute-exit-line h-6 w-6"></svg>
-                                        <p>خروج</p>
-                                    </div>
-                                    <svg class="i-lucide-chevron-left"></svg>
-                                </a>
-                            </li>
-                        </ul>
+                        <!-- Dropdown menu -->
+                        <div id="desktopAccountDropdown" class="z-10 hidden w-60 rounded-lg border bg-muted shadow"
+                             data-popper-placement="bottom"
+                             style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(344px, 116px);">
+                            <ul class="flex flex-col justify-between divide-y">
+                                <!-- user -->
+                                <li class="group">
+                                    <a href="./profile-dashboard.html"
+                                       class="flex items-center justify-between px-5 py-4 transition-all group-hover:text-primary">
+                                        <div class="flex items-center gap-x-3">
+                                            <img class="h-8 w-8" src="/static/images/user.png" alt="Profile">
+                                            <p class="w-32 overflow-hidden font-semibold">
+                                                0900000000
+                                            </p>
+                                        </div>
+                                        <div class="i-lucide-chevron-left min-w-fit text-text/60 group-hover:text-primary"></div>
+                                    </a>
+                                </li>
+                                <!-- order -->
+                                <li class="group">
+                                    <a href="./profile-order.html"
+                                       class="flex items-center justify-between px-5 py-4 transition-all group-hover:text-primary">
+                                        <div class="flex items-center gap-x-3">
+                                            <svg class="i-mingcute-shopping-bag-3-line h-6 w-6 text-text/70 group-hover:text-primary"></svg>
+                                            <p>سفارش ها</p>
+                                        </div>
+                                        <svg class="i-lucide-chevron-left text-text/60 group-hover:text-primary"></svg>
+                                    </a>
+                                </li>
+                                <!-- favorite -->
+                                <li class="group">
+                                    <a href="./profile-favorite.html"
+                                       class="flex items-center justify-between px-5 py-4 transition-all group-hover:text-primary">
+                                        <div class="flex items-center gap-x-3">
+                                            <svg class="i-ic-baseline-favorite-border h-6 w-6 text-text/70 group-hover:text-primary"></svg>
+                                            <p>علاقه‌مندی ها</p>
+                                        </div>
+                                        <svg class="i-lucide-chevron-left text-text/60 group-hover:text-primary"></svg>
+                                    </a>
+                                </li>
+                                <!-- recent searches -->
+                                <li class="group">
+                                    <a href="./profile-recent.html"
+                                       class="flex items-center justify-between px-5 py-4 transition-all group-hover:text-primary">
+                                        <div class="flex items-center gap-x-3">
+                                            <svg class="i-lucide-mouse-pointer-click h-6 w-6 text-text/70 group-hover:text-primary"></svg>
+                                            <p>بازدید های‌ اخیر</p>
+                                        </div>
+                                        <svg class="i-lucide-chevron-left text-text/60 group-hover:text-primary"></svg>
+                                    </a>
+                                </li>
+                                <!-- exit -->
+                                <li>
+                                    <a href="#"
+                                       class="my-1 flex items-center justify-between px-5 py-3 text-warning duration-150 hover:bg-warning/10">
+                                        <div class="flex items-center gap-x-3">
+                                            <svg class="i-mingcute-exit-line h-6 w-6"></svg>
+                                            <p>خروج</p>
+                                        </div>
+                                        <svg class="i-lucide-chevron-left"></svg>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
+                {% else %}
+                    <div>
+                        <a href="{% url 'auth_page' %}"
+                           class="h-10 flex items-center gap-2 border px-4 rounded-lg text-text/80 hover:bg-background duration-200 ">
+                            <div class="i-lucide-user-round w-6 h-6"></div>
+                        </a>
+                    </div>
+                {% endif %}
                 <!-- Account Logged out -->
-                <!--                    <div>-->
-                <!--                        <a href="./login.html"-->
-                <!--                           class="h-10 flex items-center gap-2 border px-4 rounded-lg text-text/80 hover:bg-background duration-200 ">-->
-                <!--                            <div class="i-lucide-user-round w-6 h-6"></div>-->
-                <!--                            ورود \ ثبت نام-->
-                <!--                        </a>-->
-
-                <!--                    </div>-->
-                <!-- Favorite -->
-                <div>
-                    <button data-dropdown-toggle="desktopFavoriteDropdown" class="icon-btn relative h-10 w-10 border-primary">
-                        <div class="i-lucide-heart h-6 w-6"></div>
-                        <div class="absolute -right-1.5 -top-2.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
-                            3
-                        </div>
-                    </button>
-
-                    <!-- Dropdown Shopping -->
-
-                    <div id="desktopFavoriteDropdown" class="left-10 z-10 !ml-5 hidden w-[420px] rounded-lg border bg-muted shadow"
-                         data-popper-placement="bottom"
-                         style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(296px, 116px);">
-                        <div>
-                            <div class="flex items-center justify-between px-4 pb-2 pt-3">
-                                <div>لیست علاقه‌مندی</div>
-                                <button class="btn-warning px-4 py-2 text-sm">
-                                    حذف همه
-                                </button>
+                {% if request.path == '/' %}
+                    <!-- Favorite -->
+                    <div>
+                        <button data-dropdown-toggle="desktopFavoriteDropdown" class="icon-btn relative h-10 w-10 border-primary">
+                            <div class="i-lucide-heart h-6 w-6"></div>
+                            <div class="absolute -right-1.5 -top-2.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
+                                3
                             </div>
-                            <div class="h-60">
-                                <ul class="h-full space-y-2 divide-y overflow-y-auto p-5 pb-0 pl-2">
-                                    <li>
-                                        <div class="flex gap-x-2 py-5">
-                                            <div class="relative min-w-fit">
-                                                <a href="./product-detail.html">
-                                                    <img src="/static/images/p1.png" alt="نایک زوم پگاسوس توربو مشکی" loading="lazy"
-                                                         class="h-25 w-25 rounded-3xl">
-                                                </a>
-                                                <button class="absolute -top-2 right-0 rounded-lg border bg-muted duration-200 hover:bg-background">
-                                                    <div class="i-lucide-trash m-2 h-4 w-4 text-warning"></div>
-                                                </button>
-                                            </div>
-                                            <div class="w-full space-y-4">
-                                                <a href="./product-detail.html" class="line-clamp-2 text-text">نایک زوم پگاسوس توربو
-                                                    مشکی</a>
-                                                <div class="flex items-center justify-between gap-x-2">
-                                                    <div class="flex items-center gap-x-2 text-primary">
-                                                        <span class="text-lg font-bold">900,000</span><span
-                                                            class="text-sm">تومان</span>
+                        </button>
+
+                        <!-- Dropdown Shopping -->
+
+                        <div id="desktopFavoriteDropdown" class="left-10 z-10 !ml-5 hidden w-[420px] rounded-lg border bg-muted shadow"
+                             data-popper-placement="bottom"
+                             style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(296px, 116px);">
+                            <div>
+                                <div class="flex items-center justify-between px-4 pb-2 pt-3">
+                                    <div>لیست علاقه‌مندی</div>
+                                    <button class="btn-warning px-4 py-2 text-sm">
+                                        حذف همه
+                                    </button>
+                                </div>
+                                <div class="h-60">
+                                    <ul class="h-full space-y-2 divide-y overflow-y-auto p-5 pb-0 pl-2">
+                                        <li>
+                                            <div class="flex gap-x-2 py-5">
+                                                <div class="relative min-w-fit">
+                                                    <a href="./product-detail.html">
+                                                        <img src="/static/images/p1.png" alt="نایک زوم پگاسوس توربو مشکی"
+                                                             loading="lazy"
+                                                             class="h-25 w-25 rounded-3xl">
+                                                    </a>
+                                                    <button class="absolute -top-2 right-0 rounded-lg border bg-muted duration-200 hover:bg-background">
+                                                        <div class="i-lucide-trash m-2 h-4 w-4 text-warning"></div>
+                                                    </button>
+                                                </div>
+                                                <div class="w-full space-y-4">
+                                                    <a href="./product-detail.html" class="line-clamp-2 text-text">نایک زوم پگاسوس
+                                                        توربو
+                                                        مشکی</a>
+                                                    <div class="flex items-center justify-between gap-x-2">
+                                                        <div class="flex items-center gap-x-2 text-primary">
+                                                            <span class="text-lg font-bold">900,000</span><span
+                                                                class="text-sm">تومان</span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </li>
-                                </ul>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- Compare -->
-                <div>
-                    <button data-dropdown-toggle="desktopCompareDropdown" class="icon-btn relative h-10 w-10 border-primary">
-                        <div class="i-lucide-align-horizontal-justify-center h-6 w-6"></div>
-                        <div class="absolute -right-1.5 -top-2.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
-                            3
-                        </div>
-                    </button>
-
-                    <!-- Dropdown Shopping -->
-
-                    <div id="desktopCompareDropdown" class="left-10 z-10 !ml-5 hidden w-[420px] rounded-lg border bg-muted shadow"
-                         data-popper-placement="bottom"
-                         style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(248px, 116px);">
-                        <div>
-                            <div class="flex items-center justify-between px-4 pb-2 pt-3">
-                                <div>لیست مقایسه</div>
-                                <button class="btn-warning px-4 py-2 text-sm">
-                                    حذف همه
-                                </button>
+                    <!-- Compare -->
+                    <div>
+                        <button data-dropdown-toggle="desktopCompareDropdown" class="icon-btn relative h-10 w-10 border-primary">
+                            <div class="i-lucide-align-horizontal-justify-center h-6 w-6"></div>
+                            <div class="absolute -right-1.5 -top-2.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
+                                3
                             </div>
-                            <div class="h-60">
-                                <ul class="h-full space-y-2 divide-y overflow-y-auto p-5 pl-2">
-                                    <li>
-                                        <div class="flex gap-x-2 py-5">
-                                            <div class="relative min-w-fit">
-                                                <a href="./product-detail.html">
-                                                    <img src="/static/images/p1.png" alt="نایک زوم پگاسوس توربو مشکی" loading="lazy"
-                                                         class="h-25 w-25 rounded-3xl">
-                                                </a>
-                                                <button class="absolute -top-2 right-0 rounded-lg border bg-muted duration-200 hover:bg-background">
-                                                    <div class="i-lucide-trash m-2 h-4 w-4 text-warning"></div>
-                                                </button>
-                                            </div>
-                                            <div class="w-full space-y-4">
-                                                <a href="./product-detail.html" class="line-clamp-2 text-text">نایک زوم پگاسوس توربو
-                                                    مشکی</a>
-                                                <div class="flex items-center justify-between gap-x-2">
-                                                    <div class="flex items-center gap-x-2 text-primary">
-                                                        <span class="text-lg font-bold">900,000</span><span
-                                                            class="text-sm">تومان</span>
+                        </button>
+
+                        <!-- Dropdown Shopping -->
+
+                        <div id="desktopCompareDropdown" class="left-10 z-10 !ml-5 hidden w-[420px] rounded-lg border bg-muted shadow"
+                             data-popper-placement="bottom"
+                             style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(248px, 116px);">
+                            <div>
+                                <div class="flex items-center justify-between px-4 pb-2 pt-3">
+                                    <div>لیست مقایسه</div>
+                                    <button class="btn-warning px-4 py-2 text-sm">
+                                        حذف همه
+                                    </button>
+                                </div>
+                                <div class="h-60">
+                                    <ul class="h-full space-y-2 divide-y overflow-y-auto p-5 pl-2">
+                                        <li>
+                                            <div class="flex gap-x-2 py-5">
+                                                <div class="relative min-w-fit">
+                                                    <a href="./product-detail.html">
+                                                        <img src="/static/images/p1.png" alt="نایک زوم پگاسوس توربو مشکی"
+                                                             loading="lazy"
+                                                             class="h-25 w-25 rounded-3xl">
+                                                    </a>
+                                                    <button class="absolute -top-2 right-0 rounded-lg border bg-muted duration-200 hover:bg-background">
+                                                        <div class="i-lucide-trash m-2 h-4 w-4 text-warning"></div>
+                                                    </button>
+                                                </div>
+                                                <div class="w-full space-y-4">
+                                                    <a href="./product-detail.html" class="line-clamp-2 text-text">نایک زوم پگاسوس
+                                                        توربو
+                                                        مشکی</a>
+                                                    <div class="flex items-center justify-between gap-x-2">
+                                                        <div class="flex items-center gap-x-2 text-primary">
+                                                            <span class="text-lg font-bold">900,000</span><span
+                                                                class="text-sm">تومان</span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="border-t p-2">
-                                <a href="./compare.html" class="btn-primary block w-full py-2">
-                                    نمایش نتیجه
-                                </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="border-t p-2">
+                                    <a href="./compare.html" class="btn-primary block w-full py-2">
+                                        نمایش نتیجه
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                {% endif %}
                 <!-- Cart -->
                 <div>
                     <button data-dropdown-toggle="desktopShoppingDropdown" class="icon-btn relative h-10 w-10 border-primary">
@@ -543,40 +552,39 @@
             </nav>
         </div>
     </div>
+
+
     <!-- Mobile-->
     <div class="block lg:hidden">
         <!-- Top -->
         <div id="headerMobileTop" class="container relative inset-x-0 z-30 bg-muted pb-4 pt-2 transition-transform duration-300">
             <div class="flex items-center justify-between">
                 <!-- Image -->
-                <a href="./index.html">
+                <a href="{% url 'index_page' %}">
                     <img class="h-6" src="/static/images/logo.png" alt="Blesser">
                 </a>
                 <div class="flex gap-2">
                     <!-- Favorite -->
-
-                    <button type="button" data-drawer-target="favorite-drawer" data-drawer-show="favorite-drawer"
-                            data-drawer-placement="bottom" aria-controls="favorite-drawer"
-                            class="icon-btn relative h-10 w-10 border-primary">
-                        <div class="i-lucide-heart h-6 w-6"></div>
-                        <div class="absolute -right-1.5 -top-1.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
-                            3
-                        </div>
-                    </button>
-
-                    <!-- Compare -->
-
-                    <button type="button" data-drawer-target="compare-drawer" data-drawer-show="compare-drawer"
-                            data-drawer-placement="bottom" aria-controls="compare-drawer"
-                            class="icon-btn relative h-10 w-10 border-primary">
-                        <div class="i-lucide-align-horizontal-justify-center h-6 w-6"></div>
-                        <div class="absolute -right-1.5 -top-1.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
-                            3
-                        </div>
-                    </button>
-
-                    <!-- Theme -->
-
+                    {% if request.path == '/' %}
+                        <button type="button" data-drawer-target="favorite-drawer" data-drawer-show="favorite-drawer"
+                                data-drawer-placement="bottom" aria-controls="favorite-drawer"
+                                class="icon-btn relative h-10 w-10 border-primary">
+                            <div class="i-lucide-heart h-6 w-6"></div>
+                            <div class="absolute -right-1.5 -top-1.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
+                                3
+                            </div>
+                        </button>
+                        <!-- Compare -->
+                        <button type="button" data-drawer-target="compare-drawer" data-drawer-show="compare-drawer"
+                                data-drawer-placement="bottom" aria-controls="compare-drawer"
+                                class="icon-btn relative h-10 w-10 border-primary">
+                            <div class="i-lucide-align-horizontal-justify-center h-6 w-6"></div>
+                            <div class="absolute -right-1.5 -top-1.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
+                                3
+                            </div>
+                        </button>
+                        <!-- Theme -->
+                    {% endif %}
                     <button onclick="toggleDark(event)" class="icon-btn h-10 w-10">
                         <span class="i-carbon-moon !h-6 !w-6 dark:i-carbon-sun"></span>
                     </button>
