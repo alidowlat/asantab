@@ -1,0 +1,261 @@
+<div class="grow overflow-y-auto">
+    <ul class="divide-y">
+        {#unique-services#}
+        <li>
+            <label class="flex cursor-pointer items-center justify-between px-4 py-5"
+                   for="onlyAvailableDesktop">
+                <div>فقط کالا های موجود</div>
+                <div class="relative inline-flex cursor-pointer items-center">
+                    <input value="1" name="available-filter" class="peer sr-only" id="onlyAvailableDesktop" type="checkbox">
+
+                    <div class="peer h-6 w-11 rounded-full bg-background after:absolute after:left-[2px] after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-muted after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full"></div>
+                </div>
+            </label>
+        </li>
+        {#active-services#}
+        <li>
+            <label class="flex cursor-pointer items-center justify-between px-4 py-5"
+                   for="onlySpecialDesktop">
+                <div>فقط کالا های فروش ویژه</div>
+                <div class="relative inline-flex cursor-pointer items-center">
+                    <input value="1" name="featured-filter" class="peer sr-only" id="onlySpecialDesktop" type="checkbox">
+
+                    <div class="peer h-6 w-11 rounded-full bg-background after:absolute after:left-[2px] after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-muted after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full"></div>
+                </div>
+            </label>
+        </li>
+        {#price-range#}
+        <li>
+            <!-- todo: fix the price range -->
+            <div class="relative rounded-lg bg-muted" data-accordion-item="">
+                <button type="button" class="w-full px-4 py-5 text-right md:px-6 md:py-5"
+                        data-accordion-button="">
+                    <div class="flex items-center justify-between gap-2 text-sm md:text-base">
+                        <span> محدوده قیمت </span>
+                        <div class="min-w-fit">
+                                                                <span class="i-lucide-chevron-left duration-300"
+                                                                      data-accordion-chevron=""></span>
+                        </div>
+                    </div>
+                </button>
+                <div class="relative max-h-0 overflow-hidden transition-all duration-300"
+                     data-accordion-content="">
+                    <div class="space-y-4 p-4">
+                        <div data-id="shop-price-slider"
+                             class="range-slider-target range-slider-rtl range-slider-horizontal range-slider-txt-dir-rtl">
+                            <div class="range-slider-base">
+                                <div class="range-slider-connects">
+                                    <div class="range-slider-connect"
+                                         style="transform: translate(0%, 0px) scale(1, 1);"></div>
+                                </div>
+                                <div class="range-slider-origin"
+                                     style="transform: translate(100%, 0px); z-index: 5;">
+                                    <div class="range-slider-handle range-slider-handle-lower"
+                                         data-handle="0" tabindex="0" role="slider"
+                                         aria-orientation="horizontal" aria-valuemin="0.0"
+                                         aria-valuemax="99999999.0" aria-valuenow="0.0"
+                                         aria-valuetext="0">
+                                        <div class="range-slider-touch-area"></div>
+                                    </div>
+                                </div>
+                                <div class="range-slider-origin"
+                                     style="transform: translate(0%, 0px); z-index: 4;">
+                                    <div class="range-slider-handle range-slider-handle-upper"
+                                         data-handle="1" tabindex="0" role="slider"
+                                         aria-orientation="horizontal" aria-valuemin="1.0"
+                                         aria-valuemax="100000000.0" aria-valuenow="100000000.0"
+                                         aria-valuetext="100,000,000">
+                                        <div class="range-slider-touch-area"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div class="text-primary">
+                                                                    <span class="text-xs font-bold xl:text-sm"
+                                                                          data-id="shop-price-slider-min">0</span>
+                                <span class="text-sm">تومان</span>
+                            </div>
+                            <div class="text-primary">
+                                                                    <span class="text-xs font-bold xl:text-sm"
+                                                                          data-id="shop-price-slider-max">100,000,000</span>
+                                <span class="text-sm">تومان</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+        {#categories#}
+        <li>
+            <div class="relative rounded-lg bg-muted" data-accordion-item="">
+                <button type="button" class="w-full px-4 py-5 text-right md:px-6 md:py-5"
+                        data-accordion-button="">
+                    <div class="flex items-center justify-between gap-2 text-sm md:text-base">
+                        <span> دسته بندی ها </span>
+                        <div class="min-w-fit">
+                            <span class="i-lucide-chevron-left duration-300"
+                                  data-accordion-chevron=""></span>
+                        </div>
+                    </div>
+                </button>
+                <div class="relative max-h-0 overflow-hidden transition-all duration-300"
+                     data-accordion-content="">
+                    <ul data-search-items="" class="max-h-40 space-y-2 overflow-y-auto py-3">
+                        {% for category in categories %}
+                            <li>
+                                <div class="inline-flex w-full items-center">
+                                    <label class="flex w-full cursor-pointer items-center gap-4 px-4 py-2"
+                                           for="checkbox-category-{{ forloop.counter }}" data-ripple-dark="true">
+                                        <div class="relative flex items-center">
+                                            <input value="{{ category.url_title }}" name="category-filter" type="checkbox"
+                                                   class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary-btn checked:bg-primary-btn checked:before:bg-primary-btn hover:before:opacity-10"
+                                                   id="checkbox-category-{{ forloop.counter }}">
+                                            <div class="pointer-events-none absolute left-2/4 top-2/4 -translate-x-2/4 -translate-y-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
+                                                <div class="i-lucide-check h-4 w-4 stroke-2"></div>
+                                            </div>
+                                        </div>
+                                        <div class="flex w-full items-center justify-between">
+                                            <span data-searchable=""> {{ category.title }} </span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </li>
+        {#locations#}
+        <li>
+            <div class="relative rounded-lg bg-muted" data-accordion-item="">
+                <button type="button" class="w-full px-4 py-5 text-right md:px-6 md:py-5"
+                        data-accordion-button="">
+                    <div class="flex items-center justify-between gap-2 text-sm md:text-base">
+                        <span> شهر ها </span>
+                        <div class="min-w-fit">
+                                                                <span class="i-lucide-chevron-left duration-300"
+                                                                      data-accordion-chevron=""></span>
+                        </div>
+                    </div>
+                </button>
+                <div class="relative max-h-0 overflow-hidden transition-all duration-300"
+                     data-accordion-content="">
+                    <div data-search-item-input-wrapper="" class="mb-4 px-4">
+                        <input class="w-full rounded-lg border bg-transparent px-4 py-2 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2"
+                               type="text" placeholder="جستجوی شهر ...">
+                    </div>
+                    <ul class="space-y-2 py-3">
+                        {% for location in locations %}
+                            <li>
+                                <div class="inline-flex w-full items-center">
+                                    <label class="flex w-full cursor-pointer items-center gap-4 px-4 py-2"
+                                           for="checkbox-location-{{ forloop.counter }}" data-ripple-dark="true">
+                                        <div class="relative flex items-center">
+                                            <input value="{{ location.name_en }}" name="locations-filter" type="checkbox"
+                                                   class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary-btn checked:bg-primary-btn checked:before:bg-primary-btn hover:before:opacity-10"
+                                                   id="checkbox-locations-{{ forloop.counter }}">
+                                            <div class="pointer-events-none absolute left-2/4 top-2/4 -translate-x-2/4 -translate-y-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
+                                                <div class="i-lucide-check h-4 w-4 stroke-2"></div>
+                                            </div>
+                                        </div>
+                                        <span data-searchable="">{{ location.name_fa }}</span>
+                                    </label>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </li>
+        {#professions#}
+        <li>
+            <div class="relative rounded-lg bg-muted" data-accordion-item="">
+                <button type="button" class="w-full px-4 py-5 text-right md:px-6 md:py-5"
+                        data-accordion-button="">
+                    <div class="flex items-center justify-between gap-2 text-sm md:text-base">
+                        <span> صنف کاری </span>
+                        <div class="min-w-fit">
+                            <span class="i-lucide-chevron-left duration-300"
+                                  data-accordion-chevron=""></span>
+                        </div>
+                    </div>
+                </button>
+                <div class="relative max-h-0 overflow-hidden transition-all duration-300"
+                     data-accordion-content="">
+                    <div data-search-item-input-wrapper="" class="mb-4 px-4">
+                        <input class="w-full rounded-lg border bg-transparent px-4 py-2 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2"
+                               type="text" placeholder="جستجوی صنف کاری ...">
+                    </div>
+                    <ul data-search-items="" class="max-h-40 space-y-2 overflow-y-auto py-3">
+                        {% for profession in professions %}
+                            <li>
+                                <div class="inline-flex w-full items-center">
+                                    <label class="flex w-full cursor-pointer items-center gap-4 px-4 py-2"
+                                           for="checkbox-professions-{{ forloop.counter }}" data-ripple-dark="true">
+                                        <div class="relative flex items-center">
+                                            <input value="{{ profession.url_title }}" name="professions-filter" type="checkbox"
+                                                   class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary-btn checked:bg-primary-btn checked:before:bg-primary-btn hover:before:opacity-10"
+                                                   id="checkbox-professions-{{ forloop.counter }}">
+                                            <div class="pointer-events-none absolute left-2/4 top-2/4 -translate-x-2/4 -translate-y-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
+                                                <div class="i-lucide-check h-4 w-4 stroke-2"></div>
+                                            </div>
+                                        </div>
+                                        <div class="flex w-full items-center justify-between">
+                                            <span data-searchable=""> {{ profession.title }} </span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </li>
+                        {% endfor %}
+
+                    </ul>
+                </div>
+            </div>
+        </li>
+        {#tags#}
+        <li>
+            <div class="relative rounded-lg bg-muted" data-accordion-item="">
+                <button type="button" class="w-full px-4 py-5 text-right md:px-6 md:py-5"
+                        data-accordion-button="">
+                    <div class="flex items-center justify-between gap-2 text-sm md:text-base">
+                        <span> تگ ها </span>
+                        <div class="min-w-fit">
+                                                                <span class="i-lucide-chevron-left duration-300"
+                                                                      data-accordion-chevron=""></span>
+                        </div>
+                    </div>
+                </button>
+                <div class="relative max-h-0 overflow-hidden transition-all duration-300"
+                     data-accordion-content="">
+                    <div data-search-item-input-wrapper="" class="mb-4 px-4">
+                        <input class="w-full rounded-lg border bg-transparent px-4 py-2 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2"
+                               type="text" placeholder="جستجوی تگ ها ...">
+                    </div>
+                    <ul data-search-items="" class="max-h-40 space-y-2 overflow-y-auto py-3">
+                        {% for tag in tags %}
+                            <li>
+                                <div class="inline-flex w-full items-center">
+                                    <label class="flex w-full cursor-pointer items-center gap-4 px-4 py-2"
+                                           for="checkbox-tags-{{ forloop.counter }}" data-ripple-dark="true">
+                                        <div class="relative flex items-center">
+                                            <input value="{{ tag.url_title }}" name="tags-filter" type="checkbox"
+                                                   class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary-btn checked:bg-primary-btn checked:before:bg-primary-btn hover:before:opacity-10"
+                                                   id="checkbox-tags-{{ forloop.counter }}">
+                                            <div class="pointer-events-none absolute left-2/4 top-2/4 -translate-x-2/4 -translate-y-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
+                                                <div class="i-lucide-check h-4 w-4 stroke-2"></div>
+                                            </div>
+                                        </div>
+                                        <div class="flex w-full items-center justify-between">
+                                            <span data-searchable=""> {{ tag.title }} </span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
