@@ -6,6 +6,7 @@ from core.media_path import get_image_upload_to
 
 class Category(models.Model):
     title = models.CharField(max_length=50, verbose_name='عنوان')
+    title_en = models.CharField(max_length=50, verbose_name='عنوان')
     url_title = models.CharField(max_length=50, verbose_name='عنوان در URL')
     slug = models.SlugField(default="", null=False, db_index=True, blank=True, max_length=50, unique=True)
     image = models.ImageField(upload_to=get_image_upload_to, null=True, blank=True, verbose_name='تصویر')
