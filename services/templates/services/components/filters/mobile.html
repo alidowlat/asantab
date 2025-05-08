@@ -1,15 +1,16 @@
-<div
-        id="filter-drawer"
-        class="fixed inset-x-0 bottom-0 z-40 h-[90dvh] w-full translate-y-full overflow-y-auto rounded-t-xl border-t bg-muted transition-transform duration-500"
-        tabindex="-1"
-        aria-labelledby="filter-drawer"
+<div id="filter-drawer"
+     class="fixed inset-x-0 bottom-0 z-40 h-[90dvh] w-full translate-y-full overflow-y-auto rounded-t-xl border-t bg-muted transition-transform duration-500"
+     tabindex="-1"
+     aria-hidden="true"
 >
     <div class="flex h-full flex-col gap-4">
         <div class="flex items-center justify-between p-4">
             <div class="text-lg font-medium">فیلترها</div>
-            <button class="text-sm text-primary disabled:text-text/60">
-                لغو فیلترها
-            </button>
+            <div class="p-4">
+                <button type="button" id="apply-filters-btn-mobile" data-drawer-hide="filter-drawer"
+                        class="btn-primary w-full py-2">
+اعمال فیلتر                </button>
+            </div>
         </div>
         <!-- Filters -->
         <div class="grow overflow-y-auto">
@@ -23,9 +24,9 @@
                         <div>فقط کالا های موجود</div>
                         <div class="relative inline-flex cursor-pointer items-center">
                             <input value="1" name="available-filter"
-                                    class="peer sr-only"
-                                    id="onlyAvailableMobile"
-                                    type="checkbox"
+                                   class="peer sr-only"
+                                   id="onlyAvailableMobile"
+                                   type="checkbox"
                             />
 
                             <div
@@ -43,9 +44,9 @@
                         <div>فقط کالا های فروش ویژه</div>
                         <div class="relative inline-flex cursor-pointer items-center">
                             <input value="1" name="featured-filter"
-                                    class="peer sr-only"
-                                    id="onlySpecialMobile"
-                                    type="checkbox"
+                                   class="peer sr-only"
+                                   id="onlySpecialMobile"
+                                   type="checkbox"
                             />
 
                             <div
@@ -136,11 +137,11 @@
                                                     data-ripple-dark="true"
                                             >
                                                 <div class="relative flex items-center">
-                                                    <input
-                                                            name="gender-filter"
-                                                            type="checkbox"
-                                                            class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary-btn checked:bg-primary-btn checked:before:bg-primary-btn hover:before:opacity-10"
-                                                            id="checkbox-mobile-category-{{ forloop.counter }}"
+                                                    <input value="{{ category.url_title }}"
+                                                           name="category-filter"
+                                                           type="checkbox"
+                                                           class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary-btn checked:bg-primary-btn checked:before:bg-primary-btn hover:before:opacity-10"
+                                                           id="checkbox-mobile-category-{{ forloop.counter }}"
                                                     />
                                                     <div
                                                             class="pointer-events-none absolute left-2/4 top-2/4 -translate-x-2/4 -translate-y-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100"
@@ -203,11 +204,11 @@
                                                     data-ripple-dark="true"
                                             >
                                                 <div class="relative flex items-center">
-                                                    <input
-                                                            name="brand-filter"
-                                                            type="checkbox"
-                                                            class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary-btn checked:bg-primary-btn checked:before:bg-primary-btn hover:before:opacity-10"
-                                                            id="checkbox-mobile-profession-{{ forloop.counter }}"
+                                                    <input value="{{ location.name_en }}"
+                                                           name="locations-filter"
+                                                           type="checkbox"
+                                                           class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary-btn checked:bg-primary-btn checked:before:bg-primary-btn hover:before:opacity-10"
+                                                           id="checkbox-mobile-profession-{{ forloop.counter }}"
                                                     />
                                                     <div
                                                             class="pointer-events-none absolute left-2/4 top-2/4 -translate-x-2/4 -translate-y-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100"
@@ -274,11 +275,11 @@
                                                     data-ripple-dark="true"
                                             >
                                                 <div class="relative flex items-center">
-                                                    <input
-                                                            name="brand-filter"
-                                                            type="checkbox"
-                                                            class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary-btn checked:bg-primary-btn checked:before:bg-primary-btn hover:before:opacity-10"
-                                                            id="checkbox-mobile-color-{{ forloop.counter }}"
+                                                    <input value="{{ profession.url_title }}"
+                                                           name="professions-filter"
+                                                           type="checkbox"
+                                                           class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary-btn checked:bg-primary-btn checked:before:bg-primary-btn hover:before:opacity-10"
+                                                           id="checkbox-mobile-color-{{ forloop.counter }}"
                                                     />
                                                     <div
                                                             class="pointer-events-none absolute left-2/4 top-2/4 -translate-x-2/4 -translate-y-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100"
@@ -343,11 +344,11 @@
                                                     data-ripple-dark="true"
                                             >
                                                 <div class="relative flex items-center">
-                                                    <input
-                                                            name="brand-filter"
-                                                            type="checkbox"
-                                                            class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary-btn checked:bg-primary-btn checked:before:bg-primary-btn hover:before:opacity-10"
-                                                            id="checkbox-mobile-tag-{{ forloop.counter }}"
+                                                    <input value="{{ tag.url_title }}"
+                                                           name="tags-filter"
+                                                           type="checkbox"
+                                                           class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary-btn checked:bg-primary-btn checked:before:bg-primary-btn hover:before:opacity-10"
+                                                           id="checkbox-mobile-tag-{{ forloop.counter }}"
                                                     />
                                                     <div
                                                             class="pointer-events-none absolute left-2/4 top-2/4 -translate-x-2/4 -translate-y-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100"
@@ -369,17 +370,6 @@
                     </div>
                 </li>
             </ul>
-        </div>
-
-        <!-- Confirm -->
-        <div class="border-t p-4">
-            <button
-                    type="button"
-                    data-drawer-hide="filter-drawer"
-                    class="btn-primary w-full py-2"
-            >
-                نمایش 300 کالا
-            </button>
         </div>
     </div>
 </div>
