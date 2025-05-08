@@ -73,14 +73,6 @@
                                     </div>
                                     <!-- Filters -->
                                     {% include "services/components/filters/desktop.html" %}
-
-                                    <!-- Confirm -->
-                                    <!--                                    <div class="p-4">-->
-                                    <!--                                        <button type="button" data-drawer-hide="filter-drawer"-->
-                                    <!--                                                class="btn-primary w-full py-2">-->
-                                    <!--                                            نمایش 300 کالا-->
-                                    <!--                                        </button>-->
-                                    <!--                                    </div>-->
                                 </div>
                             </div>
                         </div>
@@ -108,7 +100,8 @@
                             </button>
                         </div>
                     </div>
-                    <div id="service-list" class="grid grid-cols-2 gap-2 gap-y-2 xs:gap-4 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
+                    <div id="service-list"
+                         class="grid grid-cols-2 gap-2 gap-y-2 xs:gap-4 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
                         {% include 'services/components/service_list_partial.html' with service=service %}
                     </div>
                     <!-- Pagination -->
