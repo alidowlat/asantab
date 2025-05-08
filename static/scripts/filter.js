@@ -1,28 +1,45 @@
 $(document).ready(function () {
+    let pendingFilters = {};
+
     function getSelectedFilters(className) {
-        let selected = [];
+        let selected = new Set();
         $(className + ':checked').each(function () {
-            selected.push($(this).val());
+            selected.add($(this).val());
         });
-        return selected.join(',');
+        return Array.from(selected).join(',');
+    }
+
+    function updatePendingFilters() {
+        pendingFilters = {
+            categories: getSelectedFilters('input[name="category-filter"]') || '',
+            tags: getSelectedFilters('input[name="tags-filter"]') || '',
+            professions: getSelectedFilters('input[name="professions-filter"]') || '',
+            locations: getSelectedFilters('input[name="locations-filter"]') || '',
+            available: $('input[name="available-filter"]:checked').val() || '',
+            featured: $('input[name="featured-filter"]:checked').val() || ''
+        };
     }
 
     function filterServices(page = 1, sortBy = null, removeSort = false) {
-        let categories = getSelectedFilters('input[name="category-filter"]');
-        let tags = getSelectedFilters('input[name="tags-filter"]');
-        let professions = getSelectedFilters('input[name="professions-filter"]');
-        let locations = getSelectedFilters('input[name="locations-filter"]');
-        let available = $('input[name="available-filter"]:checked').val();
-        let featured = $('input[name="featured-filter"]:checked').val();
-
         let filters = {page: page};
 
-        if (categories) filters.category = categories;
-        if (tags) filters.tag = tags;
-        if (professions) filters.profession = professions;
-        if (locations) filters.location = locations;
-        if (available) filters.available = available;
-        if (featured) filters.featured = featured;
+        if (pendingFilters.categories) filters.category = pendingFilters.categories;
+        else delete filters.category;
+
+        if (pendingFilters.tags) filters.tag = pendingFilters.tags;
+        else delete filters.tag;
+
+        if (pendingFilters.professions) filters.profession = pendingFilters.professions;
+        else delete filters.profession;
+
+        if (pendingFilters.locations) filters.location = pendingFilters.locations;
+        else delete filters.location;
+
+        if (pendingFilters.available) filters.available = pendingFilters.available;
+        else delete filters.available;
+
+        if (pendingFilters.featured) filters.featured = pendingFilters.featured;
+        else delete filters.featured;
 
         if (sortBy && !removeSort) {
             filters.sort_by = sortBy;
@@ -30,6 +47,13 @@ $(document).ready(function () {
             let currentSort = $('.sort-filter.active').data('sort');
             if (currentSort) filters.sort_by = currentSort;
         }
+
+        // Clean up empty filters before sending the request
+        Object.keys(filters).forEach(key => {
+            if (filters[key] === '' || filters[key] == null) {
+                delete filters[key];
+            }
+        });
 
         $.ajax({
             url: '/services/',
@@ -48,10 +72,11 @@ $(document).ready(function () {
                 $('#pagination').html($(data).find('#pagination').html());
                 Swal.close();
 
-                let newUrl = '/services/';
-                if (!$.isEmptyObject(filters)) newUrl += '?' + $.param(filters);
-                history.pushState(null, '', newUrl);
+                let baseUrl = '/services/';
+                let query = $.param(filters);
+                let newUrl = query ? `${baseUrl}?${query}` : baseUrl;
 
+                history.pushState(null, '', newUrl);
                 $('html, body').animate({scrollTop: 0}, 'slow');
             },
             error: function (err) {
@@ -61,20 +86,28 @@ $(document).ready(function () {
         });
     }
 
-
-    function debounce(func, delay) {
-        let timeout;
-        return function (...args) {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => func.apply(this, args), delay);
-        };
-    }
-
-    let debouncedFilter = debounce(filterServices, 500);
-
-    $('input[name="category-filter"], input[name="tags-filter"], input[name="professions-filter"], input[name="locations-filter"], input[name="available-filter"], input[name="featured-filter"]').change(function () {
-        debouncedFilter();
+    $('#apply-filters-btn').click(function () {
+        updatePendingFilters();
+        filterServices(1);
     });
+
+    $('#apply-filters-btn-mobile').click(function () {
+        updatePendingFilters();
+        filterServices(1);
+        $('#filter-drawer').addClass('translate-y-full').attr('aria-hidden', 'true');
+    });
+
+    $(document).on('change', 'input[name$="-filter"]', function () {
+        let name = $(this).attr('name');
+        let val = $(this).val();
+        let isChecked = $(this).prop('checked');
+
+        // sync all with the same name and value
+        $(`input[name="${name}"][value="${val}"]`).not(this).prop('checked', isChecked);
+
+        updatePendingFilters();
+    });
+
 
     window.toggleSortFilter = function (sortBy) {
         let current = $(`.sort-filter[data-sort="${sortBy}"]`).hasClass('active');
@@ -98,18 +131,57 @@ $(document).ready(function () {
         sort_by: params.get('sort_by'),
         categories: params.get('category') ? params.get('category').split(',') : [],
         tags: params.get('tag') ? params.get('tag').split(',') : [],
-        professions: params.get('profession') ? params.get('v').split(',') : [],
+        professions: params.get('profession') ? params.get('profession').split(',') : [],
         locations: params.get('location') ? params.get('location').split(',') : [],
-        page: params.get('page') || 1
+        available: params.get('available') || '',
+        featured: params.get('featured') || '',
+        page: params.get('page') ? parseInt(params.get('page')) : 1
     };
 
     if (filters.sort_by)
         $(`.sort-filter[data-sort="${filters.sort_by}"]`).addClass('active text-red-500').removeClass('opacity-70');
 
-    filters.categories.forEach(val => $(`input[name="category-filter"][value="${val}"]`).prop('checked', true));
-    filters.tags.forEach(val => $(`input[name="tags-filter"][value="${val}"]`).prop('checked', true));
-    filters.professions.forEach(val => $(`input[name="professions-filter"][value="${val}"]`).prop('checked', true));
-    filters.locations.forEach(val => $(`input[name="locations-filter"][value="${val}"]`).prop('checked', true));
+    function syncCheck(name, val) {
+        $(`input[name="${name}"][value="${val}"]`).each(function () {
+            $(this).prop('checked', true);
+        });
+    }
 
+    filters.categories.forEach(val => syncCheck('category-filter', val));
+    filters.tags.forEach(val => syncCheck('tags-filter', val));
+    filters.professions.forEach(val => syncCheck('professions-filter', val));
+    filters.locations.forEach(val => syncCheck('locations-filter', val));
+    if (filters.available) syncCheck('available-filter', filters.available);
+    if (filters.featured) syncCheck('featured-filter', filters.featured);
+
+    updatePendingFilters();
     filterServices(filters.page);
 });
+
+// document.addEventListener('DOMContentLoaded', function () {
+//     const drawer = document.getElementById("filter-drawer");
+//     const toggleBtn = document.getElementById("filter-toggle-btn");
+//     const applyBtn = document.getElementById("apply-filters-btn");
+//
+//     function openDrawer() {
+//         drawer.classList.remove("translate-y-full");
+//         drawer.setAttribute("aria-hidden", "false");
+//     }
+//
+//     function closeDrawer() {
+//         drawer.classList.add("translate-y-full");
+//         drawer.setAttribute("aria-hidden", "true");
+//     }
+//
+//     toggleBtn?.addEventListener("click", openDrawer);
+//
+//     applyBtn?.addEventListener("click", function () {
+//         closeDrawer();
+//     });
+//
+//     const filterToggleBtn = document.getElementById("filter-toggle-btn");
+//
+//     if (filterToggleBtn) {
+//         filterToggleBtn.addEventListener("click", openDrawer);  // وقتی فیلتر باز میشه
+//     }
+// });
