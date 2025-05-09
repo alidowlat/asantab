@@ -1,0 +1,1459 @@
+{% extends 'shared/_layout.html' %}
+
+{% block title %}
+    فلان چیز | آسان تب
+{% endblock %}
+
+{% block content %}
+    <main class="flex-grow bg-background pt-[106px]">
+        <div class="container pt-10">
+            <!-- Breadcrumb -->
+            <div class="mb-8 flex flex-wrap items-center gap-2 text-sm text-text/60">
+                <a href="./index.html" class="flex items-center gap-x-1">
+                    بلسر
+                    <div class="i-lucide-chevron-left size-4"></div>
+                </a>
+                <div>
+                    <a href="./shop.html" class="flex items-center gap-x-1">سالومون
+                        <div class="i-lucide-chevron-left size-4"></div>
+                    </a>
+                </div>
+            </div>
+            <!-- Detail -->
+            <div class="mb-16 grid grid-cols-12 gap-4">
+                <div class="col-span-12 flex-grow rounded-lg bg-muted px-4 py-6 shadow-md lg:col-span-9">
+                    <div class="mb-6 grid grid-cols-12 gap-6">
+                        <div class="col-span-12 space-y-4 lg:col-span-4 lg:min-w-fit">
+                            <!-- Special Countdown -->
+                            <div class="flex flex-wrap items-center justify-between gap-x-2 font-medium md:justify-center 2xl:justify-between">
+                                <div class="text-warning">پیشنهاد شگفت انگیز</div>
+
+                            </div>
+                            <div>
+                                <!-- Desktop Gallery -->
+                                <div class="hidden space-y-4 lg:block">
+                                    <!-- Main image -->
+                                    <button type="button" data-modal-target="gallery-modal" data-modal-toggle="gallery-modal">
+                                        <img src="/static/images/p1.png" alt="کفش سالومون اکس تی راش Salomon XT-RUSH" loading="lazy"
+                                             class="mx-auto h-full w-full cursor-pointer rounded-xl">
+                                    </button>
+                                    <!-- Gallery -->
+                                    <div class="flex w-full items-center justify-center gap-2">
+                                        <button type="button" data-modal-target="gallery-modal" data-modal-toggle="gallery-modal"
+                                                class="relative cursor-pointer overflow-hidden rounded-xl border">
+                                            <img src="/static/images/p1.png" alt="کفش سالومون اکس تی راش Salomon XT-RUSH"
+                                                 loading="lazy" class="h-16 w-16">
+                                        </button>
+                                        <button type="button" data-modal-target="gallery-modal" data-modal-toggle="gallery-modal"
+                                                class="relative cursor-pointer overflow-hidden rounded-xl border">
+                                            <img src="/static/images/p1.png" alt="کفش سالومون اکس تی راش Salomon XT-RUSH"
+                                                 loading="lazy" class="h-16 w-16">
+                                        </button>
+                                        <button type="button" data-modal-target="gallery-modal" data-modal-toggle="gallery-modal"
+                                                class="relative cursor-pointer overflow-hidden rounded-xl border">
+                                            <img src="/static/images/p1.png" alt="کفش سالومون اکس تی راش Salomon XT-RUSH"
+                                                 loading="lazy" class="h-16 w-16"><span
+                                                class="absolute inset-0 flex items-center justify-center backdrop-blur-md">
+                            <div class="i-lucide-ellipsis size-6"></div>
+                          </span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- Mobile Gallery -->
+                                <div class="lg:hidden">
+                                    <div class="mb-4">
+                                        <div class="swiper product-gallery-mobile-swiper swiper-initialized swiper-horizontal swiper-rtl">
+                                            <div class="swiper-wrapper" id="swiper-wrapper-1f688ec108348efe3" aria-live="polite"
+                                                 style="transition-duration: 0ms; transition-delay: 0ms;">
+                                                <div class="swiper-slide">
+                                                    <img src="/static/images/p1.png" alt="p image"
+                                                         class="mx-auto h-[250px] rounded-lg object-cover">
+                                                </div>
+                                                <div class="swiper-slide">
+                                                    <img src="/static/images/p1.png" alt="p image"
+                                                         class="mx-auto h-[250px] rounded-lg object-cover">
+                                                </div>
+                                                <div class="swiper-slide">
+                                                    <img src="/static/images/p1.png" alt="p image"
+                                                         class="mx-auto h-[250px] rounded-lg object-cover">
+                                                </div>
+                                            </div>
+                                            <div class="swiper-pagination text-left swiper-pagination-bullets swiper-pagination-horizontal"></div>
+                                            <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Mobile Actions ( Favorite, Compare, Share )-->
+                            <div class="flex items-center justify-end gap-2 text-text/95 lg:hidden">
+                                <button class="icon-btn h-10 w-10" title="Product add to Favorite">
+                                    <div class="i-lucide-heart size-6"></div>
+                                </button>
+                                <button class="icon-btn h-10 w-10">
+                                    <div class="i-lucide-align-horizontal-justify-center size-6"></div>
+                                </button>
+
+                                <button class="icon-btn h-10 w-10" data-state="closed" type="button" data-modal-target="share-modal"
+                                        data-modal-toggle="share-modal">
+                                    <div class="i-lucide-share-2 size-6"></div>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-span-12 flex min-h-full flex-col lg:col-span-8">
+                            <div class="flex gap-4">
+                                <div class="flex-grow">
+                                    <h1 class="mb-4 text-lg font-semibold">
+                                        کفش سالومون اکس تی راش Salomon XT-RUSH
+                                    </h1>
+                                    <div class="mb-6 flex items-center gap-2">
+                                        <h2 class="line-clamp-1 text-sm font-light text-text/60">
+                                            Salomon XT-RUSH
+                                        </h2>
+                                        <span class="h-px flex-grow bg-secondary"></span>
+                                    </div>
+                                    <div class="mb-4 flex items-center gap-4 border-b pb-6 text-sm font-light">
+                                        <div class="text-text/95">کد کالا 63479</div>
+                                        <span class="h-4 w-px rounded-full bg-secondary"></span>
+                                        <div class="cursor-pointer text-primary">0 دیدگاه</div>
+                                    </div>
+                                </div>
+                                <!-- Desktop Actions ( Favorite, Compare, Share )-->
+
+                                <div class="hidden flex-col items-center gap-2 text-text/95 lg:flex">
+                                    <div>
+                                        <button data-popover-target="popover-favorite" data-popover-placement="right" type="button"
+                                                class="icon-btn h-10 w-10" title="Product add to Favorite">
+                                            <div class="i-lucide-heart size-6"></div>
+                                        </button>
+
+                                        <div data-popover="" id="popover-favorite" role="tooltip"
+                                             class="absolute z-10 inline-block rounded-lg border bg-background px-2 py-1 text-sm shadow-sm transition-opacity duration-300 opacity-0 invisible"
+                                             data-popper-placement="right"
+                                             style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(432px, 219px);">
+                                            <div class="px-3 py-2">
+                                                <p>افزودن به لیست علاقه‌مندی ها</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button data-popover-target="popover-compare" data-popover-placement="right" type="button"
+                                                class="icon-btn h-10 w-10" title="Product add to Favorite">
+                                            <div class="i-lucide-align-horizontal-justify-center size-6"></div>
+                                        </button>
+
+                                        <div data-popover="" id="popover-compare" role="tooltip"
+                                             class="absolute z-10 inline-block rounded-lg border bg-background px-2 py-1 text-sm shadow-sm transition-opacity duration-300 opacity-0 invisible"
+                                             data-popper-placement="right"
+                                             style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(432px, 267px);">
+                                            <div class="px-3 py-2">
+                                                <p>افزودن به لیست مقایسه</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button data-popover-target="popover-share" data-popover-placement="right" type="button"
+                                                data-modal-target="share-modal" data-modal-toggle="share-modal"
+                                                class="icon-btn h-10 w-10" title="Product add to Favorite">
+                                            <div class="i-lucide-share-2 size-6"></div>
+                                        </button>
+
+                                        <div data-popover="" id="popover-share" role="tooltip"
+                                             class="absolute z-10 inline-block rounded-lg border bg-background px-2 py-1 text-sm shadow-sm transition-opacity duration-300 opacity-0 invisible"
+                                             data-popper-placement="right"
+                                             style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(432px, 315px);">
+                                            <div class="px-3 py-2">
+                                                <p>اشتراک گذاری</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-grow flex-col">
+                                <div class="mb-8 space-y-4">
+                                    <div>
+                                        <div class="mb-4">انتخاب سایز</div>
+                                        <fieldset class="flex flex-wrap items-center gap-3">
+                                            <legend class="sr-only">سایز</legend>
+                                            <div>
+                                                <div>
+                                                    <input id="variant-desktop-17" type="radio" name="variant-option"
+                                                           class="peer hidden" value="[object Object]"><label for="variant-desktop-17"
+                                                                                                              class="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-2 p-1 text-text/95 shadow duration-200 peer-checked:border-primary peer-disabled:cursor-default 2xl:h-12 2xl:w-12">
+                                                    <p class="text-sm font-bold md:text-base">40</p>
+                                                </label>
+                                                </div>
+                                            </div>
+
+
+                                        </fieldset>
+                                    </div>
+                                    <div>
+                                        <div class="mb-4">انتخاب رنگ</div>
+                                        <fieldset class="flex flex-wrap items-center gap-3">
+                                            <legend class="sr-only">رنگ</legend>
+                                            <div>
+                                                <div>
+                                                    <label for="10" class="relative block h-8 w-8" data-state="closed"><input id="10"
+                                                                                                                              type="radio"
+                                                                                                                              name="color"
+                                                                                                                              class="peer sr-only"
+                                                                                                                              checked=""
+                                                                                                                              value="[object Object]"><span
+                                                            class="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full border shadow ring-primary ring-offset-2 duration-150 peer-checked:border-none peer-checked:ring"
+                                                            style="background-color: white"></span>
+
+                                                        <div class="i-lucide-check pointer-events-none absolute inset-0 z-0 m-auto hidden h-5 w-5 text-black duration-150 peer-checked:block"></div>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                        </fieldset>
+                                    </div>
+                                </div>
+
+                                <!-- Properties -->
+                                <div>
+                                    <p class="mb-6 font-medium">ویژگی های محصول</p>
+                                    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                                        <div class="space-y-1 rounded-lg bg-background px-4 py-2">
+                                            <div class="line-clamp-1 text-xs text-text/60">
+                                                جنس
+                                            </div>
+                                            <div class="line-clamp-1 text-sm text-text/95">
+                                                پارچه
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hidden gap-2 md:grid md:grid-cols-2 xl:grid-cols-4">
+                        <div class="flex w-full items-center gap-2 rounded-lg border px-2 py-4 text-sm text-text/60">
+                            <div class="i-lucide-timer-reset size-6"></div>
+                            هفت روز ضمانت بازگشت کالا
+                        </div>
+                        <div class="flex w-full items-center gap-2 rounded-lg border px-2 py-4 text-sm text-text/60">
+                            <div class="i-lucide-badge-check size-6"></div>
+
+                            تضمین اصالت کالا
+                        </div>
+                        <div class="flex w-full items-center gap-2 rounded-lg border px-2 py-4 text-sm text-text/60">
+                            <div class="i-lucide-headset size-6"></div>
+
+                            هفت روز هفته
+                        </div>
+                        <div class="flex w-full items-center gap-2 rounded-lg border px-2 py-4 text-sm text-text/60">
+                            <div class="i-lucide-earth size-6"></div>
+
+                            ارسال به سراسر ایران
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Desktop Add to Cart -->
+                <div class="sticky top-36 col-span-3 hidden h-fit rounded-lg bg-muted px-4 py-6 shadow-md lg:block">
+                    <div class="mb-6 flex justify-between">
+                        <div>
+                            <div class="flex flex-col gap-1">
+                                <div class="w-9 rounded-full bg-warning text-center text-sm text-white">
+                                    %10
+                                </div>
+                                <del class="text-sm text-text/60 xl:text-base">5,000,000
+                                </del>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-x-1">
+                            <span class="font-bold xl:text-xl">4,500,000</span><span class="text-xs text-text/60">تومان</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <div>
+                                <button class="btn-primary w-full py-2.5" aria-label="Add to Cart">
+                                    افزودن به سبد خرید
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Add to Cart -->
+                <div data-onscrollclass="translate-y-1/2"
+                     class="fixed inset-x-0 bottom-0 z-20 rounded-t-xl bg-muted px-4 pb-20 pt-4 transition-all duration-300 lg:hidden translate-y-1/2">
+                    <div>
+                        <button class="btn-primary w-full py-2" aria-label="Add to Cart">
+                            افزودن | 2,000,000 <span class="text-xs"> تومان </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Related Products -->
+            <div class="mb-16">
+                <div class="mb-6 flex items-center justify-between gap-x-6 text-nowrap">
+                    <h2 class="font-semiBold lg:text-xl">کالا های مرتبط</h2>
+                    <div class="h-[0.25px] w-full bg-secondary"></div>
+                </div>
+
+                <div>
+                    <div class="swiper product-slider !px-px pt-4 swiper-initialized swiper-horizontal swiper-free-mode swiper-rtl swiper-backface-hidden">
+                        <div class="swiper-wrapper py-px" id="swiper-wrapper-85cfe1fd75fb7f9f" aria-live="polite">
+                            <!-- product -->
+
+
+                            <div class="swiper-slide" role="group" aria-label="1 / 7" style="width: 209.667px; margin-left: 20px;">
+                                <div class="border-gradient relative rounded-[--product-card-radius] p-px [--product-card-radius:theme(borderRadius.2xl)] before:absolute before:-inset-px before:h-[calc(100%+2px)] before:w-[calc(100%+2px)] before:rounded-[--product-card-radius] before:content-['']"
+                                     style="--x: 233.15625px; --y: -64px;">
+                                    <a href="#"
+                                       class="relative block overflow-hidden rounded-[calc(var(--product-card-radius)-1px)] bg-muted">
+                                        <div class="mb-4 bg-secondary p-2 lg:p-4">
+                                            <!-- Special Sale Percentage  -->
+                                            <div class="absolute right-2 top-0 rounded-b-full bg-warning px-1 py-1.5 text-center text-sm font-medium text-white md:text-base">
+                                                20%
+                                            </div>
+                                            <!-- Image -->
+                                            <img src="/static/images/images (6).avif" alt="Blesser"
+                                                 class="aspect-[1/1] w-full rounded-xl object-cover">
+                                        </div>
+                                        <div class="mb-1 px-2 lg:px-4">
+                                            <p class="line-clamp-2 h-10 text-sm xs:h-12 xs:text-base">
+                                                کفش نیوبالانس NewBalance 725
+                                            </p>
+
+                                            <div class="gap-x-1 text-end font-bold text-primary">
+                                                <div class="h-5 text-end text-sm text-text/50 xs:text-base">
+                                                    <del>900,000</del>
+                                                </div>
+
+                                                <span class="text-sm xs:text-base">7,000,000,000</span>
+                                                <span class="text-sm font-light">تومان</span>
+                                            </div>
+                                        </div>
+                                        <div class="h-8 px-2 lg:px-4">
+                                            <!-- Countdown -->
+
+
+                                            <!-- Proccess Bar -->
+
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div>
+                </div>
+            </div>
+
+            <!-- Information -->
+
+            <div class="rounded-lg bg-muted px-4 py-6 shadow-md">
+                <!-- Tabs -->
+                <ul class="mb-6 flex justify-between gap-x-2 border-b text-center text-sm font-medium xs:justify-start xs:gap-x-4 xs:text-base">
+                    <li>
+                        <div data-scroll-to="description"
+                             class="inline-block cursor-pointer rounded-t-lg border-b-2 border-transparent px-2 pb-2 duration-200 hover:text-primary">
+                            معرفی
+                        </div>
+                    </li>
+                    <li>
+                        <div data-scroll-to="specs"
+                             class="inline-block cursor-pointer rounded-t-lg border-b-2 border-transparent px-2 pb-2 duration-200 hover:text-primary">
+                            مشخصات
+                        </div>
+                    </li>
+                    <li>
+                        <div data-scroll-to="comment"
+                             class="inline-block cursor-pointer rounded-t-lg border-b-2 border-transparent px-2 pb-2 duration-200 hover:text-primary">
+                            دیدگاه ها
+                        </div>
+                    </li>
+                </ul>
+                <div class="divide-y divide-border">
+                    <!-- description -->
+
+                    <div class="py-6">
+                        <div id="description" class="-translate-y-36"></div>
+                        <div class="relative mb-16 w-fit text-2xl font-medium">
+                            معرفی
+                            <span class="absolute right-0 top-10 h-[3px] w-full rounded-full bg-primary"></span>
+                        </div>
+                        <div data-show-more="">
+                            <div data-show-max="450" class="mb-4 max-w-full overflow-hidden" style="max-height: 450px;">
+                                <article
+                                        class="prose !max-w-full dark:prose-invert [&amp;_a]:text-primary [&amp;_a]:no-underline [&amp;_img]:mx-auto [&amp;_img]:rounded-xl [&amp;_ul]:list-inside">
+                                    <h2>کفش مولتی چویس</h2>
+                                    <h3>ویژگی های محصول</h3>
+                                    <a href="#"> لینک تست</a>
+                                    <ul>
+                                        <li>نرم</li>
+                                        <li>راحت</li>
+                                        <li>ارزان</li>
+                                    </ul>
+                                    <p>
+                                        <img alt="Image"
+                                             src="https://dl.taymakz.ir/media/images/2024/03/07/PlnMncihb7SBs848wFFLRQgJZd24fH.webp">
+                                    </p>
+                                </article>
+                            </div>
+                            <div class="relative flex justify-center">
+                                <button data-show-more-button="" type="button" data-drawer-target="description-drawer"
+                                        data-drawer-show="description-drawer" data-drawer-placement="bottom"
+                                        class="text-primary duration-300 hover:text-primary/80">
+                                    مشاهده بیشتر
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Specs -->
+                    <div class="py-6">
+                        <div id="specs" class="-translate-y-60"></div>
+                        <div class="relative mb-16 w-fit text-2xl font-medium">
+                            مشخصات
+                            <span class="absolute right-0 top-10 h-[3px] w-full rounded-full bg-primary"></span>
+                        </div>
+
+                        <div data-show-more="">
+                            <div data-show-max="450" class="prose mb-4 max-w-full overflow-hidden dark:prose-invert"
+                                 style="max-height: 450px;">
+                                <ul class="w-full space-y-6 text-sm">
+                                    <li class="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
+                                        <div class="col-span-1 text-text/60">جنس</div>
+                                        <div class="col-span-2 border-b pb-4 text-text/95 lg:col-span-4">
+                                            <ul class="space-y-4">
+                                                <li>پیاز</li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li class="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
+                                        <div class="col-span-1 text-text/60">جنس زیره</div>
+                                        <div class="col-span-2 border-b pb-4 text-text/95 lg:col-span-4">
+                                            <ul class="space-y-4">
+                                                <li>سیب زمینی</li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li class="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
+                                        <div class="col-span-1 text-text/60">جنس زیره</div>
+                                        <div class="col-span-2 border-b pb-4 text-text/95 lg:col-span-4">
+                                            <ul class="space-y-4">
+                                                <li>سیب زمینی</li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li class="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
+                                        <div class="col-span-1 text-text/60">جنس زیره</div>
+                                        <div class="col-span-2 border-b pb-4 text-text/95 lg:col-span-4">
+                                            <ul class="space-y-4">
+                                                <li>سیب زمینی</li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li class="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
+                                        <div class="col-span-1 text-text/60">جنس زیره</div>
+                                        <div class="col-span-2 border-b pb-4 text-text/95 lg:col-span-4">
+                                            <ul class="space-y-4">
+                                                <li>سیب زمینی</li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li class="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
+                                        <div class="col-span-1 text-text/60">جنس زیره</div>
+                                        <div class="col-span-2 border-b pb-4 text-text/95 lg:col-span-4">
+                                            <ul class="space-y-4">
+                                                <li>سیب زمینی</li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="relative flex justify-center">
+                                <button data-show-more-button="" type="button" data-drawer-target="specs-drawer"
+                                        data-drawer-show="specs-drawer" data-drawer-placement="bottom"
+                                        class="text-primary duration-300 hover:text-primary/80">
+                                    مشاهده بیشتر
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Comments -->
+                    <div class="py-6">
+                        <div id="comment" class="-translate-y-60"></div>
+                        <div class="relative mb-16 w-fit text-2xl font-medium">
+                            دیدگاه ها
+                            <span class="absolute right-0 top-10 h-[3px] w-full rounded-full bg-primary"></span>
+                        </div>
+                        <div class="grid grid-cols-12 gap-y-8 md:gap-8">
+                            <!-- Submit new Comment -->
+                            <div class="col-span-12 md:col-span-4 lg:col-span-3">
+                                <div class="relative p-2">
+                                    <form class="grid grid-cols-2 gap-4 md:sticky md:top-32">
+                                        <div class="lg:text-lg">ثبت دیدگاه</div>
+                                        <div class="col-span-2">
+                                            <label for="subject" class="sr-only"> عنوان </label>
+                                            <input placeholder="عنوان" type="text" id="subject"
+                                                   class="mb-2 w-full rounded-lg border bg-transparent px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2">
+                                            <!-- <div class="text-warning h-5 text-sm"> -->
+                                            <!-- این فیلد الزامی می باشد-->
+                                            <!--   </div>-->
+                                        </div>
+                                        <div class="col-span-2 mb-2">
+                                            <div class="mb-4 text-sm text-text/80">
+                                                این محصول را به دیگران پیشنهاد
+                                            </div>
+                                            <fieldset class="flex items-center gap-4">
+                                                <legend class="sr-only">پیشنهاد</legend>
+                                                <div class="w-full">
+                                                    <input id="suggest-like" type="radio" name="suggest" value="پیشنهاد میکنم"
+                                                           class="peer hidden"><label for="suggest-like"
+                                                                                      class="relative block cursor-pointer rounded-lg border p-2 shadow duration-200 hover:border-border/50 peer-checked:border-success">
+                                                    <div class="flex items-center justify-center gap-x-2 text-success">
+                                                        <div class="i-lucide-thumbs-up size-5"></div>
+                                                        <p class="text-sm xs:text-base">میکنم</p>
+                                                    </div>
+                                                </label>
+                                                </div>
+                                                <div class="w-full">
+                                                    <input id="suggest-dislike" type="radio" name="suggest" value="پیشنهاد نمی کنم"
+                                                           class="peer hidden"><label for="suggest-dislike"
+                                                                                      class="relative block cursor-pointer rounded-lg border p-2 shadow duration-200 hover:border-border/50 peer-checked:border-warning">
+                                                    <div class="flex items-center justify-center gap-x-2 text-warning">
+                                                        <div class="i-lucide-thumbs-down size-5"></div>
+                                                        <p class="text-sm xs:text-base">نمیکنم</p>
+                                                    </div>
+                                                </label>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                        <div class="col-span-2">
+                                            <label for="message" class="sr-only">
+                                                متن دیدگاه
+                                            </label>
+                                            <textarea rows="3" placeholder="متن دیدگاه" type="text" id="message"
+                                                      class="mb-2 w-full rounded-lg border bg-transparent px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2"></textarea>
+                                            <!--                                            <div class="text-warning h-5 text-sm">-->
+                                            <!--                                                                                    این فیلد الزامی می باشد-->
+                                            <!--                                            </div>-->
+                                        </div>
+
+                                        <div class="col-span-2 flex justify-end">
+                                            <button class="btn-primary px-4 py-2">
+                                                ثبت دیدگاه
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="order-first col-span-12 mb-10 overflow-hidden md:order-last md:col-span-8 lg:col-span-9">
+                                <!-- Desktop Comment -->
+                                <div class="hidden md:block">
+                                    <ul class="mb-8 max-h-[500px] space-y-4 overflow-y-auto pl-4">
+                                        <li>
+                                            <div class="py-6">
+                                                <div class="mb-2 flex items-center justify-between">
+                                                    <div class="flex items-center gap-2">
+                                                        <div>کاربر بلسر</div>
+                                                        <div class="rounded-full bg-success/10 px-4 py-1 text-sm text-success">
+                                                            خریدار
+                                                        </div>
+                                                        <div class="text-sm text-text/60">
+                                                            شنبه 4 خرداد
+                                                        </div>
+                                                    </div>
+                                                    <button class="flex items-center gap-1 text-sm text-primary duration-300 hover:text-primary/80">
+                                                        پاسخ ( 2 )
+                                                        <div class="i-lucide-chevron-left size-4"></div>
+                                                    </button>
+                                                </div>
+
+                                                <div class="mb-4 leading-relaxed xl:text-lg">
+                                                    عنوان تست
+                                                </div>
+                                                <div class="mb-6 flex items-center gap-x-4 border-b pb-6">
+                                                    <div class="flex items-center gap-x-2 text-warning">
+                                                        <div class="i-lucide-thumbs-down size-6"></div>
+                                                        پیشنهاد نمیکنم
+                                                    </div>
+                                                </div>
+                                                <div class="mb-6 border-b pb-6">
+                                                    <p class="line-clamp-4 text-sm text-text/80">
+                                                        صبشصبش صبشبصش
+                                                    </p>
+                                                </div>
+                                                <div class="flex items-center justify-end gap-8">
+                                                    <div class="text-sm text-text/60">
+                                                        آیا این دیدگاه برایتان مفید بود؟
+                                                    </div>
+                                                    <button class="flex items-center gap-2 text-success duration-300 hover:text-success/80 disabled:text-success/50 disabled:hover:text-success/40">
+                                                        <span class="text-sm"> 32 </span>
+
+                                                        <span class="i-lucide-thumbs-up size-6"></span>
+                                                    </button>
+                                                    <button class="flex items-center gap-2 text-warning duration-300 hover:text-warning/80 disabled:text-warning/50 disabled:hover:text-warning/40">
+                                                        <span class="text-sm"> 76 </span>
+                                                        <span class="i-lucide-thumbs-down size-6"></span>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <!-- Replies -->
+                                            <ul class="mr-4 space-y-4 border-r pr-4">
+                                                <li>
+                                                    <div>
+                                                        <div class="mb-8 flex items-center gap-2">
+                                                            <div>کاربر بلسر</div>
+                                                            <div class="rounded-full bg-primary/10 px-4 py-1 text-sm text-primary">
+                                                                فروشنده
+                                                            </div>
+                                                            <div class="text-sm text-text/60">
+                                                                شنبه 4 خرداد
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="border-b pb-6">
+                                                            <p class="line-clamp-4 text-sm text-text/80">
+                                                                صبشصبش صبشبصش
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div>
+                                                        <div class="mb-8 flex items-center gap-2">
+                                                            <div>کاربر بلسر</div>
+                                                            <div class="rounded-full bg-primary/10 px-4 py-1 text-sm text-primary">
+                                                                فروشنده
+                                                            </div>
+                                                            <div class="text-sm text-text/60">
+                                                                شنبه 4 خرداد
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="border-b pb-6">
+                                                            <p class="line-clamp-4 text-sm text-text/80">
+                                                                صبشصبش صبشبصش
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <div class="py-6">
+                                                <div class="mb-2 flex items-center justify-between">
+                                                    <div class="flex items-center gap-2">
+                                                        <div>کاربر بلسر</div>
+                                                        <div class="rounded-full bg-success/10 px-4 py-1 text-sm text-success">
+                                                            خریدار
+                                                        </div>
+                                                        <div class="text-sm text-text/60">
+                                                            شنبه 4 خرداد
+                                                        </div>
+                                                    </div>
+                                                    <button class="flex items-center gap-1 text-sm text-primary duration-300 hover:text-primary/80">
+                                                        پاسخ ( 1 )
+                                                        <div class="i-lucide-chevron-left size-4"></div>
+                                                    </button>
+                                                </div>
+
+                                                <div class="mb-4 leading-relaxed xl:text-lg">
+                                                    عنوان تست
+                                                </div>
+                                                <div class="mb-6 flex items-center gap-x-4 border-b pb-6">
+                                                    <div class="flex items-center gap-x-2 text-success">
+                                                        <div class="i-lucide-thumbs-up size-6"></div>
+                                                        پیشنهاد میکنم
+                                                    </div>
+                                                </div>
+                                                <div class="mb-6 border-b pb-6">
+                                                    <p class="line-clamp-4 text-sm text-text/80">
+                                                        صبشصبش صبشبصش
+                                                    </p>
+                                                </div>
+                                                <div class="flex items-center justify-end gap-8">
+                                                    <div class="text-sm text-text/60">
+                                                        آیا این دیدگاه برایتان مفید بود؟
+                                                    </div>
+                                                    <button class="flex items-center gap-2 text-success duration-300 hover:text-success/80 disabled:text-success/50 disabled:hover:text-success/40">
+                                                        <span class="text-sm"> 32 </span>
+
+                                                        <span class="i-lucide-thumbs-up size-6"></span>
+                                                    </button>
+                                                    <button class="flex items-center gap-2 text-warning duration-300 hover:text-warning/80 disabled:text-warning/50 disabled:hover:text-warning/40">
+                                                        <span class="text-sm"> 76 </span>
+                                                        <span class="i-lucide-thumbs-down size-6"></span>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <!-- Replies -->
+                                            <ul class="mr-4 space-y-4 border-r pr-4">
+                                                <li>
+                                                    <div>
+                                                        <div class="mb-8 flex items-center gap-2">
+                                                            <div>کاربر بلسر</div>
+                                                            <div class="rounded-full bg-warning/10 px-4 py-1 text-sm text-warning">
+                                                                مدیر
+                                                            </div>
+                                                            <div class="text-sm text-text/60">
+                                                                شنبه 4 خرداد
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="border-b pb-6">
+                                                            <p class="line-clamp-4 text-sm text-text/80">
+                                                                صبشصبش صبشبصش
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <!-- Mobile Comment -->
+
+                                <div class="space-y-4 md:hidden">
+                                    <div class="swiper product-comment-swiper swiper-initialized swiper-horizontal swiper-free-mode swiper-rtl">
+                                        <div class="swiper-wrapper" id="swiper-wrapper-010fc7aa2d11060170" aria-live="polite"
+                                             style="transition-duration: 0ms; transition-delay: 0ms;">
+                                            <div class="swiper-slide">
+                                                <div class="flex h-64 flex-col rounded-lg border">
+                                                    <div aria-controls="comment-detail-drawer" data-drawer-show="comment-detail-drawer"
+                                                         data-drawer-placement="bottom" data-drawer-target="comment-detail-drawer"
+                                                         type="button" class="flex-grow cursor-pointer px-4 pt-6">
+                                                        <div class="mb-4 flex items-center gap-2">
+                                                            <div class="truncate">کاربر بلسر</div>
+                                                            <div class="rounded-full bg-success/10 px-4 py-1 text-sm text-success">
+                                                                خریدار
+                                                            </div>
+                                                        </div>
+                                                        <div class="mb-4 flex items-center justify-between">
+                                                            <div class="flex items-center gap-2 text-warning">
+                                                                <div class="i-lucide-thumbs-down size-5"></div>
+                                                                پیشنهاد نمیکنم
+                                                            </div>
+
+                                                            <div class="text-sm text-primary">4 پاسخ</div>
+                                                        </div>
+                                                        <div class="space-y-2">
+                                                            <h5 class="truncate text-sm leading-relaxed">
+                                                                عنوان تست تست
+                                                            </h5>
+                                                            <p class="line-clamp-2 text-sm leading-relaxed text-text/80">
+                                                                متن تست متن تست متن تست متن تست متن تست
+                                                            </p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="flex items-center justify-between px-4 pb-6">
+                                                        <div class="flex items-center gap-6">
+                                                            <button class="relative flex items-center gap-2 text-success duration-300 hover:text-success/80 disabled:text-success/50 disabled:hover:text-success/40">
+                                                                <span class="i-lucide-thumbs-up size-6"></span>
+
+                                                                <span class="absolute -right-2 top-6 text-sm">
+                                      32
+                                    </span>
+                                                            </button>
+                                                            <button class="relative flex items-center gap-2 text-warning duration-300 hover:text-warning/80 disabled:text-warning/50 disabled:hover:text-warning/40">
+                                                                <span class="i-lucide-thumbs-down size-6"></span>
+                                                                <span class="absolute -right-2 top-6 text-sm">
+                                      76
+                                    </span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="text-sm text-text/60">
+                                                            شنبه 4 خرداد
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="swiper-slide">
+                                                <button aria-controls="comment-list-drawer" data-drawer-show="comment-list-drawer"
+                                                        data-drawer-placement="bottom" data-drawer-target="comment-list-drawer"
+                                                        type="button" class="flex h-64 w-full items-center justify-center">
+                                                    <div class="flex flex-col items-center justify-center gap-y-4 text-primary">
+                                                        <div class="rounded-full border border-primary p-2">
+                                                            <div class="i-lucide-chevron-left size-6"></div>
+                                                        </div>
+                                                        <div>مشاهده بیشتر</div>
+                                                    </div>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div
+            id="share-modal"
+            tabindex="-1"
+            aria-hidden="true"
+            class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full overflow-y-auto overflow-x-hidden p-4 md:inset-0"
+    >
+        <div class="relative max-h-full w-full max-w-sm">
+            <div class="overflow-hidden rounded-lg border bg-muted shadow">
+                <!-- Header -->
+                <div class="px-4 py-5 sm:px-6">
+                    <div class="flex items-center justify-between">
+                        <h3 class="md:text-lg">اشتراک گذاری</h3>
+
+                        <button
+                                class="text-text/60 duration-300 hover:text-text/95"
+                                data-modal-hide="share-modal"
+                                type="button"
+                        >
+                            <div class="i-lucide-x size-6"></div>
+
+                            <span class="sr-only">Close menu</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="space-y-6 px-4 py-5 sm:p-6">
+                    <!-- Content -->
+                    <div class="flex items-center gap-4">
+                        <button
+                                class="text-primary"
+                                data-copy-clipboard="blesser.ir/salomon"
+                        >
+                            <div class="i-lucide-copy size-6"></div>
+                            <div class="i-lucide-check hidden size-6"></div>
+                        </button>
+                        <div class="w-full">
+                            <div
+                                    class="line-clamp-1 w-full select-none rounded-lg border px-4 py-3"
+                            >
+                                <input
+                                        value="blesser.ir/salomon"
+                                        class="w-full bg-transparent text-left outline-none"
+                                        readonly=""
+                                        type="text"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Footer -->
+                    <div class="flex justify-end">
+                        <button
+                                data-modal-hide="share-modal"
+                                type="button"
+                                class="btn-warning w-full rounded-lg px-4 py-2 md:w-auto"
+                        >
+                            <span> بستن </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Gallery Modal -->
+    <div
+            id="gallery-modal"
+            tabindex="-1"
+            aria-hidden="true"
+            class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full overflow-y-auto overflow-x-hidden p-4 md:inset-0"
+    >
+        <div class="relative max-h-full w-full max-w-5xl">
+            <div class="overflow-hidden rounded-lg border bg-muted shadow">
+                <!-- Header -->
+                <div class="px-4 py-5 sm:px-6">
+                    <div class="flex items-center justify-between">
+                        <h3 class="md:text-lg">
+                            تصاویر محصول کفش سالومون اکس تی راش Salomon XT-RUSH
+                        </h3>
+
+                        <button
+                                class="text-text/60 duration-300 hover:text-text/95"
+                                data-modal-hide="gallery-modal"
+                                type="button"
+                        >
+                            <div class="i-lucide-x size-6"></div>
+
+                            <span class="sr-only">Close menu</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="space-y-6 px-4 py-5 sm:p-6">
+                    <!-- Content -->
+                    <div class="flex flex-col gap-4">
+                        <div>
+                            <div class="swiper product-gallery-swiper">
+                                <div class="swiper-wrapper">
+                                    <div class="swiper-slide">
+                                        <img
+                                                src="/static/images/p1.png"
+                                                alt=""
+                                                class="mx-auto min-h-[500px] min-w-[500px]"
+                                                loading="lazy"
+                                        />
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <img
+                                                src="/static/images/p1.png"
+                                                alt=""
+                                                class="mx-auto min-h-[500px] min-w-[500px]"
+                                                loading="lazy"
+                                        />
+                                    </div>
+                                    <div class="swiper-slide">
+                                        <img
+                                                src="/static/images/p1.png"
+                                                alt=""
+                                                class="mx-auto min-h-[500px] min-w-[500px]"
+                                                loading="lazy"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="swiper-pagination"></div>
+                                <div class="swiper-button-next main-slider-nav-button"></div>
+                                <div class="swiper-button-prev main-slider-nav-button"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Drawers -->
+    <!-- Description Drawer -->
+    <div
+            id="description-drawer"
+            class="fixed inset-x-0 bottom-0 z-40 mx-auto h-[90dvh] w-full translate-y-full overflow-y-auto rounded-t-xl border-t bg-muted transition-transform duration-500 lg:max-w-3xl"
+            tabindex="-1"
+            aria-labelledby="description-drawer"
+    >
+        <div class="flex h-full flex-col gap-4">
+            <div class="flex items-center justify-between p-4">
+                <div class="text-lg font-medium">معرفی</div>
+                <button
+                        class="text-text/60 duration-300 hover:text-text/95"
+                        data-drawer-hide="description-drawer"
+                        type="button"
+                >
+                    <div class="i-lucide-x size-6"></div>
+
+                    <span class="sr-only">Close menu</span>
+                </button>
+            </div>
+
+            <div class="grow overflow-y-auto px-4">
+                <article
+                        class="container prose !max-w-xl dark:prose-invert [&_a]:text-primary [&_a]:no-underline [&_img]:mx-auto [&_img]:rounded-xl [&_ul]:list-inside"
+                >
+                    <h2>کفش مولتی چویس</h2>
+                    <h3>ویژگی های محصول</h3>
+                    <a href="#"> لینک تست</a>
+                    <ul>
+                        <li>نرم</li>
+                        <li>راحت</li>
+                        <li>ارزان</li>
+                    </ul>
+                    <p>
+                        <img
+                                alt="Image"
+                                src="https://dl.taymakz.ir/media/images/2024/03/07/PlnMncihb7SBs848wFFLRQgJZd24fH.webp"
+                        />
+                    </p>
+                </article>
+            </div>
+        </div>
+    </div>
+    <!-- Specs Drawer -->
+    <div
+            id="specs-drawer"
+            class="fixed inset-x-0 bottom-0 z-40 mx-auto max-h-[90dvh] w-full translate-y-full overflow-y-auto rounded-t-xl border-t bg-muted transition-transform duration-500 lg:max-w-3xl"
+            tabindex="-1"
+            aria-labelledby="specs-drawer"
+    >
+        <div class="flex h-full flex-col gap-4">
+            <div class="flex items-center justify-between p-4">
+                <div class="text-lg font-medium">مشخصات</div>
+                <button
+                        class="text-text/60 duration-300 hover:text-text/95"
+                        data-drawer-hide="specs-drawer"
+                        type="button"
+                >
+                    <div class="i-lucide-x size-6"></div>
+
+                    <span class="sr-only">Close menu</span>
+                </button>
+            </div>
+
+            <div class="grow overflow-y-auto pb-20">
+                <ul class="container w-full space-y-6 text-sm">
+                    <li class="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
+                        <div class="col-span-1 text-text/60">جنس</div>
+                        <div class="col-span-2 border-b pb-4 text-text/95 lg:col-span-4">
+                            <ul class="space-y-4">
+                                <li>پیاز</li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
+                        <div class="col-span-1 text-text/60">جنس زیره</div>
+                        <div class="col-span-2 border-b pb-4 text-text/95 lg:col-span-4">
+                            <ul class="space-y-4">
+                                <li>سیب زمینی</li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
+                        <div class="col-span-1 text-text/60">جنس زیره</div>
+                        <div class="col-span-2 border-b pb-4 text-text/95 lg:col-span-4">
+                            <ul class="space-y-4">
+                                <li>سیب زمینی</li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
+                        <div class="col-span-1 text-text/60">جنس زیره</div>
+                        <div class="col-span-2 border-b pb-4 text-text/95 lg:col-span-4">
+                            <ul class="space-y-4">
+                                <li>سیب زمینی</li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
+                        <div class="col-span-1 text-text/60">جنس زیره</div>
+                        <div class="col-span-2 border-b pb-4 text-text/95 lg:col-span-4">
+                            <ul class="space-y-4">
+                                <li>سیب زمینی</li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
+                        <div class="col-span-1 text-text/60">جنس زیره</div>
+                        <div class="col-span-2 border-b pb-4 text-text/95 lg:col-span-4">
+                            <ul class="space-y-4">
+                                <li>سیب زمینی</li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- comments List Drawer -->
+    <div
+            id="comment-list-drawer"
+            class="fixed inset-x-0 bottom-0 z-40 mx-auto h-full max-h-[90dvh] w-full translate-y-full rounded-t-xl border-t bg-muted transition-transform duration-500 lg:max-w-3xl"
+            tabindex="-1"
+            data-modal-backdrop="static"
+            aria-labelledby="comments-more-drawer"
+    >
+        <div class="flex h-full flex-col gap-4">
+            <div class="flex items-center justify-between p-4">
+                <div class="text-lg font-medium">دیدگاه ها</div>
+                <button
+                        class="text-text/60 duration-300 hover:text-text/95"
+                        data-drawer-hide="comment-list-drawer"
+                        type="button"
+                >
+                    <div class="i-lucide-x size-6"></div>
+
+                    <span class="sr-only">Close menu</span>
+                </button>
+            </div>
+
+            <div class="grow overflow-y-auto pb-10">
+                <ul class="space-y-6 px-4">
+                    <li>
+                        <div class="flex h-64 flex-col rounded-lg border">
+                            <div
+                                    aria-controls="comment-detail-drawer"
+                                    data-drawer-show="comment-detail-drawer"
+                                    data-drawer-placement="bottom"
+                                    data-drawer-target="comment-detail-drawer"
+                                    type="button"
+                                    class="flex-grow cursor-pointer px-4 pt-6"
+                            >
+                                <div class="mb-4 flex items-center gap-2">
+                                    <div class="truncate">کاربر بلسر</div>
+                                    <div
+                                            class="rounded-full bg-success/10 px-4 py-1 text-sm text-success"
+                                    >
+                                        خریدار
+                                    </div>
+                                </div>
+                                <div class="mb-4 flex items-center gap-x-2 text-warning">
+                                    <div class="i-lucide-thumbs-down size-5"></div>
+                                    پیشنهاد نمیکنم
+                                </div>
+                                <div class="space-y-2">
+                                    <h5 class="truncate text-sm leading-relaxed">
+                                        عنوان تست تست
+                                    </h5>
+                                    <p
+                                            class="line-clamp-2 text-sm leading-relaxed text-text/80"
+                                    >
+                                        متن تست متن تست متن تست متن تست متن تست
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between px-4 pb-6">
+                                <div class="flex items-center gap-6">
+                                    <button
+                                            class="relative flex items-center gap-2 text-success duration-300 hover:text-success/80 disabled:text-success/50 disabled:hover:text-success/40"
+                                    >
+                                        <span class="i-lucide-thumbs-up size-6"></span>
+
+                                        <span class="absolute -right-2 top-6 text-sm"> 32 </span>
+                                    </button>
+                                    <button
+                                            class="relative flex items-center gap-2 text-warning duration-300 hover:text-warning/80 disabled:text-warning/50 disabled:hover:text-warning/40"
+                                    >
+                                        <span class="i-lucide-thumbs-down size-6"></span>
+                                        <span class="absolute -right-2 top-6 text-sm"> 76 </span>
+                                    </button>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="text-xs text-text/60">شنبه 4 خرداد</div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="flex h-64 flex-col rounded-lg border">
+                            <div
+                                    aria-controls="comment-detail-drawer"
+                                    data-drawer-show="comment-detail-drawer"
+                                    data-drawer-placement="bottom"
+                                    data-drawer-target="comment-detail-drawer"
+                                    type="button"
+                                    class="flex-grow cursor-pointer px-4 pt-6"
+                            >
+                                <div class="mb-4 flex items-center gap-2">
+                                    <div class="truncate">کاربر بلسر</div>
+                                    <div
+                                            class="rounded-full bg-success/10 px-4 py-1 text-sm text-success"
+                                    >
+                                        خریدار
+                                    </div>
+                                </div>
+                                <div class="mb-4 flex items-center gap-x-2 text-warning">
+                                    <div class="i-lucide-thumbs-down size-5"></div>
+                                    پیشنهاد نمیکنم
+                                </div>
+                                <div class="space-y-2">
+                                    <h5 class="truncate text-sm leading-relaxed">
+                                        عنوان تست تست
+                                    </h5>
+                                    <p
+                                            class="line-clamp-2 text-sm leading-relaxed text-text/80"
+                                    >
+                                        متن تست متن تست متن تست متن تست متن تست
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between px-4 pb-6">
+                                <div class="flex items-center gap-6">
+                                    <button
+                                            class="relative flex items-center gap-2 text-success duration-300 hover:text-success/80 disabled:text-success/50 disabled:hover:text-success/40"
+                                    >
+                                        <span class="i-lucide-thumbs-up size-6"></span>
+
+                                        <span class="absolute -right-2 top-6 text-sm"> 32 </span>
+                                    </button>
+                                    <button
+                                            class="relative flex items-center gap-2 text-warning duration-300 hover:text-warning/80 disabled:text-warning/50 disabled:hover:text-warning/40"
+                                    >
+                                        <span class="i-lucide-thumbs-down size-6"></span>
+                                        <span class="absolute -right-2 top-6 text-sm"> 76 </span>
+                                    </button>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="text-xs text-text/60">شنبه 4 خرداد</div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="flex h-64 flex-col rounded-lg border">
+                            <div
+                                    aria-controls="comment-detail-drawer"
+                                    data-drawer-show="comment-detail-drawer"
+                                    data-drawer-placement="bottom"
+                                    data-drawer-target="comment-detail-drawer"
+                                    type="button"
+                                    class="flex-grow cursor-pointer px-4 pt-6"
+                            >
+                                <div class="mb-4 flex items-center gap-2">
+                                    <div class="truncate">کاربر بلسر</div>
+                                    <div
+                                            class="rounded-full bg-success/10 px-4 py-1 text-sm text-success"
+                                    >
+                                        خریدار
+                                    </div>
+                                </div>
+                                <div class="mb-4 flex items-center gap-x-2 text-warning">
+                                    <div class="i-lucide-thumbs-down size-5"></div>
+                                    پیشنهاد نمیکنم
+                                </div>
+                                <div class="space-y-2">
+                                    <h5 class="truncate text-sm leading-relaxed">
+                                        عنوان تست تست
+                                    </h5>
+                                    <p
+                                            class="line-clamp-2 text-sm leading-relaxed text-text/80"
+                                    >
+                                        متن تست متن تست متن تست متن تست متن تست
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between px-4 pb-6">
+                                <div class="flex items-center gap-6">
+                                    <button
+                                            class="relative flex items-center gap-2 text-success duration-300 hover:text-success/80 disabled:text-success/50 disabled:hover:text-success/40"
+                                    >
+                                        <span class="i-lucide-thumbs-up size-6"></span>
+
+                                        <span class="absolute -right-2 top-6 text-sm"> 32 </span>
+                                    </button>
+                                    <button
+                                            class="relative flex items-center gap-2 text-warning duration-300 hover:text-warning/80 disabled:text-warning/50 disabled:hover:text-warning/40"
+                                    >
+                                        <span class="i-lucide-thumbs-down size-6"></span>
+                                        <span class="absolute -right-2 top-6 text-sm"> 76 </span>
+                                    </button>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="text-xs text-text/60">شنبه 4 خرداد</div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="flex h-64 flex-col rounded-lg border">
+                            <div
+                                    aria-controls="comment-detail-drawer"
+                                    data-drawer-show="comment-detail-drawer"
+                                    data-drawer-placement="bottom"
+                                    data-drawer-target="comment-detail-drawer"
+                                    type="button"
+                                    class="flex-grow cursor-pointer px-4 pt-6"
+                            >
+                                <div class="mb-4 flex items-center gap-2">
+                                    <div class="truncate">کاربر بلسر</div>
+                                    <div
+                                            class="rounded-full bg-success/10 px-4 py-1 text-sm text-success"
+                                    >
+                                        خریدار
+                                    </div>
+                                </div>
+                                <div class="mb-4 flex items-center gap-x-2 text-warning">
+                                    <div class="i-lucide-thumbs-down size-5"></div>
+                                    پیشنهاد نمیکنم
+                                </div>
+                                <div class="space-y-2">
+                                    <h5 class="truncate text-sm leading-relaxed">
+                                        عنوان تست تست
+                                    </h5>
+                                    <p
+                                            class="line-clamp-2 text-sm leading-relaxed text-text/80"
+                                    >
+                                        متن تست متن تست متن تست متن تست متن تست
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between px-4 pb-6">
+                                <div class="flex items-center gap-6">
+                                    <button
+                                            class="relative flex items-center gap-2 text-success duration-300 hover:text-success/80 disabled:text-success/50 disabled:hover:text-success/40"
+                                    >
+                                        <span class="i-lucide-thumbs-up size-6"></span>
+
+                                        <span class="absolute -right-2 top-6 text-sm"> 32 </span>
+                                    </button>
+                                    <button
+                                            class="relative flex items-center gap-2 text-warning duration-300 hover:text-warning/80 disabled:text-warning/50 disabled:hover:text-warning/40"
+                                    >
+                                        <span class="i-lucide-thumbs-down size-6"></span>
+                                        <span class="absolute -right-2 top-6 text-sm"> 76 </span>
+                                    </button>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="text-xs text-text/60">شنبه 4 خرداد</div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- Comment Detail Drawer -->
+    <div
+            id="comment-detail-drawer"
+            class="fixed inset-x-0 bottom-0 z-40 mx-auto h-full max-h-[90dvh] w-full translate-y-full overflow-y-auto rounded-t-xl border-t bg-muted transition-transform duration-500 lg:max-w-3xl"
+            tabindex="-1"
+            data-modal-backdrop="static"
+            aria-labelledby="comment-detail-drawer"
+    >
+        <div class="flex h-full flex-col gap-4">
+            <div class="flex items-center justify-between p-4">
+                <div class="text-lg font-medium">جزئیات دیدگاه</div>
+                <button
+                        class="text-text/60 duration-300 hover:text-text/95"
+                        data-drawer-hide="comment-detail-drawer"
+                        type="button"
+                >
+                    <div class="i-lucide-x size-6"></div>
+
+                    <span class="sr-only">Close menu</span>
+                </button>
+            </div>
+
+            <div class="grow overflow-y-auto pb-10">
+                <!-- Detail -->
+                <div class="mb-6 px-4 py-2">
+                    <div class="mb-2 flex items-center gap-2">
+                        <div>کاربر بلسر</div>
+                        <div
+                                class="rounded-full bg-success/10 px-4 py-1 text-sm text-success"
+                        >
+                            خریدار
+                        </div>
+                        <div class="text-sm text-text/60">شنبه 4 خرداد</div>
+                    </div>
+
+                    <div class="mb-4 leading-relaxed xl:text-lg">عنوان تست</div>
+                    <div class="mb-6 flex items-center gap-x-4 border-b pb-6">
+                        <div class="flex items-center gap-x-2 text-warning">
+                            <div class="i-lucide-thumbs-down size-6"></div>
+                            پیشنهاد نمیکنم
+                        </div>
+                    </div>
+                    <div class="mb-6 border-b pb-6">
+                        <p class="text-sm text-text/80">صبشصبش صبشبصش</p>
+                    </div>
+                    <div class="flex items-center justify-end gap-4">
+                        <div class="text-xs text-text/60 xs:text-sm">
+                            آیا این دیدگاه برایتان مفید بود؟
+                        </div>
+                        <button
+                                class="flex items-center gap-2 text-success duration-300 hover:text-success/80 disabled:text-success/50 disabled:hover:text-success/40"
+                        >
+                            <span class="text-sm"> 32 </span>
+
+                            <span class="i-lucide-thumbs-up size-6"></span>
+                        </button>
+                        <button
+                                class="flex items-center gap-2 text-warning duration-300 hover:text-warning/80 disabled:text-warning/50 disabled:hover:text-warning/40"
+                        >
+                            <span class="text-sm"> 76 </span>
+                            <span class="i-lucide-thumbs-down size-6"></span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Submit Reply-->
+                <form class="mb-6 grid grid-cols-2 gap-4 px-4">
+                    <div class="lg:text-lg">ثبت پاسخ</div>
+                    <div class="col-span-2">
+                        <label for="reply" class="sr-only"> متن پاسخ </label>
+                        <textarea
+                                rows="3"
+                                placeholder="متن پاسخ"
+                                type="text"
+                                id="reply"
+                                class="mb-2 w-full rounded-lg border bg-transparent px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2"
+                        ></textarea>
+                        <!--                                            <div class="text-warning h-5 text-sm">-->
+                        <!--                                                                                    این فیلد الزامی می باشد-->
+                        <!--                                            </div>-->
+                    </div>
+
+                    <div class="col-span-2 flex justify-end">
+                        <button class="btn-primary px-4 py-2">ثبت پاسخ</button>
+                    </div>
+                </form>
+                <!-- Replies -->
+                <div class="px-4">
+                    <p class="mb-8 text-lg font-medium">پاسخ ها ( 4 )</p>
+                    <ul class="space-y-4">
+                        <li>
+                            <div>
+                                <div class="mb-8 flex items-center gap-2">
+                                    <div>کاربر بلسر</div>
+                                    <div
+                                            class="rounded-full bg-primary/10 px-4 py-1 text-sm text-primary"
+                                    >
+                                        فروشنده
+                                    </div>
+                                    <div class="text-sm text-text/60">شنبه 4 خرداد</div>
+                                </div>
+
+                                <div class="border-b pb-6">
+                                    <p class="text-sm text-text/80">صبشصبش صبشبصش</p>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div>
+                                <div class="mb-8 flex items-center gap-2">
+                                    <div>کاربر بلسر</div>
+                                    <div
+                                            class="rounded-full bg-primary/10 px-4 py-1 text-sm text-primary"
+                                    >
+                                        فروشنده
+                                    </div>
+                                    <div class="text-sm text-text/60">شنبه 4 خرداد</div>
+                                </div>
+
+                                <div class="border-b pb-6">
+                                    <p class="text-sm text-text/80">صبشصبش صبشبصش</p>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div>
+                                <div class="mb-8 flex items-center gap-2">
+                                    <div>کاربر بلسر</div>
+                                    <div
+                                            class="rounded-full bg-primary/10 px-4 py-1 text-sm text-primary"
+                                    >
+                                        فروشنده
+                                    </div>
+                                    <div class="text-sm text-text/60">شنبه 4 خرداد</div>
+                                </div>
+
+                                <div class="border-b pb-6">
+                                    <p class="text-sm text-text/80">صبشصبش صبشبصش</p>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div>
+                                <div class="mb-8 flex items-center gap-2">
+                                    <div>کاربر بلسر</div>
+                                    <div
+                                            class="rounded-full bg-primary/10 px-4 py-1 text-sm text-primary"
+                                    >
+                                        فروشنده
+                                    </div>
+                                    <div class="text-sm text-text/60">شنبه 4 خرداد</div>
+                                </div>
+
+                                <div class="border-b pb-6">
+                                    <p class="text-sm text-text/80">صبشصبش صبشبصش</p>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
