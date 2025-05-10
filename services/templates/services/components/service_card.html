@@ -25,22 +25,18 @@
                 </div>
 
                 <span class="text-sm xs:text-base">
-                                                {% if service.min_price and service.max_price %}
-                                                    {{ service.min_price|three_digits }}{% if service.min_price < service.max_price %}
-                                                        الی
-                                                        {{ service.max_price|three_digits }}{% endif %}
-                                                {% endif %}
-                                            </span>
+                {% if service.min_price and service.max_price %}
+                    {{ service.min_price|three_digits }}
+                    {% if service.min_price < service.max_price %}
+                        الی
+                        {{ service.max_price|three_digits }}
+                    {% endif %}
+                {% endif %}
+            </span>
                 <span class="text-sm font-light">تومان</span>
             </div>
         </div>
-        <div class="h-8 px-2 lg:px-4">
-            <!-- Countdown -->
 
-
-            <!-- Proccess Bar -->
-
-        </div>
         {% if request.user.is_superuser %}
             <form method="POST" action="{% url 'toggle_unique' service.id %}">
                 {% csrf_token %}
