@@ -14,7 +14,7 @@
             <img src="{{ service.image.url }}" draggable="false" alt="service image"
                  class="aspect-[1/1] w-full rounded-xl object-cover">
         </div>
-        <div class="mb-1 px-2 lg:px-4">
+        <div class="mb-2 px-2 lg:px-4">
             <p class="line-clamp-2 h-10 text-sm xs:h-12 xs:text-base">
                 {{ service.title }}
             </p>
@@ -28,7 +28,7 @@
                 {% if service.min_price and service.max_price %}
                     {{ service.min_price|three_digits }}
                     {% if service.min_price < service.max_price %}
-                        الی
+                        <span class="text-sm font-normal">الی</span>
                         {{ service.max_price|three_digits }}
                     {% endif %}
                 {% endif %}
@@ -50,7 +50,6 @@
                 </label>
             </form>
         {% endif %}
-
     </div>
 </div>
 
