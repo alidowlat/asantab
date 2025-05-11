@@ -1,5 +1,7 @@
+from django.core.files.storage import default_storage
 from django.db import models
 from django.db.models import Max
+from django.urls import reverse
 from django.utils.text import slugify
 from core.media_path import get_image_upload_to
 from core.image_compressor import compress_and_convert_to_webp
@@ -30,7 +32,16 @@ class Service(models.Model):
     tags = models.ManyToManyField('services.Tag', related_name='services', verbose_name='تگ / تگ ها')
     locations = models.ManyToManyField('locations.City', related_name='services', verbose_name='شهر های قابل ارائه برای خدمات')
 
-    # todo: get_absolute_url
+    def get_min_price(self):
+        prices = self.options.filter(unit_price__isnull=False).values_list('unit_price', flat=True)
+        return min(prices) if prices else None
+
+    def get_max_price(self):
+        prices = self.options.filter(unit_price__isnull=False).values_list('unit_price', flat=True)
+        return max(prices) if prices else None
+
+    def get_absolute_url(self):
+        return reverse('service-detail', kwargs={'slug': self.slug})
 
     def __str__(self):
         return self.title
@@ -42,16 +53,20 @@ class Service(models.Model):
             last_code = Service.objects.aggregate(Max('code'))['code__max'] or 100
             self.code = last_code + 1
 
-        try:
-            this = Service.objects.get(pk=self.pk)
-            if this.image and this.image != self.image:
-                this.image.delete(save=False)
-        except Service.DoesNotExist:
-            pass
+        if self.pk:
+            old = Service.objects.get(pk=self.pk)
+            if old.image and old.image != self.image:
+                if old.image:
+                    try:
+                        default_storage.delete(old.image.name)
+                    except Exception as e:
+                        print(f"Error deleting old image: {e}")
 
         if self.image:
-            name_part = getattr(self, 'username', None) or getattr(self, 'slug', None) or self.__class__.__name__.lower()
-            self.image = compress_and_convert_to_webp(self.image, name_part, quality=65)
+            old_image_name = getattr(self, 'image', None)
+            if old_image_name and old_image_name != self.image.name:
+                name_part = getattr(self, 'username', None) or getattr(self, 'slug', None) or self.__class__.__name__.lower()
+                self.image = compress_and_convert_to_webp(self.image, name_part, quality=65)
 
         super().save(*args, **kwargs)
 
@@ -62,4 +77,3 @@ class Service(models.Model):
         verbose_name = 'Service'
         verbose_name_plural = 'Services'
         db_table = 'services'
-
