@@ -19,5 +19,3 @@ class Profession(models.Model):
 
     def __str__(self):
         return f'{self.title} - {self.url_title}'
-
-    # todo: get_absolute_url
