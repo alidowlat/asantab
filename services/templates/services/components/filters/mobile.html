@@ -8,9 +8,13 @@
             <div class="text-lg font-medium">فیلترها</div>
             <div class="p-4">
                 <button type="button" id="apply-filters-btn-mobile" data-drawer-hide="filter-drawer"
-                        class="btn-primary w-full py-2">
-اعمال فیلتر                </button>
+                        class="btn-primary w-full py-2 px-4">
+                    اعمال فیلتر
+                </button>
             </div>
+            <button id="clear-filters-btn-mob" class="text-sm text-primary disabled:text-text/60">
+                لغو فیلترها
+            </button>
         </div>
         <!-- Filters -->
         <div class="grow overflow-y-auto">
@@ -373,77 +377,42 @@
         </div>
     </div>
 </div>
-<div
-        id="sort-drawer"
-        class="fixed inset-x-0 bottom-0 z-40 w-full translate-y-full overflow-y-auto rounded-t-xl border-t bg-muted p-4 transition-transform duration-500"
-        tabindex="-1"
-        aria-labelledby="filter-drawer"
->
+<div id="sort-drawer"
+     class="fixed inset-x-0 bottom-0 z-40 w-full translate-y-full overflow-y-auto rounded-t-xl border-t bg-muted p-4 transition-transform duration-500"
+     tabindex="-1" aria-labelledby="filter-drawer">
     <div>
         <fieldset class="mb-4 flex flex-col space-y-2">
             <legend class="sr-only">Sort</legend>
             <div>
-                <input
-                        id="sort-1"
-                        class="peer hidden"
-                        name="sort"
-                        type="radio"
-                        value="1"
-                /><label
-                    class="relative block w-full cursor-pointer rounded-lg border p-4 text-text/95 transition-all duration-200 peer-checked:border-transparent peer-checked:bg-primary/15 peer-checked:text-primary"
-                    for="sort-1"
-            >
-                <p class="text-center">جدید ترین</p>
-            </label>
+                <input data-sort="newest" id="sort-1" class="peer hidden sort-radio-mobile" name="sort" type="radio" value="1"/>
+                <label class="relative block w-full cursor-pointer rounded-lg border p-4 text-text/95 transition-all duration-200 peer-checked:border-transparent peer-checked:bg-primary/15 peer-checked:text-primary"
+                       for="sort-1">
+                    <p class="text-center">جدید ترین</p>
+                </label>
             </div>
             <div>
-                <input
-                        id="sort-2"
-                        class="peer hidden"
-                        name="sort"
-                        type="radio"
-                        value="2"
-                /><label
-                    class="relative block w-full cursor-pointer rounded-lg border p-4 text-text/95 transition-all duration-200 peer-checked:border-transparent peer-checked:bg-primary/15 peer-checked:text-primary"
-                    for="sort-2"
-            >
-                <p class="text-center">پرفروش ترین</p>
-            </label>
+                <input data-sort="2" id="sort-2" class="peer hidden sort-radio-mobile" name="sort" type="radio" value="2"/>
+                <label class="relative block w-full cursor-pointer rounded-lg border p-4 text-text/95 transition-all duration-200 peer-checked:border-transparent peer-checked:bg-primary/15 peer-checked:text-primary"
+                       for="sort-2">
+                    <p class="text-center">پرفروش ترین</p>
+                </label>
             </div>
             <div>
-                <input
-                        id="sort-3"
-                        class="peer hidden"
-                        name="sort"
-                        type="radio"
-                        value="3"
-                /><label
-                    class="relative block w-full cursor-pointer rounded-lg border p-4 text-text/95 transition-all duration-200 peer-checked:border-transparent peer-checked:bg-primary/15 peer-checked:text-primary"
-                    for="sort-3"
-            >
-                <p class="text-center">گران ترین</p>
-            </label>
+                <input data-sort="most_expensive" id="sort-3" class="peer hidden sort-radio-mobile" name="sort" type="radio" value="3"/>
+                <label class="relative block w-full cursor-pointer rounded-lg border p-4 text-text/95 transition-all duration-200 peer-checked:border-transparent peer-checked:bg-primary/15 peer-checked:text-primary"
+                       for="sort-3">
+                    <p class="text-center">گران ترین</p>
+                </label>
             </div>
             <div>
-                <input
-                        id="sort-4"
-                        class="peer hidden"
-                        name="sort"
-                        type="radio"
-                        value="4"
-                /><label
-                    class="relative block w-full cursor-pointer rounded-lg border p-4 text-text/95 transition-all duration-200 peer-checked:border-transparent peer-checked:bg-primary/15 peer-checked:text-primary"
-                    for="sort-4"
-            >
-                <p class="text-center">ارزان ترین</p>
-            </label>
+                <input data-sort="cheapest" id="sort-4" class="peer hidden sort-radio-mobile" name="sort" type="radio" value="4"/>
+                <label class="relative block w-full cursor-pointer rounded-lg border p-4 text-text/95 transition-all duration-200 peer-checked:border-transparent peer-checked:bg-primary/15 peer-checked:text-primary"
+                       for="sort-4">
+                    <p class="text-center">ارزان ترین</p>
+                </label>
             </div>
         </fieldset>
-        <button
-                type="button"
-                data-drawer-hide="sort-drawer"
-                class="btn-primary w-full py-2"
-        >
+        <button id="apply-sort-btn-mobile" type="button" data-drawer-hide="sort-drawer" class="btn-primary w-full py-2">
             نمایش
         </button>
     </div>

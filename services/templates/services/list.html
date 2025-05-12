@@ -66,8 +66,7 @@
                                 <div class="flex h-full flex-col gap-4">
                                     <div class="flex items-center justify-between p-4 pb-0">
                                         <div class="text-lg font-medium">فیلترها</div>
-                                        <!-- todo: create remove filter js response -->
-                                        <button class="text-sm text-primary disabled:text-text/60">
+                                        <button id="clear-filters-btn" class="text-sm text-primary disabled:text-text/60">
                                             لغو فیلترها
                                         </button>
                                     </div>
@@ -86,16 +85,17 @@
                                 <div class="i-lucide-list-filter size-6"></div>
                                 <p>مرتب سازی بر اساس</p>
                             </div>
-                            <button class="rounded-lg bg-primary/15 px-1 py-1.5 text-sm text-primary duration-200 lg:px-4 lg:text-base">
+                            <button data-sort="newest" class="sort-filter rounded-lg px-1 py-1.5 text-sm duration-200 hover:text-primary lg:px-4 lg:text-base">
                                 جدید ترین
                             </button>
-                            <button class="rounded-lg px-1 py-1.5 text-sm duration-200 hover:text-primary lg:px-4 lg:text-base">
+                            <button class="sort-filter rounded-lg px-1 py-1.5 text-sm duration-200 hover:text-primary lg:px-4 lg:text-base">
                                 پرفروش ترین
                             </button>
-                            <button class="rounded-lg px-1 py-1.5 text-sm duration-200 hover:text-primary lg:px-4 lg:text-base">
+                            <button data-sort="most_expensive" class="sort-filter rounded-lg px-1 py-1.5 text-sm duration-200 hover:text-primary lg:px-4 lg:text-base">
                                 گران ترین
                             </button>
-                            <button class="rounded-lg px-1 py-1.5 text-sm duration-200 hover:text-primary lg:px-4 lg:text-base">
+                            <button data-sort="cheapest"
+                                    class="sort-filter rounded-lg px-1 py-1.5 text-sm duration-200 hover:text-primary lg:px-4 lg:text-base">
                                 ارزان ترین
                             </button>
                         </div>
