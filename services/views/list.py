@@ -13,7 +13,7 @@ class ServiceListView(ListView):
     model = Service
     context_object_name = 'services'
     ordering = ['-id']
-    paginate_by = 4
+    paginate_by = 12
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
@@ -71,14 +71,12 @@ class ServiceListView(ListView):
             query = query.filter(is_unique=True)
 
         match sort_by:
-            case 'expensive':
+            case 'most_expensive':
                 query = query.order_by('-max_price', '-id')
-            case 'cheap':
+            case 'cheapest':
                 query = query.order_by('min_price', '-id')
             case 'newest':
                 query = query.order_by('-id')
-            case 'oldest':
-                query = query.order_by('id')
 
         return query
 
