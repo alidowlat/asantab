@@ -24,35 +24,21 @@ $(document).ready(function () {
         let filters = {page: page};
 
         if (pendingFilters.categories) filters.category = pendingFilters.categories;
-        else delete filters.category;
-
         if (pendingFilters.tags) filters.tag = pendingFilters.tags;
-        else delete filters.tag;
-
         if (pendingFilters.professions) filters.profession = pendingFilters.professions;
-        else delete filters.profession;
-
         if (pendingFilters.locations) filters.location = pendingFilters.locations;
-        else delete filters.location;
-
         if (pendingFilters.available) filters.available = pendingFilters.available;
-        else delete filters.available;
-
         if (pendingFilters.featured) filters.featured = pendingFilters.featured;
-        else delete filters.featured;
 
         if (sortBy && !removeSort) {
             filters.sort_by = sortBy;
-        } else if (!sortBy) {
-            let currentSort = $('.sort-filter.active').data('sort');
-            if (currentSort) filters.sort_by = currentSort;
+        } else {
+            let currentSort = $('.sort-filter.bg-primary\\/15').data('sort');
+            filters.sort_by = currentSort || 'newest';
         }
 
-        // Clean up empty filters before sending the request
         Object.keys(filters).forEach(key => {
-            if (filters[key] === '' || filters[key] == null) {
-                delete filters[key];
-            }
+            if (!filters[key]) delete filters[key];
         });
 
         $.ajax({
@@ -72,10 +58,8 @@ $(document).ready(function () {
                 $('#pagination').html($(data).find('#pagination').html());
                 Swal.close();
 
-                let baseUrl = '/services/';
                 let query = $.param(filters);
-                let newUrl = query ? `${baseUrl}?${query}` : baseUrl;
-
+                let newUrl = query ? `/services/?${query}` : '/services/';
                 history.pushState(null, '', newUrl);
                 $('html, body').animate({scrollTop: 0}, 'slow');
             },
@@ -86,12 +70,7 @@ $(document).ready(function () {
         });
     }
 
-    $('#apply-filters-btn').click(function () {
-        updatePendingFilters();
-        filterServices(1);
-    });
-
-    $('#apply-filters-btn-mobile').click(function () {
+    $('#apply-filters-btn, #apply-filters-btn-mobile').click(function () {
         updatePendingFilters();
         filterServices(1);
         $('#filter-drawer').addClass('translate-y-full').attr('aria-hidden', 'true');
@@ -101,21 +80,25 @@ $(document).ready(function () {
         let name = $(this).attr('name');
         let val = $(this).val();
         let isChecked = $(this).prop('checked');
-
-        // sync all with the same name and value
         $(`input[name="${name}"][value="${val}"]`).not(this).prop('checked', isChecked);
-
         updatePendingFilters();
     });
 
+    $(document).on('click', '.sort-filter', function () {
+        const sortBy = $(this).data('sort');
+        window.toggleSortFilter(sortBy);
+    });
 
     window.toggleSortFilter = function (sortBy) {
-        let current = $(`.sort-filter[data-sort="${sortBy}"]`).hasClass('active');
-        $('.sort-filter').removeClass('active text-red-500').addClass('opacity-70');
-        if (current) {
+        const target = $(`.sort-filter[data-sort="${sortBy}"]`);
+        const isActive = target.hasClass('bg-primary/15');
+
+        $('.sort-filter').removeClass('bg-primary/15 text-primary').addClass('opacity-70');
+
+        if (isActive) {
             filterServices(1, null, true);
         } else {
-            $(`.sort-filter[data-sort="${sortBy}"]`).addClass('active text-red-500').removeClass('opacity-70');
+            target.addClass('bg-primary/15 text-primary').removeClass('opacity-70');
             filterServices(1, sortBy);
         }
     };
@@ -128,7 +111,7 @@ $(document).ready(function () {
 
     let params = new URLSearchParams(window.location.search);
     let filters = {
-        sort_by: params.get('sort_by'),
+        sort_by: params.get('sort_by') || 'newest',
         categories: params.get('category') ? params.get('category').split(',') : [],
         tags: params.get('tag') ? params.get('tag').split(',') : [],
         professions: params.get('profession') ? params.get('profession').split(',') : [],
@@ -138,13 +121,15 @@ $(document).ready(function () {
         page: params.get('page') ? parseInt(params.get('page')) : 1
     };
 
-    if (filters.sort_by)
-        $(`.sort-filter[data-sort="${filters.sort_by}"]`).addClass('active text-red-500').removeClass('opacity-70');
+    if (filters.sort_by) {
+        const target = $(`.sort-filter[data-sort="${filters.sort_by}"]`);
+        target.addClass('bg-primary/15 text-primary').removeClass('opacity-70');
+        $(`.sort-radio-mobile[data-sort="${filters.sort_by}"]`).prop('checked', true);
+    }
+
 
     function syncCheck(name, val) {
-        $(`input[name="${name}"][value="${val}"]`).each(function () {
-            $(this).prop('checked', true);
-        });
+        $(`input[name="${name}"][value="${val}"]`).prop('checked', true);
     }
 
     filters.categories.forEach(val => syncCheck('category-filter', val));
@@ -154,34 +139,24 @@ $(document).ready(function () {
     if (filters.available) syncCheck('available-filter', filters.available);
     if (filters.featured) syncCheck('featured-filter', filters.featured);
 
+    $('#apply-sort-btn-mobile').click(function () {
+        const selected = $('.sort-radio-mobile:checked');
+        const sortBy = selected.data('sort');
+        $('.sort-filter').removeClass('bg-primary/15 text-primary').addClass('opacity-70');
+        if (sortBy) {
+            const target = $(`.sort-filter[data-sort="${sortBy}"]`);
+            target.addClass('bg-primary/15 text-primary').removeClass('opacity-70');
+        }
+        filterServices(1, sortBy);
+    });
+
+    $('#clear-filters-btn, #clear-filters-btn-mob').click(function () {
+        $('input[name$="-filter"]').prop('checked', false);
+        updatePendingFilters();
+        $('#filter-drawer').addClass('translate-y-full').attr('aria-hidden', 'true');
+        filterServices(1);
+    });
+
     updatePendingFilters();
     filterServices(filters.page);
 });
-
-// document.addEventListener('DOMContentLoaded', function () {
-//     const drawer = document.getElementById("filter-drawer");
-//     const toggleBtn = document.getElementById("filter-toggle-btn");
-//     const applyBtn = document.getElementById("apply-filters-btn");
-//
-//     function openDrawer() {
-//         drawer.classList.remove("translate-y-full");
-//         drawer.setAttribute("aria-hidden", "false");
-//     }
-//
-//     function closeDrawer() {
-//         drawer.classList.add("translate-y-full");
-//         drawer.setAttribute("aria-hidden", "true");
-//     }
-//
-//     toggleBtn?.addEventListener("click", openDrawer);
-//
-//     applyBtn?.addEventListener("click", function () {
-//         closeDrawer();
-//     });
-//
-//     const filterToggleBtn = document.getElementById("filter-toggle-btn");
-//
-//     if (filterToggleBtn) {
-//         filterToggleBtn.addEventListener("click", openDrawer);  // وقتی فیلتر باز میشه
-//     }
-// });
