@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'accounts',
     'blog',
     'core',
+    'config',
     'dashboard',
     'discounts',
     'home',
