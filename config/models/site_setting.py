@@ -57,3 +57,17 @@ class FooterLink(models.Model):
 
     def __str__(self):
         return f'{self.title} - {self.footer_box}'
+
+
+class SocialLink(models.Model):
+    site_setting = models.ForeignKey('config.SiteSetting', on_delete=models.CASCADE, verbose_name="تنظیمات")
+    title = models.CharField(max_length=25, verbose_name="عنوان")
+    url = models.URLField(max_length=75, verbose_name="آدرس")
+
+    def __str__(self):
+        return f'{self.site_setting} - {self.title}'
+
+    class Meta:
+        verbose_name = "Social Link"
+        verbose_name_plural = "Social Links"
+        db_table = 'social_links'
