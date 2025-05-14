@@ -26,6 +26,8 @@ class Service(models.Model):
     is_unique = models.BooleanField(default=False, verbose_name='ویژه است؟')
     code = models.PositiveIntegerField(verbose_name='کد خدمت', unique=True, null=True, blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending', verbose_name='وضعیت')
+    platform = models.ForeignKey('services.Platform', on_delete=models.CASCADE, null=True, related_name='services',
+                                 verbose_name='پلتفرم')
     category = models.ForeignKey('services.Category', on_delete=models.SET_NULL, null=True, related_name='services',
                                  verbose_name='دسته بندی')
     profession = models.ForeignKey('services.Profession', on_delete=models.CASCADE, related_name='services', verbose_name='صنف')
