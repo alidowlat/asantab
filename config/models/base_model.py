@@ -2,8 +2,8 @@ from django.db import models
 
 
 class BaseCategory(models.Model):
-    title = models.CharField(max_length=100, verbose_name="عنوان")
-    url = models.CharField(max_length=255, verbose_name="آدرس")
+    title = models.CharField(max_length=35, verbose_name="عنوان")
+    url = models.CharField(max_length=75, null=True, blank=True, verbose_name="آدرس")
     order = models.PositiveIntegerField(default=0, verbose_name="ترتیب نمایش")
 
     class Meta:
