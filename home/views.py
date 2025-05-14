@@ -1,7 +1,7 @@
 from django.views.generic import TemplateView
 from django.shortcuts import render
 
-from config.models import SiteSetting, FooterBox
+from config.models import SiteSetting, FooterBox, SocialLink
 from services.models import Service
 
 
@@ -33,10 +33,12 @@ def site_header_component(request):
 def site_footer_component(request):
     site_settings = SiteSetting.objects.get(is_main=True)
     footer_boxes = FooterBox.objects.prefetch_related('footerlink_set').all()
+    social_links = SocialLink.objects.prefetch_related('site_setting').all()
 
     context = {
         'site_settings': site_settings,
         'footer_boxes': footer_boxes,
+        'social_links': social_links,
     }
     return render(request, 'shared/footer_comp.html', context)
 

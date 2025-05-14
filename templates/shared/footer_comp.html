@@ -58,15 +58,15 @@
             <div class="flex flex-col items-center justify-center gap-4 text-center lg:text-right">
                 <p>بلسر در شبکه های اجتماعی</p>
                 <div class="text-text-/70 flex items-center justify-center gap-x-6 text-center">
-                    <a href="#" class="duration-150 hover:text-primary">
-                        <i class="i-carbon-logo-twitter h-7 w-7"></i>
-                    </a>
-                    <a href="#" class="duration-150 hover:text-warning">
-                        <i class="i-carbon-logo-instagram h-7 w-7"></i>
-                    </a>
-                    <a href="#" class="duration-150 hover:text-primary">
-                        <i class="i-file-icons-telegram h-5 w-5"></i>
-                    </a>
+                    {% for link in social_links %}
+                        <a href="{{ link.url }}" class="duration-150 hover:text-primary">
+                            {% if link.title == 'telegram' %}
+                                <i class="i-file-icons-telegram h-5 w-5"></i>
+                            {% else %}
+                                <i class="i-carbon-logo-{{ link.title }} h-7 w-7"></i>
+                            {% endif %}
+                        </a>
+                    {% endfor %}
                 </div>
             </div>
 
