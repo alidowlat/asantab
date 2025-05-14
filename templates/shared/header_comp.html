@@ -11,7 +11,7 @@
         <div class="container relative z-30 flex items-center justify-between gap-6 bg-muted py-4">
             <!-- Logo -->
             <a href="{% url 'index_page' %}">
-                <img src="/static/images/logo.png" alt="Logo" class="w-40">
+                <img src="{{ site_settings.transparent_logo.url }}" alt="Logo" class="w-40">
             </a>
             <!-- Search Wrapper -->
             <div class="flex-grow">
