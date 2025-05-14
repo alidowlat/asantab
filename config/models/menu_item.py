@@ -2,11 +2,8 @@ from django.db import models
 from config.models import BaseCategory
 
 
-class MainCategory(BaseCategory):
-    title = models.CharField(max_length=35, verbose_name="عنوان")
-    url = models.CharField(max_length=85, null=True, blank=True, verbose_name="آدرس")
-    order = models.PositiveIntegerField(default=0, verbose_name="ترتیب نمایش")
 
+class MainCategory(BaseCategory):
     class Meta:
         verbose_name = "Main Category"
         verbose_name_plural = "Main Categories"
@@ -15,9 +12,6 @@ class MainCategory(BaseCategory):
 
 class CategoryItem(BaseCategory):
     main_category = models.ForeignKey(MainCategory, on_delete=models.CASCADE, related_name='category_items', verbose_name="دسته اصلی")
-    title = models.CharField(max_length=35, verbose_name="عنوان")
-    url = models.CharField(max_length=85, null=True, blank=True, verbose_name="آدرس")
-    order = models.PositiveIntegerField(default=0, verbose_name="ترتیب نمایش")
 
     class Meta:
         unique_together = ('main_category', 'title')
