@@ -46,12 +46,12 @@
                             aria-label="Go to slide 2" aria-current="true"></span></div>
                     <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div>
             </section>
-            <!-- Special Sale Section -->
+            <!-- Latest Services Section -->
             <section class="container py-10">
                 <div class="mb-6 flex items-center justify-between gap-x-6 text-nowrap">
-                    <h4 class="font-semiBold lg:text-xl">فروش ویژه</h4>
+                    <h4 class="font-semiBold lg:text-xl">جدیدترین خدمات</h4>
                     <div class="h-[0.25px] w-full bg-border"></div>
-                    <a href="services/?page=1&featured=1&sort_by=newest">
+                    <a href="{% url 'services_list_page' %}?page=1&sort_by=newest">
                         <div class="flex cursor-pointer items-center gap-x-2 text-sm text-primary duration-200 hover:text-primary/80 lg:text-base">
                             <p>مشاهده همه</p>
                             <i class="i-carbon-chevron-left"></i>
@@ -61,8 +61,8 @@
                 <div>
                     <div class="swiper product-slider !px-px pt-4 swiper-initialized swiper-horizontal swiper-free-mode swiper-rtl swiper-backface-hidden">
                         <div class="swiper-wrapper py-px" id="swiper-wrapper-386d109d5776ce5af" aria-live="polite">
-                            <!-- product -->
-                            {% for service in featured_services %}
+                            <!-- service -->
+                            {% for service in newest_services %}
                                 <div class="swiper-slide swiper-slide-active" role="group" aria-label="{{ forloop.counter }} / 8"
                                      style="width: 184.4px; margin-left: 20px;">
                                     <div class="border-gradient relative rounded-[--product-card-radius] p-px [--product-card-radius:theme(borderRadius.2xl)] before:absolute before:-inset-px before:h-[calc(100%+2px)] before:w-[calc(100%+2px)] before:rounded-[--product-card-radius] before:content-['']"
@@ -82,10 +82,9 @@
                                                 <p class="line-clamp-2 h-10 text-sm xs:h-12 xs:text-base">{{ service.title }}</p>
 
                                                 <div class="gap-x-1 text-end font-bold text-primary">
-                                                    <div class="h-5 text-end text-sm text-text/50 xs:text-base">
-                                                        <del>2,00,000</del>
-                                                    </div>
-
+{#                                                    <div class="h-5 text-end text-sm text-text/50 xs:text-base">#}
+{#                                                        <del>2,00,000</del>#}
+{#                                                    </div>#}
                                                     <span class="text-sm xs:text-base">
                                                     {% if service.get_min_price and service.get_max_price %}
                                                         {{ service.get_min_price|three_digits }}
@@ -108,40 +107,39 @@
                 </div>
             </section>
             <!-- special offer selected products Section -->
-            <section class="container">
+            <section class="container hidden md:block">
                 <div class="relative flex w-full flex-col items-center justify-between gap-y-10 overflow-hidden rounded-lg bg-muted p-4 lg:flex-row lg:p-6">
                     <div class="absolute right-0 top-0 size-20 rounded-full bg-success blur-3xl"></div>
-                    <a href="./shop.html" class="absolute inset-0"></a>
+                    <a href="{% url 'services_list_page' %}?page=1&featured=1&sort_by=newest" class="absolute inset-0"></a>
 
                     <div class="flex min-w-fit flex-col items-center justify-between gap-x-6 gap-y-4 sm:flex-row lg:justify-start">
-                        <div class="i-unjs-destr size-10"></div>
-                        <div class="text-center text-base font-medium">
+                        <div class="i-unjs-destr size-24"></div>
+                        <div class="text-center text-xl font-medium">
                             شـگـفـت انـگـیـز هـای مـنـتـخـب
                         </div>
-                        <div class="rounded-full bg-primary-btn px-2 py-1 text-center text-sm text-white">
+                        <div class="rounded-full bg-primary-btn ml-2 px-2 py-1 text-center text-sm text-white">
                             تا 65% تخفیف
                         </div>
                     </div>
-                    <div class="flex w-full min-w-fit flex-col items-center justify-between gap-4 sm:flex-row lg:justify-end">
+                    <div class="flex w-full min-w-fit flex-col items-center justify-center gap-4 sm:flex-row lg:justify-center mr-2">
                         <!-- Products -->
-                        <div class="flex flex-wrap items-center justify-center gap-2">
-
-
-                            <a href="./product-detail.html"
-                               class="relative flex size-18 items-center justify-center rounded-full bg-secondary">
-                                <img src="/static/images/p7.jpeg" alt="product" class="size-14 rounded-full object-cover">
-                                <div class="absolute bottom-0 right-0">
-                                    <div class="flex w-10 items-center justify-center rounded-full bg-warning py-px text-sm font-medium text-white">
-                                        %65
+                        {% for service in featured_services %}
+                            <div class="flex flex-wrap items-center justify-center gap-2">
+                                <a href="{{ service.get_absolute_url }}"
+                                   class="relative flex size-24 items-center justify-center rounded-full bg-secondary">
+                                    <img src="{{ service.image.url }}" alt="product" class="size-20 rounded-full object-cover">
+                                    <div class="absolute bottom-0 right-0">
+                                        <div class="flex w-10 items-center justify-center rounded-full bg-warning py-px text-sm font-medium text-white">
+                                            %65
+                                        </div>
                                     </div>
-                                </div>
-                            </a>
-                        </div>
-
-                        <div class="order-first flex items-center justify-center gap-2 rounded-full bg-success/10 px-4 py-3 text-sm text-success sm:order-last">
-                            <p>بیش از 50 کالا</p>
-                            <div class="i-lucide-chevron-left size-5"></div>
-                        </div>
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="flex items-center whitespace-nowrap justify-center gap-2 rounded-full bg-success/10 px-2 py-2 text-sm text-success sm:order-last">
+                        <p>بیش از 50 کالا</p>
+                        <div class="i-lucide-chevron-left size-5"></div>
                     </div>
                 </div>
             </section>
@@ -399,7 +397,7 @@
                          aria-controls="swiper-wrapper-a27bd3bd03ba87d1" aria-disabled="false"></div>
                     <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div>
             </section>
-            <!-- Chosen Hot Products  Section -->
+            <!-- Chosen Hot Products Section -->
             <section class="container py-10">
                 <div class="rounded-lg border bg-muted px-5 shadow lg:px-3">
                     <!-- Title -->
