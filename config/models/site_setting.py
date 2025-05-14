@@ -1,16 +1,28 @@
 from django.db import models
-from core.media_path import get_image_upload_to
 
 
 class SiteSetting(models.Model):
     site_name = models.CharField(max_length=35, verbose_name='عنوان')
-    logo_1 = models.ImageField(upload_to=get_image_upload_to, verbose_name='لوگو ۱')
-    logo_2 = models.ImageField(upload_to=get_image_upload_to, verbose_name='لوگو ۲')
-    transparent_logo = models.ImageField(upload_to=get_image_upload_to, verbose_name='لوگو شفاف')
+    logo_1 = models.ImageField(upload_to='site_setting/logo_1', verbose_name='لوگو ۱')
+    logo_2 = models.ImageField(upload_to='site_setting/logo_2', verbose_name='لوگو ۲')
+    transparent_logo = models.ImageField(upload_to='site_setting/transparent_logo', verbose_name='لوگو شفاف')
     footer_text = models.TextField(null=True, blank=True, verbose_name="متن فوتر")
     contact_email = models.EmailField(null=True, blank=True, verbose_name="ایمیل وب سایت")
     phone_number = models.CharField(max_length=11, null=True, blank=True, verbose_name="شماره تماس وب سایت")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="آخرین آپدیت")
+    is_main = models.BooleanField(default=False, unique=True, verbose_name='تنظیمات اصلی؟')
+
+    # def save(self, *args, **kwargs):
+    #     if self.pk:
+    #         old = Service.objects.get(pk=self.pk)
+    #         if old.image and old.image != self.image:
+    #             if old.image:
+    #                 try:
+    #                     default_storage.delete(old.image.name)
+    #                 except Exception as e:
+    #                     print(f"Error deleting old image: {e}")
+    #
+    #     super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Site Setting'
