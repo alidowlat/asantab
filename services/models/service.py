@@ -16,7 +16,6 @@ STATUS_CHOICES = [
 class Service(models.Model):
     provider = models.ForeignKey('accounts.Provider', on_delete=models.CASCADE, related_name='services', verbose_name='ارائه دهنده')
     title = models.CharField(max_length=120, verbose_name='عنوان خدمت')
-    url_title = models.CharField(max_length=120, verbose_name='عنوان خدمت در URL')
     slug = models.SlugField(default="", null=False, db_index=True, blank=True, max_length=120, unique=True)
     description = models.TextField(max_length=800, verbose_name='توضیحات')
     image = models.ImageField(upload_to=get_image_upload_to, null=True, verbose_name='تصویر خدمت')
@@ -26,6 +25,8 @@ class Service(models.Model):
     is_unique = models.BooleanField(default=False, verbose_name='ویژه است؟')
     code = models.PositiveIntegerField(verbose_name='کد خدمت', unique=True, null=True, blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending', verbose_name='وضعیت')
+    platform = models.ForeignKey('services.Platform', on_delete=models.CASCADE, null=True, related_name='services',
+                                 verbose_name='پلتفرم')
     category = models.ForeignKey('services.Category', on_delete=models.SET_NULL, null=True, related_name='services',
                                  verbose_name='دسته بندی')
     profession = models.ForeignKey('services.Profession', on_delete=models.CASCADE, related_name='services', verbose_name='صنف')
@@ -41,14 +42,12 @@ class Service(models.Model):
         return max(prices) if prices else None
 
     def get_absolute_url(self):
-        return reverse('service-detail', kwargs={'slug': self.slug})
+        return reverse('service_detail', kwargs={'slug': self.slug})
 
     def __str__(self):
         return self.title
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.url_title)
-
         if not self.code:
             last_code = Service.objects.aggregate(Max('code'))['code__max'] or 100
             self.code = last_code + 1
