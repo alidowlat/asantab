@@ -1,0 +1,62 @@
+<div
+        id="share-modal"
+        tabindex="-1"
+        aria-hidden="true"
+        class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full overflow-y-auto overflow-x-hidden p-4 md:inset-0"
+>
+    <div class="relative max-h-full w-full max-w-sm">
+        <div class="overflow-hidden rounded-lg border bg-muted shadow">
+            <!-- Header -->
+            <div class="px-4 py-5 sm:px-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="md:text-lg">اشتراک گذاری</h3>
+
+                    <button
+                            class="text-text/60 duration-300 hover:text-text/95"
+                            data-modal-hide="share-modal"
+                            type="button"
+                    >
+                        <div class="i-lucide-x size-6"></div>
+
+                        <span class="sr-only">Close menu</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="space-y-6 px-4 py-5 sm:p-6">
+                <!-- Content -->
+                <div class="flex items-center gap-4">
+                    <button
+                            class="text-primary"
+                            data-copy-clipboard="https://asantab.com{{ service.get_absolute_url }}"
+                    >
+                        <div class="i-lucide-copy size-6"></div>
+                        <div class="i-lucide-check hidden size-6"></div>
+                    </button>
+                    <div class="w-full">
+                        <div
+                                class="line-clamp-1 w-full select-none rounded-lg border px-4 py-3"
+                        >
+                            <input dir="ltr"
+                                   value="asantab.com{{ service.get_absolute_url }}"
+                                   class="w-full bg-transparent text-left outline-none"
+                                   readonly
+                                   type="text"
+                            />
+                        </div>
+                    </div>
+                </div>
+                <!-- Footer -->
+                <div class="flex justify-end">
+                    <button
+                            data-modal-hide="share-modal"
+                            type="button"
+                            class="btn-warning w-full rounded-lg px-4 py-2 md:w-auto"
+                    >
+                        <span> بستن </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
