@@ -11,6 +11,7 @@ $(document).ready(function () {
 
     function updatePendingFilters() {
         pendingFilters = {
+            platforms: getSelectedFilters('input[name="platform-filter"]') || '',
             categories: getSelectedFilters('input[name="category-filter"]') || '',
             tags: getSelectedFilters('input[name="tags-filter"]') || '',
             professions: getSelectedFilters('input[name="professions-filter"]') || '',
@@ -23,6 +24,7 @@ $(document).ready(function () {
     function filterServices(page = 1, sortBy = null, removeSort = false) {
         let filters = {page: page};
 
+        if (pendingFilters.platforms) filters.platform = pendingFilters.platforms;
         if (pendingFilters.categories) filters.category = pendingFilters.categories;
         if (pendingFilters.tags) filters.tag = pendingFilters.tags;
         if (pendingFilters.professions) filters.profession = pendingFilters.professions;
@@ -112,6 +114,7 @@ $(document).ready(function () {
     let params = new URLSearchParams(window.location.search);
     let filters = {
         sort_by: params.get('sort_by') || 'newest',
+        platforms: params.get('platform') ? params.get('platform').split(',') : [],
         categories: params.get('category') ? params.get('category').split(',') : [],
         tags: params.get('tag') ? params.get('tag').split(',') : [],
         professions: params.get('profession') ? params.get('profession').split(',') : [],
@@ -132,6 +135,7 @@ $(document).ready(function () {
         $(`input[name="${name}"][value="${val}"]`).prop('checked', true);
     }
 
+    filters.platforms.forEach(val => syncCheck('platform-filter', val));
     filters.categories.forEach(val => syncCheck('category-filter', val));
     filters.tags.forEach(val => syncCheck('tags-filter', val));
     filters.professions.forEach(val => syncCheck('professions-filter', val));
