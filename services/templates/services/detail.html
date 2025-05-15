@@ -163,61 +163,65 @@
                                 </div>
                             </div>
                             <div class="flex flex-grow flex-col">
-                                <!-- todo: release type (dropdown) - options (dropdown) - weekly plan -->
-                                <div class="mb-8 space-y-4">
-                                    <div>
-                                        <div class="mb-4">انتخاب سایز</div>
-                                        <fieldset class="flex flex-wrap items-center gap-3">
-                                            <legend class="sr-only">سایز</legend>
-                                            <div>
-                                                <div>
-                                                    <input id="variant-desktop-17" type="radio" name="variant-option"
-                                                           class="peer hidden" value="[object Object]"><label for="variant-desktop-17"
-                                                                                                              class="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-2 p-1 text-text/95 shadow duration-200 peer-checked:border-primary peer-disabled:cursor-default 2xl:h-12 2xl:w-12">
-                                                    <p class="text-sm font-bold md:text-base">40</p>
-                                                </label>
-                                                </div>
-                                            </div>
-
-
-                                        </fieldset>
-                                    </div>
-                                    <div>
-                                        <div class="mb-4">انتخاب رنگ</div>
-                                        <fieldset class="flex flex-wrap items-center gap-3">
-                                            <legend class="sr-only">رنگ</legend>
-                                            <div>
-                                                <div>
-                                                    <label for="10" class="relative block h-8 w-8" data-state="closed"><input id="10"
-                                                                                                                              type="radio"
-                                                                                                                              name="color"
-                                                                                                                              class="peer sr-only"
-                                                                                                                              checked=""
-                                                                                                                              value="[object Object]"><span
-                                                            class="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full border shadow ring-primary ring-offset-2 duration-150 peer-checked:border-none peer-checked:ring"
-                                                            style="background-color: white"></span>
-
-                                                        <div class="i-lucide-check pointer-events-none absolute inset-0 z-0 m-auto hidden h-5 w-5 text-black duration-150 peer-checked:block"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-
-                                        </fieldset>
-                                    </div>
-                                </div>
-
-                                <!-- todo: release type - options (dropdown) -->
+                                <!-- todo: weekly plan -->
+                                <!-- todo: features -->
                                 <div>
-                                    <p class="mb-6 font-medium">ویژگی های محصول</p>
-                                    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                                    <p class="mb-6 font-medium">ویژگی های خدمت</p>
+                                    <div class="grid grid-cols-2 gap-4 md:grid-cols-2 lg:grid-cols-3">
                                         <div class="space-y-1 rounded-lg bg-background px-4 py-2">
                                             <div class="line-clamp-1 text-xs text-text/60">
-                                                جنس
+                                                موقعیت مکانی
                                             </div>
                                             <div class="line-clamp-1 text-sm text-text/95">
-                                                پارچه
+                                                <div class="line-clamp-1 text-sm text-text/95">
+                                                    {% with service.locations.all as locs %}
+                                                        {% for location in locs|slice:":3" %}
+                                                            {{ location.name_fa }}{% if not forloop.last %}, {% endif %}
+                                                        {% endfor %}
+                                                        {% if locs|length > 3 %}و..{% endif %}
+                                                    {% endwith %}
+                                                </div>
                                             </div>
                                         </div>
+                                        <div class="space-y-1 rounded-lg bg-background px-4 py-2">
+                                            <div class="line-clamp-1 text-xs text-text/60">
+                                                جامعه هدف
+                                            </div>
+                                            <div class="line-clamp-1 text-sm text-text/95">
+                                                {% for pro in service.profession.all %}
+                                                    {{ pro.title }}{% if not forloop.last %}, {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        <div class="space-y-1 rounded-lg bg-background px-4 py-2">
+                                            <div class="line-clamp-1 text-xs text-text/60">
+                                                نوع انتشار
+                                            </div>
+                                            <div class="line-clamp-1 text-sm text-text/95">
+                                                {% with service.options.all as options %}
+                                                    {% for option in options|slice:":2" %}
+                                                        {{ option.title }}{% if not forloop.last %}, {% endif %}
+                                                    {% endfor %}
+                                                    {% if options|length > 1 %}و..{% endif %}
+                                                {% endwith %}
+                                            </div>
+                                        </div>
+                                        <div class="space-y-1 rounded-lg bg-background px-4 py-2">
+                                            <div class="line-clamp-1 text-xs text-text/60">
+                                                پلتفرم قابل ارائه
+                                            </div>
+                                            <div class="line-clamp-1 text-sm text-text/95">
+                                                {{ service.platform.title }}
+                                            </div>
+                                        </div>
+                                        {#                                        <div class="space-y-1 rounded-lg bg-background px-4 py-2">#}
+                                        {#                                            <div class="line-clamp-1 text-xs text-text/60">#}
+                                        {#                                                پلتفرم قابل ارائه#}
+                                        {#                                            </div>#}
+                                        {#                                            <div class="line-clamp-1 text-sm text-text/95">#}
+                                        {#                                            {{ service.platform.title }}#}
+                                        {#                                            </div>#}
+                                        {#                                        </div>#}
                                     </div>
                                 </div>
                             </div>
@@ -230,17 +234,14 @@
                         </div>
                         <div class="flex w-full items-center gap-2 rounded-lg border px-2 py-4 text-sm text-text/60">
                             <div class="i-lucide-badge-check size-6"></div>
-
                             تضمین اصالت کالا
                         </div>
                         <div class="flex w-full items-center gap-2 rounded-lg border px-2 py-4 text-sm text-text/60">
                             <div class="i-lucide-headset size-6"></div>
-
                             هفت روز هفته
                         </div>
                         <div class="flex w-full items-center gap-2 rounded-lg border px-2 py-4 text-sm text-text/60">
                             <div class="i-lucide-earth size-6"></div>
-
                             ارسال به سراسر ایران
                         </div>
                     </div>
@@ -293,136 +294,9 @@
         </div>
     </main>
 
-    <div
-            id="share-modal"
-            tabindex="-1"
-            aria-hidden="true"
-            class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full overflow-y-auto overflow-x-hidden p-4 md:inset-0"
-    >
-        <div class="relative max-h-full w-full max-w-sm">
-            <div class="overflow-hidden rounded-lg border bg-muted shadow">
-                <!-- Header -->
-                <div class="px-4 py-5 sm:px-6">
-                    <div class="flex items-center justify-between">
-                        <h3 class="md:text-lg">اشتراک گذاری</h3>
+    <!-- Share Modal -->
+    {% include 'services/components/modals/share_modal.html' %}
 
-                        <button
-                                class="text-text/60 duration-300 hover:text-text/95"
-                                data-modal-hide="share-modal"
-                                type="button"
-                        >
-                            <div class="i-lucide-x size-6"></div>
-
-                            <span class="sr-only">Close menu</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="space-y-6 px-4 py-5 sm:p-6">
-                    <!-- Content -->
-                    <div class="flex items-center gap-4">
-                        <button
-                                class="text-primary"
-                                data-copy-clipboard="https://asantab.com{{ service.get_absolute_url }}"
-                        >
-                            <div class="i-lucide-copy size-6"></div>
-                            <div class="i-lucide-check hidden size-6"></div>
-                        </button>
-                        <div class="w-full">
-                            <div
-                                    class="line-clamp-1 w-full select-none rounded-lg border px-4 py-3"
-                            >
-                                <input dir="ltr"
-                                        value="asantab.com{{ service.get_absolute_url }}"
-                                        class="w-full bg-transparent text-left outline-none"
-                                        readonly
-                                        type="text"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Footer -->
-                    <div class="flex justify-end">
-                        <button
-                                data-modal-hide="share-modal"
-                                type="button"
-                                class="btn-warning w-full rounded-lg px-4 py-2 md:w-auto"
-                        >
-                            <span> بستن </span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     <!-- Gallery Modal -->
-    <div
-            id="gallery-modal"
-            tabindex="-1"
-            aria-hidden="true"
-            class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full overflow-y-auto overflow-x-hidden p-4 md:inset-0"
-    >
-        <div class="relative max-h-full w-full max-w-5xl">
-            <div class="overflow-hidden rounded-lg border bg-muted shadow">
-                <!-- Header -->
-                <div class="px-4 py-5 sm:px-6">
-                    <div class="flex items-center justify-between">
-                        <h3 class="md:text-lg">
-                            تصاویر محصول کفش سالومون اکس تی راش Salomon XT-RUSH
-                        </h3>
-
-                        <button
-                                class="text-text/60 duration-300 hover:text-text/95"
-                                data-modal-hide="gallery-modal"
-                                type="button"
-                        >
-                            <div class="i-lucide-x size-6"></div>
-
-                            <span class="sr-only">Close menu</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="space-y-6 px-4 py-5 sm:p-6">
-                    <!-- Content -->
-                    <div class="flex flex-col gap-4">
-                        <div>
-                            <div class="swiper product-gallery-swiper">
-                                <div class="swiper-wrapper">
-                                    <div class="swiper-slide">
-                                        <img
-                                                src="/static/images/p1.png"
-                                                alt=""
-                                                class="mx-auto min-h-[500px] min-w-[500px]"
-                                                loading="lazy"
-                                        />
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <img
-                                                src="/static/images/p1.png"
-                                                alt=""
-                                                class="mx-auto min-h-[500px] min-w-[500px]"
-                                                loading="lazy"
-                                        />
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <img
-                                                src="/static/images/p1.png"
-                                                alt=""
-                                                class="mx-auto min-h-[500px] min-w-[500px]"
-                                                loading="lazy"
-                                        />
-                                    </div>
-                                </div>
-                                <div class="swiper-pagination"></div>
-                                <div class="swiper-button-next main-slider-nav-button"></div>
-                                <div class="swiper-button-prev main-slider-nav-button"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    {% include 'services/components/modals/gallery_modal.html' %}
 {% endblock %}
