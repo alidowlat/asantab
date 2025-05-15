@@ -5,7 +5,7 @@ from django.views.decorators.http import require_POST
 from django.views.generic import ListView
 
 from locations.models import City
-from services.models import Service, Category, Profession, Tag
+from services.models import Service, Category, Profession, Tag, Platform
 
 
 class ServiceListView(ListView):
@@ -26,6 +26,7 @@ class ServiceListView(ListView):
             service.max_price = max(prices) if prices else None
 
         model_fields = [
+            ('platforms', Platform.objects.all()),
             ('categories', Category.objects.filter(is_active=True)),
             ('professions', Profession.objects.all()),
             ('tags', Tag.objects.all()),
@@ -40,6 +41,7 @@ class ServiceListView(ListView):
     def get_queryset(self):
         request = self.request
         sort_by = request.GET.get('sort_by')
+        platform = request.GET.get('platform')
         category = request.GET.get('category')
         profession = request.GET.get('profession')
         location = request.GET.get('location')
@@ -52,17 +54,20 @@ class ServiceListView(ListView):
             max_price=Max('options__unit_price')
         ).distinct()
 
+        if platform:
+            query = query.filter(platform__slug__in=platform.split(','))
+
         if category:
-            query = query.filter(category__url_title__in=category.split(','))
+            query = query.filter(category__slug__in=category.split(','))
 
         if profession:
-            query = query.filter(profession__url_title__in=profession.split(','))
+            query = query.filter(profession__slug__in=profession.split(','))
 
         if location:
             query = query.filter(locations__name_en__in=location.split(','))
 
         if tag:
-            query = query.filter(tags__url_title__in=tag.split(','))
+            query = query.filter(tags__slug__in=tag.split(','))
 
         if available == '1':
             query = query.filter(is_active=True)
@@ -79,25 +84,6 @@ class ServiceListView(ListView):
                 query = query.order_by('-id')
 
         return query
-
-        # db_max_price = Service.new_price if Service is not None else 0
-        # context['start_price'] = self.request.GET.get('start_price') or 0
-        # context['end_price'] = self.request.GET.get('end_price') or db_max_price
-        #
-        # most_bought_Services = Service.objects.filter(orderdetails__order__is_paid=True).annotate(
-        #     order_count=Sum('orderdetails__count')
-        # ).order_by('-order_count')[:12]
-        # context['most_bought_Services'] = group_list(most_bought_Services)
-        #
-        # most_visit_Services = Service.objects.filter(is_active=True).annotate(
-        #     visit_count=Count('Servicevisit')).order_by('-visit_count')[:13]
-        # context['most_visit_Services'] = most_visit_Services
-        #
-        # high_price_Services = Service.objects.filter(is_active=True, is_stock=True).order_by('-new_price')[:13]
-        # context['high_price_Services'] = high_price_Services
-        #
-        # low_price_Services = Service.objects.filter(is_active=True, is_stock=True).order_by('new_price')[:13]
-        # context['low_price_Services'] = low_price_Services
 
 
 @staff_member_required
