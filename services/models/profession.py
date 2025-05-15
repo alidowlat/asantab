@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.text import slugify
 
 
 class Profession(models.Model):
@@ -13,4 +12,4 @@ class Profession(models.Model):
         db_table = 'professions'
 
     def __str__(self):
-        return f'{self.title} - {self.url_title}'
+        return f'{self.title} - {self.slug}'
