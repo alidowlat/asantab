@@ -1,8 +1,9 @@
+from django.db.models import Prefetch
 from django.views.generic import TemplateView
 from django.shortcuts import render
 
-from config.models import SiteSetting, FooterBox, SocialLink
-from services.models import Service
+from config.models import SiteSetting, FooterBox, SocialLink, MainCategory, CategoryItem
+from services.models import Service, Platform
 
 
 class HomeView(TemplateView):
@@ -23,11 +24,16 @@ class HomeView(TemplateView):
 
 def site_header_component(request):
     site_settings = SiteSetting.objects.get(is_main=True)
+    platforms = Platform.objects.all().prefetch_related(
+        Prefetch('main_categories', queryset=MainCategory.objects.prefetch_related('category_items').order_by('order'))
+    )
 
     context = {
         'site_settings': site_settings,
+        'platforms': platforms,
     }
     return render(request, 'shared/header_comp.html', context)
+
 
 
 def site_footer_component(request):
