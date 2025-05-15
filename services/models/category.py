@@ -1,5 +1,4 @@
 from django.db import models
-
 from core.media_path import get_image_upload_to
 
 

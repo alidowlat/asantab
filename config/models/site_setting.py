@@ -12,18 +12,6 @@ class SiteSetting(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name="آخرین آپدیت")
     is_main = models.BooleanField(default=False, unique=True, verbose_name='تنظیمات اصلی؟')
 
-    # def save(self, *args, **kwargs):
-    #     if self.pk:
-    #         old = Service.objects.get(pk=self.pk)
-    #         if old.image and old.image != self.image:
-    #             if old.image:
-    #                 try:
-    #                     default_storage.delete(old.image.name)
-    #                 except Exception as e:
-    #                     print(f"Error deleting old image: {e}")
-    #
-    #     super().save(*args, **kwargs)
-
     class Meta:
         verbose_name = 'Site Setting'
         verbose_name_plural = "Site Settings"
@@ -34,7 +22,7 @@ class SiteSetting(models.Model):
 
 
 class FooterBox(models.Model):
-    title = models.CharField(max_length=255, verbose_name="عنوان")
+    title = models.CharField(max_length=35, verbose_name="عنوان")
 
     class Meta:
         verbose_name = "Footer Box"
@@ -48,7 +36,7 @@ class FooterBox(models.Model):
 class FooterLink(models.Model):
     footer_box = models.ForeignKey('config.FooterBox', on_delete=models.CASCADE, verbose_name="باکس")
     title = models.CharField(max_length=35, verbose_name="عنوان")
-    url = models.URLField(max_length=255, verbose_name="لینک")
+    url = models.URLField(max_length=90, verbose_name="لینک")
 
     class Meta:
         verbose_name = "Footer Link"
@@ -61,8 +49,8 @@ class FooterLink(models.Model):
 
 class SocialLink(models.Model):
     site_setting = models.ForeignKey('config.SiteSetting', on_delete=models.CASCADE, verbose_name="تنظیمات")
-    title = models.CharField(max_length=25, verbose_name="عنوان")
-    url = models.URLField(max_length=75, verbose_name="آدرس")
+    title = models.CharField(max_length=35, verbose_name="عنوان")
+    url = models.URLField(max_length=90, verbose_name="آدرس")
 
     def __str__(self):
         return f'{self.site_setting} - {self.title}'

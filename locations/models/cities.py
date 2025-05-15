@@ -17,6 +17,3 @@ class City(models.Model):
         verbose_name_plural = 'Cities'
         db_table = 'cities'
 
-
-
-# INSERT INTO `cities` (id, province_id, name_en) VALUES ('1', '1', 'Azarshahr');
