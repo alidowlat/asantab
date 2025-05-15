@@ -1,5 +1,8 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
+from django.urls import reverse
+from django.views import View
+
 from .models import User
 from core.otp import set_user_otp, is_valid_otp
 from .forms import PhoneForm, OTPForm
@@ -51,3 +54,9 @@ def otp_verify_view(request):
         return render(request, 'accounts/verify.html', {'form': form})
     else:
         return redirect('about_us_page')
+
+
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect(reverse('auth_page'))
