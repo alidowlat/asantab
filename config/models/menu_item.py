@@ -4,6 +4,8 @@ from config.models import BaseCategory
 
 
 class MainCategory(BaseCategory):
+    platform = models.ForeignKey('services.Platform', on_delete=models.CASCADE, related_name='main_categories', verbose_name='پلتفرم')
+
     class Meta:
         verbose_name = "Main Category"
         verbose_name_plural = "Main Categories"
