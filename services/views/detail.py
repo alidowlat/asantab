@@ -18,9 +18,10 @@ class ServiceDetailView(DetailView):
         context['max_price'] = max_price
 
         related_services = Service.objects.filter(
-            Q(profession_id=loaded_service.profession_id) |
+            Q(profession__in=loaded_service.profession.all()) |
             Q(tags__in=loaded_service.tags.all())
         ).exclude(id=loaded_service.id).distinct()
+
         context['related_services'] = related_services
 
         return context
