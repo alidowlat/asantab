@@ -107,6 +107,63 @@
                         </div>
                     </div>
                 </li>
+                {#platforms#}
+                <li>
+                    <div class="relative rounded-lg bg-muted" data-accordion-item>
+                        <button
+                                type="button"
+                                class="w-full px-4 py-5 text-right md:px-6 md:py-5"
+                                data-accordion-button
+                        >
+                            <div
+                                    class="flex items-center justify-between gap-2 text-sm md:text-base"
+                            >
+                                <span> پلتفرم ها </span>
+                                <div class="min-w-fit">
+                                  <span
+                                          class="i-lucide-chevron-left duration-300"
+                                          data-accordion-chevron
+                                  ></span>
+                                </div>
+                            </div>
+                        </button>
+                        <div
+                                class="relative max-h-0 overflow-hidden transition-all duration-300"
+                                data-accordion-content
+                        >
+                            <ul class="space-y-2 py-3">
+                                {% for platform in platforms %}
+                                    <li>
+                                        <div class="inline-flex w-full items-center">
+                                            <label
+                                                    class="flex w-full cursor-pointer items-center gap-4 px-4 py-2"
+                                                    for="checkbox-mobile-platform-{{ forloop.counter }}"
+                                                    data-ripple-dark="true"
+                                            >
+                                                <div class="relative flex items-center">
+                                                    <input value="{{ platform.slug }}"
+                                                           name="platform-filter"
+                                                           type="checkbox"
+                                                           class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary-btn checked:bg-primary-btn checked:before:bg-primary-btn hover:before:opacity-10"
+                                                           id="checkbox-mobile-platform-{{ forloop.counter }}"
+                                                    />
+                                                    <div
+                                                            class="pointer-events-none absolute left-2/4 top-2/4 -translate-x-2/4 -translate-y-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100"
+                                                    >
+                                                        <div
+                                                                class="i-lucide-check h-4 w-4 stroke-2"
+                                                        ></div>
+                                                    </div>
+                                                </div>
+                                                {{ platform.title }}
+                                            </label>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </li>
                 {#categories#}
                 <li>
                     <div class="relative rounded-lg bg-muted" data-accordion-item>
@@ -141,7 +198,7 @@
                                                     data-ripple-dark="true"
                                             >
                                                 <div class="relative flex items-center">
-                                                    <input value="{{ category.url_title }}"
+                                                    <input value="{{ category.slug }}"
                                                            name="category-filter"
                                                            type="checkbox"
                                                            class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary-btn checked:bg-primary-btn checked:before:bg-primary-btn hover:before:opacity-10"
@@ -279,7 +336,7 @@
                                                     data-ripple-dark="true"
                                             >
                                                 <div class="relative flex items-center">
-                                                    <input value="{{ profession.url_title }}"
+                                                    <input value="{{ profession.slug }}"
                                                            name="professions-filter"
                                                            type="checkbox"
                                                            class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary-btn checked:bg-primary-btn checked:before:bg-primary-btn hover:before:opacity-10"
@@ -348,7 +405,7 @@
                                                     data-ripple-dark="true"
                                             >
                                                 <div class="relative flex items-center">
-                                                    <input value="{{ tag.url_title }}"
+                                                    <input value="{{ tag.slug }}"
                                                            name="tags-filter"
                                                            type="checkbox"
                                                            class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary-btn checked:bg-primary-btn checked:before:bg-primary-btn hover:before:opacity-10"
@@ -398,7 +455,8 @@
                 </label>
             </div>
             <div>
-                <input data-sort="most_expensive" id="sort-3" class="peer hidden sort-radio-mobile" name="sort" type="radio" value="3"/>
+                <input data-sort="most_expensive" id="sort-3" class="peer hidden sort-radio-mobile" name="sort" type="radio"
+                       value="3"/>
                 <label class="relative block w-full cursor-pointer rounded-lg border p-4 text-text/95 transition-all duration-200 peer-checked:border-transparent peer-checked:bg-primary/15 peer-checked:text-primary"
                        for="sort-3">
                     <p class="text-center">گران ترین</p>

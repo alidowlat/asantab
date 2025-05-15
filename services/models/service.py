@@ -2,7 +2,6 @@ from django.core.files.storage import default_storage
 from django.db import models
 from django.db.models import Max
 from django.urls import reverse
-from django.utils.text import slugify
 from core.media_path import get_image_upload_to
 from core.image_compressor import compress_and_convert_to_webp
 
@@ -15,9 +14,8 @@ STATUS_CHOICES = [
 
 class Service(models.Model):
     provider = models.ForeignKey('accounts.Provider', on_delete=models.CASCADE, related_name='services', verbose_name='ارائه دهنده')
-    title = models.CharField(max_length=120, verbose_name='عنوان خدمت')
-    url_title = models.CharField(max_length=120, verbose_name='عنوان خدمت در URL')
-    slug = models.SlugField(default="", null=False, db_index=True, blank=True, max_length=120, unique=True)
+    title = models.CharField(max_length=85, verbose_name='عنوان خدمت')
+    slug = models.SlugField(default="", null=False, db_index=True, blank=True, max_length=85, unique=True)
     description = models.TextField(max_length=800, verbose_name='توضیحات')
     image = models.ImageField(upload_to=get_image_upload_to, null=True, verbose_name='تصویر خدمت')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='ساخته شده در تاریخ')
@@ -43,14 +41,12 @@ class Service(models.Model):
         return max(prices) if prices else None
 
     def get_absolute_url(self):
-        return reverse('service-detail', kwargs={'slug': self.slug})
+        return reverse('service_detail', kwargs={'slug': self.slug})
 
     def __str__(self):
         return self.title
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.url_title)
-
         if not self.code:
             last_code = Service.objects.aggregate(Max('code'))['code__max'] or 100
             self.code = last_code + 1
