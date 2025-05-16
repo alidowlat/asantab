@@ -1,12 +1,10 @@
+from config.models import BaseOption
+
 from django.db import models
 
 
-class Option(models.Model):
+class Option(BaseOption):
     service = models.ForeignKey('services.Service', on_delete=models.CASCADE, related_name='options', verbose_name='خدمت')
-    title = models.CharField(max_length=50, verbose_name='عنوان')
-    unit_price = models.PositiveIntegerField(verbose_name='قیمت هر عدد')
-    unit_description = models.CharField(max_length=80, verbose_name='توضیحات')
-    is_active = models.BooleanField(default=True, verbose_name='فعال است؟')
 
     class Meta:
         verbose_name = 'Option'
@@ -14,4 +12,16 @@ class Option(models.Model):
         db_table = 'options'
 
     def __str__(self):
-        return f'{self.title} ({self.unit_price} تومان / {self.unit_description})'
+        return f'{self.title} - ({self.unit_price})'
+
+
+class OptionItem(BaseOption):
+    option = models.ForeignKey('Option', on_delete=models.CASCADE, related_name='items', verbose_name='خدمت')
+
+    class Meta:
+        verbose_name = 'Option Item'
+        verbose_name_plural = 'Option Items'
+        db_table = 'option_items'
+
+    def __str__(self):
+        return f'{self.option} ({self.unit_price} تومان / {self.title})'
