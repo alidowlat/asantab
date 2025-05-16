@@ -11,7 +11,7 @@
         <div class="container relative z-30 flex items-center justify-between gap-6 bg-muted py-4">
             <!-- Logo -->
             <a href="{% url 'index_page' %}">
-                <img src="{{ site_settings.transparent_logo.url }}" alt="Logo" class="w-40">
+                <img src="{{ site_settings.transparent_logo.url }}" alt="Logo" class="w-20">
             </a>
             <!-- Search Wrapper -->
             <div class="flex-grow">
@@ -499,7 +499,7 @@
             <div class="flex items-center justify-between">
                 <!-- Image -->
                 <a href="{% url 'index_page' %}">
-                    <img class="h-6" src="/static/images/logo.png" alt="Blesser">
+                    <img class="h-10" src="{{ site_settings.transparent_logo.url }}" alt="Blesser">
                 </a>
                 <div class="flex gap-2">
                     <!-- Favorite -->
