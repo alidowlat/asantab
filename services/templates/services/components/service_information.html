@@ -2,12 +2,6 @@
     <!-- Tabs -->
     <ul class="mb-6 flex justify-between gap-x-2 border-b text-center text-sm font-medium xs:justify-start xs:gap-x-4 xs:text-base">
         <li>
-            <div data-scroll-to="description"
-                 class="inline-block cursor-pointer rounded-t-lg border-b-2 border-transparent px-2 pb-2 duration-200 hover:text-primary">
-                معرفی
-            </div>
-        </li>
-        <li>
             <div data-scroll-to="specs"
                  class="inline-block cursor-pointer rounded-t-lg border-b-2 border-transparent px-2 pb-2 duration-200 hover:text-primary">
                 جزئیات
@@ -21,33 +15,6 @@
         </li>
     </ul>
     <div class="divide-y divide-border">
-        <!-- Description -->
-        <div class="py-6">
-            <div id="description" class="-translate-y-36"></div>
-            <div class="relative mb-16 w-fit text-2xl font-medium">
-                معرفی
-                <span class="absolute right-0 top-10 h-[3px] w-full rounded-full bg-primary"></span>
-            </div>
-            <div data-show-more="">
-                <div data-show-max="450" class="mb-4 max-w-full overflow-hidden" style="max-height: 450px;">
-                    <article
-                            class="prose !max-w-full dark:prose-invert [&amp;_a]:text-primary [&amp;_a]:no-underline [&amp;_img]:mx-auto [&amp;_img]:rounded-xl [&amp;_ul]:list-inside">
-                        <p>{{ service.description }}</p>
-                        <p>
-                            <img alt="Image"
-                                 src="https://dl.taymakz.ir/media/images/2024/03/07/PlnMncihb7SBs848wFFLRQgJZd24fH.webp">
-                        </p>
-                    </article>
-                </div>
-                <div class="relative flex justify-center">
-                    <button data-show-more-button="" type="button" data-drawer-target="description-drawer"
-                            data-drawer-show="description-drawer" data-drawer-placement="bottom"
-                            class="text-primary duration-300 hover:text-primary/80">
-                        مشاهده بیشتر
-                    </button>
-                </div>
-            </div>
-        </div>
         <!-- Specs -->
         <div class="py-6">
             <div id="specs" class="-translate-y-60"></div>
@@ -55,68 +22,69 @@
                 مشخصات
                 <span class="absolute right-0 top-10 h-[3px] w-full rounded-full bg-primary"></span>
             </div>
-
-            <div data-show-more="">
-                <div data-show-max="450" class="prose mb-4 max-w-full overflow-hidden dark:prose-invert"
-                     style="max-height: 450px;">
-                    <ul class="w-full space-y-6 text-sm">
+            <div class="prose mb-4 max-w-full overflow-hidden dark:prose-invert">
+                <ul class="w-full space-y-6 text-sm">
+                    {% if service.locations.exists %}
                         <li class="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
-                            <div class="col-span-1 text-text/60">جنس</div>
+                            <div class="col-span-1 text-text/60">موقعیت مکانی</div>
                             <div class="col-span-2 border-b pb-4 text-text/95 lg:col-span-4">
                                 <ul class="space-y-4">
-                                    <li>پیاز</li>
+                                    <li>
+                                        {% with service.locations.all as locs %}
+                                            {% for location in locs|slice:":6" %}
+                                                {{ location.name_fa }}{% if not forloop.last %}, {% endif %}
+                                            {% endfor %}
+                                            {% if locs.length > 6 %}و..{% endif %}
+                                        {% endwith %}
+                                    </li>
                                 </ul>
                             </div>
                         </li>
+                    {% endif %}
+                    {% if service.profession.exists %}
+                        <li class="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
+                            <div class="col-span-1 text-text/60">جامعه هدف</div>
+                            <div class="col-span-2 border-b pb-4 text-text/95 lg:col-span-4">
+                                <ul class="space-y-4">
+                                    <li>
+                                        {% for pro in service.profession.all %}
+                                            {{ pro.title }}{% if not forloop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    {% endif %}
+                    {% if service.options.exists %}
+                        <li class="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
+                            <div class="col-span-1 text-text/60">نوع انتشار</div>
+                            <div class="col-span-2 border-b pb-4 text-text/95 lg:col-span-4">
+                                <ul class="space-y-4">
+                                    <li>
+                                        {% with service.options.all as options %}
+                                            {% for option in options|slice:":10" %}
+                                                {{ option.title }}{% if not forloop.last %}, {% endif %}
+                                            {% endfor %}
+                                            {% if options|length > 10 %}و..{% endif %}
+                                        {% endwith %}
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    {% endif %}
+                    {% if service.profession.exists %}
                         <li class="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
                             <div class="col-span-1 text-text/60">جنس زیره</div>
-                            <div class="col-span-2 border-b pb-4 text-text/95 lg:col-span-4">
+                            <div class="col-span-2 text-text/95 lg:col-span-4">
                                 <ul class="space-y-4">
-                                    <li>سیب زمینی</li>
+                                    <li>
+                                        {{ service.platform.title }}
+                                    </li>
                                 </ul>
                             </div>
                         </li>
-                        <li class="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
-                            <div class="col-span-1 text-text/60">جنس زیره</div>
-                            <div class="col-span-2 border-b pb-4 text-text/95 lg:col-span-4">
-                                <ul class="space-y-4">
-                                    <li>سیب زمینی</li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
-                            <div class="col-span-1 text-text/60">جنس زیره</div>
-                            <div class="col-span-2 border-b pb-4 text-text/95 lg:col-span-4">
-                                <ul class="space-y-4">
-                                    <li>سیب زمینی</li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
-                            <div class="col-span-1 text-text/60">جنس زیره</div>
-                            <div class="col-span-2 border-b pb-4 text-text/95 lg:col-span-4">
-                                <ul class="space-y-4">
-                                    <li>سیب زمینی</li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
-                            <div class="col-span-1 text-text/60">جنس زیره</div>
-                            <div class="col-span-2 border-b pb-4 text-text/95 lg:col-span-4">
-                                <ul class="space-y-4">
-                                    <li>سیب زمینی</li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                <div class="relative flex justify-center">
-                    <button data-show-more-button="" type="button" data-drawer-target="specs-drawer"
-                            data-drawer-show="specs-drawer" data-drawer-placement="bottom"
-                            class="text-primary duration-300 hover:text-primary/80">
-                        مشاهده بیشتر
-                    </button>
-                </div>
+                    {% endif %}
+                </ul>
             </div>
         </div>
         <!-- Comments -->
@@ -432,125 +400,6 @@
     </div>
 </div>
 
-
-<!-- Description Drawer -->
-<div
-        id="description-drawer"
-        class="fixed inset-x-0 bottom-0 z-40 mx-auto h-[90dvh] w-full translate-y-full overflow-y-auto rounded-t-xl border-t bg-muted transition-transform duration-500 lg:max-w-3xl"
-        tabindex="-1"
-        aria-labelledby="description-drawer"
->
-    <div class="flex h-full flex-col gap-4">
-        <div class="flex items-center justify-between p-4">
-            <div class="text-lg font-medium">معرفی</div>
-            <button
-                    class="text-text/60 duration-300 hover:text-text/95"
-                    data-drawer-hide="description-drawer"
-                    type="button"
-            >
-                <div class="i-lucide-x size-6"></div>
-
-                <span class="sr-only">Close menu</span>
-            </button>
-        </div>
-
-        <div class="grow overflow-y-auto px-4">
-            <article
-                    class="container prose !max-w-xl dark:prose-invert [&_a]:text-primary [&_a]:no-underline [&_img]:mx-auto [&_img]:rounded-xl [&_ul]:list-inside"
-            >
-                <h2>کفش مولتی چویس</h2>
-                <h3>ویژگی های محصول</h3>
-                <a href="#"> لینک تست</a>
-                <ul>
-                    <li>نرم</li>
-                    <li>راحت</li>
-                    <li>ارزان</li>
-                </ul>
-                <p>
-                    <img
-                            alt="Image"
-                            src="https://dl.taymakz.ir/media/images/2024/03/07/PlnMncihb7SBs848wFFLRQgJZd24fH.webp"
-                    />
-                </p>
-            </article>
-        </div>
-    </div>
-</div>
-<!-- Specs Drawer -->
-<div
-        id="specs-drawer"
-        class="fixed inset-x-0 bottom-0 z-40 mx-auto max-h-[90dvh] w-full translate-y-full overflow-y-auto rounded-t-xl border-t bg-muted transition-transform duration-500 lg:max-w-3xl"
-        tabindex="-1"
-        aria-labelledby="specs-drawer"
->
-    <div class="flex h-full flex-col gap-4">
-        <div class="flex items-center justify-between p-4">
-            <div class="text-lg font-medium">مشخصات</div>
-            <button
-                    class="text-text/60 duration-300 hover:text-text/95"
-                    data-drawer-hide="specs-drawer"
-                    type="button"
-            >
-                <div class="i-lucide-x size-6"></div>
-
-                <span class="sr-only">Close menu</span>
-            </button>
-        </div>
-
-        <div class="grow overflow-y-auto pb-20">
-            <ul class="container w-full space-y-6 text-sm">
-                <li class="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
-                    <div class="col-span-1 text-text/60">جنس</div>
-                    <div class="col-span-2 border-b pb-4 text-text/95 lg:col-span-4">
-                        <ul class="space-y-4">
-                            <li>پیاز</li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
-                    <div class="col-span-1 text-text/60">جنس زیره</div>
-                    <div class="col-span-2 border-b pb-4 text-text/95 lg:col-span-4">
-                        <ul class="space-y-4">
-                            <li>سیب زمینی</li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
-                    <div class="col-span-1 text-text/60">جنس زیره</div>
-                    <div class="col-span-2 border-b pb-4 text-text/95 lg:col-span-4">
-                        <ul class="space-y-4">
-                            <li>سیب زمینی</li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
-                    <div class="col-span-1 text-text/60">جنس زیره</div>
-                    <div class="col-span-2 border-b pb-4 text-text/95 lg:col-span-4">
-                        <ul class="space-y-4">
-                            <li>سیب زمینی</li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
-                    <div class="col-span-1 text-text/60">جنس زیره</div>
-                    <div class="col-span-2 border-b pb-4 text-text/95 lg:col-span-4">
-                        <ul class="space-y-4">
-                            <li>سیب زمینی</li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="grid grid-cols-3 gap-x-2 lg:grid-cols-5">
-                    <div class="col-span-1 text-text/60">جنس زیره</div>
-                    <div class="col-span-2 border-b pb-4 text-text/95 lg:col-span-4">
-                        <ul class="space-y-4">
-                            <li>سیب زمینی</li>
-                        </ul>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </div>
-</div>
 <!-- Comments List Drawer -->
 <div
         id="comment-list-drawer"

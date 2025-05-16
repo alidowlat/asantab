@@ -16,29 +16,28 @@
         <div class="container pt-10">
             <!-- Breadcrumb -->
             <div class="mb-8 flex flex-wrap items-center gap-2 text-sm text-text/60">
-                <a href="{% url 'index_page' %}" class="flex items-center gap-x-1">
+                <a href="{% url 'index_page' %}" class="flex items-center gap-x-1 duration-300 hover:text-primary">
                     آسان تب
                     <div class="i-lucide-chevron-left size-4"></div>
                 </a>
                 <div>
-                    <a href="{% url 'services_list_page' %}" class="flex items-center gap-x-1">
+                    <a href="{% url 'services_list_page' %}" class="flex items-center gap-x-1 duration-300 hover:text-primary">
                         فروشگاه
                         <div class="i-lucide-chevron-left size-4"></div>
                     </a>
                 </div>
                 <div>
-                    <a href="{% url 'services_list_page' %}?category={{ service.category.slug }}" class="flex items-center gap-x-1">
+                    <a href="{% url 'services_list_page' %}?category={{ service.category.slug }}"
+                       class="flex items-center gap-x-1 duration-300 hover:text-primary">
                         {{ service.category.title }}
                         <div class="i-lucide-chevron-left size-4"></div>
                     </a>
                 </div>
                 <div>
-                    <a href="{{ service.get_absolute_url }}" class="flex items-center gap-x-1">
+                    <a href="{{ service.get_absolute_url }}" class="flex items-center gap-x-1 duration-300 hover:text-primary">
                         {{ service.title }}
-                        <div class="i-lucide-chevron-left size-4"></div>
                     </a>
                 </div>
-
             </div>
             <!-- Detail -->
             <div class="mb-16 grid grid-cols-12 gap-4">
@@ -47,7 +46,9 @@
                         <div class="col-span-12 space-y-4 lg:col-span-4 lg:min-w-fit">
                             <!-- Special Countdown -->
                             <div class="flex flex-wrap items-center justify-between gap-x-2 font-medium md:justify-center 2xl:justify-between">
-                                <div class="text-warning">پیشنهاد شگفت انگیز</div>
+                                {% if service.is_unique %}
+                                    <div class="text-warning">پیشنهاد شگفت انگیز</div>
+                                {% endif %}
                             </div>
                             <div>
                                 <!-- Desktop Gallery -->
@@ -164,6 +165,9 @@
                             <div class="flex flex-grow flex-col">
                                 <!-- todo: weekly plan -->
                                 <!-- todo: features -->
+{#                                <div class="mb-6 flex items-center gap-2">#}
+{#                                    <span class="h-px flex-grow bg-secondary"></span>#}
+{#                                </div>#}
                                 <div>
                                     <p class="mb-6 font-medium">ویژگی های خدمت</p>
                                     <div class="grid grid-cols-2 gap-4 md:grid-cols-2 lg:grid-cols-2">
