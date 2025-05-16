@@ -16,15 +16,29 @@
         <div class="container pt-10">
             <!-- Breadcrumb -->
             <div class="mb-8 flex flex-wrap items-center gap-2 text-sm text-text/60">
-                <a href="./index.html" class="flex items-center gap-x-1">
-                    بلسر
+                <a href="{% url 'index_page' %}" class="flex items-center gap-x-1">
+                    آسان تب
                     <div class="i-lucide-chevron-left size-4"></div>
                 </a>
                 <div>
-                    <a href="./shop.html" class="flex items-center gap-x-1">سالومون
+                    <a href="{% url 'services_list_page' %}" class="flex items-center gap-x-1">
+                        فروشگاه
                         <div class="i-lucide-chevron-left size-4"></div>
                     </a>
                 </div>
+                <div>
+                    <a href="{% url 'services_list_page' %}?category={{ service.category.slug }}" class="flex items-center gap-x-1">
+                        {{ service.category.title }}
+                        <div class="i-lucide-chevron-left size-4"></div>
+                    </a>
+                </div>
+                <div>
+                    <a href="{{ service.get_absolute_url }}" class="flex items-center gap-x-1">
+                        {{ service.title }}
+                        <div class="i-lucide-chevron-left size-4"></div>
+                    </a>
+                </div>
+
             </div>
             <!-- Detail -->
             <div class="mb-16 grid grid-cols-12 gap-4">
@@ -130,21 +144,6 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <button data-popover-target="popover-compare" data-popover-placement="right" type="button"
-                                                class="icon-btn h-10 w-10" title="Product add to Favorite">
-                                            <div class="i-lucide-align-horizontal-justify-center size-6"></div>
-                                        </button>
-
-                                        <div data-popover="" id="popover-compare" role="tooltip"
-                                             class="absolute z-10 inline-block rounded-lg border bg-background px-2 py-1 text-sm shadow-sm transition-opacity duration-300 opacity-0 invisible"
-                                             data-popper-placement="right"
-                                             style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(432px, 267px);">
-                                            <div class="px-3 py-2">
-                                                <p>افزودن به لیست مقایسه</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div>
                                         <button data-popover-target="popover-share" data-popover-placement="right" type="button"
                                                 data-modal-target="share-modal" data-modal-toggle="share-modal"
                                                 class="icon-btn h-10 w-10" title="Product add to Favorite">
@@ -167,61 +166,61 @@
                                 <!-- todo: features -->
                                 <div>
                                     <p class="mb-6 font-medium">ویژگی های خدمت</p>
-                                    <div class="grid grid-cols-2 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                                        <div class="space-y-1 rounded-lg bg-background px-4 py-2">
-                                            <div class="line-clamp-1 text-xs text-text/60">
-                                                موقعیت مکانی
-                                            </div>
-                                            <div class="line-clamp-1 text-sm text-text/95">
+                                    <div class="grid grid-cols-2 gap-4 md:grid-cols-2 lg:grid-cols-2">
+                                        {% if service.locations.exists %}
+                                            <div class="space-y-1 rounded-lg bg-background px-4 py-2">
+                                                <div class="line-clamp-1 text-xs text-text/60">
+                                                    موقعیت مکانی
+                                                </div>
                                                 <div class="line-clamp-1 text-sm text-text/95">
-                                                    {% with service.locations.all as locs %}
-                                                        {% for location in locs|slice:":3" %}
-                                                            {{ location.name_fa }}{% if not forloop.last %}, {% endif %}
+                                                    <div class="line-clamp-1 text-sm text-text/95">
+                                                        {% with service.locations.all as locs %}
+                                                            {% for location in locs|slice:":3" %}
+                                                                {{ location.name_fa }}{% if not forloop.last %}, {% endif %}
+                                                            {% endfor %}
+                                                            {% if locs|length > 3 %}و..{% endif %}
+                                                        {% endwith %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                        {% if service.profession.exists %}
+                                            <div class="space-y-1 rounded-lg bg-background px-4 py-2">
+                                                <div class="line-clamp-1 text-xs text-text/60">
+                                                    جامعه هدف
+                                                </div>
+                                                <div class="line-clamp-1 text-sm text-text/95">
+                                                    {% for pro in service.profession.all %}
+                                                        {{ pro.title }}{% if not forloop.last %}, {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                        {% if service.options.exists %}
+                                            <div class="space-y-1 rounded-lg bg-background px-4 py-2">
+                                                <div class="line-clamp-1 text-xs text-text/60">
+                                                    نوع انتشار
+                                                </div>
+                                                <div class="line-clamp-1 text-sm text-text/95">
+                                                    {% with service.options.all as options %}
+                                                        {% for option in options|slice:":2" %}
+                                                            {{ option.title }}{% if not forloop.last %}, {% endif %}
                                                         {% endfor %}
-                                                        {% if locs|length > 3 %}و..{% endif %}
+                                                        {% if options|length > 1 %}و..{% endif %}
                                                     {% endwith %}
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="space-y-1 rounded-lg bg-background px-4 py-2">
-                                            <div class="line-clamp-1 text-xs text-text/60">
-                                                جامعه هدف
+                                        {% endif %}
+                                        {% if service.profession.exists %}
+                                            <div class="space-y-1 rounded-lg bg-background px-4 py-2">
+                                                <div class="line-clamp-1 text-xs text-text/60">
+                                                    پلتفرم قابل ارائه
+                                                </div>
+                                                <div class="line-clamp-1 text-sm text-text/95">
+                                                    {{ service.platform.title }}
+                                                </div>
                                             </div>
-                                            <div class="line-clamp-1 text-sm text-text/95">
-                                                {% for pro in service.profession.all %}
-                                                    {{ pro.title }}{% if not forloop.last %}, {% endif %}
-                                                {% endfor %}
-                                            </div>
-                                        </div>
-                                        <div class="space-y-1 rounded-lg bg-background px-4 py-2">
-                                            <div class="line-clamp-1 text-xs text-text/60">
-                                                نوع انتشار
-                                            </div>
-                                            <div class="line-clamp-1 text-sm text-text/95">
-                                                {% with service.options.all as options %}
-                                                    {% for option in options|slice:":2" %}
-                                                        {{ option.title }}{% if not forloop.last %}, {% endif %}
-                                                    {% endfor %}
-                                                    {% if options|length > 1 %}و..{% endif %}
-                                                {% endwith %}
-                                            </div>
-                                        </div>
-                                        <div class="space-y-1 rounded-lg bg-background px-4 py-2">
-                                            <div class="line-clamp-1 text-xs text-text/60">
-                                                پلتفرم قابل ارائه
-                                            </div>
-                                            <div class="line-clamp-1 text-sm text-text/95">
-                                                {{ service.platform.title }}
-                                            </div>
-                                        </div>
-                                        {#                                        <div class="space-y-1 rounded-lg bg-background px-4 py-2">#}
-                                        {#                                            <div class="line-clamp-1 text-xs text-text/60">#}
-                                        {#                                                پلتفرم قابل ارائه#}
-                                        {#                                            </div>#}
-                                        {#                                            <div class="line-clamp-1 text-sm text-text/95">#}
-                                        {#                                            {{ service.platform.title }}#}
-                                        {#                                            </div>#}
-                                        {#                                        </div>#}
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
