@@ -48,6 +48,7 @@ class ServiceListView(ListView):
         tag = request.GET.get('tag')
         available = request.GET.get('available')
         featured = request.GET.get('featured')
+        search = request.GET.get('s')
 
         query = Service.objects.filter(options__is_active=True).annotate(
             min_price=Min('options__unit_price'),
@@ -74,6 +75,9 @@ class ServiceListView(ListView):
 
         if featured == '1':
             query = query.filter(is_unique=True)
+
+        if search:
+            query = query.filter(title__icontains=search)
 
         match sort_by:
             case 'most_expensive':

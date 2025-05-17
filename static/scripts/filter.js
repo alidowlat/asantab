@@ -17,7 +17,8 @@ $(document).ready(function () {
             professions: getSelectedFilters('input[name="professions-filter"]') || '',
             locations: getSelectedFilters('input[name="locations-filter"]') || '',
             available: $('input[name="available-filter"]:checked').val() || '',
-            featured: $('input[name="featured-filter"]:checked').val() || ''
+            featured: $('input[name="featured-filter"]:checked').val() || '',
+            search: $('input[name="search-filter"]').val() || ''
         };
     }
 
@@ -69,6 +70,7 @@ $(document).ready(function () {
         if (pendingFilters.locations) filters.location = pendingFilters.locations;
         if (pendingFilters.available) filters.available = pendingFilters.available;
         if (pendingFilters.featured) filters.featured = pendingFilters.featured;
+        if (pendingFilters.search) filters.s = pendingFilters.search;
 
         if (sortBy && !removeSort) {
             filters.sort_by = sortBy;
@@ -161,6 +163,7 @@ $(document).ready(function () {
         locations: params.get('location') ? params.get('location').split(',') : [],
         available: params.get('available') || '',
         featured: params.get('featured') || '',
+        search: params.get('s') || '',
         page: params.get('page') ? parseInt(params.get('page')) : 1
     };
 
