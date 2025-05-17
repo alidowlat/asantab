@@ -21,6 +21,44 @@ $(document).ready(function () {
         };
     }
 
+    function showServiceLoader() {
+        let loaderHTML = '';
+        for (let i = 0; i < 12; i++) {
+            loaderHTML += `
+                <div class="relative bg-muted rounded-xl overflow-hidden">
+                    <div class="flex flex-col">
+                        <div class="mb-4 p-2 lg:p-4 bg-secondary flex justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                 class="lucide lucide-image-icon w-full h-auto max-w-50 max-h-50 text-text/60/10 animate-pulse">
+                                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+                                <circle cx="9" cy="9" r="2"></circle>
+                                <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
+                            </svg>
+                        </div>
+                        <div class="px-2 lg:px-4 flex flex-col justify-between gap-3 h-10 lg:h-12">
+                            <div class="animate-pulse rounded-md bg-background h-full"></div>
+                            <div class="animate-pulse rounded-md bg-background h-full"></div>
+                        </div>
+                        <div class="flex flex-col px-2 lg:px-4">
+                            <div class="h-5 flex justify-end items-center">
+                                <div class="animate-pulse rounded-md bg-background h-2 w-10"></div>
+                            </div>
+                            <div class="flex justify-end items-center">
+                                <div class="animate-pulse rounded-md bg-background h-5 w-2/3"></div>
+                            </div>
+                            <div class="h-8 flex justify-center items-center">
+                                <div class="animate-pulse rounded-md bg-background h-2 w-full"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+        }
+        $('#service-list').html(loaderHTML);
+        $('#pagination').empty();
+    }
+
     function filterServices(page = 1, sortBy = null, removeSort = false) {
         let filters = {page: page};
 
@@ -48,22 +86,24 @@ $(document).ready(function () {
             method: 'GET',
             data: filters,
             beforeSend: function () {
+                showServiceLoader();
                 Swal.fire({
-                    title: 'لطفا صبر کنید...',
-                    html: 'در حال بارگزاری...',
+                    title: 'در حال بارگذاری...',
                     allowOutsideClick: false,
                     didOpen: () => Swal.showLoading()
                 });
             },
             success: function (data) {
-                $('#service-list').html($(data).find('#service-list').html());
-                $('#pagination').html($(data).find('#pagination').html());
-                Swal.close();
+                setTimeout(() => {
+                    $('#service-list').html($(data).find('#service-list').html());
+                    $('#pagination').html($(data).find('#pagination').html());
+                    Swal.close();
 
-                let query = $.param(filters);
-                let newUrl = query ? `/services/?${query}` : '/services/';
-                history.pushState(null, '', newUrl);
-                $('html, body').animate({scrollTop: 0}, 'slow');
+                    let query = $.param(filters);
+                    let newUrl = query ? `/services/?${query}` : '/services/';
+                    history.pushState(null, '', newUrl);
+                    $('html, body').animate({scrollTop: 0}, 'slow');
+                });
             },
             error: function (err) {
                 Swal.close();
@@ -129,7 +169,6 @@ $(document).ready(function () {
         target.addClass('bg-primary/15 text-primary').removeClass('opacity-70');
         $(`.sort-radio-mobile[data-sort="${filters.sort_by}"]`).prop('checked', true);
     }
-
 
     function syncCheck(name, val) {
         $(`input[name="${name}"][value="${val}"]`).prop('checked', true);
