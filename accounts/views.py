@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.views import View
 
 from .models import User
-from core.otp import set_user_otp, is_valid_otp
+from core.otp import set_user_otp, is_valid_otp, send_otp
 from .forms import PhoneForm, OTPForm
 
 
@@ -18,7 +18,8 @@ def phone_input_view(request):
                 if created:
                     user.set_unusable_password()
                     user.save()
-                set_user_otp(user)
+                otp = set_user_otp(user)
+                send_otp(user, otp)
                 request.session['user_phone'] = phone_number
                 return redirect('verify_page')
         else:
