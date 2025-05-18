@@ -18,7 +18,7 @@ $(document).ready(function () {
             locations: getSelectedFilters('input[name="locations-filter"]') || '',
             available: $('input[name="available-filter"]:checked').val() || '',
             featured: $('input[name="featured-filter"]:checked').val() || '',
-            search: $('input[name="search-filter"]').val() || ''
+            search: $('input[name="search-filter"]').val() || $('input[name="search-filter-mobile"]').val() || ''
         };
     }
 
@@ -182,6 +182,7 @@ $(document).ready(function () {
     filters.tags.forEach(val => syncCheck('tags-filter', val));
     filters.professions.forEach(val => syncCheck('professions-filter', val));
     filters.locations.forEach(val => syncCheck('locations-filter', val));
+    filters.search.forEach(val => syncCheck('search-filter', val));
     if (filters.available) syncCheck('available-filter', filters.available);
     if (filters.featured) syncCheck('featured-filter', filters.featured);
 

@@ -1,5 +1,13 @@
 <div class="grow overflow-y-auto">
     <ul class="divide-y">
+        <li class="pb-5 pt-6">
+            <div class="flex justify-center relative cursor-pointer">
+                <input placeholder="جست و جو خدمت..."
+                       type="text"
+                       name="search-filter"
+                       class="w-64 border rounded-lg bg-background px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:placeholder:-translate-x-2">
+            </div>
+        </li>
         {#unique-services#}
         <li>
             <label class="flex cursor-pointer items-center justify-between px-4 py-5"
@@ -7,7 +15,6 @@
                 <div>فقط کالا های موجود</div>
                 <div class="relative inline-flex cursor-pointer items-center">
                     <input value="1" name="available-filter" class="peer sr-only" id="onlyAvailableDesktop" type="checkbox">
-
                     <div class="peer h-6 w-11 rounded-full bg-background after:absolute after:left-[2px] after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-muted after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full"></div>
                 </div>
             </label>
@@ -214,7 +221,7 @@
                 <button type="button" class="w-full px-4 py-5 text-right md:px-6 md:py-5"
                         data-accordion-button="">
                     <div class="flex items-center justify-between gap-2 text-sm md:text-base">
-                        <span> صنف کاری </span>
+                        <span> صنف فعالیت </span>
                         <div class="min-w-fit">
                             <span class="i-lucide-chevron-left duration-300"
                                   data-accordion-chevron=""></span>
@@ -225,7 +232,7 @@
                      data-accordion-content="">
                     <div data-search-item-input-wrapper="" class="mb-4 px-4">
                         <input class="w-full rounded-lg border bg-transparent px-4 py-2 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2"
-                               type="text" placeholder="جستجوی صنف کاری ...">
+                               type="text" placeholder="جستجوی صنف فعالیت ...">
                     </div>
                     <ul data-search-items="" class="max-h-40 space-y-2 overflow-y-auto py-3">
                         {% for profession in professions %}
@@ -297,10 +304,6 @@
                 </div>
             </div>
         </li>
-            <div>
-                <input placeholder="جست و جوی خدمت" type="text" name="search-filter"
-                       class="mb-2 w-64 border bg-background px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:placeholder:-translate-x-2">
-            </div>
     </ul>
 </div>
 

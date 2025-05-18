@@ -19,6 +19,19 @@
         <!-- Filters -->
         <div class="grow overflow-y-auto">
             <ul class="divide-y">
+                <li class="pb-5">
+                    <label
+                            for="SearchService"
+                    >
+                        <div class="flex justify-center relative cursor-pointer pl-4 pr-4">
+                            <input placeholder="جست و جو خدمت..."
+                                   type="text"
+                                   id="SearchService"
+                                   name="search-filter-mobile"
+                                   class="w-[900px] border rounded-lg bg-background px-4 py-3 outline-none duration-300 placeholder:duration-300 focus:placeholder:-translate-x-2">
+                        </div>
+                    </label>
+                </li>
                 {#unique-services#}
                 <li>
                     <label
@@ -32,7 +45,6 @@
                                    id="onlyAvailableMobile"
                                    type="checkbox"
                             />
-
                             <div
                                     class="peer h-6 w-11 rounded-full bg-background after:absolute after:left-[2px] after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-muted after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full"
                             ></div>
