@@ -8,7 +8,7 @@
 {% block extra_header %}
     {% block extra_css %}
         <meta name="description" content="{{ service.description }}"/>
-        <script src="/static/scripts/review.js"></script>
+        <script src="/static/scripts/actions.js"></script>
     {% endblock %}
 {% endblock %}
 
@@ -102,9 +102,18 @@
                             </div>
                             <!-- Mobile Actions ( Favorite, Compare, Share )-->
                             <div class="flex items-center justify-end gap-2 text-text/95 lg:hidden">
-                                <button class="icon-btn h-10 w-10" title="Product add to Favorite">
-                                    <div class="i-lucide-heart size-6"></div>
+                                <button onclick="toggleFavorite({{ service.id }})"
+                                        data-popover-target="popover-favorite" data-popover-placement="right"
+                                        data-favorite-id="{{ service.id }}" class="icon-btn h-10 w-10 favorite-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                         viewBox="0 0 24 24" fill="{% if is_favorite %}currentColor{% else %}none{% endif %}"
+                                         stroke="currentColor"
+                                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                         class="lucide lucide-heart-icon lucide-heart">
+                                        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                                    </svg>
                                 </button>
+
                                 <button class="icon-btn h-10 w-10">
                                     <div class="i-lucide-align-horizontal-justify-center size-6"></div>
                                 </button>
@@ -141,9 +150,16 @@
                                 <!-- Desktop Actions ( Favorite, Compare, Share )-->
                                 <div class="hidden flex-col items-center gap-2 text-text/95 lg:flex">
                                     <div>
-                                        <button data-popover-target="popover-favorite" data-popover-placement="right" type="button"
-                                                class="icon-btn h-10 w-10" title="Product add to Favorite">
-                                            <div class="i-lucide-heart size-6"></div>
+                                        <button onclick="toggleFavorite({{ service.id }})"
+                                                data-popover-target="popover-favorite" data-popover-placement="right"
+                                                data-favorite-id="{{ service.id }}" class="icon-btn h-10 w-10 favorite-btn">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                 viewBox="0 0 24 24" fill="{% if is_favorite %}currentColor{% else %}none{% endif %}"
+                                                 stroke="currentColor"
+                                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                 class="lucide lucide-heart-icon lucide-heart">
+                                                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                                            </svg>
                                         </button>
 
                                         <div data-popover="" id="popover-favorite" role="tooltip"
@@ -158,7 +174,7 @@
                                     <div>
                                         <button data-popover-target="popover-share" data-popover-placement="right" type="button"
                                                 data-modal-target="share-modal" data-modal-toggle="share-modal"
-                                                class="icon-btn h-10 w-10" title="Product add to Favorite">
+                                                class="icon-btn h-10 w-10">
                                             <div class="i-lucide-share-2 size-6"></div>
                                         </button>
 
