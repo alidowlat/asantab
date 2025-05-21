@@ -1,13 +1,13 @@
-from django.db.models import Q, Count
-from django.http import HttpRequest, HttpResponse, JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.db.models import Q, Count, Min, Max
+from django.http import HttpRequest, JsonResponse
+from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
 from django.views.generic import DetailView
 
-from reviews.forms import ServiceReviewForm
+from core import get_client_info
 from reviews.models.service_review import ServiceReview, ServiceReviewReaction
-from services.models import Service
+from services.models import Service, Visit
 
 
 class ServiceDetailView(DetailView):
@@ -17,12 +17,13 @@ class ServiceDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         loaded_service = self.object
+        user = self.request.user if self.request.user.is_authenticated else None
 
-        prices = list(loaded_service.options.filter(unit_price__isnull=False).values_list('unit_price', flat=True))
-        min_price = min(prices) if prices else None
-        max_price = max(prices) if prices else None
-        context['min_price'] = min_price
-        context['max_price'] = max_price
+        price_range = loaded_service.options.aggregate(
+            min_price=Min('unit_price'), max_price=Max('unit_price')
+        )
+        context['min_price'] = price_range['min_price']
+        context['max_price'] = price_range['max_price']
 
         related_services = Service.objects.filter(
             Q(profession__in=loaded_service.profession.all()) |
@@ -30,21 +31,18 @@ class ServiceDetailView(DetailView):
         ).exclude(id=loaded_service.id).distinct()
         context['related_services'] = related_services
 
-        service_reviews = ServiceReview.objects.filter(service_id=loaded_service.id, status='approved').select_related(
-            'user').annotate(
+        base_reviews_qs = ServiceReview.objects.filter(
+            service_id=loaded_service.id, status='approved'
+        ).select_related('user')
+
+        annotated_reviews = base_reviews_qs.annotate(
             like_count=Count('reactions', filter=Q(reactions__reaction='like')),
             dislike_count=Count('reactions', filter=Q(reactions__reaction='dislike'))
         ).order_by('-created_at')
-        context['service_reviews'] = service_reviews
 
-        last_review = ServiceReview.objects.filter(service_id=loaded_service.id, status='approved').select_related('user').annotate(
-            like_count=Count('reactions', filter=Q(reactions__reaction='like')),
-            dislike_count=Count('reactions', filter=Q(reactions__reaction='dislike'))
-        ).order_by('-created_at').first()
-        context['last_review'] = last_review
-
-        reviews_count = ServiceReview.objects.filter(service_id=loaded_service.id, status='approved').select_related('user').count()
-        context['reviews_count'] = reviews_count
+        context['service_reviews'] = annotated_reviews
+        context['last_review'] = annotated_reviews.first()
+        context['reviews_count'] = base_reviews_qs.count()
 
         if self.request.user.is_authenticated:
             liked_ids = set(
@@ -59,6 +57,18 @@ class ServiceDetailView(DetailView):
 
         context['liked_ids'] = liked_ids
         context['disliked_ids'] = disliked_ids
+
+        ip, user_agent, referer = get_client_info(self.request)
+
+        visit_exists = Visit.objects.filter(ip=ip, service=loaded_service).exists()
+        if not visit_exists:
+            Visit.objects.create(
+                service=loaded_service,
+                ip=ip,
+                user=user,
+                user_agent=user_agent,
+                referer=referer
+            )
 
         return context
 
