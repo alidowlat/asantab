@@ -1,4 +1,5 @@
 from .category import *
+from .favorite import *
 from .media import *
 from .option import *
 from .platform import *
