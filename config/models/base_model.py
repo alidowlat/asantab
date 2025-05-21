@@ -32,10 +32,10 @@ class BaseOption(models.Model):
 class BaseReview(models.Model):
     user = models.ForeignKey('accounts.User', null=True, blank=True, on_delete=models.CASCADE, verbose_name='کاربر')
     parent = models.ForeignKey('self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE, verbose_name='پاسخ')
-    title = models.CharField(max_length=75, null=True, blank=True, verbose_name='عنوان', )
+    title = models.CharField(max_length=75, verbose_name='عنوان', )
     text = models.TextField(max_length=450, verbose_name='متن')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ثبت')
-    status = models.CharField(max_length=8, choices=STATUS_CHOICES, default='pending', verbose_name='وضعیت')
+    status = models.CharField(max_length=8, choices=STATUS_CHOICES, default='pending', blank=True, verbose_name='وضعیت')
 
     RECOMMENDATION_CHOICES = [
         ('good', 'میکنم'),
