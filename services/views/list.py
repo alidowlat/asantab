@@ -1,5 +1,5 @@
 from django.contrib.admin.views.decorators import staff_member_required
-from django.db.models import Max, Min
+from django.db.models import Max, Min, Count, Q
 from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.views.generic import ListView
@@ -50,10 +50,11 @@ class ServiceListView(ListView):
         featured = request.GET.get('featured')
         search = request.GET.get('s')
 
-        query = Service.objects.filter(options__is_active=True).annotate(
+        query = Service.objects.annotate(
             min_price=Min('options__unit_price'),
-            max_price=Max('options__unit_price')
-        ).distinct()
+            max_price=Max('options__unit_price'),
+            visit_count=Count('visits', distinct=True),
+        ).filter(min_price__isnull=False)
 
         if platform:
             query = query.filter(platform__slug__in=platform.split(','))
@@ -82,6 +83,8 @@ class ServiceListView(ListView):
         match sort_by:
             case 'most_expensive':
                 query = query.order_by('-max_price', '-id')
+            case 'most_viewed':
+                query = query.order_by('-visit_count', '-id')
             case 'cheapest':
                 query = query.order_by('min_price', '-id')
             case 'newest':
