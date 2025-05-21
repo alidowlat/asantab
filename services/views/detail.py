@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q, Count, Min, Max
 from django.http import HttpRequest, JsonResponse
 from django.shortcuts import get_object_or_404
@@ -7,7 +8,7 @@ from django.views.generic import DetailView
 
 from core import get_client_info
 from reviews.models.service_review import ServiceReview, ServiceReviewReaction
-from services.models import Service, Visit
+from services.models import Service, Visit, Favorite
 
 
 class ServiceDetailView(DetailView):
@@ -43,6 +44,9 @@ class ServiceDetailView(DetailView):
         context['service_reviews'] = annotated_reviews
         context['last_review'] = annotated_reviews.first()
         context['reviews_count'] = base_reviews_qs.count()
+
+        is_favorite = Favorite.objects.filter(service=loaded_service, user=user).exists()
+        context['is_favorite'] = is_favorite
 
         if self.request.user.is_authenticated:
             liked_ids = set(
@@ -103,7 +107,7 @@ def add_service_review(request: HttpRequest):
 
 
 @require_POST
-def toggle_reaction(request):
+def toggle_reaction_service(request):
     if not request.user.is_authenticated:
         return JsonResponse({'success': False, 'message': 'برای انجام این عملیات باید وارد حساب شوید.'}, status=403)
 
@@ -136,3 +140,23 @@ def toggle_reaction(request):
         'like_count': like_count,
         'dislike_count': dislike_count
     })
+
+
+@require_POST
+def toggle_favorite_service(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'message': 'برای انجام این عملیات باید وارد حساب شوید.'}, status=403)
+
+    service_id = request.POST.get('service_id')
+    try:
+        service = Service.objects.get(id=service_id)
+    except Service.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'service_not_found'}, status=404)
+
+    user = request.user
+    favorite, created = Favorite.objects.get_or_create(user=user, service=service)
+
+    if not created:
+        favorite.delete()
+        return JsonResponse({'status': 'removed'})
+    return JsonResponse({'status': 'added'})
