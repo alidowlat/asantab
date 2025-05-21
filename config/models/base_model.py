@@ -59,3 +59,11 @@ class BaseReviewReaction(models.Model):
 
     class Meta:
         abstract = True
+
+
+class BaseFavorite(models.Model):
+    user = models.ForeignKey('accounts.User', on_delete=models.CASCADE, verbose_name='کاربر')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        abstract = True
