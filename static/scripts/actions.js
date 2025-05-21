@@ -1,3 +1,18 @@
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === name + "=") {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 function sendServiceReview(serviceId) {
     const comment = document.getElementById('message').value.trim();
     const commentInput = document.getElementById('message');
@@ -127,3 +142,67 @@ function toggleReaction(reviewId, csrfToken, reactionType) {
             }
         });
 }
+
+function toggleFavorite(serviceId) {
+    const csrfToken = getCookie('csrftoken');
+    fetch("/services/toggle-favorite", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrfToken,
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: new URLSearchParams({ service_id: serviceId })
+    })
+    .then(res => {
+        if (res.status === 403) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'برای انجام این عملیات باید وارد حساب شوید.',
+                showCancelButton: true,
+                confirmButtonText: 'ورود',
+                cancelButtonText: 'انصراف',
+                allowOutsideClick: true,
+                allowEscapeKey: true,
+            }).then(result => {
+                if (result.isConfirmed) window.location.href = '/auth/';
+            });
+            throw new Error('Not authenticated');
+        }
+        return res.json();
+    })
+    .then(data => {
+        if (!data) return;
+
+        const buttons = document.querySelectorAll(`[data-favorite-id="${serviceId}"]`);
+        buttons.forEach(btn => {
+            const icon = btn.querySelector('svg');
+
+            if (data.status === 'added') {
+                icon.setAttribute('fill', 'currentColor');
+                btn.classList.add('active');
+            } else if (data.status === 'removed') {
+                icon.setAttribute('fill', 'none');
+                btn.classList.remove('active');
+            }
+        });
+
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: data.status === 'added' ? 'success' : 'info',
+            title: data.status === 'added' ? 'به علاقه‌مندی‌ها اضافه شد' : 'از علاقه‌مندی‌ها حذف شد',
+            showConfirmButton: false,
+            timer: 1500
+        });
+    })
+    .catch(e => {
+        if (e.message !== 'Not authenticated') {
+            Swal.fire({
+                icon: 'error',
+                title: 'خطایی رخ داده است.',
+                text: 'لطفا دوباره تلاش کنید.',
+            });
+        }
+    });
+}
+
