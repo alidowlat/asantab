@@ -2,6 +2,7 @@ from django import template
 from django.utils.timezone import now
 import pytz
 from jdatetime import datetime as jdatetime
+import jdatetime
 
 register = template.Library()
 
@@ -43,6 +44,21 @@ def show_jalali_date(value):
         localized_time = value.astimezone(iran_tz)
         return jdatetime.fromgregorian(datetime=localized_time).strftime('%Y/%m/%d - %H:%M:%S')
     return ""
+
+
+JALALI_MONTHS = [
+    '', 'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
+    'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'
+]
+
+
+@register.filter(name='show_date')
+def to_jalali(value):
+    if not value:
+        return ''
+    jalali_date = jdatetime.datetime.fromgregorian(datetime=value)
+    month_name = JALALI_MONTHS[jalali_date.month]
+    return f"{jalali_date.day} {month_name} {jalali_date.year}"
 
 
 # @register.filter(name='persian_int')
