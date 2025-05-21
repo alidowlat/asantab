@@ -7,3 +7,4 @@ from .reservation import *
 from .schedule import *
 from .service import *
 from .tag import *
+from .visit import *
