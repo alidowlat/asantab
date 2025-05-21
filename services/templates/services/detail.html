@@ -8,6 +8,7 @@
 {% block extra_header %}
     {% block extra_css %}
         <meta name="description" content="{{ service.description }}"/>
+        <script src="/static/scripts/review.js"></script>
     {% endblock %}
 {% endblock %}
 
@@ -124,7 +125,17 @@
                                     <div class="mb-4 flex items-center gap-4 border-b pb-6 text-sm font-light">
                                         <div class="text-text/95">کد کالا {{ service.code }}</div>
                                         <span class="h-4 w-px rounded-full bg-secondary"></span>
-                                        <div class="cursor-pointer text-primary">0 دیدگاه</div>
+                                        <div class="cursor-pointer text-primary">
+                                            {% if reviews_count %}
+                                                <button onclick="scrollToObj('reviews-section')">
+                                                    {{ reviews_count }} دیدگاه
+                                                </button>
+                                            {% else %}
+                                                <button onclick="scrollToObj('reviews-section')">
+                                                    بدون دیدگاه
+                                                </button>
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </div>
                                 <!-- Desktop Actions ( Favorite, Compare, Share )-->
