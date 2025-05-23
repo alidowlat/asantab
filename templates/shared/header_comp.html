@@ -1,3 +1,6 @@
+{% load extra_filters %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/static/scripts/actions.js"></script>
 <header class="fixed inset-x-0 top-0 z-30 bg-muted">
     <!-- Ad Banner -->
     {% if request.path == '/' %}
@@ -188,96 +191,14 @@
                             <div>
                                 <div class="flex items-center justify-between px-4 pb-2 pt-3">
                                     <div>لیست علاقه‌مندی</div>
-                                    <button class="btn-warning px-4 py-2 text-sm">
+                                    <button id="remove-all-favorites-btn" class="btn-warning px-4 py-2 text-sm">
                                         حذف همه
                                     </button>
                                 </div>
                                 <div class="h-60">
-                                    <ul class="h-full space-y-2 divide-y overflow-y-auto p-5 pb-0 pl-2">
-                                        <li>
-                                            <div class="flex gap-x-2 py-5">
-                                                <div class="relative min-w-fit">
-                                                    <a href="./product-detail.html">
-                                                        <img src="/static/images/p1.png" alt="نایک زوم پگاسوس توربو مشکی"
-                                                             loading="lazy"
-                                                             class="h-25 w-25 rounded-3xl">
-                                                    </a>
-                                                    <button class="absolute -top-2 right-0 rounded-lg border bg-muted duration-200 hover:bg-background">
-                                                        <div class="i-lucide-trash m-2 h-4 w-4 text-warning"></div>
-                                                    </button>
-                                                </div>
-                                                <div class="w-full space-y-4">
-                                                    <a href="./product-detail.html" class="line-clamp-2 text-text">نایک زوم پگاسوس
-                                                        توربو
-                                                        مشکی</a>
-                                                    <div class="flex items-center justify-between gap-x-2">
-                                                        <div class="flex items-center gap-x-2 text-primary">
-                                                            <span class="text-lg font-bold">900,000</span><span
-                                                                class="text-sm">تومان</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
+                                    <ul id="favorite-list" class="h-full space-y-2 divide-y overflow-y-auto p-5 pb-0 pl-2">
+                                        {% include 'includes/favorite_list.html' %}
                                     </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Compare -->
-                    <div>
-                        <button data-dropdown-toggle="desktopCompareDropdown" class="icon-btn relative h-10 w-10 border-primary">
-                            <div class="i-lucide-align-horizontal-justify-center h-6 w-6"></div>
-                            <div class="absolute -right-1.5 -top-2.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
-                                3
-                            </div>
-                        </button>
-
-                        <!-- Dropdown Shopping -->
-
-                        <div id="desktopCompareDropdown" class="left-10 z-10 !ml-5 hidden w-[420px] rounded-lg border bg-muted shadow"
-                             data-popper-placement="bottom"
-                             style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(248px, 116px);">
-                            <div>
-                                <div class="flex items-center justify-between px-4 pb-2 pt-3">
-                                    <div>لیست مقایسه</div>
-                                    <button class="btn-warning px-4 py-2 text-sm">
-                                        حذف همه
-                                    </button>
-                                </div>
-                                <div class="h-60">
-                                    <ul class="h-full space-y-2 divide-y overflow-y-auto p-5 pl-2">
-                                        <li>
-                                            <div class="flex gap-x-2 py-5">
-                                                <div class="relative min-w-fit">
-                                                    <a href="./product-detail.html">
-                                                        <img src="/static/images/p1.png" alt="نایک زوم پگاسوس توربو مشکی"
-                                                             loading="lazy"
-                                                             class="h-25 w-25 rounded-3xl">
-                                                    </a>
-                                                    <button class="absolute -top-2 right-0 rounded-lg border bg-muted duration-200 hover:bg-background">
-                                                        <div class="i-lucide-trash m-2 h-4 w-4 text-warning"></div>
-                                                    </button>
-                                                </div>
-                                                <div class="w-full space-y-4">
-                                                    <a href="./product-detail.html" class="line-clamp-2 text-text">نایک زوم پگاسوس
-                                                        توربو
-                                                        مشکی</a>
-                                                    <div class="flex items-center justify-between gap-x-2">
-                                                        <div class="flex items-center gap-x-2 text-primary">
-                                                            <span class="text-lg font-bold">900,000</span><span
-                                                                class="text-sm">تومان</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="border-t p-2">
-                                    <a href="./compare.html" class="btn-primary block w-full py-2">
-                                        نمایش نتیجه
-                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -508,15 +429,6 @@
                                 data-drawer-placement="bottom" aria-controls="favorite-drawer"
                                 class="icon-btn relative h-10 w-10 border-primary">
                             <div class="i-lucide-heart h-6 w-6"></div>
-                            <div class="absolute -right-1.5 -top-1.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
-                                3
-                            </div>
-                        </button>
-                        <!-- Compare -->
-                        <button type="button" data-drawer-target="compare-drawer" data-drawer-show="compare-drawer"
-                                data-drawer-placement="bottom" aria-controls="compare-drawer"
-                                class="icon-btn relative h-10 w-10 border-primary">
-                            <div class="i-lucide-align-horizontal-justify-center h-6 w-6"></div>
                             <div class="absolute -right-1.5 -top-1.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
                                 3
                             </div>
