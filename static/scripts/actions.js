@@ -55,8 +55,7 @@ function sendServiceReview(serviceId) {
     }
 
     fetch('/services/add-review', {
-        method: 'POST',
-        body: formData,
+        method: 'POST', body: formData,
     })
         .then(response => response.json())
         .then(data => {
@@ -84,14 +83,10 @@ function sendServiceReview(serviceId) {
 
 function toggleReaction(reviewId, csrfToken, reactionType) {
     fetch("/services/toggle-reaction", {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': csrfToken,
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: new URLSearchParams({
-            review_id: reviewId,
-            reaction: reactionType
+        method: 'POST', headers: {
+            'X-CSRFToken': csrfToken, 'Content-Type': 'application/x-www-form-urlencoded'
+        }, body: new URLSearchParams({
+            review_id: reviewId, reaction: reactionType
         })
     })
         .then(res => {
@@ -135,9 +130,7 @@ function toggleReaction(reviewId, csrfToken, reactionType) {
         .catch(e => {
             if (e.message !== 'Not authenticated') {
                 Swal.fire({
-                    icon: 'error',
-                    title: 'خطایی رخ داده است.',
-                    text: 'لطفا دوباره تلاش کنید.',
+                    icon: 'error', title: 'خطایی رخ داده است.', text: 'لطفا دوباره تلاش کنید.',
                 });
             }
         });
@@ -146,63 +139,172 @@ function toggleReaction(reviewId, csrfToken, reactionType) {
 function toggleFavorite(serviceId) {
     const csrfToken = getCookie('csrftoken');
     fetch("/services/toggle-favorite", {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": csrfToken,
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: new URLSearchParams({ service_id: serviceId })
+        method: "POST", headers: {
+            "X-CSRFToken": csrfToken, "Content-Type": "application/x-www-form-urlencoded"
+        }, body: new URLSearchParams({service_id: serviceId})
     })
-    .then(res => {
-        if (res.status === 403) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'برای انجام این عملیات باید وارد حساب شوید.',
-                showCancelButton: true,
-                confirmButtonText: 'ورود',
-                cancelButtonText: 'انصراف',
-                allowOutsideClick: true,
-                allowEscapeKey: true,
-            }).then(result => {
-                if (result.isConfirmed) window.location.href = '/auth/';
+        .then(res => {
+            if (res.status === 403) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'برای انجام این عملیات باید وارد حساب شوید.',
+                    showCancelButton: true,
+                    confirmButtonText: 'ورود',
+                    cancelButtonText: 'انصراف',
+                    allowOutsideClick: true,
+                    allowEscapeKey: true,
+                }).then(result => {
+                    if (result.isConfirmed) window.location.href = '/auth/';
+                });
+                throw new Error('Not authenticated');
+            }
+            return res.json();
+        })
+        .then(data => {
+            if (!data) return;
+
+            const buttons = document.querySelectorAll(`[data-favorite-id="${serviceId}"]`);
+            buttons.forEach(btn => {
+                const icon = btn.querySelector('svg');
+
+                if (data.status === 'added') {
+                    icon.setAttribute('fill', 'currentColor');
+                    btn.classList.add('active');
+                } else if (data.status === 'removed') {
+                    icon.setAttribute('fill', 'none');
+                    btn.classList.remove('active');
+                }
             });
-            throw new Error('Not authenticated');
-        }
-        return res.json();
-    })
-    .then(data => {
-        if (!data) return;
 
-        const buttons = document.querySelectorAll(`[data-favorite-id="${serviceId}"]`);
-        buttons.forEach(btn => {
-            const icon = btn.querySelector('svg');
-
-            if (data.status === 'added') {
-                icon.setAttribute('fill', 'currentColor');
-                btn.classList.add('active');
-            } else if (data.status === 'removed') {
-                icon.setAttribute('fill', 'none');
-                btn.classList.remove('active');
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: data.status === 'added' ? 'success' : 'info',
+                title: data.status === 'added' ? 'به علاقه‌مندی‌ها اضافه شد' : 'از علاقه‌مندی‌ها حذف شد',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        })
+        .catch(e => {
+            if (e.message !== 'Not authenticated') {
+                Swal.fire({
+                    icon: 'error', title: 'خطایی رخ داده است.', text: 'لطفا دوباره تلاش کنید.',
+                });
             }
         });
-
-        Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: data.status === 'added' ? 'success' : 'info',
-            title: data.status === 'added' ? 'به علاقه‌مندی‌ها اضافه شد' : 'از علاقه‌مندی‌ها حذف شد',
-            showConfirmButton: false,
-            timer: 1500
-        });
-    })
-    .catch(e => {
-        if (e.message !== 'Not authenticated') {
-            Swal.fire({
-                icon: 'error',
-                title: 'خطایی رخ داده است.',
-                text: 'لطفا دوباره تلاش کنید.',
-            });
-        }
-    });
 }
 
+document.addEventListener('DOMContentLoaded', function () {
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function reloadFavoriteList() {
+        fetch('/favorites/partial/')
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('favorite-list').innerHTML = html;
+                bindRemoveButtons(); // دوباره دکمه‌ها رو فعال می‌کنیم
+            });
+    }
+
+    function bindRemoveButtons() {
+        document.querySelectorAll('.remove-favorite-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                const serviceId = this.dataset.serviceId;
+
+                Swal.fire({
+                    title: 'مطمئنی؟',
+                    text: 'این سرویس از علاقه‌مندی‌ها حذف بشه؟',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'بله',
+                    cancelButtonText: 'نه',
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                }).then((result) => {
+                    if (!result.isConfirmed) return;
+
+                    const formData = new FormData();
+                    formData.append('service_id', serviceId);
+
+                    fetch('/favorites/delete/', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken'),
+                        }, body: formData,
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.status === 'ok') {
+                                reloadFavoriteList();
+                                Swal.fire({
+                                    toast: true,
+                                    position: 'top-end',
+                                    icon: 'info',
+                                    title: 'از علاقه‌مندی‌ها حذف شد',
+                                    showConfirmButton: false,
+                                    timer: 1500,
+                                });
+                            } else {
+                                console.error('خطا در حذف:', data.message);
+                            }
+                        });
+                });
+            });
+        });
+    }
+
+    const removeAllBtn = document.getElementById('remove-all-favorites-btn');
+    if (removeAllBtn) {
+        removeAllBtn.addEventListener('click', function () {
+            Swal.fire({
+                title: 'مطمئنی؟',
+                text: 'همه موارد حذف بشن؟',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'بله',
+                cancelButtonText: 'نه',
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+            }).then((result) => {
+                if (!result.isConfirmed) return;
+
+                fetch('/favorites/delete/all/', {
+                    method: 'POST', headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                    },
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === 'ok') {
+                            reloadFavoriteList();
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'info',
+                                title: 'همه علاقه‌مندی‌ها حذف شدن',
+                                showConfirmButton: false,
+                                timer: 1500,
+                            });
+                        }
+                    });
+            });
+        });
+    }
+
+    // بار اول دکمه‌ها رو bind کن
+    bindRemoveButtons();
+});
