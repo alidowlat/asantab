@@ -3,7 +3,7 @@ from django.views.generic import TemplateView
 from django.shortcuts import render
 
 from config.models import SiteSetting, FooterBox, SocialLink, MainCategory, CategoryItem
-from services.models import Service, Platform
+from services.models import Service, Platform, Favorite
 
 
 class HomeView(TemplateView):
@@ -27,10 +27,12 @@ def site_header_component(request):
     platforms = Platform.objects.all().prefetch_related(
         Prefetch('main_categories', queryset=MainCategory.objects.prefetch_related('category_items').order_by('order'))
     )
+    favorite_list = Favorite.objects.filter(user=request.user).select_related('service').order_by('-created_at')
 
     context = {
         'site_settings': site_settings,
         'platforms': platforms,
+        'favorite_list': favorite_list,
     }
     return render(request, 'shared/header_comp.html', context)
 
@@ -38,7 +40,7 @@ def site_header_component(request):
 
 def site_footer_component(request):
     site_settings = SiteSetting.objects.get(is_main=True)
-    footer_boxes = FooterBox.objects.prefetch_related('footerlink_set').all()
+    footer_boxes = FooterBox.objects.prefetch_related('footer_links').all()
     social_links = SocialLink.objects.prefetch_related('site_setting').all()
 
     context = {
