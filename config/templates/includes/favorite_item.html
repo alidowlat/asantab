@@ -1,0 +1,27 @@
+{% load extra_filters %}
+<li id="favorite-item-{{ favorite.id }}" class="favorite-item">
+    <div class="flex gap-x-2 py-5">
+        <div class="relative min-w-fit">
+            <a href="{{ favorite.service.get_absolute_url }}">
+                <img src="{{ favorite.service.image.url }}" alt="Service Picture"
+                     loading="lazy"
+                     class="h-25 w-25 rounded-3xl">
+            </a>
+            <button data-service-id="{{ favorite.service.id }}"
+                    class="remove-favorite-btn absolute -top-2 right-0 rounded-lg border bg-muted duration-200 hover:bg-background">
+                <div class="i-lucide-trash m-2 h-4 w-4 text-warning"></div>
+            </button>
+        </div>
+        <div class="w-full space-y-4">
+            <a href="{{ favorite.service.get_absolute_url }}"
+               class="line-clamp-2 text-text">{{ favorite.service.title }}</a>
+            <div class="flex items-center justify-between gap-x-2">
+                <div class="flex items-center gap-x-2 text-primary">
+                    <span class="text-sm">از</span>
+                    <span class="text-lg font-bold">{{ favorite.service.get_min_price|three_digits }}</span>
+                    <span class="text-sm">تومان</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</li>

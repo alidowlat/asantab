@@ -1,0 +1,7 @@
+{% if favorite_list %}
+    {% for favorite in favorite_list %}
+        {% include 'includes/favorite_item.html' with favorite=favorite %}
+    {% endfor %}
+{% else %}
+    <div class="text-center text-gray-500 text-sm py-4">موردی یافت نشد.</div>
+{% endif %}
