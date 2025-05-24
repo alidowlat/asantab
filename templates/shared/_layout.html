@@ -28,15 +28,15 @@
     <div data-onscrollclass="translate-y-full" class="fixed inset-x-0 bottom-0 z-20 bg-muted duration-300 lg:hidden">
         <div class="container flex items-center text-sm">
             <div class="w-1/4 border-b-2 border-primary py-1 font-medium text-primary">
-                <a href="./index.html" class="flex flex-col items-center justify-center">
+                <a href="{% url 'index_page' %}" class="flex flex-col items-center justify-center">
                     <i class="i-solar-home-smile-linear size-6 items-center justify-center"></i>
                     <p class="pt-2 text-xs xs:text-sm">خانه</p>
                 </a>
             </div>
             <div class="w-1/4 py-1">
-                <a href="./category.html" class="flex flex-col items-center justify-center">
-                    <i class="i-iconamoon-category-light size-6"></i>
-                    <p class="pt-2 text-xs xs:text-sm">دسته ها</p>
+                <a href="{% url 'services_list_page' %}" class="flex flex-col items-center justify-center">
+                    <i class="i-mingcute-shopping-bag-3-line size-6"></i>
+                    <p class="pt-2 text-xs xs:text-sm">فروشگاه</p>
                 </a>
             </div>
             <div class="w-1/4 py-1">
