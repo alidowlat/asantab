@@ -26,3 +26,37 @@ def delete_favorite(request):
 def delete_all_favorites(request):
     Favorite.objects.filter(user=request.user).delete()
     return JsonResponse({'status': 'ok'})
+
+
+def apply_filters(request, queryset):
+    filters = {
+        'platform__slug__in': request.GET.get('platform', '').split(','),
+        'category__slug__in': request.GET.get('category', '').split(','),
+        'profession__slug__in': request.GET.get('profession', '').split(','),
+        'locations__name_en__in': request.GET.get('location', '').split(','),
+        'tags__slug__in': request.GET.get('tag', '').split(','),
+    }
+
+    for key, value in filters.items():
+        if value and value != ['']:
+            queryset = queryset.filter(**{key: value})
+
+    if request.GET.get('available') == '1':
+        queryset = queryset.filter(is_active=True)
+
+    if request.GET.get('featured') == '1':
+        queryset = queryset.filter(is_unique=True)
+
+    search = request.GET.get('s')
+    if search:
+        queryset = queryset.filter(title__icontains=search)
+
+    min_price = request.GET.get('min_price')
+    if min_price:
+        queryset = queryset.filter(min_price__gte=min_price)
+
+    max_price = request.GET.get('max_price')
+    if max_price:
+        queryset = queryset.filter(max_price__lte=max_price)
+
+    return queryset
