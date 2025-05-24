@@ -33,59 +33,32 @@
         </li>
         {#price-range#}
         <li>
-            <!-- todo: fix the price range -->
-            <div class="relative rounded-lg bg-muted" data-accordion-item="">
-                <button type="button" class="w-full px-4 py-5 text-right md:px-6 md:py-5"
-                        data-accordion-button="">
+            <div class="relative rounded-lg bg-muted" data-accordion-item>
+                <button type="button" class="w-full px-4 py-5 text-right md:px-6 md:py-5" data-accordion-button>
                     <div class="flex items-center justify-between gap-2 text-sm md:text-base">
                         <span> محدوده قیمت </span>
                         <div class="min-w-fit">
-                            <span class="i-lucide-chevron-left duration-300"
-                                  data-accordion-chevron=""></span>
+                       <span
+                               class="i-lucide-chevron-left duration-300"
+                               data-accordion-chevron></span>
                         </div>
                     </div>
                 </button>
-                <div class="relative max-h-0 overflow-hidden transition-all duration-300"
-                     data-accordion-content="">
+                <div dir="ltr" class="relative max-h-0 overflow-hidden transition-all duration-300" data-accordion-content>
                     <div class="space-y-4 p-4">
-                        <div data-id="shop-price-slider"
-                             class="range-slider-target range-slider-rtl range-slider-horizontal range-slider-txt-dir-rtl">
-                            <div class="range-slider-base">
-                                <div class="range-slider-connects">
-                                    <div class="range-slider-connect"
-                                         style="transform: translate(0%, 0px) scale(1, 1);"></div>
-                                </div>
-                                <div class="range-slider-origin"
-                                     style="transform: translate(100%, 0px); z-index: 5;">
-                                    <div class="range-slider-handle range-slider-handle-lower"
-                                         data-handle="0" tabindex="0" role="slider"
-                                         aria-orientation="horizontal" aria-valuemin="0.0"
-                                         aria-valuemax="99999999.0" aria-valuenow="0.0"
-                                         aria-valuetext="0">
-                                        <div class="range-slider-touch-area"></div>
-                                    </div>
-                                </div>
-                                <div class="range-slider-origin"
-                                     style="transform: translate(0%, 0px); z-index: 4;">
-                                    <div class="range-slider-handle range-slider-handle-upper"
-                                         data-handle="1" tabindex="0" role="slider"
-                                         aria-orientation="horizontal" aria-valuemin="1.0"
-                                         aria-valuemax="100000000.0" aria-valuenow="100000000.0"
-                                         aria-valuetext="100,000,000">
-                                        <div class="range-slider-touch-area"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between">
+                        <div data-id="shop-price-slider"></div>
+                        <div class="flex items-center justify-between" id="price-slider-data"
+                             data-global-min="{{ global_min_price }}"
+                             data-global-max="{{ global_max_price }}">
+
                             <div class="text-primary">
-                                <span class="text-xs font-bold xl:text-sm"
-                                      data-id="shop-price-slider-min">0</span>
+        <span class="text-xs font-bold xl:text-sm"
+              data-id="shop-price-slider-max">{{ global_max_price }}</span>
                                 <span class="text-sm">تومان</span>
                             </div>
                             <div class="text-primary">
-                                <span class="text-xs font-bold xl:text-sm"
-                                      data-id="shop-price-slider-max">100,000,000</span>
+        <span class="text-xs font-bold xl:text-sm"
+              data-id="shop-price-slider-min">{{ global_min_price }}</span>
                                 <span class="text-sm">تومان</span>
                             </div>
                         </div>

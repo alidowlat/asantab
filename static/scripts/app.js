@@ -136,43 +136,61 @@ accordionItems.forEach((item) => {
 
 
 // Shop noUiSlider Initialization
-const shopPriceSliders = document.querySelectorAll("[data-id='shop-price-slider']");
-const shopPriceSliderMin = document.querySelectorAll("[data-id='shop-price-slider-min']");
-const shopPriceSliderMax = document.querySelectorAll("[data-id='shop-price-slider-max']");
+document.addEventListener("DOMContentLoaded", function () {
+    const sliderElem = document.querySelector('[data-id="shop-price-slider"]');
+    const minPriceElem = document.querySelector('[data-id="shop-price-slider-min"]');
+    const maxPriceElem = document.querySelector('[data-id="shop-price-slider-max"]');
+    const sliderData = document.querySelectorAll("#price-slider-data");
 
-shopPriceSliders.forEach((item) => {
-    noUiSlider.create(item, {
+    if (!sliderElem || !minPriceElem || !maxPriceElem || !sliderData) return;
+
+    if (sliderData.length === 0) return;
+
+    const globalMin = parseInt(sliderData[0].dataset.globalMin);
+    const globalMax = parseInt(sliderData[0].dataset.globalMax);
+
+    noUiSlider.create(sliderElem, {
         cssPrefix: "range-slider-",
-        start: [0, 100_000_000],
-        direction: "rtl",
-        margin: 1,
+        start: [globalMin, globalMax],
         connect: true,
         range: {
-            min: 0,
-            max: 100_000_000
+            min: globalMin,
+            max: globalMax
         },
+        step: 10000,
+        direction: 'rtl',
         format: {
-            to: value => value.toLocaleString("en-US", {
-                style: "decimal",
-                maximumFractionDigits: 0
-            }),
-            from: value => parseFloat(value.replace(/,/g, ""))
+            to: value => Math.round(value).toLocaleString("en-US"),
+            from: value => Number(value.replace(/,/g, ''))
         }
     });
 
-    item.noUiSlider.on("update", (values, handle) => {
-        if (handle) {
-            shopPriceSliderMax.forEach((priceItem) => {
-                priceItem.innerHTML = values[handle];
-            });
-        } else {
-            shopPriceSliderMin.forEach((priceItem) => {
-                priceItem.innerHTML = values[handle];
-            });
-        }
+    sliderElem.noUiSlider.on('update', function (values) {
+        minPriceElem.textContent = values[0];
+        maxPriceElem.textContent = values[1];
     });
 });
 
+
+//
+// noUiSlider.create(item, {
+//     cssPrefix: "range-slider-",
+//     start: [0, 10_000_000],
+//     direction: "rtl",
+//     margin: 1,
+//     connect: true,
+//     range: {
+//         min: 0,
+//         max: 10_000_000
+//     },
+//     format: {
+//         to: value => value.toLocaleString("en-US", {
+//             style: "decimal",
+//             maximumFractionDigits: 0
+//         }),
+//         from: value => parseFloat(value.replace(/,/g, ""))
+//     }
+// });
 
 // Search Filter
 const searchInputWrappers = document.querySelectorAll("[data-search-item-input-wrapper]");

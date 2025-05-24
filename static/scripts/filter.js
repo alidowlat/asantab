@@ -20,6 +20,13 @@ $(document).ready(function () {
             featured: $('input[name="featured-filter"]:checked').val() || '',
             search: $('input[name="search-filter"]').val() || $('input[name="search-filter-mobile"]').val() || ''
         };
+
+        const slider = document.querySelector('[data-id="shop-price-slider"]');
+        if (slider && slider.noUiSlider) {
+            const priceValues = slider.noUiSlider.get();
+            pendingFilters.min_price = priceValues[0].replace(/,/g, '');
+            pendingFilters.max_price = priceValues[1].replace(/,/g, '');
+        }
     }
 
     function showServiceLoader() {
@@ -71,6 +78,8 @@ $(document).ready(function () {
         if (pendingFilters.available) filters.available = pendingFilters.available;
         if (pendingFilters.featured) filters.featured = pendingFilters.featured;
         if (pendingFilters.search) filters.s = pendingFilters.search;
+        if (pendingFilters.min_price) filters.min_price = pendingFilters.min_price;
+        if (pendingFilters.max_price) filters.max_price = pendingFilters.max_price;
 
         if (sortBy && !removeSort) {
             filters.sort_by = sortBy;
@@ -153,6 +162,7 @@ $(document).ready(function () {
         filterServices(page);
     });
 
+    // مقداردهی اولیه
     let params = new URLSearchParams(window.location.search);
     let filters = {
         sort_by: params.get('sort_by') || 'newest',
@@ -182,9 +192,10 @@ $(document).ready(function () {
     filters.tags.forEach(val => syncCheck('tags-filter', val));
     filters.professions.forEach(val => syncCheck('professions-filter', val));
     filters.locations.forEach(val => syncCheck('locations-filter', val));
-    filters.search.forEach(val => syncCheck('search-filter', val));
+
     if (filters.available) syncCheck('available-filter', filters.available);
     if (filters.featured) syncCheck('featured-filter', filters.featured);
+    if (filters.search) $('input[name="search-filter"], input[name="search-filter-mobile"]').val(filters.search);
 
     $('#apply-sort-btn-mobile').click(function () {
         const selected = $('.sort-radio-mobile:checked');
@@ -199,11 +210,13 @@ $(document).ready(function () {
 
     $('#clear-filters-btn, #clear-filters-btn-mob').click(function () {
         $('input[name$="-filter"]').prop('checked', false);
+        $('input[name="search-filter"]').val('');
+        $('input[name="search-filter-mobile"]').val('');
         updatePendingFilters();
         $('#filter-drawer').addClass('translate-y-full').attr('aria-hidden', 'true');
         filterServices(1);
     });
 
     updatePendingFilters();
-    filterServices(filters.page);
+    filterServices(filters.page, filters.sort_by);
 });
