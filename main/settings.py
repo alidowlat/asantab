@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django_render_partial',
     'widget_tweaks',
     'jalali_date',
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -49,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'main.urls'
@@ -116,3 +118,5 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 Kavenegar_API = "3755324A6D424E2B7269706C316C5939466E76777552757A56616F766E475876685254524B4464594E56673D"
+
+INTERNAL_IPS = ['127.0.0.1', '0.0.0.0', 'localhost']
