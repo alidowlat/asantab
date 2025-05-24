@@ -1,8 +1,7 @@
 from django.db.models import Prefetch
 from django.views.generic import TemplateView
 from django.shortcuts import render
-
-from config.models import SiteSetting, FooterBox, SocialLink, MainCategory, CategoryItem
+from config.models import SiteSetting, FooterBox, SocialLink, MainCategory
 from services.models import Service, Platform, Favorite
 
 
@@ -38,7 +37,6 @@ def site_header_component(request):
         'favorite_list': favorite_list,
     }
     return render(request, 'shared/header_comp.html', context)
-
 
 
 def site_footer_component(request):
