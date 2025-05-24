@@ -27,7 +27,10 @@ def site_header_component(request):
     platforms = Platform.objects.all().prefetch_related(
         Prefetch('main_categories', queryset=MainCategory.objects.prefetch_related('category_items').order_by('order'))
     )
-    favorite_list = Favorite.objects.filter(user=request.user).select_related('service').order_by('-created_at')
+    if request.user.is_authenticated:
+        favorite_list = Favorite.objects.filter(user=request.user).select_related('service').order_by('-created_at')
+    else:
+        favorite_list = []
 
     context = {
         'site_settings': site_settings,
