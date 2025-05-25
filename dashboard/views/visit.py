@@ -1,12 +1,10 @@
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
-from django.utils.decorators import method_decorator
 from django.views.generic import ListView
 from services.models import Visit
 
 
-@method_decorator(login_required, name='dispatch')
-class VisitListView(ListView):
+class VisitListView(LoginRequiredMixin, ListView):
     template_name = 'dashboard/visit/main.html'
     context_object_name = 'visit_list'
     model = Visit
@@ -21,7 +19,6 @@ class VisitListView(ListView):
         return context
 
 
-@login_required
-def dashboard_visit_list_partial(request):
+def dashboard_visit_list_partial(LoginRequiredMixin, request):
     visit_list = Visit.objects.filter(user=request.user).select_related('service').order_by('-created_at')
     return render(request, 'dashboard/visit/list.html', {'visit_list': visit_list})

@@ -1,10 +1,8 @@
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 
 
-@method_decorator(login_required, name='dispatch')
-class DashboardView(TemplateView):
+class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'dashboard/index.html'
 
     def get_context_data(self, **kwargs):
