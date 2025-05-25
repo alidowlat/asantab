@@ -85,7 +85,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div onclick="desktopSearchUnFocus()" id="desktopSearchResultOverlay" class="relative z-10 hidden">
                     <div class="fixed inset-0 bg-black/40"></div>
                 </div>
@@ -98,7 +97,6 @@
                         <button type="button" data-dropdown-toggle="desktopAccountDropdown" class="icon-btn h-10 w-10">
                             <div class="i-lucide-user-round h-6 w-6"></div>
                         </button>
-
                         <!-- Dropdown menu -->
                         <div id="desktopAccountDropdown" class="z-10 hidden w-60 rounded-lg border bg-muted shadow"
                              data-popper-placement="bottom"
@@ -106,12 +104,12 @@
                             <ul class="flex flex-col justify-between divide-y">
                                 <!-- user -->
                                 <li class="group">
-                                    <a href="./profile-dashboard.html"
+                                    <a href="{% url 'dashboard_page' %}"
                                        class="flex items-center justify-between px-5 py-4 transition-all group-hover:text-primary">
                                         <div class="flex items-center gap-x-3">
                                             <img class="h-8 w-8" src="/static/images/user.png" alt="Profile">
                                             <p class="w-32 overflow-hidden font-semibold">
-                                                0900000000
+                                                {{ request.user }}
                                             </p>
                                         </div>
                                         <div class="i-lucide-chevron-left min-w-fit text-text/60 group-hover:text-primary"></div>
@@ -129,19 +127,21 @@
                                     </a>
                                 </li>
                                 <!-- favorite -->
-                                <li class="group">
-                                    <a href="./profile-favorite.html"
-                                       class="flex items-center justify-between px-5 py-4 transition-all group-hover:text-primary">
-                                        <div class="flex items-center gap-x-3">
-                                            <svg class="i-ic-baseline-favorite-border h-6 w-6 text-text/70 group-hover:text-primary"></svg>
-                                            <p>علاقه‌مندی ها</p>
-                                        </div>
-                                        <svg class="i-lucide-chevron-left text-text/60 group-hover:text-primary"></svg>
-                                    </a>
-                                </li>
+                                {% if request.user.is_authenticated %}
+                                    <li class="group">
+                                        <a href="{% url 'favorite_list_page' %}"
+                                           class="flex items-center justify-between px-5 py-4 transition-all group-hover:text-primary">
+                                            <div class="flex items-center gap-x-3">
+                                                <svg class="i-ic-baseline-favorite-border h-6 w-6 text-text/70 group-hover:text-primary"></svg>
+                                                <p>علاقه‌مندی ها</p>
+                                            </div>
+                                            <svg class="i-lucide-chevron-left text-text/60 group-hover:text-primary"></svg>
+                                        </a>
+                                    </li>
+                                {% endif %}
                                 <!-- recent searches -->
                                 <li class="group">
-                                    <a href="./profile-recent.html"
+                                    <a href="{% url 'visit_list_page' %}"
                                        class="flex items-center justify-between px-5 py-4 transition-all group-hover:text-primary">
                                         <div class="flex items-center gap-x-3">
                                             <svg class="i-lucide-mouse-pointer-click h-6 w-6 text-text/70 group-hover:text-primary"></svg>
@@ -152,7 +152,7 @@
                                 </li>
                                 <!-- exit -->
                                 <li>
-                                    <a href="#"
+                                    <a href="{% url 'logout' %}"
                                        class="my-1 flex items-center justify-between px-5 py-3 text-warning duration-150 hover:bg-warning/10">
                                         <div class="flex items-center gap-x-3">
                                             <svg class="i-mingcute-exit-line h-6 w-6"></svg>
@@ -172,17 +172,17 @@
                         </a>
                     </div>
                 {% endif %}
+
                 <!-- Account Logged out -->
-                {% if request.path == '/' and request.user.is_authenticated %}
+                {% if request.user.is_authenticated %}
                     <!-- Favorite -->
                     <div>
                         <button data-dropdown-toggle="desktopFavoriteDropdown" class="icon-btn relative h-10 w-10 border-primary">
                             <div class="i-lucide-heart h-6 w-6"></div>
-                            <div class="absolute -right-1.5 -top-2.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
+                            <div class="favorite-count absolute -right-1.5 -top-2.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
                                 {{ favorite_list.count }}
                             </div>
                         </button>
-
                         <!-- Dropdown Shopping -->
                         <div id="desktopFavoriteDropdown" class="left-10 z-10 !ml-5 hidden w-[420px] rounded-lg border bg-muted shadow"
                              data-popper-placement="bottom"
@@ -190,11 +190,9 @@
                             <div>
                                 <div class="flex items-center justify-between px-4 pb-2 pt-3">
                                     <div>لیست علاقه‌مندی</div>
-                                    {% if favorite_list %}
-                                        <button id="remove-all-favorites-btn" class="btn-warning px-4 py-2 text-sm">
-                                            حذف همه
-                                        </button>
-                                    {% endif %}
+                                    <button class="remove-all-favorites-btn btn-warning px-4 py-2 text-sm">
+                                        حذف همه
+                                    </button>
                                 </div>
                                 <div class="{% if favorite_list %}h-60{% else %}h-25{% endif %}">
                                     <ul id="favorite-list" class="h-full space-y-2 divide-y overflow-y-auto p-5 pb-0 pl-2">
@@ -204,92 +202,91 @@
                             </div>
                         </div>
                     </div>
-                {% endif %}
-                <!-- Cart -->
-                <div>
-                    <button data-dropdown-toggle="desktopShoppingDropdown" class="icon-btn relative h-10 w-10 border-primary">
-                        <span class="i-lucide-shopping-cart h-6 w-6"></span>
-                        <span class="absolute -right-1.5 -top-2.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
+                    <!-- Cart -->
+                    <div>
+                        <button data-dropdown-toggle="desktopShoppingDropdown" class="icon-btn relative h-10 w-10 border-primary">
+                            <span class="i-lucide-shopping-cart h-6 w-6"></span>
+                            <span class="absolute -right-1.5 -top-2.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
                     4
                   </span>
-                    </button>
-
-                    <!-- Dropdown Shopping -->
-                    <div id="desktopShoppingDropdown" class="left-10 z-10 !ml-5 hidden w-[420px] rounded-lg border bg-muted shadow"
-                         data-popper-placement="bottom"
-                         style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(200px, 116px);">
-                        <div class="flex flex-col justify-between text-sm">
-                            <!-- header -->
-                            <div class="flex justify-between px-5 py-4">
-                                <div>2 مورد</div>
-                                <a href="./checkout-cart.html"
-                                   class="flex items-center text-primary duration-200 hover:text-primary/80">
-                                    <p>مشاهده سبد خرید</p>
-                                    <div class="i-lucide-chevron-left"></div>
-                                </a>
-                            </div>
-                            <!-- Products -->
-                            <ul class="max-h-60 divide-y overflow-y-auto p-5">
-                                <!-- product1 -->
-                                <li class="flex gap-x-3 pb-5 pt-8">
-                                    <!-- Image -->
-                                    <div class="relative min-w-fit">
-                                        <button class="absolute -top-2 right-0 rounded-lg border bg-muted duration-200 hover:bg-background">
-                                            <div class="i-lucide-trash m-2 h-4 w-4 text-warning"></div>
-                                        </button>
-                                        <a href="./product-detail.html">
-                                            <img class="h-[120px] w-[120px] rounded-2xl" src="/static/images/p1.png" alt="Blesser">
-                                        </a>
-                                    </div>
-                                    <!-- Information -->
-                                    <div class="flex w-full flex-col">
-                                        <a href="./product-detail.html" class="line-clamp-2 h-10">
-                                            کفش نیوبالانس NewBalanceوبالانس NewBalanceوبالانس
-                                            NewBalanceوبالانس NewBalanceوبالانس NewBalance
-                                        </a>
-                                        <div class="flex items-center gap-x-4 pt-3 text-text/80">
-                                            <p>تعداد : 1</p>
-                                            <div class="h-3 w-0.5 bg-secondary"></div>
-                                            <p>سایز : 44</p>
-                                        </div>
-                                        <div class="flex items-center justify-between gap-x-5 py-3">
-                                            <!-- price -->
-                                            <div class="flex items-center gap-x-2">
-                                                <div class="text-lg font-medium text-primary">
-                                                    1,300,000,000
-                                                </div>
-                                                <p class="text-sm text-primary">تومان</p>
-                                            </div>
-                                            <!-- Quantity -->
-
-                                            <div class="flex h-10 w-24 items-center justify-between rounded-lg border px-2 py-1">
-                                                <button type="button" class="i-lucide-plus size-8 text-success"></button>
-                                                <input value="1" disabled="" type="number"
-                                                       class="flex h-5 w-full grow select-none items-center justify-center bg-transparent text-center text-sm outline-none">
-                                                <button type="button" class="i-lucide-minus size-8 text-warning"></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                            <!-- footer -->
-                            <div class="flex items-center justify-between border-t p-5">
-                                <div class="flex flex-col items-center">
-                                    <p class="text-text/60">مبلغ قابل پرداخت</p>
-                                    <div class="flex items-center gap-x-1 text-primary">
-                                        <p class="text-lg font-bold">10,130,000</p>
-                                        <p class="text-sm">تومان</p>
-                                    </div>
+                        </button>
+                        <!-- Dropdown Shopping -->
+                        <div id="desktopShoppingDropdown" class="left-10 z-10 !ml-5 hidden w-[420px] rounded-lg border bg-muted shadow"
+                             data-popper-placement="bottom"
+                             style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(200px, 116px);">
+                            <div class="flex flex-col justify-between text-sm">
+                                <!-- header -->
+                                <div class="flex justify-between px-5 py-4">
+                                    <div>2 مورد</div>
+                                    <a href="./checkout-cart.html"
+                                       class="flex items-center text-primary duration-200 hover:text-primary/80">
+                                        <p>مشاهده سبد خرید</p>
+                                        <div class="i-lucide-chevron-left"></div>
+                                    </a>
                                 </div>
-                                <a href="checkout-shipping-not-selected.html">
-                                    <button class="w-32 rounded-md bg-primary-btn py-3 text-white duration-200 hover:bg-primary-btn/80">
-                                        ثبت سفارش
-                                    </button>
-                                </a>
+                                <!-- Products -->
+                                <ul class="max-h-60 divide-y overflow-y-auto p-5">
+                                    <!-- product1 -->
+                                    <li class="flex gap-x-3 pb-5 pt-8">
+                                        <!-- Image -->
+                                        <div class="relative min-w-fit">
+                                            <button class="absolute -top-2 right-0 rounded-lg border bg-muted duration-200 hover:bg-background">
+                                                <div class="i-lucide-trash m-2 h-4 w-4 text-warning"></div>
+                                            </button>
+                                            <a href="./product-detail.html">
+                                                <img class="h-[120px] w-[120px] rounded-2xl" src="/static/images/p1.png" alt="Blesser">
+                                            </a>
+                                        </div>
+                                        <!-- Information -->
+                                        <div class="flex w-full flex-col">
+                                            <a href="./product-detail.html" class="line-clamp-2 h-10">
+                                                کفش نیوبالانس NewBalanceوبالانس NewBalanceوبالانس
+                                                NewBalanceوبالانس NewBalanceوبالانس NewBalance
+                                            </a>
+                                            <div class="flex items-center gap-x-4 pt-3 text-text/80">
+                                                <p>تعداد : 1</p>
+                                                <div class="h-3 w-0.5 bg-secondary"></div>
+                                                <p>سایز : 44</p>
+                                            </div>
+                                            <div class="flex items-center justify-between gap-x-5 py-3">
+                                                <!-- price -->
+                                                <div class="flex items-center gap-x-2">
+                                                    <div class="text-lg font-medium text-primary">
+                                                        1,300,000,000
+                                                    </div>
+                                                    <p class="text-sm text-primary">تومان</p>
+                                                </div>
+                                                <!-- Quantity -->
+
+                                                <div class="flex h-10 w-24 items-center justify-between rounded-lg border px-2 py-1">
+                                                    <button type="button" class="i-lucide-plus size-8 text-success"></button>
+                                                    <input value="1" disabled="" type="number"
+                                                           class="flex h-5 w-full grow select-none items-center justify-center bg-transparent text-center text-sm outline-none">
+                                                    <button type="button" class="i-lucide-minus size-8 text-warning"></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <!-- footer -->
+                                <div class="flex items-center justify-between border-t p-5">
+                                    <div class="flex flex-col items-center">
+                                        <p class="text-text/60">مبلغ قابل پرداخت</p>
+                                        <div class="flex items-center gap-x-1 text-primary">
+                                            <p class="text-lg font-bold">10,130,000</p>
+                                            <p class="text-sm">تومان</p>
+                                        </div>
+                                    </div>
+                                    <a href="checkout-shipping-not-selected.html">
+                                        <button class="w-32 rounded-md bg-primary-btn py-3 text-white duration-200 hover:bg-primary-btn/80">
+                                            ثبت سفارش
+                                        </button>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                {% endif %}
                 <!-- Theme -->
                 <div>
                     <button onclick="toggleDark(event)" class="icon-btn h-10 w-10">
@@ -310,7 +307,6 @@
                         <div class="i-lucide-align-justify h-4 w-4"></div>
                         <div>دسته بندی‌ها</div>
                     </div>
-
                     <div id="desktop-mega-menu"
                          class="absolute right-0 top-full h-[400px] w-[900px] overflow-hidden rounded-b-lg bg-muted hidden">
                         <!-- menu -->
@@ -326,7 +322,6 @@
                                         {% endfor %}
                                     </ul>
                                 </div>
-
                                 <!-- Left Menu (Main Categories and Items) -->
                                 <div dir="ltr" class="max-h-[400px] min-h-[400px] overflow-y-auto p-6">
                                     <div dir="rtl" id="desktopMegamenuSubCategory">
@@ -412,8 +407,6 @@
             </nav>
         </div>
     </div>
-
-
     <!-- Mobile-->
     <div class="block lg:hidden">
         <!-- Top -->
@@ -425,17 +418,17 @@
                 </a>
                 <div class="flex gap-2">
                     <!-- Favorite -->
-                    {% if request.path == '/' %}
-                        <button type="button" data-drawer-target="favorite-drawer" data-drawer-show="favorite-drawer"
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'favorite_list_page' %}" data-drawer-show="favorite-drawer"
                                 data-drawer-placement="bottom" aria-controls="favorite-drawer"
                                 class="icon-btn relative h-10 w-10 border-primary">
                             <div class="i-lucide-heart h-6 w-6"></div>
-                            <div class="absolute -right-1.5 -top-1.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
-                                3
+                            <div class="favorite-count absolute -right-1.5 -top-1.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
+                                {{ favorite_list.count }}
                             </div>
-                        </button>
-                        <!-- Theme -->
+                        </a>
                     {% endif %}
+                    <!-- Theme -->
                     <button onclick="toggleDark(event)" class="icon-btn h-10 w-10">
                         <span class="i-carbon-moon !h-6 !w-6 dark:i-carbon-sun"></span>
                     </button>
@@ -473,8 +466,6 @@
                     <div class="swiper search-result-slider swiper-initialized swiper-horizontal swiper-free-mode swiper-rtl swiper-backface-hidden">
                         <div class="swiper-wrapper" id="swiper-wrapper-a27bd3bd03ba87d1" aria-live="polite"
                              style="transition-duration: 0ms; transition-delay: 0ms; transform: translate3d(0px, 0px, 0px);">
-
-
                             <div class="swiper-slide" role="group" aria-label="4 / 4" style="width: 304px; margin-left: 10px;">
                                 <a href="./product-detail.html"
                                    class="flex items-center gap-x-2 rounded-xl border p-2 hover:border-border/50">
@@ -502,7 +493,6 @@
                             </a>
                         </li>
                     </ul>
-
                     <!-- User Recent Search -->
                     <div>
                         <div class="flex items-center justify-between">
@@ -512,17 +502,12 @@
                                 <i class="i-lucide-trash size-5"></i>
                             </button>
                         </div>
-
                         <div class="flex flex-wrap gap-4 pt-3">
                             <a href="#" class="rounded-2xl border px-2 py-1 text-sm text-text/80 duration-200 hover:bg-background">
                                 کفش نایک
                             </a>
-
-
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </div>
