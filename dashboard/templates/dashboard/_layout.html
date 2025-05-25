@@ -1,0 +1,87 @@
+{% load render_partial %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock %}</title>
+    {% render_partial 'home.views.site_header_component' %}
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "آسان تب",
+            "url": "https://asantab.com",
+        {#            "description": "دیجی اوند، مرجع تخصصی کیف و کوله های لپ تاپ، ارائه‌دهنده طیف وسیعی از برندهای معتبر با قیمت‌های رقابتی و مناسب برای تجربه خریدی مطمئن و آسان."#}
+        }
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="keywords" content="فروشگاه آنلاین, خدمات تبلیغات, تبلیغ آسان">
+    <meta name="author" content="آسان تب">
+    {% include 'shared/header_ref.html' %}
+    {% block extra_header %}{% endblock %}
+</head>
+<body dir="rtl">
+<div class="flex.min-h-screen.flex-col">
+    <div id="desktop-mega-menu-overlay" class="fixed inset-0 z-20 bg-black/40 backdrop-blur-md hidden"></div>
+        <main class="flex-grow bg-background pt-[106px]">
+            <div class="container grid grid-cols-12 gap-4 pb-28 pt-10 lg:pb-10">
+                <!-- Sidebar -->
+                <div class="col-span-12 lg:col-span-3">
+                    <!-- Profile, Edit, Menu -->
+                    <div class="mb-4 rounded-lg bg-muted p-4 shadow">
+                        <!-- Desktop -->
+                        {% include 'dashboard/sidebar/_desktop.html' %}
+                        <!-- Mobile -->
+                        {% include 'dashboard/sidebar/_mobile.html' %}
+                    </div>
+
+                    <!-- Desktop Menu -->
+                    {% include 'dashboard/sidebar/_menu.html' %}
+                </div>
+                <!-- Content -->
+                <div class="col-span-12 lg:col-span-9">
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+        </main>
+    <div data-onscrollclass="translate-y-full" class="fixed inset-x-0 bottom-0 z-20 bg-muted duration-300 lg:hidden">
+        <div class="container flex items-center text-sm">
+            <div class="w-1/4 border-b-2 border-primary py-1 font-medium text-primary">
+                <a href="{% url 'index_page' %}" class="flex flex-col items-center justify-center">
+                    <i class="i-solar-home-smile-linear size-6 items-center justify-center"></i>
+                    <p class="pt-2 text-xs xs:text-sm">خانه</p>
+                </a>
+            </div>
+            <div class="w-1/4 py-1">
+                <a href="{% url 'services_list_page' %}" class="flex flex-col items-center justify-center">
+                    <i class="i-mingcute-shopping-bag-3-line size-6"></i>
+                    <p class="pt-2 text-xs xs:text-sm">فروشگاه</p>
+                </a>
+            </div>
+            <div class="w-1/4 py-1">
+                <a href="./checkout-cart.html" class="flex flex-col items-center justify-center">
+                    <i class="i-lucide-shopping-cart size-6"></i>
+                    <p class="pt-2 text-xs xs:text-sm">سبد خرید</p>
+                </a>
+            </div>
+            <div class="w-1/4 py-1">
+
+                {% if request.user.is_authenticated %}
+                    <a href="./profile-dashboard.html" class="flex flex-col items-center justify-center">
+                        <i class="i-lucide-user-round size-6"></i>
+                        <p class="pt-2 text-xs xs:text-sm">حساب من</p>
+                    </a>
+                {% else %}
+                    <a href="{% url 'auth_page' %}" class="flex flex-col items-center justify-center">
+                        <i class="i-lucide-user-round size-6"></i>
+                        <p class="pt-2 text-xs xs:text-sm">ورود</p>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'shared/footer_ref.html' %}
+</body>
+</html>
