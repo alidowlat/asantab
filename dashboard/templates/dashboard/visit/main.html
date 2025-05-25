@@ -1,0 +1,24 @@
+{% extends 'dashboard/_layout.html' %}
+{% load extra_filters %}
+
+
+{% block title %}
+    آخرین بازدید ها | آسان تب
+{% endblock %}
+
+{% block content %}
+    <div class="rounded-lg bg-muted shadow">
+        <div class="py-5">
+            <div class="mb-16 flex justify-between px-5">
+                <h1 class="relative w-fit font-medium lg:text-lg">
+                    بازدید های شما
+                    <span class="absolute right-0 top-10 h-[3px] w-full animate-fill-border rounded-full bg-primary"></span>
+                </h1>
+                <button class="remove-all-visits-btn btn-warning px-4 py-1.5">حذف همه</button>
+            </div>
+            <div id="visit-list-dashboard" class="grid gap-2 xs:grid-cols-2 md:grid-cols-3">
+                {% include 'dashboard/visit/list.html' %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

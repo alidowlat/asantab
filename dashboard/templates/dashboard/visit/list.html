@@ -1,0 +1,7 @@
+{% if visit_list %}
+    {% for visit in visit_list %}
+        {% include 'dashboard/visit/item.html' with visit=visit %}
+    {% endfor %}
+{% else %}
+    <div class="text-center text-gray-400 text-lg pb-10">موردی یافت نشد.</div>
+{% endif %}
