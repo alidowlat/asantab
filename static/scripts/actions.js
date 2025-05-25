@@ -196,27 +196,54 @@ function toggleFavorite(serviceId) {
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
+    function toggleRemoveAllButton() {
+        const hasFavorites = document.querySelectorAll('.remove-favorite-btn').length > 0;
+        document.querySelectorAll('.remove-all-favorites-btn').forEach(btn => {
+            btn.disabled = !hasFavorites;
+        });
     }
+
+    function updateFavoriteCount() {
+        fetch('/favorites/count/')
+            .then(res => res.json())
+            .then(data => {
+                document.querySelectorAll('.favorite-count').forEach(el => {
+                    el.textContent = data.count;
+                });
+            });
+    }
+
 
     function reloadFavoriteList() {
         fetch('/favorites/partial/')
             .then(res => res.text())
             .then(html => {
                 document.getElementById('favorite-list').innerHTML = html;
-                bindRemoveButtons(); // دوباره دکمه‌ها رو فعال می‌کنیم
+                bindRemoveButtons();
+                toggleRemoveAllButton();
+                updateFavoriteCount();
+            });
+    }
+
+    const container = document.getElementById('favorite-list-dashboard');
+
+    function checkFavoriteListEmpty() {
+        if (container.children.length === 0 || container.innerText.trim() === 'موردی یافت نشد.') {
+            container.className = 'flex items-center justify-center';
+        } else {
+            container.className = 'grid gap-2 xs:grid-cols-2 md:grid-cols-3';
+        }
+    }
+
+    function reloadFavoriteListDashboard() {
+        fetch('/profile/favorites/partial/')
+            .then(res => res.text())
+            .then(html => {
+                container.innerHTML = html;
+                bindRemoveButtons();
+                toggleRemoveAllButton();
+                checkFavoriteListEmpty();
+                updateFavoriteCount();
             });
     }
 
@@ -244,12 +271,14 @@ document.addEventListener('DOMContentLoaded', function () {
                         method: 'POST',
                         headers: {
                             'X-CSRFToken': getCookie('csrftoken'),
-                        }, body: formData,
+                        },
+                        body: formData,
                     })
                         .then(res => res.json())
                         .then(data => {
                             if (data.status === 'ok') {
                                 reloadFavoriteList();
+                                reloadFavoriteListDashboard();
                                 Swal.fire({
                                     toast: true,
                                     position: 'top-end',
@@ -267,9 +296,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    const removeAllBtn = document.getElementById('remove-all-favorites-btn');
-    if (removeAllBtn) {
-        removeAllBtn.addEventListener('click', function () {
+    document.querySelectorAll('.remove-all-favorites-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
             Swal.fire({
                 title: 'مطمئنی؟',
                 text: 'همه موارد حذف بشن؟',
@@ -283,7 +311,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (!result.isConfirmed) return;
 
                 fetch('/favorites/delete/all/', {
-                    method: 'POST', headers: {
+                    method: 'POST',
+                    headers: {
                         'X-CSRFToken': getCookie('csrftoken'),
                     },
                 })
@@ -291,6 +320,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     .then(data => {
                         if (data.status === 'ok') {
                             reloadFavoriteList();
+                            reloadFavoriteListDashboard();
                             Swal.fire({
                                 toast: true,
                                 position: 'top-end',
@@ -303,8 +333,131 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
             });
         });
+    });
+
+    bindRemoveButtons();
+    toggleRemoveAllButton();
+    checkFavoriteListEmpty();
+    updateFavoriteCount();
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    function toggleRemoveAllButton() {
+        const hasVisits = document.querySelectorAll('.remove-visit-btn').length > 0;
+        document.querySelectorAll('.remove-all-visits-btn').forEach(btn => {
+            btn.disabled = !hasVisits;
+        });
     }
 
-    // بار اول دکمه‌ها رو bind کن
+    const container = document.getElementById('visit-list-dashboard');
+
+    function checkVisitListEmpty() {
+        if (container.children.length === 0 || container.innerText.trim() === 'موردی یافت نشد.') {
+            container.className = 'flex items-center justify-center';
+        } else {
+            container.className = 'grid gap-2 xs:grid-cols-2 md:grid-cols-3';
+        }
+    }
+
+    function reloadVisitListDashboard() {
+        fetch('/profile/visits/partial/')
+            .then(res => res.text())
+            .then(html => {
+                container.innerHTML = html;
+                bindRemoveButtons();
+                toggleRemoveAllButton();
+                checkVisitListEmpty();
+            });
+    }
+
+    function bindRemoveButtons() {
+        document.querySelectorAll('.remove-visit-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                const serviceId = this.dataset.serviceId;
+
+                Swal.fire({
+                    title: 'مطمئنی؟',
+                    text: 'این سرویس از علاقه‌مندی‌ها حذف بشه؟',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'بله',
+                    cancelButtonText: 'نه',
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                }).then((result) => {
+                    if (!result.isConfirmed) return;
+
+                    const formData = new FormData();
+                    formData.append('service_id', serviceId);
+
+                    fetch('/visits/delete/', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken'),
+                        },
+                        body: formData,
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.status === 'ok') {
+                                reloadVisitListDashboard();
+                                Swal.fire({
+                                    toast: true,
+                                    position: 'top-end',
+                                    icon: 'info',
+                                    title: 'از علاقه‌مندی‌ها حذف شد',
+                                    showConfirmButton: false,
+                                    timer: 1500,
+                                });
+                            } else {
+                                console.error('خطا در حذف:', data.message);
+                            }
+                        });
+                });
+            });
+        });
+    }
+
+    document.querySelectorAll('.remove-all-visits-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            Swal.fire({
+                title: 'مطمئنی؟',
+                text: 'همه موارد حذف بشن؟',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'بله',
+                cancelButtonText: 'نه',
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+            }).then((result) => {
+                if (!result.isConfirmed) return;
+
+                fetch('/visits/delete/all/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                    },
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === 'ok') {
+                            reloadVisitListDashboard();
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'info',
+                                title: 'همه علاقه‌مندی‌ها حذف شدن',
+                                showConfirmButton: false,
+                                timer: 1500,
+                            });
+                        }
+                    });
+            });
+        });
+    });
+
     bindRemoveButtons();
+    toggleRemoveAllButton();
+    checkVisitListEmpty();
 });
