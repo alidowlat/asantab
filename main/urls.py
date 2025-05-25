@@ -29,6 +29,9 @@ urlpatterns = [
     path('auth/', include('accounts.urls')),
     path('services/', include('services.urls.list')),
     path('services/', include('services.urls.detail')),
+    path('profile/', include('dashboard.urls.profile')),
+    path('profile/', include('dashboard.urls.favorite')),
+    path('profile/', include('dashboard.urls.visit')),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
