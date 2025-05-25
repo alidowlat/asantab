@@ -1,0 +1,435 @@
+{% extends 'dashboard/_layout.html' %}
+
+{% block title %}
+    اطلاعات حساب کاربری | آسان تب
+{% endblock %}
+
+{% block content %}
+    <div class="rounded-lg bg-muted shadow">
+        <div class="py-5">
+            <div class="mb-16 flex justify-between px-5">
+                <h1 class="relative w-fit font-medium lg:text-lg">
+                    اطلاعات حساب کاربری شما
+                    <span
+                            class="absolute right-0 top-10 h-[3px] w-full animate-fill-border rounded-full bg-primary"
+                    ></span>
+                </h1>
+            </div>
+            <div class="grid grid-cols-2 gap-6 px-5 pb-2">
+                <div class="col-span-2 sm:col-span-1">
+                    <button
+                            class="w-full"
+                            type="button"
+                            data-modal-target="fullname-modal"
+                            data-modal-toggle="fullname-modal"
+                    >
+                        <div
+                                class="relative rounded-lg border p-4 hover:border-border/50"
+                        >
+                            {% if user.first_name and user.last_name %}
+                                <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-success">
+                                    تکمیل شده
+                                </div>
+                            {% else %}
+                                <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-yellow-500">
+                                    تکمیل نشده
+                                </div>
+                            {% endif %}
+                            <div class="flex justify-between">
+                                <div class="flex flex-col items-start gap-y-2">
+                                    <div class="text-text/60">نام و نام خانوادگی</div>
+                                    <div class="mr-2 text-text/80">{{ user.get_full_name|default:'ثبت نشده' }}</div>
+                                </div>
+
+                                <div class="i-lucide-pen size-5 text-primary"></div>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+                <div class="col-span-2 sm:col-span-1">
+                    <button
+                            class="w-full"
+                            type="button"
+                            data-modal-target="nCode-modal"
+                            data-modal-toggle="nCode-modal"
+                    >
+                        <div
+                                class="relative rounded-lg border p-4 hover:border-border/50"
+                        >
+                            {% if user.national_id %}
+                                <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-success">
+                                    تکمیل شده
+                                </div>
+                            {% else %}
+                                <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-yellow-500">
+                                    تکمیل نشده
+                                </div>
+                            {% endif %}
+
+                            <div class="flex justify-between">
+                                <div class="flex flex-col items-start gap-y-2">
+                                    <div class="text-text/60">کد ملی</div>
+                                    <div class="mr-2 text-text/80">{{ user.national_id|default:'ثبت نشده' }}</div>
+                                </div>
+                                <div class="i-lucide-pen size-5 text-primary"></div>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+                <div class="col-span-2 sm:col-span-1">
+                    <button
+                            class="w-full"
+                            type="button"
+                            data-modal-target="phone-modal"
+                            data-modal-toggle="phone-modal"
+                    >
+                        <div
+                                class="relative rounded-lg border p-4 hover:border-border/50"
+                        >
+                            {% if user.phone_number %}
+                                <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-success">
+                                    تایید شده
+                                </div>
+                            {% else %}
+                                <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-yellow-500">
+                                    تایید نشده
+                                </div>
+                            {% endif %}
+                            <div class="flex justify-between">
+                                <div class="flex flex-col items-start gap-y-2">
+                                    <div class="text-text/60">شماره موبایل</div>
+                                    <div class="mr-2 text-text/80">{{ user.phone_number|default:'ثبت نشده' }}</div>
+                                </div>
+                                <div class="i-lucide-pen size-5 text-primary"></div>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+                <div class="col-span-2 sm:col-span-1">
+                    <button
+                            class="w-full"
+                            type="button"
+                            data-modal-target="email-modal"
+                            data-modal-toggle="email-modal"
+                    >
+                        <div
+                                class="relative rounded-lg border p-4 hover:border-border/50"
+                        >
+                            {% if user.email %}
+                                <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-success">
+                                    تکمیل شده
+                                </div>
+                            {% else %}
+                                <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-yellow-500">
+                                    تکمیل نشده
+                                </div>
+                            {% endif %}
+                            <div class="flex justify-between">
+                                <div class="flex flex-col items-start gap-y-2">
+                                    <div class="text-text/60">ایمیل</div>
+                                    <div class="mr-2 text-text/80">{{ user.email|default:'ثبت نشده' }}</div>
+                                </div>
+                                <div class="i-lucide-pen size-5 text-primary"></div>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full name Modal -->
+    <div
+            id="fullname-modal"
+            tabindex="-1"
+            aria-hidden="true"
+            class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full overflow-y-auto overflow-x-hidden p-4 md:inset-0"
+    >
+        <div class="relative max-h-full w-full max-w-md">
+            <div class="overflow-hidden rounded-lg border bg-muted shadow">
+                <!-- Header -->
+                <div class="px-4 py-5 sm:px-6">
+                    <div class="flex items-center justify-between">
+                        <h3 class="md:text-lg">تغییر نام و نام خانوادگی</h3>
+
+                        <button
+                                class="text-text/60 duration-300 hover:text-text/95"
+                                data-modal-hide="fullname-modal"
+                                type="button"
+                        >
+                            <div class="i-lucide-x size-6"></div>
+
+                            <span class="sr-only">Close menu</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="space-y-6 px-4 py-5 sm:p-6">
+                    <!-- Content -->
+                    <div
+                            class="mb-4 grid grid-cols-2 gap-x-4 gap-y-2 sm:gap-6 sm:gap-y-4"
+                    >
+                        <!-- Name -->
+                        <div class="col-span-2 sm:col-span-1">
+                            <div class="w-full space-y-3">
+                                <label
+                                        for="name"
+                                        class="relative block w-full rounded-lg border bg-muted shadow-sm duration-300 focus-within:border-primary"
+                                >
+                                    <input
+                                            type="text"
+                                            id="name"
+                                            placeholder=" "
+                                            class="peer w-full rounded-lg bg-transparent p-2 placeholder-transparent outline-none focus:ring-0 xs:px-4 xs:py-3"
+                                    />
+                                    <span
+                                            class="pointer-events-none absolute start-3 -translate-y-1/2 rounded-full bg-muted px-2 text-xs text-text/80 transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:text-xs peer-focus:peer-placeholder-shown:top-0 xs:text-sm md:text-sm md:peer-placeholder-shown:text-base md:peer-focus:text-sm lg:start-5"
+                                    >
+                      نام
+                    </span>
+                                </label>
+                                <p class="h-5 text-sm text-warning">
+                                    <!--                                این فیلد اجباری می باشد-->
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Family -->
+                        <div class="col-span-2 sm:col-span-1">
+                            <div class="w-full space-y-3">
+                                <label
+                                        for="family"
+                                        class="relative block w-full rounded-lg border bg-muted shadow-sm duration-300 focus-within:border-primary"
+                                >
+                                    <input
+                                            type="text"
+                                            id="family"
+                                            placeholder=" "
+                                            class="peer w-full rounded-lg bg-transparent p-2 placeholder-transparent outline-none focus:ring-0 xs:px-4 xs:py-3"
+                                    />
+                                    <span
+                                            class="pointer-events-none absolute start-3 -translate-y-1/2 rounded-full bg-muted px-2 text-xs text-text/80 transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:text-xs peer-focus:peer-placeholder-shown:top-0 xs:text-sm md:text-sm md:peer-placeholder-shown:text-base md:peer-focus:text-sm lg:start-5"
+                                    >
+                      نام خانوادگی
+                    </span>
+                                </label>
+                                <p class="h-5 text-sm text-warning">
+                                    <!-- شماره موبایل یا ایمیل نامعتبر می باشد -->
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Footer -->
+                    <div class="flex justify-end gap-4">
+                        <button
+                                type="button"
+                                class="btn-primary w-full rounded-lg px-4 py-2 md:w-auto"
+                        >
+                            ویرایش
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- National Code Modal -->
+    <div
+            id="nCode-modal"
+            tabindex="-1"
+            aria-hidden="true"
+            class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full overflow-y-auto overflow-x-hidden p-4 md:inset-0"
+    >
+        <div class="relative max-h-full w-full max-w-md">
+            <div class="overflow-hidden rounded-lg border bg-muted shadow">
+                <!-- Header -->
+                <div class="px-4 py-5 sm:px-6">
+                    <div class="flex items-center justify-between">
+                        <h3 class="md:text-lg">تغییر کد ملی</h3>
+
+                        <button
+                                class="text-text/60 duration-300 hover:text-text/95"
+                                data-modal-hide="nCode-modal"
+                                type="button"
+                        >
+                            <div class="i-lucide-x size-6"></div>
+
+                            <span class="sr-only">Close menu</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="space-y-6 px-4 py-5 sm:p-6">
+                    <!-- Content -->
+                    <div class="mb-4">
+                        <!-- National Code -->
+                        <div>
+                            <div class="w-full space-y-3">
+                                <label
+                                        for="nCode"
+                                        class="relative block w-full rounded-lg border bg-muted shadow-sm duration-300 focus-within:border-primary"
+                                >
+                                    <input
+                                            type="text"
+                                            id="nCode"
+                                            placeholder=" "
+                                            class="peer w-full rounded-lg bg-transparent p-2 placeholder-transparent outline-none focus:ring-0 xs:px-4 xs:py-3"
+                                    />
+                                    <span
+                                            class="pointer-events-none absolute start-3 -translate-y-1/2 rounded-full bg-muted px-2 text-xs text-text/80 transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:text-xs peer-focus:peer-placeholder-shown:top-0 xs:text-sm md:text-sm md:peer-placeholder-shown:text-base md:peer-focus:text-sm lg:start-5"
+                                    >
+                      کد ملی
+                    </span>
+                                </label>
+                                <p class="h-5 text-sm text-warning">
+                                    <!--                                این فیلد اجباری می باشد-->
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Footer -->
+                    <div class="flex justify-end gap-4">
+                        <button
+                                type="button"
+                                class="btn-primary w-full rounded-lg px-4 py-2 md:w-auto"
+                        >
+                            ویرایش
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Phone Modal -->
+    <div
+            id="phone-modal"
+            tabindex="-1"
+            aria-hidden="true"
+            class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full overflow-y-auto overflow-x-hidden p-4 md:inset-0"
+    >
+        <div class="relative max-h-full w-full max-w-md">
+            <div class="overflow-hidden rounded-lg border bg-muted shadow">
+                <!-- Header -->
+                <div class="px-4 py-5 sm:px-6">
+                    <div class="flex items-center justify-between">
+                        <h3 class="md:text-lg">تغییر شماره موبایل</h3>
+
+                        <button
+                                class="text-text/60 duration-300 hover:text-text/95"
+                                data-modal-hide="phone-modal"
+                                type="button"
+                        >
+                            <div class="i-lucide-x size-6"></div>
+
+                            <span class="sr-only">Close menu</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="space-y-6 px-4 py-5 sm:p-6">
+                    <!-- Content -->
+                    <div class="mb-4">
+                        <!-- National Code -->
+                        <div>
+                            <div class="w-full space-y-3">
+                                <label
+                                        for="phone"
+                                        class="relative block w-full rounded-lg border bg-muted shadow-sm duration-300 focus-within:border-primary"
+                                >
+                                    <input
+                                            type="text"
+                                            id="phone"
+                                            placeholder=" "
+                                            class="peer w-full rounded-lg bg-transparent p-2 placeholder-transparent outline-none focus:ring-0 xs:px-4 xs:py-3"
+                                    />
+                                    <span
+                                            class="pointer-events-none absolute start-3 -translate-y-1/2 rounded-full bg-muted px-2 text-xs text-text/80 transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:text-xs peer-focus:peer-placeholder-shown:top-0 xs:text-sm md:text-sm md:peer-placeholder-shown:text-base md:peer-focus:text-sm lg:start-5"
+                                    >
+                      شماره موبایل
+                    </span>
+                                </label>
+                                <p class="h-5 text-sm text-warning">
+                                    <!--                                این فیلد اجباری می باشد-->
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Footer -->
+                    <div class="flex justify-end gap-4">
+                        <button
+                                type="button"
+                                class="btn-primary w-full rounded-lg px-4 py-2 md:w-auto"
+                        >
+                            ویرایش
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Email Modal -->
+    <div
+            id="email-modal"
+            tabindex="-1"
+            aria-hidden="true"
+            class="fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full overflow-y-auto overflow-x-hidden p-4 md:inset-0"
+    >
+        <div class="relative max-h-full w-full max-w-md">
+            <div class="overflow-hidden rounded-lg border bg-muted shadow">
+                <!-- Header -->
+                <div class="px-4 py-5 sm:px-6">
+                    <div class="flex items-center justify-between">
+                        <h3 class="md:text-lg">تغییر ایمیل</h3>
+
+                        <button
+                                class="text-text/60 duration-300 hover:text-text/95"
+                                data-modal-hide="email-modal"
+                                type="button"
+                        >
+                            <div class="i-lucide-x size-6"></div>
+
+                            <span class="sr-only">Close menu</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="space-y-6 px-4 py-5 sm:p-6">
+                    <!-- Content -->
+                    <div class="mb-4">
+                        <!-- National Code -->
+                        <div>
+                            <div class="w-full space-y-3">
+                                <label
+                                        for="email"
+                                        class="relative block w-full rounded-lg border bg-muted shadow-sm duration-300 focus-within:border-primary"
+                                >
+                                    <input
+                                            type="text"
+                                            id="email"
+                                            placeholder=" "
+                                            class="peer w-full rounded-lg bg-transparent p-2 placeholder-transparent outline-none focus:ring-0 xs:px-4 xs:py-3"
+                                    />
+                                    <span
+                                            class="pointer-events-none absolute start-3 -translate-y-1/2 rounded-full bg-muted px-2 text-xs text-text/80 transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:text-xs peer-focus:peer-placeholder-shown:top-0 xs:text-sm md:text-sm md:peer-placeholder-shown:text-base md:peer-focus:text-sm lg:start-5"
+                                    >
+                      ایمیل
+                    </span>
+                                </label>
+                                <p class="h-5 text-sm text-warning">
+                                    <!--                                این فیلد اجباری می باشد-->
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Footer -->
+                    <div class="flex justify-end gap-4">
+                        <button
+                                type="button"
+                                class="btn-primary w-full rounded-lg px-4 py-2 md:w-auto"
+                        >
+                            ویرایش
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
