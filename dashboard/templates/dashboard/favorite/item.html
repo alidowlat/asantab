@@ -1,0 +1,31 @@
+{% load extra_filters %}
+<div class="border border-transparent px-4 py-2 duration-200 hover:border-border">
+    <div class="flex flex-col">
+        <div class="mb-4 flex flex-col justify-center">
+            <a href="{{ favorite.service.get_absolute_url }}">
+                <img src="{{ favorite.service.image.url }}" alt="Service Image" loading="lazy"
+                     class="mx-auto aspect-[1/1] w-60 rounded-lg object-cover" draggable="false">
+            </a>
+        </div>
+        <a href="{{ favorite.service.get_absolute_url }}"
+           class="mb-2 line-clamp-2 h-10 px-2 text-sm text-text/95 lg:h-12 lg:px-4 lg:text-base">{{ favorite.service.title }}</a>
+        <div class="flex flex-col px-2 lg:px-4">
+            <div class="flex justify-between">
+                <button type="button" data-service-id="{{ favorite.service.id }}"
+                    class="remove-favorite-btn flex h-10 w-10 items-center justify-center rounded-full bg-background text-warning transition-all duration-200 hover:bg-warning hover:text-white hover:dark:text-black">
+                    <span class="i-lucide-trash size-5"></span>
+                </button>
+                <div>
+                    <div class="h-5 text-left">
+                        <del class="text-sm text-text/60 md:text-base">500,000
+                        </del>
+                    </div>
+                    <div class="text-end text-sm font-bold text-primary md:text-base">
+                        <span>{{ favorite.service.get_min_price|three_digits }}</span>
+                        <span class="mr-1 text-xs font-light md:text-sm">تومان</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

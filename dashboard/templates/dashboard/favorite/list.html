@@ -1,0 +1,7 @@
+{% if favorite_list %}
+    {% for favorite in favorite_list %}
+        {% include 'dashboard/favorite/item.html' with favorite=favorite %}
+    {% endfor %}
+{% else %}
+    <div class="text-center text-gray-400 text-lg pb-10">موردی یافت نشد.</div>
+{% endif %}
