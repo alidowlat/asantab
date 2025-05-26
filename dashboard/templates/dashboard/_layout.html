@@ -24,27 +24,27 @@
 <body dir="rtl">
 <div class="flex.min-h-screen.flex-col">
     <div id="desktop-mega-menu-overlay" class="fixed inset-0 z-20 bg-black/40 backdrop-blur-md hidden"></div>
-        <main class="flex-grow bg-background pt-[106px]">
-            <div class="container grid grid-cols-12 gap-4 pb-28 pt-10 lg:pb-10">
-                <!-- Sidebar -->
-                <div class="col-span-12 lg:col-span-3">
-                    <!-- Profile, Edit, Menu -->
-                    <div class="mb-4 rounded-lg bg-muted p-4 shadow">
-                        <!-- Desktop -->
-                        {% include 'dashboard/sidebar/_desktop.html' %}
-                        <!-- Mobile -->
-                        {% include 'dashboard/sidebar/_mobile.html' %}
-                    </div>
+    <main class="flex-grow bg-background pt-[106px]">
+        <div class="container grid grid-cols-12 gap-4 pb-28 pt-10 lg:pb-10">
+            <!-- Sidebar -->
+            <div class="col-span-12 lg:col-span-3">
+                <!-- Profile, Edit, Menu -->
+                <div class="mb-4 rounded-lg bg-muted p-4 shadow">
+                    <!-- Desktop -->
+                    {% include 'dashboard/sidebar/_desktop.html' %}
+                    <!-- Mobile -->
+                    {% include 'dashboard/sidebar/_mobile.html' %}
+                </div>
 
-                    <!-- Desktop Menu -->
-                    {% include 'dashboard/sidebar/_menu.html' %}
-                </div>
-                <!-- Content -->
-                <div class="col-span-12 lg:col-span-9">
-                    {% block content %}{% endblock %}
-                </div>
+                <!-- Desktop Menu -->
+                {% include 'dashboard/sidebar/_menu.html' %}
             </div>
-        </main>
+            <!-- Content -->
+            <div class="col-span-12 lg:col-span-9">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </main>
     <div data-onscrollclass="translate-y-full" class="fixed inset-x-0 bottom-0 z-20 bg-muted duration-300 lg:hidden">
         <div class="container flex items-center text-sm">
             <div class="w-1/4 border-b-2 border-primary py-1 font-medium text-primary">
@@ -79,6 +79,85 @@
                     </a>
                 {% endif %}
             </div>
+        </div>
+    </div>
+</div>
+<div id="profile-drawer"
+     class="fixed inset-x-0 bottom-0 z-40 max-h-[80dvh] w-full rounded-t-xl border-t bg-muted transition-transform duration-500 left-0 right-0 translate-y-full"
+     tabindex="-1" aria-labelledby="profile-drawer" aria-hidden="true">
+    <div class="flex h-full max-h-[80dvh] flex-col gap-4">
+        <!-- Items -->
+        <div class="grow overflow-y-auto">
+            <ul class="space-y-2 p-4 pl-2">
+                <li>
+                    <a href="{% url 'dashboard_page' %}"
+                       class="inline-flex w-full items-center justify-between rounded-lg bg-primary/5 p-4 text-primary duration-300">
+                        <div class="flex items-center gap-4">
+                            <div class="i-solar-home-smile-linear size-6"></div>
+                            پیشخوان
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a href="./profile-order.html"
+                       class="inline-flex w-full items-center justify-between rounded-lg p-4 text-text/80 duration-300 hover:text-primary">
+                        <div class="flex items-center gap-4">
+                            <div class="i-mingcute-shopping-bag-3-line size-6"></div>
+                            سفارش ها
+                        </div>
+                        <div class="h-6 w-6 rounded-full bg-yellow-500 text-center leading-6 text-white dark:bg-yellow-600">
+                            1
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a href="./profile-notification.html"
+                       class="inline-flex w-full items-center justify-between rounded-lg p-4 text-text/80 duration-300 hover:text-primary">
+                        <div class="flex items-center gap-4">
+                            <div class="i-lucide-bell size-6"></div>
+                            پیام ها
+                        </div>
+                        <div class="h-6 w-6 rounded-full bg-primary-btn text-center leading-6 text-white">
+                            2
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'favorite_list_page' %}"
+                       class="inline-flex w-full items-center justify-between rounded-lg p-4 text-text/80 duration-300 hover:text-primary">
+                        <div class="flex items-center gap-4">
+                            <div class="i-lucide-heart size-6"></div>
+                            علاقه‌‍مندی ها
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'visit_list_page' %}"
+                       class="inline-flex w-full items-center justify-between rounded-lg p-4 text-text/80 duration-300 hover:text-primary">
+                        <div class="flex items-center gap-4">
+                            <div class="i-lucide-mouse-pointer-click size-6"></div>
+                            بازدید های اخیر
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'account_info_page' %}"
+                       class="inline-flex w-full items-center justify-between rounded-lg p-4 text-text/80 duration-300 hover:text-primary">
+                        <div class="flex items-center gap-4">
+                            <div class="i-lucide-user-cog size-6"></div>
+                            اطلاعات حساب کاربری
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'logout' %}" type="button" class="inline-flex w-full items-center justify-between p-4 text-warning">
+                        <div class="flex items-center gap-4">
+                            <div class="i-mingcute-exit-line size-6"></div>
+                            خروج
+                        </div>
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
 </div>
