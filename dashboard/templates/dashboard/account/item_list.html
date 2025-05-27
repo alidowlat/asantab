@@ -1,0 +1,120 @@
+<div class="grid grid-cols-2 gap-6 px-5 pb-2">
+    <div class="col-span-2 sm:col-span-1">
+        <button
+                class="w-full"
+                type="button"
+                data-modal-target="fullname-modal"
+                data-modal-toggle="fullname-modal"
+        >
+            <div
+                    class="relative rounded-lg border p-4 hover:border-border/50"
+            >
+                {% if user.first_name and user.last_name %}
+                    <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-success">
+                        تکمیل شده
+                    </div>
+                {% else %}
+                    <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-yellow-500">
+                        تکمیل نشده
+                    </div>
+                {% endif %}
+                <div class="flex justify-between">
+                    <div class="flex flex-col items-start gap-y-2">
+                        <div class="text-text/60">نام و نام خانوادگی</div>
+                        <div class="mr-2 text-text/80">{{ user.get_full_name|default:'ثبت نشده' }}</div>
+                    </div>
+
+                    <div class="i-lucide-pen size-5 text-primary"></div>
+                </div>
+            </div>
+        </button>
+    </div>
+    <div class="col-span-2 sm:col-span-1">
+        <button
+                class="w-full"
+                type="button"
+                data-modal-target="nCode-modal"
+                data-modal-toggle="nCode-modal"
+        >
+            <div
+                    class="relative rounded-lg border p-4 hover:border-border/50"
+            >
+                {% if user.national_id %}
+                    <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-success">
+                        تکمیل شده
+                    </div>
+                {% else %}
+                    <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-yellow-500">
+                        تکمیل نشده
+                    </div>
+                {% endif %}
+
+                <div class="flex justify-between">
+                    <div class="flex flex-col items-start gap-y-2">
+                        <div class="text-text/60">کد ملی</div>
+                        <div class="mr-2 text-text/80">{{ user.national_id|default:'ثبت نشده' }}</div>
+                    </div>
+                    <div class="i-lucide-pen size-5 text-primary"></div>
+                </div>
+            </div>
+        </button>
+    </div>
+    <div class="col-span-2 sm:col-span-1">
+        <button
+                class="w-full"
+                type="button"
+                data-modal-target="phone-modal"
+                data-modal-toggle="phone-modal"
+        >
+            <div
+                    class="relative rounded-lg border p-4 hover:border-border/50"
+            >
+                {% if user.phone_number %}
+                    <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-success">
+                        تایید شده
+                    </div>
+                {% else %}
+                    <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-yellow-500">
+                        تایید نشده
+                    </div>
+                {% endif %}
+                <div class="flex justify-between">
+                    <div class="flex flex-col items-start gap-y-2">
+                        <div class="text-text/60">شماره موبایل</div>
+                        <div class="mr-2 text-text/80">{{ user.phone_number|default:'ثبت نشده' }}</div>
+                    </div>
+                    <div class="i-lucide-pen size-5 text-primary"></div>
+                </div>
+            </div>
+        </button>
+    </div>
+    <div class="col-span-2 sm:col-span-1">
+        <button
+                class="w-full"
+                type="button"
+                data-modal-target="email-modal"
+                data-modal-toggle="email-modal"
+        >
+            <div
+                    class="relative rounded-lg border p-4 hover:border-border/50"
+            >
+                {% if user.email %}
+                    <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-success">
+                        تکمیل شده
+                    </div>
+                {% else %}
+                    <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-yellow-500">
+                        تکمیل نشده
+                    </div>
+                {% endif %}
+                <div class="flex justify-between">
+                    <div class="flex flex-col items-start gap-y-2">
+                        <div class="text-text/60">ایمیل</div>
+                        <div class="mr-2 text-text/80">{{ user.email|default:'ثبت نشده' }}</div>
+                    </div>
+                    <div class="i-lucide-pen size-5 text-primary"></div>
+                </div>
+            </div>
+        </button>
+    </div>
+</div>
