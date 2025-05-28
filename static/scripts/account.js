@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     modals.forEach(modal => {
         // const fieldName = modal.dataset.field;
-        const fieldName = modal.dataset.field.split(/[ ,]+/);
+        const fieldName = modal.dataset.field;
         const submitBtn = modal.querySelector(".submit-btn");
         const input = modal.querySelector(".modal-input");
         const errorText = modal.querySelector(".error-text");
@@ -25,6 +25,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         submitBtn.addEventListener("click", () => {
             errorText.textContent = "";
+            const icon = modal.querySelector("i");
+
+            if (icon) icon.classList.add("hidden");
 
             const form = modal.querySelector("form");
             const formData = new FormData(form);
@@ -49,15 +52,15 @@ document.addEventListener("DOMContentLoaded", () => {
                         });
                     } else if (data.error_type && data.error_message) {
                         errorText.textContent = data.error_message;
+                        if (icon) icon.classList.remove("hidden");
                     } else if (data.errors && data.errors[fieldName]) {
                         errorText.textContent = data.errors[fieldName][0].message;
+                        if (icon) icon.classList.remove("hidden");
                     }
                 });
         });
     });
 
-
-    // پاک‌سازی ورودی‌ها موقع بستن مودال
     const closeBtns = document.querySelectorAll(".modal-close-btn");
 
     closeBtns.forEach(btn => {
