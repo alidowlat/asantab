@@ -1,8 +1,9 @@
 <div class="hidden rounded-lg shadow lg:block">
     <ul class="relative space-y-2 rounded-lg bg-muted p-2">
+        {% with request.resolver_match.url_name as current_url %}
         <li>
             <a href="{% url 'dashboard_page' %}"
-               class="inline-flex w-full items-center justify-between rounded-lg bg-primary/5 p-4 text-primary duration-300">
+               class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == 'dashboard_page' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
                 <div class="flex items-center gap-4">
                     <div class="i-solar-home-smile-linear size-6"></div>
                     پیشخوان
@@ -11,7 +12,7 @@
         </li>
         <li>
             <a href="./profile-order.html"
-               class="inline-flex w-full items-center justify-between rounded-lg p-4 text-text/80 duration-300 hover:text-primary">
+               class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == '' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
                 <div class="flex items-center gap-4">
                     <div class="i-mingcute-shopping-bag-3-line size-6"></div>
                     سفارش ها
@@ -22,8 +23,8 @@
             </a>
         </li>
         <li>
-            <a href="./profile-notification.html"
-               class="inline-flex w-full items-center justify-between rounded-lg p-4 text-text/80 duration-300 hover:text-primary">
+            <a href=""
+               class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == '' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
                 <div class="flex items-center gap-4">
                     <div class="i-lucide-bell size-6"></div>
                     پیام ها
@@ -35,7 +36,7 @@
         </li>
         <li>
             <a href="{% url 'favorite_list_page' %}"
-               class="inline-flex w-full items-center justify-between rounded-lg p-4 text-text/80 duration-300 hover:text-primary">
+               class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == 'favorite_list_page' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
                 <div class="flex items-center gap-4">
                     <div class="i-lucide-heart size-6"></div>
                     علاقه‌‍مندی ها
@@ -44,7 +45,7 @@
         </li>
         <li>
             <a href="{% url 'visit_list_page' %}"
-               class="inline-flex w-full items-center justify-between rounded-lg p-4 text-text/80 duration-300 hover:text-primary">
+               class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == 'visit_list_page' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
                 <div class="flex items-center gap-4">
                     <div class="i-lucide-mouse-pointer-click size-6"></div>
                     بازدید های اخیر
@@ -53,7 +54,7 @@
         </li>
         <li>
             <a href="{% url 'account_info_page' %}"
-               class="inline-flex w-full items-center justify-between rounded-lg p-4 text-text/80 duration-300 hover:text-primary">
+               class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == 'account_info_page' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
                 <div class="flex items-center gap-4">
                     <div class="i-lucide-user-cog size-6"></div>
                     اطلاعات حساب کاربری
@@ -68,5 +69,6 @@
                 </div>
             </a>
         </li>
+        {% endwith %}
     </ul>
 </div>
