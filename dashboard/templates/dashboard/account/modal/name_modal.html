@@ -56,9 +56,12 @@
                             </div>
                         </div>
                     </div>
-                    <p class="error-text h-5 text-sm text-warning">
-                        {% if name_form.last_name.errors %}{{ name_form.last_name.errors.0 }}{% endif %}
-                    </p>
+                    <div class="flex">
+                        <i class="hidden i-lucide-circle-alert text-warning ml-2"></i>
+                        <p class="error-text h-5 text-sm text-warning">
+                            {% if name_form.last_name.errors %}{{ name_form.last_name.errors.0 }}{% endif %}
+                        </p>
+                    </div>
                     <!-- Footer -->
                     <div class="flex justify-end gap-4">
                         <button

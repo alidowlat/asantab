@@ -1,9 +1,9 @@
 {% load widget_tweaks %}
 <div
-    id="email-modal"
-    class="field-modal fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full overflow-y-auto overflow-x-hidden p-4 md:inset-0"
-    data-field="email"
-    data-url="{% url 'update_email' %}"
+        id="email-modal"
+        class="field-modal fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full overflow-y-auto overflow-x-hidden p-4 md:inset-0"
+        data-field="email"
+        data-url="{% url 'update_email' %}"
 >
     <div class="relative max-h-full w-full max-w-md">
         <div class="overflow-hidden rounded-lg border bg-muted shadow">
@@ -12,9 +12,9 @@
                 <div class="flex items-center justify-between">
                     <h3 class="md:text-lg">تغییر ایمیل</h3>
                     <button
-                        class="text-text/60 duration-300 hover:text-text/95"
-                        data-modal-hide="email-modal"
-                        type="button"
+                            class="text-text/60 duration-300 hover:text-text/95"
+                            data-modal-hide="email-modal"
+                            type="button"
                     >
                         <div class="i-lucide-x size-6"></div>
                         <span class="sr-only">بستن</span>
@@ -28,26 +28,29 @@
                     {% csrf_token %}
                     <div class="space-y-3">
                         <label dir="ltr"
-                            for="{{ email_form.email.id_for_label }}"
-                            class="relative block w-full rounded-lg border bg-muted shadow-sm duration-300 focus-within:border-primary"
+                               for="{{ email_form.email.id_for_label }}"
+                               class="relative block w-full rounded-lg border bg-muted shadow-sm duration-300 focus-within:border-primary"
                         >
                             {{ email_form.email|add_class:"modal-input peer w-full rounded-lg bg-transparent p-2 placeholder-transparent outline-none focus:ring-0 xs:px-4 xs:py-3" }}
                             <span dir="rtl"
-                                class="pointer-events-none absolute start-3 -translate-y-1/2 rounded-full bg-muted px-2 text-base text-text/80 transition-all duration-200"
+                                  class="pointer-events-none absolute start-3 -translate-y-1/2 rounded-full bg-muted px-2 text-base text-text/80 transition-all duration-200"
                             >
                                 ایمیل
                             </span>
                         </label>
-                        <p class="error-text h-5 text-sm text-warning">
-                            {% if email_form.email.errors %}{{ email_form.email.errors.0 }}{% endif %}
-                        </p>
+                        <div class="flex">
+                            <i class="hidden i-lucide-circle-alert text-warning ml-2"></i>
+                            <p class="error-text h-5 text-sm text-warning">
+                                {% if email_form.email.errors %}{{ email_form.email.errors.0 }}{% endif %}
+                            </p>
+                        </div>
                     </div>
 
                     <!-- Footer -->
                     <div class="flex justify-end gap-4">
                         <button
-                            type="button"
-                            class="submit-btn btn-primary w-full rounded-lg px-4 py-2 md:w-auto"
+                                type="button"
+                                class="submit-btn btn-primary w-full rounded-lg px-4 py-2 md:w-auto"
                         >
                             ویرایش
                         </button>
