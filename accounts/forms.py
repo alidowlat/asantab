@@ -1,29 +1,49 @@
 from django import forms
-from django.core import validators
+from core.convertors import fa_to_en_digits
 
 
 class PhoneForm(forms.Form):
     phone_number = forms.CharField(
         max_length=11,
-        validators=[
-            validators.RegexValidator(
-                regex=r'^09\d{9}$',
-                message='شماره موبایل باید با 09 شروع شود و 11 رقم باشد.'
-            )
-        ],
-        widget=forms.TextInput(attrs={'placeholder': 'مثلاً 09123456789'})
     )
+
+    def clean_phone_number(self):
+        phone = fa_to_en_digits(self.cleaned_data['phone_number'].strip())
+        errors = []
+
+        if not phone.isdigit():
+            errors.append("شماره موبایل نامعتبر است.")
+
+        if not phone.startswith("09"):
+            errors.append("شماره موبایل میبایست با ۰۹ شروع شود.")
+
+        if len(phone) != 11:
+            errors.append("شماره موبایل میبایست دقیقا ۱۱ رقمی باشد.")
+
+        if errors:
+            raise forms.ValidationError(errors)
+
+        return phone
 
 
 class OTPForm(forms.Form):
     otp = forms.CharField(
-        max_length=5,
-        min_length=5,
         error_messages={
             'required': 'وارد کردن کد الزامی است.',
-            'min_length': 'کد باید دقیقاً ۵ رقم باشد.',
-            'max_length': 'کد باید دقیقاً ۵ رقم باشد.',
         },
-        validators=[validators.RegexValidator(r'^\d{5}$', 'کد باید ۵ رقمی و عددی باشد.')],
-        widget=forms.TextInput(attrs={'placeholder': 'کد ۵ رقمی'})
     )
+
+    def clean_otp(self):
+        otp = fa_to_en_digits(self.cleaned_data['otp'].strip())
+        errors = []
+
+        if not otp.isdigit():
+            errors.append("کد تایید میبایست فقط عدد باشد.")
+
+        if len(otp) != 5:
+            errors.append("کد تایید میبایست دقیقا ۵ رقمی باشد.")
+
+        if errors:
+            raise forms.ValidationError(errors)
+
+        return otp

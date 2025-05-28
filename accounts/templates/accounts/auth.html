@@ -83,7 +83,7 @@
         <div class="relative mx-auto bg-muted px-4 py-8 xs:max-w-[440px] xs:rounded-xl lg:px-10 lg:py-12">
             <form class="flex flex-col" method="post" action="{% url 'auth_page' %}">
                 {% csrf_token %}
-                <a href="./index.html" class="mb-10">
+                <a href="{% url 'index_page' %}" class="mb-10">
                     <img src="/static/images/logo.png" alt="logo" class="mx-auto h-10 xs:h-12">
                 </a>
                 <h1 class="mb-8 text-center font-medium xs:text-lg">
@@ -97,15 +97,18 @@
                     شماره موبایل
                 </span>
                     </label>
-                    <p class="h-5 text-sm text-warning">
-                        {{ form.phone_number.errors }}
-                    </p>
+                    {% for error in form.phone_number.errors %}
+                        <div class="flex">
+                            <i class="i-lucide-circle-alert text-warning ml-2"></i>
+                            <div class="text-warning text-sm">{{ error }}</div>
+                        </div>
+                    {% endfor %}
                 </div>
 
                 <button type="submit" class="btn-primary py-3">ورود</button>
                 <p class="mt-5 text-center text-sm text-text/80">
                     با ورود به فروشگاه, کلیه
-                    <a href="./rules.html" class="text-primary duration-200 hover:text-primary/80">قوانین
+                    <a href="." class="text-primary duration-200 hover:text-primary/80">قوانین
                     </a>
                     را می‌پذیرم.
                 </p>
