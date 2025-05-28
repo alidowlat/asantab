@@ -48,7 +48,7 @@
             <div class="w-1/4 py-1">
 
                 {% if request.user.is_authenticated %}
-                    <a href="./profile-dashboard.html" class="flex flex-col items-center justify-center">
+                    <a href="{% url 'account_info_page' %}" class="flex flex-col items-center justify-center">
                         <i class="i-lucide-user-round size-6"></i>
                         <p class="pt-2 text-xs xs:text-sm">حساب من</p>
                     </a>
