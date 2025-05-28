@@ -73,7 +73,7 @@ class UpdatePhoneForm(forms.ModelForm):
         error_messages = {
             'phone_number': {
                 'required': 'وارد کردن این فیلد الزامی است.',
-                'invalid': 'شماره تماس وارد شده معتبر نیست.',
+                'invalid': 'شماره موبایل وارد شده معتبر نیست.',
             },
         }
 
@@ -83,14 +83,14 @@ class UpdatePhoneForm(forms.ModelForm):
 
         if not phone_number:
             if self.instance.phone_number:
-                raise ValidationError("نمی‌توانید شماره تماس را خالی بگذارید.")
-            raise ValidationError("وارد کردن شماره تماس الزامی است.")
+                raise ValidationError("نمی‌توانید شماره موبایل را خالی بگذارید.")
+            raise ValidationError("وارد کردن شماره موبایل الزامی است.")
 
         if not phone_number.isdigit() or len(phone_number) != 11:
-            raise ValidationError("شماره تماس باید دقیقاً ۱۱ رقم عددی باشد.")
+            raise ValidationError("شماره موبایل باید دقیقاً ۱۱ رقم عددی باشد.")
 
         if not phone_number.startswith("09"):
-            raise ValidationError("شماره تماس باید با 09 شروع شود.")
+            raise ValidationError("شماره موبایل باید با 09 شروع شود.")
 
         return phone_number
 
@@ -107,7 +107,7 @@ class UpdateNationalIDForm(forms.ModelForm):
         error_messages = {
             'national_id': {
                 'required': 'وارد کردن این فیلد الزامی است.',
-                'invalid': 'شماره تماس وارد شده معتبر نیست.',
+                'invalid': 'شماره موبایل وارد شده معتبر نیست.',
             },
         }
 
@@ -124,3 +124,41 @@ class UpdateNationalIDForm(forms.ModelForm):
             raise ValidationError("کد ملی باید دقیقاً 10 رقم عددی باشد.")
 
         return national_id
+
+
+class UpdateGenderForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['gender']
+
+        widgets = {
+            'gender': forms.Select(attrs={'class': 'modal-input'}),
+        }
+
+        error_messages = {
+            'gender': {
+                'required': 'لطفا گزینه مورد نظر را انتخاب کنید.',
+            },
+        }
+
+
+class UpdateBirthdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['birth_date']
+
+        widgets = {
+            'birth_date': forms.DateInput(
+                attrs={
+                    'class': 'modal-input',
+                    'type': 'date'
+                }
+            )
+        }
+
+        error_messages = {
+            'birth_date': {
+                'invalid': 'تاریخ وارد شده معتبر نیست.',
+                'required': 'لطفا تاریخ تولد را وارد کنید.',
+            }
+        }

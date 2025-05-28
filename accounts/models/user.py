@@ -3,14 +3,16 @@ from django.db import models
 from django.core.validators import RegexValidator
 from accounts.managers import UserManager
 
-phone_regex = RegexValidator(regex=r'^09\d{9}$', message="لطفا شماره تماس خود را به درستی وارد کنید.")
+phone_regex = RegexValidator(regex=r'^09\d{9}$', message="لطفا شماره موبایل خود را به درستی وارد کنید.")
 otp_regex = RegexValidator(regex=r'^\d{6}$', message='کد تایید باید دقیقا ۶ رقم عددی باشد.')
 national_id_regex = RegexValidator(regex=r'^\d{10}$', message='کد ملی باید ۱۰ رقم باشد.')
 
 GENDER_CHOICES = (
+    ('', 'انتخاب کنید...'),
     ('M', 'مرد'),
     ('F', 'زن'),
 )
+
 
 
 class User(AbstractUser):

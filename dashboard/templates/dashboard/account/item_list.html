@@ -71,11 +71,11 @@
             >
                 {% if user.phone_number %}
                     <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-success">
-                        تایید شده
+                        تکمیل شده
                     </div>
                 {% else %}
                     <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-yellow-500">
-                        تایید نشده
+                        تکمیل نشده
                     </div>
                 {% endif %}
                 <div class="flex justify-between">
@@ -111,6 +111,64 @@
                     <div class="flex flex-col items-start gap-y-2">
                         <div class="text-text/60">ایمیل</div>
                         <div class="mr-2 text-text/80">{{ user.email|default:'ثبت نشده' }}</div>
+                    </div>
+                    <div class="i-lucide-pen size-5 text-primary"></div>
+                </div>
+            </div>
+        </button>
+    </div>
+    <div class="col-span-2 sm:col-span-1">
+        <button
+                class="w-full"
+                type="button"
+                data-modal-target="gender-modal"
+                data-modal-toggle="gender-modal"
+        >
+            <div
+                    class="relative rounded-lg border p-4 hover:border-border/50"
+            >
+                {% if user.gender %}
+                    <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-success">
+                        تکمیل شده
+                    </div>
+                {% else %}
+                    <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-yellow-500">
+                        تکمیل نشده
+                    </div>
+                {% endif %}
+                <div class="flex justify-between">
+                    <div class="flex flex-col items-start gap-y-2">
+                        <div class="text-text/60">جنسبت</div>
+                        <div class="mr-2 text-text/80">{{ user.get_gender_display|default:'ثبت نشده' }}</div>
+                    </div>
+                    <div class="i-lucide-pen size-5 text-primary"></div>
+                </div>
+            </div>
+        </button>
+    </div>
+    <div class="col-span-2 sm:col-span-1">
+        <button
+                class="w-full"
+                type="button"
+                data-modal-target="birthdate-modal"
+                data-modal-toggle="birthdate-modal"
+        >
+            <div
+                    class="relative rounded-lg border p-4 hover:border-border/50"
+            >
+                {% if user.birthdate %}
+                    <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-success">
+                        تکمیل شده
+                    </div>
+                {% else %}
+                    <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-yellow-500">
+                        تکمیل نشده
+                    </div>
+                {% endif %}
+                <div class="flex justify-between">
+                    <div class="flex flex-col items-start gap-y-2">
+                        <div class="text-text/60">تاریخ تولد</div>
+                        <div class="mr-2 text-text/80">{{ user.birth_date|default:'ثبت نشده' }}</div>
                     </div>
                     <div class="i-lucide-pen size-5 text-primary"></div>
                 </div>
