@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from django.urls import reverse
 from django.views import View
-
 from .models import User
 from core.otp import set_user_otp, is_valid_otp, send_otp
 from .forms import PhoneForm, OTPForm
@@ -46,7 +45,7 @@ def otp_verify_view(request):
                     user.is_verified = True
                     user.save(update_fields=['is_verified'])
                     login(request, user)
-                    return redirect('about_us_page')
+                    return redirect('dashboard_page')
                 else:
                     form.add_error('otp', 'کد وارد شده اشتباه و یا منقضی شده است.')
         else:
@@ -54,7 +53,7 @@ def otp_verify_view(request):
 
         return render(request, 'accounts/verify.html', {'form': form})
     else:
-        return redirect('about_us_page')
+        return redirect('dashboard_page')
 
 
 class LogoutView(View):
