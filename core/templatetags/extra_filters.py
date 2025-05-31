@@ -1,6 +1,7 @@
 from django import template
 from django.utils.timezone import now
 import pytz
+from jalali_date import date2jalali
 from jdatetime import datetime as jdatetime
 import jdatetime
 
@@ -60,6 +61,17 @@ def to_jalali(value):
     month_name = JALALI_MONTHS[jalali_date.month]
     return f"{jalali_date.day} {month_name} {jalali_date.year}"
 
+
+@register.filter(name='show_date_with_month')
+def jalali_verbose(value):
+    if not value:
+        return 'ثبت نشده'
+    months = [
+        '', 'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
+        'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'
+    ]
+    j = date2jalali(value)
+    return f"{j.day} {months[j.month]} {j.year}"
 
 # @register.filter(name='persian_int')
 # def persian_int(english_int):
