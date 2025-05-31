@@ -1,5 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from khayyam import JalaliDate
 from accounts.models import User
 from core.convertors import fa_to_en_digits
 
@@ -143,22 +144,32 @@ class UpdateGenderForm(forms.ModelForm):
 
 
 class UpdateBirthdateForm(forms.ModelForm):
+    birth_day = forms.ChoiceField(choices=[(i, i) for i in range(1, 32)], label='روز')
+    birth_month = forms.ChoiceField(choices=[
+        (1, 'فروردین'), (2, 'اردیبهشت'), (3, 'خرداد'), (4, 'تیر'),
+        (5, 'مرداد'), (6, 'شهریور'), (7, 'مهر'), (8, 'آبان'),
+        (9, 'آذر'), (10, 'دی'), (11, 'بهمن'), (12, 'اسفند')
+    ], label='ماه')
+    birth_year = forms.ChoiceField(choices=[(y, y) for y in range(1300, 1405)], label='سال')
+
     class Meta:
         model = User
-        fields = ['birth_date']
+        fields = []
 
-        widgets = {
-            'birth_date': forms.DateInput(
-                attrs={
-                    'class': 'modal-input',
-                    'type': 'date'
-                }
-            )
-        }
+    def clean(self):
+        cleaned_data = super().clean()
+        try:
+            year = int(cleaned_data.get('birth_year'))
+            month = int(cleaned_data.get('birth_month'))
+            day = int(cleaned_data.get('birth_day'))
+            jalali_date = JalaliDate(year, month, day)
+            miladi = jalali_date.todate()
+        except Exception:
+            raise forms.ValidationError("تاریخ وارد شده معتبر نیست.")
 
-        error_messages = {
-            'birth_date': {
-                'invalid': 'تاریخ وارد شده معتبر نیست.',
-                'required': 'لطفا تاریخ تولد را وارد کنید.',
-            }
-        }
+        cleaned_data['birth_date'] = miladi
+        return cleaned_data
+
+    def save(self, commit=True):
+        self.instance.birth_date = self.cleaned_data['birth_date']
+        return super().save(commit=commit)
