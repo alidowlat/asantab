@@ -4,13 +4,10 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
 from django.views.generic import TemplateView
+from jalali_date import date2jalali
 from dashboard.forms import UpdateEmailForm, UpdateNameForm, UpdatePhoneForm, UpdateNationalIDForm, UpdateGenderForm, \
     UpdateBirthdateForm
 
-
-# class AccountView(LoginRequiredMixin, View):
-#     def get(self, request):
-#         return render(request, 'dashboard/account/main.html', {})
 
 
 class AccountView(LoginRequiredMixin, TemplateView):
@@ -24,7 +21,16 @@ class AccountView(LoginRequiredMixin, TemplateView):
         context['phone_form'] = UpdatePhoneForm(instance=user)
         context['national_id_form'] = UpdateNationalIDForm(instance=user)
         context['gender_form'] = UpdateGenderForm(instance=user)
-        context['birthdate_form'] = UpdateBirthdateForm(instance=user)
+        initial = {}
+
+        if user.birth_date:
+            jalali = date2jalali(user.birth_date)
+            initial = {
+                'birth_day': jalali.day,
+                'birth_month': jalali.month,
+                'birth_year': jalali.year,
+            }
+        context['birthdate_form'] = UpdateBirthdateForm(instance=user, initial=initial)
 
         return context
 
