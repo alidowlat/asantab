@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/static/css/base.css">
     <script defer="" src="/static/scripts/theme.js"></script>
     <script src="/static/scripts/mount.js"></script>
-    <title>ورود | آسان تب</title>
+    <title>ورود فروشنده | آسان تب</title>
 </head>
 
 <body>
@@ -81,13 +81,13 @@
 
     <div class="z-10 w-full py-10 xs:container">
         <div class="relative mx-auto bg-muted px-4 py-8 xs:max-w-[440px] xs:rounded-xl lg:px-10 lg:py-12">
-            <form class="flex flex-col" method="post" action="{% url 'auth_page' %}">
+            <form class="flex flex-col" method="post" action="{% url 'auth_page_provider' %}">
                 {% csrf_token %}
                 <a href="{% url 'index_page' %}" class="mb-10">
                     <img src="/static/images/logo.png" alt="logo" class="mx-auto h-10 xs:h-12">
                 </a>
                 <h1 class="mb-8 text-center font-medium xs:text-lg">
-                    ورود
+                    ورود فروشنده
                 </h1>
                 <div class="mb-4 w-full space-y-3">
                     <label for="phone_number"
@@ -108,7 +108,7 @@
                 <button type="submit" class="btn-primary py-3">ورود</button>
                 <p class="mt-5 text-center text-sm text-text/80">
                     با ورود به فروشگاه, کلیه
-                    <a href="." class="text-primary duration-200 hover:text-primary/80">قوانین
+                    <a href="" class="text-primary duration-200 hover:text-primary/80">قوانین
                     </a>
                     را می‌پذیرم.
                 </p>

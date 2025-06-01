@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/static/css/base.css">
     <script defer="" src="/static/scripts/theme.js"></script>
     <script src="/static/scripts/mount.js"></script>
-    <title>احراز هویت</title>
+    <title>احراز هویت فروشنده | آسان تب</title>
 </head>
 
 <body>
@@ -85,7 +85,7 @@
                class="absolute right-2 top-2 flex size-10 items-center justify-center rounded-full border bg-background text-primary duration-300 hover:bg-primary-btn hover:text-background xs:-right-2 xs:-top-2">
                 <i class="i-carbon-chevron-right size-7 stroke-2"></i>
             </a>
-            <form class="flex flex-col" method="post" action=".">
+            <form class="flex flex-col" method="post" action="">
                 {% csrf_token %}
                 <a href="{% url 'index_page' %}" class="mb-10">
                     <img src="/static/images/logo.png" alt="logo" class="mx-auto h-10 xs:h-12">
@@ -187,7 +187,7 @@
     function resendOTP() {
         if (countdownMinutes != 0 || countdownSeconds != 0) return;
 
-        fetch("/auth/resend-otp/", {
+        fetch("/auth/provider/resend-otp/", {
             method: "POST",
             headers: {
                 "X-CSRFToken": getCookie("csrftoken"),
