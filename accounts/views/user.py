@@ -25,6 +25,7 @@ def otp_verify_view(request):
         form_class=OTPForm,
         user_model=User,
         get_success_redirect='dashboard_page',
+        dashboard_redirect='',
         session_key='user_phone',
         template='accounts/user/verify.html',
         fallback_redirect='auth_page'
