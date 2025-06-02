@@ -63,6 +63,13 @@ class Provider(models.Model):
 
         super().save(*args, **kwargs)
 
+    def has_completed_required_fields(self):
+        return all([
+            bool(self.username),
+            bool(self.province_id),
+            bool(self.city_id),
+        ])
+
     class Meta:
         verbose_name = 'Provider'
         verbose_name_plural = 'Providers'
