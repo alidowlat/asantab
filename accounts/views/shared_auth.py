@@ -1,5 +1,6 @@
 from django.contrib.auth import login
 from django.shortcuts import redirect, render
+from accounts.models import Provider
 from core import is_valid_otp, set_user_otp
 
 
@@ -37,6 +38,7 @@ def otp_verify_view_shared(
     form_class,
     user_model,
     get_success_redirect,
+    dashboard_redirect,
     session_key='user_phone',
     template='accounts/user/verify.html',
     fallback_redirect='auth_page'
@@ -60,6 +62,9 @@ def otp_verify_view_shared(
                 user.is_verified = True
                 user.save(update_fields=['is_verified'])
                 login(request, user)
+                provider = Provider.objects.get(user=user)
+                if provider and provider.has_completed_required_fields():
+                    return redirect(dashboard_redirect)
                 return redirect(get_success_redirect)
             else:
                 form.add_error('otp', 'کد وارد شده اشتباه و یا منقضی شده است.')
