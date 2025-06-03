@@ -1,13 +1,14 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views import View
 from django.views.generic import TemplateView
 from jalali_date import date2jalali
-from dashboard.forms import UpdateEmailForm, UpdateNameForm, UpdatePhoneForm, UpdateNationalIDForm, UpdateGenderForm, \
-    UpdateBirthdateForm
 
+from accounts.models import Provider
+from dashboard.forms import UpdateEmailForm, UpdateNameForm, UpdatePhoneForm, UpdateNationalIDForm, UpdateGenderForm, \
+    UpdateBirthdateForm, UpdateUsernameForm
 
 
 class AccountView(LoginRequiredMixin, TemplateView):
@@ -16,13 +17,18 @@ class AccountView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
+        if user.is_provider:
+            provider = get_object_or_404(Provider, user=user)
+            context['provider'] = provider
+        context['email_form'] = UpdateEmailForm(instance=user)
         context['email_form'] = UpdateEmailForm(instance=user)
         context['name_form'] = UpdateNameForm(instance=user)
         context['phone_form'] = UpdatePhoneForm(instance=user)
         context['national_id_form'] = UpdateNationalIDForm(instance=user)
         context['gender_form'] = UpdateGenderForm(instance=user)
-        initial = {}
+        context['username_form'] = UpdateUsernameForm(instance=provider)
 
+        initial = {}
         if user.birth_date:
             jalali = date2jalali(user.birth_date)
             initial = {
@@ -124,3 +130,22 @@ class UpdateBirthdateView(LoginRequiredMixin, View):
             return JsonResponse({'success': True, 'redirect_url': reverse('account_info_page')})
 
         return JsonResponse({'success': False, 'errors': form.errors.get_json_data()})
+
+
+class UpdateUsernameView(LoginRequiredMixin, View):
+    def get(self, request):
+        username_form = UpdateUsernameForm(instance=request.user)
+        return render(request, 'dashboard/account/modal/username_modal.html', {'username_form': username_form})
+
+    def post(self, request):
+        if not request.user.is_provider:
+            return JsonResponse({'success': False})
+
+        provider = get_object_or_404(Provider, user=request.user)
+        form = UpdateUsernameForm(request.POST, instance=provider)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True, 'redirect_url': reverse('account_info_page')})
+
+        return JsonResponse({'success': False, 'errors': form.errors.get_json_data()})
+

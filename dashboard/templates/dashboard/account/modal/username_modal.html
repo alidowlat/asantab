@@ -1,0 +1,62 @@
+{% load widget_tweaks %}
+<div
+        id="username-modal"
+        class="field-modal fixed left-0 right-0 top-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full overflow-y-auto overflow-x-hidden p-4 md:inset-0"
+        data-field="username"
+        data-url="{% url 'update_username' %}"
+>
+    <div class="relative max-h-full w-full max-w-md">
+        <div class="overflow-hidden rounded-lg border bg-muted shadow">
+            <!-- Header -->
+            <div class="px-4 py-5 sm:px-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="md:text-lg">تغییر نام کاربری</h3>
+                    <button
+                            class="text-text/60 duration-300 hover:text-text/95"
+                            data-modal-hide="username-modal"
+                            type="button"
+                    >
+                        <div class="i-lucide-x size-6"></div>
+                        <span class="sr-only">Close menu</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="space-y-6 px-4 py-5 sm:p-6">
+                <form class="space-y-6 w-full" novalidate>
+                    {% csrf_token %}
+                    <!-- User Name -->
+                    <div class=" sm:col-span-1">
+                        <div class="w-full space-y-3">
+                            <label
+                                    for="{{ username_form.username.id_for_label }}"
+                                    class="relative block w-full rounded-lg border bg-muted shadow-sm duration-300 focus-within:border-primary"
+                            >
+                                {{ username_form.username|add_class:"modal-input peer w-full rounded-lg bg-transparent p-2 placeholder-transparent outline-none focus:ring-0 xs:px-4 xs:py-3"|attr:'dir:ltr' }}
+                                <span class="pointer-events-none absolute start-3 -translate-y-1/2 rounded-full bg-muted px-2 text-xs text-text/80 transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:text-xs peer-focus:peer-placeholder-shown:top-0 xs:text-sm md:text-sm md:peer-placeholder-shown:text-base md:peer-focus:text-sm lg:start-5">
+                                      نام کاربری
+                                    </span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="flex">
+                        <i class="hidden i-lucide-circle-alert text-warning ml-2"></i>
+                        <p class="error-text h-5 text-sm text-warning">
+                            {% if username_form.username.errors %}{{ username_form.username.errors.0 }}{% endif %}
+                        </p>
+                    </div>
+                    <!-- Footer -->
+                    <div class="flex justify-end gap-4">
+                        <button
+                                type="button"
+                                class="submit-btn btn-primary w-full rounded-lg px-4 py-2 md:w-auto"
+                        >
+                            ویرایش
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
