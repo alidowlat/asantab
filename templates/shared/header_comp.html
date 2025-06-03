@@ -152,7 +152,7 @@
                                 </li>
                                 <!-- exit -->
                                 <li>
-                                    <a href="{% url 'logout' %}"
+                                    <a href="{% if request.user.is_provider %}{% url 'logout_provider' %}{% else %}{% url 'logout' %}{% endif %}"
                                        class="my-1 flex items-center justify-between px-5 py-3 text-warning duration-150 hover:bg-warning/10">
                                         <div class="flex items-center gap-x-3">
                                             <svg class="i-mingcute-exit-line h-6 w-6"></svg>
