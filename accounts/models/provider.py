@@ -70,6 +70,13 @@ class Provider(models.Model):
             bool(self.city_id),
         ])
 
+    def has_completed_important_fields(self):
+        return all([
+            bool(self.iban_number),
+            bool(self.card_number),
+            bool(self.national_card_image),
+        ])
+
     class Meta:
         verbose_name = 'Provider'
         verbose_name_plural = 'Providers'
