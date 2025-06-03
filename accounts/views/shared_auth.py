@@ -1,5 +1,5 @@
 from django.contrib.auth import login
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from accounts.models import Provider
 from core import is_valid_otp, set_user_otp
 
@@ -11,7 +11,8 @@ def phone_input_view_shared(
     get_redirect_name,
     session_key='user_phone',
     template='accounts/user/auth.html',
-    already_authenticated_template='home/index.html'
+    already_authenticated_template='home/index.html',
+    is_provider_route = False
 ):
     if request.user.is_authenticated:
         return render(request, already_authenticated_template)
@@ -21,6 +22,9 @@ def phone_input_view_shared(
         if form.is_valid():
             phone_number = form.cleaned_data['phone_number']
             user, _ = user_model.objects.get_or_create(phone_number=phone_number)
+            if user.is_provider and not is_provider_route:
+                request.session['redirect_to_provider_auth'] = phone_number
+                return redirect('auth_page_provider')
             user.set_unusable_password()
             user.save()
             otp = set_user_otp(user)
@@ -62,9 +66,10 @@ def otp_verify_view_shared(
                 user.is_verified = True
                 user.save(update_fields=['is_verified'])
                 login(request, user)
-                provider = Provider.objects.get(user=user)
-                if provider and provider.has_completed_required_fields():
-                    return redirect(dashboard_redirect)
+                if user.is_provider:
+                    provider = get_object_or_404(Provider, user=user)
+                    if provider.has_completed_required_fields():
+                        return redirect(dashboard_redirect)
                 return redirect(get_success_redirect)
             else:
                 form.add_error('otp', 'کد وارد شده اشتباه و یا منقضی شده است.')
