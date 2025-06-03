@@ -82,6 +82,14 @@ class User(AbstractUser):
     )
     is_verified = models.BooleanField(default=False, verbose_name="تایید شده؟")
 
+    def has_completed_important_fields(self):
+        return all([
+            bool(self.first_name),
+            bool(self.last_name),
+            bool(self.email),
+            bool(self.national_id),
+        ])
+
     def get_full_name(self):
         return f"{(self.first_name or '').strip()} {(self.last_name or '').strip()}".strip()
 
