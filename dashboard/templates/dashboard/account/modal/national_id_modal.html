@@ -27,7 +27,7 @@
                 {% if not user.national_id %}
                     <form class="space-y-6 w-full" novalidate>
                         {% csrf_token %}
-                        <div class="space-y-3">
+                        <div class="w-full space-y-3">
                             <label dir="ltr"
                                    for="{{ national_id_form.national_id.id_for_label }}"
                                    class="relative block w-full rounded-lg border bg-muted shadow-sm duration-300 focus-within:border-primary"
