@@ -1,8 +1,8 @@
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.http import JsonResponse
 from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse
-
+from django.views import View
 from accounts.forms import OTPForm, PhoneForm, ProviderCompleteInfoForm
 from accounts.models import User, Provider
 from accounts.views import otp_verify_view_shared, phone_input_view_shared
@@ -22,6 +22,7 @@ def provider_phone_input_view(request):
         session_key='provider_phone',
         template='accounts/provider/auth.html',
         already_authenticated_template='home/index.html',
+        is_provider_route=True
     )
 
 
@@ -67,3 +68,9 @@ def provider_complete_info_view(request):
 
     return render(request, 'accounts/provider/complete_info.html', {'form': form})
 
+
+
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect(reverse('auth_page_provider'))
