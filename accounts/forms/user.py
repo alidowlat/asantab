@@ -1,4 +1,6 @@
 from django import forms
+
+from core.clean import OTPCleanMixin
 from core.convertors import fa_to_en_digits
 
 
@@ -26,24 +28,9 @@ class PhoneForm(forms.Form):
         return phone
 
 
-class OTPForm(forms.Form):
+class OTPForm(OTPCleanMixin, forms.Form):
     otp = forms.CharField(
         error_messages={
             'required': 'وارد کردن کد الزامی است.',
         },
     )
-
-    def clean_otp(self):
-        otp = fa_to_en_digits(self.cleaned_data['otp'].strip())
-        errors = []
-
-        if not otp.isdigit():
-            errors.append("کد تایید میبایست فقط عدد باشد.")
-
-        if len(otp) != 5:
-            errors.append("کد تایید میبایست دقیقا ۵ رقمی باشد.")
-
-        if errors:
-            raise forms.ValidationError(errors)
-
-        return otp
