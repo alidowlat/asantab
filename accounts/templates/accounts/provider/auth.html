@@ -104,6 +104,12 @@
                         </div>
                     {% endfor %}
                 </div>
+                {% if request.session.redirect_to_provider_auth %}
+                    <div class="flex mb-4">
+                        <i class="i-lucide-circle-alert text-warning ml-2"></i>
+                        <div class="text-warning text-sm">لطفا از طریق صفحه ورود فروشندگان نسبت به ورود اقدام کنید.</div>
+                    </div>
+                {% endif %}
 
                 <button type="submit" class="btn-primary py-3">ورود</button>
                 <p class="mt-5 text-center text-sm text-text/80">
