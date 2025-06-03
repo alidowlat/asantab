@@ -62,7 +62,7 @@
             </a>
         </li>
         <li>
-            <a href="{% url 'logout' %}" type="button" class="inline-flex w-full items-center justify-between p-4 text-warning">
+            <a href="{% if request.user.is_provider %}{% url 'logout_provider' %}{% else %}{% url 'logout' %}{% endif %}" type="button" class="inline-flex w-full items-center justify-between p-4 text-warning">
                 <div class="flex items-center gap-4">
                     <div class="i-mingcute-exit-line size-6"></div>
                     خروج
