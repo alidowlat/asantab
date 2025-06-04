@@ -32,6 +32,20 @@ def time_since_custom(value):
     else:
         return "امروز"
 
+@register.filter(name='slice_after_space')
+def truncate_words_smart(text, limit=40):
+    if not text:
+        return 'ثبت نشده'
+
+    if len(text) <= limit:
+        return text
+
+    trimmed = text[:limit]
+    last_space = trimmed.rfind(' ')
+    if last_space != -1:
+        trimmed = trimmed[:last_space]
+
+    return trimmed + '...'
 
 @register.filter(name='cut')
 def cut(value, arg):
@@ -73,17 +87,6 @@ def jalali_verbose(value):
     j = date2jalali(value)
     return f"{j.day} {months[j.month]} {j.year}"
 
-# @register.filter(name='persian_int')
-# def persian_int(english_int):
-#     devanagari_nums = ('۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹')
-#     number = str(english_int)
-#     return ''.join(devanagari_nums[int(digit)] for digit in number)
-#
-#
-# @register.filter(name='three_digits')
-# def three_digits(value: int):
-#     return '{:,}'.format(value) + ' تومان'
-
 
 @register.filter(name='three_digits')
 def three_digits_sp(value: int):
@@ -114,11 +117,6 @@ def rounded(value):
         return rounded_value
     except ValueError:
         return value
-
-
-# @register.simple_tag
-# def multiply(quantity, price, *args, **kwargs):
-#     return three_digits(quantity * price)
 
 
 @register.filter(name='multiply')
