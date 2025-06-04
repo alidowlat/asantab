@@ -1,3 +1,4 @@
+{% load widget_tweaks %}
 {% load extra_filters %}
 <div class="grid grid-cols-2 gap-6 px-5 pb-2">
     <div class="col-span-2 sm:col-span-1">
@@ -176,33 +177,93 @@
             </div>
         </button>
     </div>
-    <div class="col-span-2 sm:col-span-1">
-        <button
-                class="w-full"
-                type="button"
-                data-modal-target="username-modal"
-                data-modal-toggle="username-modal"
-        >
-            <div
-                    class="relative rounded-lg border p-4 hover:border-border/50"
+    {% if request.user.is_provider %}
+        <div class="col-span-2 sm:col-span-1">
+            <button
+                    class="w-full"
+                    type="button"
+                    data-modal-target="username-modal"
+                    data-modal-toggle="username-modal"
             >
-                {% if provider.username %}
-                    <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-success">
-                        تکمیل شده
+                <div
+                        class="relative rounded-lg border p-4 hover:border-border/50"
+                >
+                    {% if provider.username %}
+                        <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-success">
+                            تکمیل شده
+                        </div>
+                    {% else %}
+                        <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-yellow-500">
+                            تکمیل نشده
+                        </div>
+                    {% endif %}
+                    <div class="flex justify-between">
+                        <div class="flex flex-col items-start gap-y-2">
+                            <div class="text-text/60">نام کاربری</div>
+                            <div class="mr-2 text-text/80">{{ provider.username|default:'ثبت نشده' }}</div>
+                        </div>
+                        <div class="i-lucide-pen size-5 text-primary"></div>
                     </div>
-                {% else %}
-                    <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-yellow-500">
-                        تکمیل نشده
-                    </div>
-                {% endif %}
-                <div class="flex justify-between">
-                    <div class="flex flex-col items-start gap-y-2">
-                        <div class="text-text/60">نام کاربری</div>
-                        <div class="mr-2 text-text/80">{{ provider.username|default:'ثبت نشده' }}</div>
-                    </div>
-                    <div class="i-lucide-pen size-5 text-primary"></div>
                 </div>
-            </div>
-        </button>
-    </div>
+            </button>
+        </div>
+        <div class="col-span-2 sm:col-span-1">
+            <button
+                    class="w-full"
+                    type="button"
+                    data-modal-target="bio-modal"
+                    data-modal-toggle="bio-modal"
+            >
+                <div
+                        class="relative rounded-lg border p-4 hover:border-border/50"
+                >
+                    {% if provider.bio %}
+                        <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-success">
+                            تکمیل شده
+                        </div>
+                    {% else %}
+                        <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-yellow-500">
+                            تکمیل نشده
+                        </div>
+                    {% endif %}
+                    <div class="flex justify-between">
+                        <div class="flex flex-col items-start gap-y-2">
+                            <div class="text-text/60">درباره من</div>
+                            <div class="mr-2 text-text/80">{{ provider.bio|slice_after_space:40 }}</div>
+                        </div>
+                        <div class="i-lucide-pen size-5 text-primary"></div>
+                    </div>
+                </div>
+            </button>
+        </div>
+        <div class="col-span-2 sm:col-span-1">
+            <button
+                    class="w-full"
+                    type="button"
+                    data-modal-target="location-modal"
+                    data-modal-toggle="location-modal"
+            >
+                <div
+                        class="relative rounded-lg border p-4 hover:border-border/50"
+                >
+                    {% if provider.city and provider.province %}
+                        <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-success">
+                            تکمیل شده
+                        </div>
+                    {% else %}
+                        <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-yellow-500">
+                            تکمیل نشده
+                        </div>
+                    {% endif %}
+                    <div class="flex justify-between">
+                        <div class="flex flex-col items-start gap-y-2">
+                            <div class="text-text/60">استان و شهر</div>
+                            <div class="mr-2 text-text/80">{{ provider.province|default:'ثبت نشده' }} - {{ provider.city|default:'ثبت نشده' }}</div>
+                        </div>
+                        <div class="i-lucide-pen size-5 text-primary"></div>
+                    </div>
+                </div>
+            </button>
+        </div>
+    {% endif %}
 </div>

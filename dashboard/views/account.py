@@ -5,10 +5,9 @@ from django.urls import reverse
 from django.views import View
 from django.views.generic import TemplateView
 from jalali_date import date2jalali
-
 from accounts.models import Provider
 from dashboard.forms import UpdateEmailForm, UpdateNameForm, UpdatePhoneForm, UpdateNationalIDForm, UpdateGenderForm, \
-    UpdateBirthdateForm, UpdateUsernameForm
+    UpdateBirthdateForm, UpdateUsernameForm, UpdateBioForm, UpdateLocationForm
 
 
 class AccountView(LoginRequiredMixin, TemplateView):
@@ -26,7 +25,11 @@ class AccountView(LoginRequiredMixin, TemplateView):
         context['phone_form'] = UpdatePhoneForm(instance=user)
         context['national_id_form'] = UpdateNationalIDForm(instance=user)
         context['gender_form'] = UpdateGenderForm(instance=user)
-        context['username_form'] = UpdateUsernameForm(instance=provider)
+
+        if user.is_provider:
+            context['username_form'] = UpdateUsernameForm(instance=provider)
+            context['bio_form'] = UpdateBioForm(instance=provider)
+            context['location_form'] = UpdateLocationForm(instance=provider)
 
         initial = {}
         if user.birth_date:
@@ -149,3 +152,37 @@ class UpdateUsernameView(LoginRequiredMixin, View):
 
         return JsonResponse({'success': False, 'errors': form.errors.get_json_data()})
 
+
+class UpdateBioView(LoginRequiredMixin, View):
+    def get(self, request):
+        bio_form = UpdateBioForm(instance=request.user)
+        return render(request, 'dashboard/account/modal/bio_modal.html', {'bio_form': bio_form})
+
+    def post(self, request):
+        if not request.user.is_provider:
+            return JsonResponse({'success': False})
+
+        provider = get_object_or_404(Provider, user=request.user)
+        form = UpdateBioForm(request.POST, instance=provider)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True, 'redirect_url': reverse('account_info_page')})
+
+        return JsonResponse({'success': False, 'errors': form.errors.get_json_data()})
+
+class UpdateLocationView(LoginRequiredMixin, View):
+    def get(self, request):
+        location_form = UpdateLocationForm(instance=request.user)
+        return render(request, 'dashboard/account/modal/location_modal.html', {'location_form': location_form})
+
+    def post(self, request):
+        if not request.user.is_provider:
+            return JsonResponse({'success': False})
+
+        provider = get_object_or_404(Provider, user=request.user)
+        form = UpdateLocationForm(request.POST, instance=provider)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True, 'redirect_url': reverse('account_info_page')})
+
+        return JsonResponse({'success': False, 'errors': form.errors.get_json_data()})

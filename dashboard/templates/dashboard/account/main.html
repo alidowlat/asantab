@@ -25,7 +25,11 @@
     {% include 'dashboard/account/modal/email_modal.html' %}
     {% include 'dashboard/account/modal/gender_modal.html' %}
     {% include 'dashboard/account/modal/birthdate_modal.html' %}
-    {% include 'dashboard/account/modal/username_modal.html' %}
+    {% if provider %}
+        {% include 'dashboard/account/modal/username_modal.html' %}
+        {% include 'dashboard/account/modal/bio_modal.html' %}
+        {% include 'dashboard/account/modal/location_modal.html' %}
+    {% endif %}
 
     <script src="/static/scripts/account.js"></script>
 {% endblock %}

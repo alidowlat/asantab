@@ -1,7 +1,7 @@
 from django.urls import path
 
 from dashboard.views import AccountView, UpdateEmailView, UpdateNameView, UpdatePhoneView, UpdateNationalIDView, UpdateGenderView, \
-    UpdateBirthdateView, UpdateUsernameView
+    UpdateBirthdateView, UpdateUsernameView, UpdateBioView, UpdateLocationView
 
 urlpatterns = [
     path('info/', AccountView.as_view(), name='account_info_page'),
@@ -12,4 +12,6 @@ urlpatterns = [
     path('update-gender/', UpdateGenderView.as_view(), name='update_gender'),
     path('update-birthdate/', UpdateBirthdateView.as_view(), name='update_birthdate'),
     path('update-username/', UpdateUsernameView.as_view(), name='update_username'),
+    path('update-bio/', UpdateBioView.as_view(), name='update_bio'),
+    path('update-location/', UpdateLocationView.as_view(), name='update_location'),
 ]
