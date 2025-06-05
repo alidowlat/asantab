@@ -1,5 +1,4 @@
 from django.contrib.auth import login, logout
-from django.http import JsonResponse
 from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse
 from django.views import View
@@ -61,8 +60,7 @@ def provider_complete_info_view(request):
             provider.save()
             login(request, user)
             request.session.pop('provider_phone', None)
-            return JsonResponse({'success': True, 'redirect_url': reverse('dashboard_page')})
-        return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+            return redirect('dashboard_page')
     else:
         form = ProviderCompleteInfoForm(instance=provider)
 

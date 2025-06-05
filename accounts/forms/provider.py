@@ -1,9 +1,9 @@
 from accounts.models import Provider
 from django import forms
-from core.clean import UsernameCleanMixin, BankCleanMixin
+from core.clean import UsernameCleanMixin, IbanNumberCleanMixin, CardNumberCleanMixin
 
 
-class ProviderCompleteInfoForm(UsernameCleanMixin, BankCleanMixin, forms.ModelForm):
+class ProviderCompleteInfoForm(UsernameCleanMixin, IbanNumberCleanMixin, CardNumberCleanMixin, forms.ModelForm):
     class Meta:
         model = Provider
         fields = [

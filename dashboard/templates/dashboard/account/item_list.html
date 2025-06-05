@@ -265,5 +265,92 @@
                 </div>
             </button>
         </div>
+        <div class="col-span-2 sm:col-span-1">
+            <button
+                    class="w-full"
+                    type="button"
+                    data-modal-target="iban_number-modal"
+                    data-modal-toggle="iban_number-modal"
+            >
+                <div
+                        class="relative rounded-lg border p-4 hover:border-border/50"
+                >
+                    {% if provider.iban_number %}
+                        <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-success">
+                            تکمیل شده
+                        </div>
+                    {% else %}
+                        <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-yellow-500">
+                            تکمیل نشده
+                        </div>
+                    {% endif %}
+                    <div class="flex justify-between">
+                        <div class="flex flex-col items-start gap-y-2">
+                            <div class="text-text/60">شماره شبا</div>
+                            <div class="mr-2 text-text/80">{{ provider.iban_number|default:'ثبت نشده' }}</div>
+                        </div>
+                        <div class="i-lucide-pen size-5 text-primary"></div>
+                    </div>
+                </div>
+            </button>
+        </div>
+        <div class="col-span-2 sm:col-span-1">
+            <button
+                    class="w-full"
+                    type="button"
+                    data-modal-target="card_number-modal"
+                    data-modal-toggle="card_number-modal"
+            >
+                <div
+                        class="relative rounded-lg border p-4 hover:border-border/50"
+                >
+                    {% if provider.card_number %}
+                        <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-success">
+                            تکمیل شده
+                        </div>
+                    {% else %}
+                        <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-yellow-500">
+                            تکمیل نشده
+                        </div>
+                    {% endif %}
+                    <div class="flex justify-between">
+                        <div class="flex flex-col items-start gap-y-2">
+                            <div class="text-text/60">شماره کارت</div>
+                            <div class="mr-2 text-text/80">{{ provider.card_number|default:'ثبت نشده' }}</div>
+                        </div>
+                        <div class="i-lucide-pen size-5 text-primary"></div>
+                    </div>
+                </div>
+            </button>
+        </div>
+        <div class="col-span-2 sm:col-span-1">
+            <button
+                    class="w-full"
+                    type="button"
+                    data-modal-target="profile_image-modal"
+                    data-modal-toggle="profile_image-modal"
+            >
+                <div
+                        class="relative rounded-lg border p-4 hover:border-border/50"
+                >
+                    {% if provider.profile_image %}
+                        <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-success">
+                            تکمیل شده
+                        </div>
+                    {% else %}
+                        <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-yellow-500">
+                            تکمیل نشده
+                        </div>
+                    {% endif %}
+                    <div class="flex justify-between">
+                        <div class="flex flex-col items-start gap-y-2">
+                            <div class="text-text/60">عکس پروفایل</div>
+                            <div class="mr-2 text-text/80">{{ provider.profile_image|default:'ثبت نشده' }}</div>
+                        </div>
+                        <div class="i-lucide-pen size-5 text-primary"></div>
+                    </div>
+                </div>
+            </button>
+        </div>
     {% endif %}
 </div>

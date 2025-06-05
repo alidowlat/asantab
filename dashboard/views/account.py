@@ -7,7 +7,8 @@ from django.views.generic import TemplateView
 from jalali_date import date2jalali
 from accounts.models import Provider
 from dashboard.forms import UpdateEmailForm, UpdateNameForm, UpdatePhoneForm, UpdateNationalIDForm, UpdateGenderForm, \
-    UpdateBirthdateForm, UpdateUsernameForm, UpdateBioForm, UpdateLocationForm
+    UpdateBirthdateForm, UpdateUsernameForm, UpdateBioForm, UpdateLocationForm, UpdateIbanForm, UpdateCardNumberForm, \
+    UpdateProfileImageForm
 
 
 class AccountView(LoginRequiredMixin, TemplateView):
@@ -30,6 +31,9 @@ class AccountView(LoginRequiredMixin, TemplateView):
             context['username_form'] = UpdateUsernameForm(instance=provider)
             context['bio_form'] = UpdateBioForm(instance=provider)
             context['location_form'] = UpdateLocationForm(instance=provider)
+            context['iban_form'] = UpdateIbanForm(instance=provider)
+            context['card_number_form'] = UpdateCardNumberForm(instance=provider)
+            context['profile_image_form'] = UpdateProfileImageForm(instance=provider)
 
         initial = {}
         if user.birth_date:
@@ -149,7 +153,6 @@ class UpdateUsernameView(LoginRequiredMixin, View):
         if form.is_valid():
             form.save()
             return JsonResponse({'success': True, 'redirect_url': reverse('account_info_page')})
-
         return JsonResponse({'success': False, 'errors': form.errors.get_json_data()})
 
 
@@ -170,6 +173,7 @@ class UpdateBioView(LoginRequiredMixin, View):
 
         return JsonResponse({'success': False, 'errors': form.errors.get_json_data()})
 
+
 class UpdateLocationView(LoginRequiredMixin, View):
     def get(self, request):
         location_form = UpdateLocationForm(instance=request.user)
@@ -185,4 +189,56 @@ class UpdateLocationView(LoginRequiredMixin, View):
             form.save()
             return JsonResponse({'success': True, 'redirect_url': reverse('account_info_page')})
 
+        return JsonResponse({'success': False, 'errors': form.errors.get_json_data()})
+
+
+class UpdateIbanView(LoginRequiredMixin, View):
+    def get(self, request):
+        iban_form = UpdateIbanForm(instance=request.user)
+        return render(request, 'dashboard/account/modal/iban_modal.html', {'iban_form': iban_form})
+
+    def post(self, request):
+        if not request.user.is_provider:
+            return JsonResponse({'success': False})
+
+        provider = get_object_or_404(Provider, user=request.user)
+        form = UpdateIbanForm(request.POST, instance=provider)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True, 'redirect_url': reverse('account_info_page')})
+
+        return JsonResponse({'success': False, 'errors': form.errors.get_json_data()})
+
+
+class UpdateCardNumberView(LoginRequiredMixin, View):
+    def get(self, request):
+        card_number_form = UpdateCardNumberForm(instance=request.user)
+        return render(request, 'dashboard/account/modal/card_number_modal.html', {'card_number_form': card_number_form})
+
+    def post(self, request):
+        if not request.user.is_provider:
+            return JsonResponse({'success': False})
+
+        provider = get_object_or_404(Provider, user=request.user)
+        form = UpdateCardNumberForm(request.POST, instance=provider)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True, 'redirect_url': reverse('account_info_page')})
+        return JsonResponse({'success': False, 'errors': form.errors.get_json_data()})
+
+
+class UpdateProfileImageView(LoginRequiredMixin, View):
+    def get(self, request):
+        profile_image_form = UpdateProfileImageForm(instance=request.user)
+        return render(request, 'dashboard/account/modal/profile_image_modal.html', {'profile_image_form': profile_image_form})
+
+    def post(self, request):
+        if not request.user.is_provider:
+            return JsonResponse({'success': False})
+
+        provider = get_object_or_404(Provider, user=request.user)
+        form = UpdateProfileImageForm(request.POST, request.FILES, instance=provider)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True, 'redirect_url': reverse('account_info_page')})
         return JsonResponse({'success': False, 'errors': form.errors.get_json_data()})
