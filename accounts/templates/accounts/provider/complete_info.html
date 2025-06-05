@@ -87,7 +87,7 @@
                 <a href="{% url 'index_page' %}" class="mb-10">
                     <img src="/static/images/logo.png" alt="logo" class="mx-auto h-10 xs:h-12">
                 </a>
-                <h1 class="mb-8 text-center font-medium xs:text-lg">
+                <h1 class="mb-10 text-center font-medium xs:text-lg">
                     ورود فروشنده
                 </h1>
 
@@ -108,7 +108,7 @@
                 </div>
 
                 <!-- bio -->
-                <div class="mb-6">
+                <div class="mb-8">
                     <label class="relative block w-full rounded-lg border bg-muted shadow-sm duration-300 focus-within:border-primary">
                         {{ form.bio|add_class:'peer w-full text-lg rounded-lg bg-transparent p-3 text-center placeholder-transparent outline-none focus:ring-0 xs:p-4' }}
                         <span class="pointer-events-none absolute start-3 -translate-y-1/2 rounded-full bg-muted px-2 text-xs text-text/80 transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:text-xs peer-focus:peer-placeholder-shown:top-0">
@@ -124,7 +124,7 @@
                 </div>
 
                 <!-- province + city -->
-                <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div class="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
                         <label class="mb-2 block text-sm font-medium text-text">
                             استان محل سکونت
@@ -152,7 +152,7 @@
                 </div>
 
                 <!-- card number + iban -->
-                <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div class="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
                         <label class="relative block w-full rounded-lg border bg-muted shadow-sm duration-300 focus-within:border-primary">
                             {{ form.card_number|add_class:'peer w-full text-lg rounded-lg bg-transparent p-3 text-center placeholder-transparent outline-none focus:ring-0 xs:p-4' }}
@@ -161,7 +161,7 @@
                         </span>
                         </label>
                         {% for error in form.card_number.errors %}
-                            <div class="flex mt-1">
+                            <div class="flex mt-5">
                                 <i class="i-lucide-circle-alert text-warning ml-2"></i>
                                 <div class="text-warning text-sm">{{ error }}</div>
                             </div>
@@ -175,7 +175,7 @@
                         </span>
                         </label>
                         {% for error in form.iban_number.errors %}
-                            <div class="flex mt-1">
+                            <div class="flex mt-5">
                                 <i class="i-lucide-circle-alert text-warning ml-2"></i>
                                 <div class="text-warning text-sm">{{ error }}</div>
                             </div>
@@ -226,56 +226,5 @@
         </div>
     </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    document.getElementById('provider-form').addEventListener('submit', async function (e) {
-        e.preventDefault()
-
-        const form = e.target
-        const url = form.action
-        const formData = new FormData(form)
-
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: formData
-            })
-
-            const data = await response.json()
-
-            if (data.success) {
-                await Swal.fire({
-                    icon: 'success',
-                    title: 'اطلاعات با موفقیت ثبت شد',
-                    text: 'در حال انتقال..',
-                    confirmButtonText: 'باشه',
-                    timer: 2000,
-                    timerProgressBar: true,
-                    showConfirmButton: false
-                })
-                window.location.href = data.redirect_url
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'خطا',
-                    text: 'اطلاعات معتبر نیست.',
-                })
-            }
-        } catch (err) {
-            console.error(err)
-            Swal.fire({
-                icon: 'error',
-                title: 'خطا در ارتباط با سرور',
-                text: 'لطفا دوباره تلاش کنید',
-            })
-        }
-    })
-</script>
-
-
 </body>
 </html>
