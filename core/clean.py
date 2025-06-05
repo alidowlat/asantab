@@ -26,7 +26,7 @@ class UsernameCleanMixin(forms.Form):
         return username
 
 
-class BankCleanMixin(forms.Form):
+class IbanNumberCleanMixin(forms.Form):
     def clean_iban_number(self):
         if self.cleaned_data.get('iban_number'):
             iban = self.cleaned_data.get('iban_number', '').replace(' ', '')
@@ -36,6 +36,8 @@ class BankCleanMixin(forms.Form):
             return iban
         return ''
 
+
+class CardNumberCleanMixin(forms.Form):
     def clean_card_number(self):
         if self.cleaned_data.get('card_number'):
             card = self.cleaned_data.get('card_number', '').replace(' ', '')
