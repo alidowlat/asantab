@@ -27,6 +27,7 @@
                 <form class="space-y-6 w-full" novalidate>
                     {% csrf_token %}
                     <div class="space-y-3">
+                        <h3>استان</h3>
                         <label dir="rtl"
                                for="{{ location_form.province.id_for_label }}"
                                class="relative block w-full rounded-lg border bg-muted shadow-sm duration-300 focus-within:border-primary"
@@ -41,6 +42,7 @@
                         </div>
                     </div>
                     <div class="space-y-3">
+                        <h3>شهر</h3>
                         <label dir="rtl"
                                for="{{ location_form.city.id_for_label }}"
                                class="relative block w-full rounded-lg border bg-muted shadow-sm duration-300 focus-within:border-primary"
