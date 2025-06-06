@@ -48,6 +48,26 @@ class CardNumberCleanMixin(forms.Form):
         return ''
 
 
+class PhoneNumberCleanMixin(forms.Form):
+    def clean_phone_number(self):
+        phone = fa_to_en_digits(self.cleaned_data['phone_number'].strip())
+        errors = []
+
+        if not phone.isdigit():
+            errors.append("شماره موبایل نامعتبر است.")
+
+        if not phone.startswith("09"):
+            errors.append("شماره موبایل میبایست با ۰۹ شروع شود.")
+
+        if len(phone) != 11:
+            errors.append("شماره موبایل میبایست دقیقا ۱۱ رقمی باشد.")
+
+        if errors:
+            raise forms.ValidationError(errors)
+
+        return phone
+
+
 class OTPCleanMixin(forms.Form):
     def clean_otp(self):
         otp = fa_to_en_digits(self.cleaned_data['otp'].strip())
