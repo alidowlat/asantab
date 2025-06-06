@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     modals.forEach(modal => {
         // const fieldName = modal.dataset.field;
-        const fieldName = modal.dataset.field;
+        const fieldName = modal.dataset.field.split(",");
         const submitBtn = modal.querySelector(".submit-btn");
         const input = modal.querySelector(".modal-input");
         const errorText = modal.querySelector(".error-text");
@@ -53,9 +53,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     } else if (data.error_type && data.error_message) {
                         errorText.textContent = data.error_message;
                         if (icon) icon.classList.remove("hidden");
-                    } else if (data.errors && data.errors[fieldName]) {
-                        errorText.textContent = data.errors[fieldName][0].message;
-                        if (icon) icon.classList.remove("hidden");
+                    } else if (data.errors) {
+                        let foundError = false;
+                        for (let name of fieldName) {
+                            if (data.errors[name]) {
+                                errorText.textContent = data.errors[name][0].message;
+                                if (icon) icon.classList.remove("hidden");
+                                foundError = true;
+                                break;
+                            }
+                        }
                     }
                 });
         });
