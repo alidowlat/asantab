@@ -63,3 +63,28 @@ class OTPCleanMixin(forms.Form):
             raise forms.ValidationError(errors)
 
         return otp
+
+
+class PasswordCleanMixin(forms.Form):
+    def clean(self):
+        cleaned = super().clean()
+        new_password = cleaned.get('new_password')
+        confirm_password = cleaned.get('confirm_password')
+
+        if not new_password:
+            self.add_error('new_password', 'کلمه عبور جدید وارد نشده است.')
+        else:
+            if len(new_password) < 8 or len(new_password) > 24:
+                self.add_error('new_password', 'طول کلمه عبور باید بین ۸ تا ۲۴ کاراکتر باشد.')
+            if not re.search(r'[a-z]', new_password):
+                self.add_error('new_password', 'کلمه عبور باید حداقل یک حرف کوچک داشته باشد.')
+            if not re.search(r'[A-Z]', new_password):
+                self.add_error('new_password', 'کلمه عبور باید حداقل یک حرف بزرگ داشته باشد.')
+            if not re.search(r'\d', new_password):
+                self.add_error('new_password', 'کلمه عبور باید حداقل یک عدد داشته باشد.')
+
+        if new_password and confirm_password and new_password != confirm_password:
+            self.add_error('confirm_password', 'تکرار کلمه عبور با کلمه عبور جدید مطابقت ندارد.')
+
+        return cleaned
+
