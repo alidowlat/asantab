@@ -1,3 +1,4 @@
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
@@ -8,7 +9,7 @@ from jalali_date import date2jalali
 from accounts.models import Provider
 from dashboard.forms import UpdateEmailForm, UpdateNameForm, UpdatePhoneForm, UpdateNationalIDForm, UpdateGenderForm, \
     UpdateBirthdateForm, UpdateUsernameForm, UpdateBioForm, UpdateLocationForm, UpdateIbanForm, UpdateCardNumberForm, \
-    UpdateProfileImageForm
+    UpdateProfileImageForm, UpdatePasswordForm
 
 
 class AccountView(LoginRequiredMixin, TemplateView):
@@ -34,6 +35,7 @@ class AccountView(LoginRequiredMixin, TemplateView):
             context['iban_form'] = UpdateIbanForm(instance=provider)
             context['card_number_form'] = UpdateCardNumberForm(instance=provider)
             context['profile_image_form'] = UpdateProfileImageForm(instance=provider)
+            context['password_form'] = UpdatePasswordForm(user=self.request.user)
 
         initial = {}
         if user.birth_date:
@@ -241,4 +243,34 @@ class UpdateProfileImageView(LoginRequiredMixin, View):
         if form.is_valid():
             form.save()
             return JsonResponse({'success': True, 'redirect_url': reverse('account_info_page')})
+        return JsonResponse({'success': False, 'errors': form.errors.get_json_data()})
+
+
+class UpdatePasswordView(LoginRequiredMixin, View):
+    def get(self, request):
+        password_form = UpdatePasswordForm(user=request.user)
+        return render(request, 'dashboard/account/modal/password_modal.html', {'password_form': password_form})
+
+    def post(self, request):
+        if not request.user.is_provider:
+            return JsonResponse({'success': False})
+
+        user = request.user
+        has_password = user.has_usable_password()
+
+        form = UpdatePasswordForm(request.POST, user=user)
+
+        if form.is_valid():
+            if has_password:
+                old_password = form.cleaned_data.get('old_password')
+                if not user.check_password(old_password):
+                    form.add_error('old_password', 'کلمه عبور فعلی وارد شده اشتباه است.')
+                    return JsonResponse({'success': False, 'errors': form.errors.get_json_data()})
+
+            user.set_password(form.cleaned_data.get('new_password'))
+            user.save()
+            update_session_auth_hash(request, user)
+
+            return JsonResponse({'success': True, 'redirect_url': reverse('account_info_page')})
+
         return JsonResponse({'success': False, 'errors': form.errors.get_json_data()})
