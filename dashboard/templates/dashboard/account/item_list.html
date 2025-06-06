@@ -352,5 +352,33 @@
                 </div>
             </button>
         </div>
+        <div class="col-span-2 sm:col-span-1">
+            <button
+                    class="w-full"
+                    type="button"
+                    data-modal-target="password-modal"
+                    data-modal-toggle="password-modal"
+            >
+                <div
+                        class="relative rounded-lg border p-4 hover:border-border/50"
+                >
+                    {% if user.has_usable_password %}
+                        <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-success">
+                            کلمه عبور برای شما ثبت شده است
+                        </div>
+                    {% else %}
+                        <div class="absolute inset-x-0 -bottom-2.5 mx-auto w-fit rounded-full bg-muted px-3 text-sm font-medium text-yellow-500">
+                            کلمه عبور برای شما ثبت نشده است
+                        </div>
+                    {% endif %}
+                    <div class="flex justify-between">
+                        <div class="flex flex-col items-start gap-y-2">
+                            <div class="text-text/60">کلمه عبور</div>
+                        </div>
+                        <div class="i-solar-password-broken size-5 text-primary"></div>
+                    </div>
+                </div>
+            </button>
+        </div>
     {% endif %}
 </div>
