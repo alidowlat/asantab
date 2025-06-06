@@ -2,7 +2,7 @@ from django.urls import path
 
 from dashboard.views import AccountView, UpdateEmailView, UpdateNameView, UpdatePhoneView, UpdateNationalIDView, UpdateGenderView, \
     UpdateBirthdateView, UpdateUsernameView, UpdateBioView, UpdateLocationView, UpdateIbanView, UpdateCardNumberView, \
-    UpdateProfileImageView
+    UpdateProfileImageView, UpdatePasswordView
 
 urlpatterns = [
     path('info/', AccountView.as_view(), name='account_info_page'),
@@ -18,4 +18,5 @@ urlpatterns = [
     path('update-iban/', UpdateIbanView.as_view(), name='update_iban'),
     path('update-card-number/', UpdateCardNumberView.as_view(), name='update_card_number'),
     path('update-profile-image/', UpdateProfileImageView.as_view(), name='update_profile_image'),
+    path('update-password/', UpdatePasswordView.as_view(), name='update_password'),
 ]
