@@ -1,7 +1,7 @@
 import os
 from django import forms
 from accounts.models import Provider
-from core.clean import UsernameCleanMixin, IbanNumberCleanMixin, CardNumberCleanMixin
+from core.clean import UsernameCleanMixin, IbanNumberCleanMixin, CardNumberCleanMixin, PasswordCleanMixin
 from django.conf import settings
 
 
@@ -122,3 +122,25 @@ class UpdateProfileImageForm(forms.ModelForm):
         if commit:
             instance.save()
         return instance
+
+
+class UpdatePasswordForm(PasswordCleanMixin, forms.Form):
+    old_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'modal-input'}),
+        error_messages={'required': 'وارد کردن کلمه عبور قبلی الزامی است.'}
+    )
+    new_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'modal-input'}),
+        error_messages={'required': 'وارد کردن کلمه عبور جدید الزامی است.'}
+    )
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'modal-input'}),
+        error_messages={'required': 'تکرار کلمه عبور جدید الزامی است.'}
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+
+        if not self.user.has_usable_password():
+            self.fields.pop('old_password')
