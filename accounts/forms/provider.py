@@ -1,6 +1,11 @@
 from accounts.models import Provider
 from django import forms
-from core.clean import UsernameCleanMixin, IbanNumberCleanMixin, CardNumberCleanMixin
+from core.clean import UsernameCleanMixin, IbanNumberCleanMixin, CardNumberCleanMixin, PhoneNumberCleanMixin
+
+
+class ProviderLoginForm(PhoneNumberCleanMixin, forms.Form):
+    phone_number = forms.CharField(max_length=11)
+    password = forms.CharField(widget=forms.PasswordInput)
 
 
 class ProviderCompleteInfoForm(UsernameCleanMixin, IbanNumberCleanMixin, CardNumberCleanMixin, forms.ModelForm):

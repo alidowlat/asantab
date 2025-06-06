@@ -2,7 +2,7 @@ from django.contrib.auth import login, logout
 from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse
 from django.views import View
-from accounts.forms import OTPForm, PhoneForm, ProviderCompleteInfoForm
+from accounts.forms import OTPForm, PhoneForm, ProviderCompleteInfoForm, ProviderLoginForm
 from accounts.models import User, Provider
 from accounts.views import otp_verify_view_shared, phone_input_view_shared
 
@@ -66,6 +66,25 @@ def provider_complete_info_view(request):
 
     return render(request, 'accounts/provider/complete_info.html', {'form': form})
 
+
+def provider_password_input_view(request):
+    if request.user.is_authenticated:
+        return redirect('index_page')
+
+    form = ProviderLoginForm(request.POST or None)
+
+    if request.method == 'POST' and form.is_valid():
+        phone_number = form.cleaned_data['phone_number']
+        password = form.cleaned_data['password']
+
+        user = User.objects.filter(phone_number=phone_number).first()
+        if user and user.check_password(password):
+            login(request, user)
+            return redirect('dashboard_page')
+
+        form.add_error('password', 'اطلاعات وارد شده نادرست است.')
+
+    return render(request, 'accounts/provider/password_auth.html', {'form': form})
 
 
 class LogoutView(View):
