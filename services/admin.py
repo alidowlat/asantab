@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from services.models import Tag, Option, Service, Schedule, Profession, Media, Category, Reservation, Platform, Visit, Favorite
+from services.models import Tag, Option, Service, Schedule, Profession, Media, Category, Reservation, Platform, ServiceVisit, Favorite
 
 admin.site.register(Category)
 admin.site.register(Favorite)
@@ -12,4 +12,4 @@ admin.site.register(Reservation)
 admin.site.register(Schedule)
 admin.site.register(Service)
 admin.site.register(Tag)
-admin.site.register(Visit)
+admin.site.register(ServiceVisit)
