@@ -67,3 +67,17 @@ class BaseFavorite(models.Model):
 
     class Meta:
         abstract = True
+
+
+
+class BaseVisit(models.Model):
+    ip = models.CharField(max_length=64, verbose_name='IP')
+    user = models.ForeignKey('accounts.User', null=True, blank=True, on_delete=models.CASCADE, verbose_name='کاربر')
+    user_agent = models.TextField(null=True, blank=True, verbose_name='مرورگر / دستگاه')
+    referer = models.URLField(null=True, blank=True, verbose_name='صفحه ارجاع‌دهنده')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        abstract = True
+        verbose_name = "Visit"
+        verbose_name_plural = "Visits"
