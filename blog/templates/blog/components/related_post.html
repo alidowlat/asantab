@@ -1,0 +1,54 @@
+{% load extra_filters %}
+
+{% if related_posts %}
+    <div class="mb-16">
+        <div class="mb-6 flex items-center justify-between gap-x-6 text-nowrap">
+            <h2 class="font-semiBold lg:text-xl">خواندنی های مرتبط</h2>
+            <div class="h-[0.25px] w-full bg-secondary"></div>
+        </div>
+
+        <div>
+            <div class="swiper blog-swiper !px-px pt-4 swiper-initialized swiper-horizontal swiper-free-mode swiper-rtl swiper-backface-hidden">
+                <div class="swiper-wrapper py-px" id="swiper-wrapper-c1066ec8abd6fc879" aria-live="polite">
+                    {% for post in related_posts %}
+                        <div class="swiper-slide" style="width: 235.5px; margin-left: 20px;" role="group"
+                             aria-label="{{ forloop.counter }} / 4">
+                            <div class="border-gradient group relative rounded-[--blog-card-radius] p-px [--blog-card-radius:theme(borderRadius.2xl)] before:absolute before:-inset-px before:h-[calc(100%+2px)] before:w-[calc(100%+2px)] before:rounded-[--blog-card-radius] before:content-['']">
+                                <a href="./blog-detail.html"
+                                   class="relative block overflow-hidden rounded-[calc(var(--blog-card-radius)-1px)] bg-muted">
+                                    <div class="mb-4 bg-border p-2">
+                                        <!-- Image -->
+                                        <div class="overflow-hidden rounded-xl rounded-br-[50px]">
+                                            <img src="./assets/images/blog.jpg" alt="Blesser"
+                                                 class="aspect-video w-full rounded-xl rounded-br-[50px] object-cover duration-500 group-hover:scale-110">
+                                        </div>
+                                    </div>
+                                    <div class="mb-4 px-2 lg:px-4">
+                                        <p class="line-clamp-2 h-10 text-sm xs:h-12 xs:text-base">
+                                            بررسی کیف رودوشی زنانه چرم مشهد؛ طراحی ساده و شیک با
+                                            چرم طبیعی
+                                        </p>
+                                    </div>
+                                    <!-- Author & Date-->
+                                    <div class="mb-4 flex items-center justify-between gap-4 px-2 lg:px-4">
+                                        <!-- Author -->
+                                        <div class="flex items-center gap-2 truncate">
+                                            <div class="size-8">
+                                                <img src="./assets/images/user.png" alt="blog author">
+                                            </div>
+                                            <div class="truncate text-sm">تایماز اکبری</div>
+                                        </div>
+                                        <!-- Date -->
+                                        <div class="min-w-fit text-sm text-primary">
+                                            شنبه 4 خرداد
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div>
+        </div>
+    </div>
+{% endif %}
