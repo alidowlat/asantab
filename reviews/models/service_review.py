@@ -9,7 +9,7 @@ class ServiceReview(BaseReview):
     class Meta:
         verbose_name = 'Service Review'
         verbose_name_plural = 'Service Reviews'
-        db_table = 'service_reviews'
+        db_table = 'services_reviews'
 
 
 class ServiceReviewReaction(BaseReviewReaction):
@@ -19,7 +19,7 @@ class ServiceReviewReaction(BaseReviewReaction):
         unique_together = ('user', 'review')
         verbose_name = 'Service Review Reaction'
         verbose_name_plural = 'Service Review Reactions'
-        db_table = 'service_review_reactions'
+        db_table = 'services_review_reactions'
 
     def __str__(self):
         return f"{self.reaction} - {self.review}"
