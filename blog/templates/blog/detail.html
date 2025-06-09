@@ -1,0 +1,80 @@
+{% extends 'shared/_layout.html' %}
+{% load extra_filters %}
+
+{% block title %}
+    {{ post.title }} | ‌آسان تب
+{% endblock %}
+
+
+{% block content %}
+    <main class="flex-grow bg-background pt-[106px]">
+        <div class="container pt-10">
+            <!-- Breadcrumb -->
+            <div class="mb-8 flex flex-wrap items-center gap-2 text-sm text-text/60">
+                <a href="{% url 'index_page' %}" class="flex items-center gap-x-1">
+                    آسان تب
+                    <div class="i-lucide-chevron-left size-4"></div>
+                </a>
+                <div>
+                    <a href="{% url 'post_list_page' %}" class="flex items-center gap-x-1">خواندنی
+                        <div class="i-lucide-chevron-left size-4"></div>
+                    </a>
+                </div>
+            </div>
+            <!-- Detail -->
+            <div class="mb-16 grid grid-cols-12 grid-rows-[60px_min(500px,_1fr)] gap-4">
+                <div class="col-span-12 space-y-4 md:col-span-8 lg:col-span-9">
+                    <div class="rounded-lg bg-muted p-3 shadow md:p-5">
+                        <h1 class="mb-8 font-medium md:text-xl">{{ post.title }}</h1>
+
+                        <div class="mb-8 flex items-center gap-2 text-sm">
+                            <div class="flex items-center gap-2">
+                                <div class="size-8">
+                                    <img src="{{ post.author.image.url|default:'/static/images/user.png' }}" alt="blog author">
+                                </div>
+                                <p class="font-medium text-text/90">{{ post.author }}</p>
+                            </div>
+                            <div class="h-3 w-px rounded-full bg-background"></div>
+                            <div class="flex items-center gap-2 text-text/60">
+                                <div class="i-lucide-clock size-5"></div>
+                                <div>{{ post.created_at|show_date_with_month }}</div>
+                            </div>
+                        </div>
+                        <div class="mb-8">
+                            <img src="{{ post.image.url }}" alt="blog" class="w-full rounded-xl rounded-br-[50px]">
+                        </div>
+                        <div class="mb-8 leading-loose text-text/90">
+                            <p class="mb-6">
+
+                            </p>
+                            <p class="mb-6">
+
+                            </p>
+                        </div>
+                        <div class="flex justify-end">
+                            <div class="text-text-/70 flex items-center justify-center gap-x-6 text-center">
+                                <button class="duration-150 hover:text-primary" data-state="closed" type="button"
+                                        data-modal-target="share-modal" data-modal-toggle="share-modal">
+                                    <div class="i-lucide-share-2 size-6"></div>
+                                </button>
+                                <a href="#" class="duration-150 hover:text-primary">
+                                    <i class="i-carbon-logo-twitter h-7 w-7"></i>
+                                </a>
+                                <a href="#" class="duration-150 hover:text-primary">
+                                    <i class="i-file-icons-telegram h-5 w-5"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% include 'blog/components/detail/sidebar.html' %}
+            </div>
+            <!-- Related Blogs -->
+            {% include 'blog/components/related_post.html' %}
+        </div>
+    </main>
+
+    {% include 'blog/components/modals/share_modal.html' %}
+{% endblock %}
+
+
