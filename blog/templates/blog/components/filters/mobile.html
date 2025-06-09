@@ -1,0 +1,26 @@
+<div id="sort-drawer"
+     class="fixed inset-x-0 bottom-0 z-40 w-full translate-y-full overflow-y-auto rounded-t-xl border-t bg-muted p-4 transition-transform duration-500"
+     tabindex="-1" aria-labelledby="filter-drawer">
+    <div>
+        <fieldset class="mb-4 flex flex-col space-y-2">
+            <legend class="sr-only">Sort</legend>
+            <div>
+                <input data-sort="newest" id="sort-1" class="peer hidden sort-radio-mobile" name="sort" type="radio" value="1"/>
+                <label class="relative block w-full cursor-pointer rounded-lg border p-4 text-text/95 transition-all duration-200 peer-checked:border-transparent peer-checked:bg-primary/15 peer-checked:text-primary"
+                       for="sort-1">
+                    <p class="text-center">جدید ترین</p>
+                </label>
+            </div>
+            <div>
+                <input data-sort="most_viewed" id="sort-2" class="peer hidden sort-radio-mobile" name="sort" type="radio" value="2"/>
+                <label class="relative block w-full cursor-pointer rounded-lg border p-4 text-text/95 transition-all duration-200 peer-checked:border-transparent peer-checked:bg-primary/15 peer-checked:text-primary"
+                       for="sort-2">
+                    <p class="text-center">پربازدید ترین</p>
+                </label>
+            </div>
+        </fieldset>
+        <button id="apply-sort-btn-mobile" type="button" data-drawer-hide="sort-drawer" class="btn-primary w-full py-2">
+            نمایش
+        </button>
+    </div>
+</div>
