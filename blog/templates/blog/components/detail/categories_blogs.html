@@ -1,0 +1,22 @@
+<div class="mb-8 rounded-lg bg-muted px-2 py-3 shadow xl:px-4">
+    <p class="mb-4 text-center text-sm font-medium xl:text-base">
+        دسته‌بندی ها
+    </p>
+    <ul class="space-y-4">
+        {% for category in categories %}
+            <li>
+                <a href="{% url 'post_list_page' %}?={{ category.slug }}" class="group py-2">
+                    <div class="flex items-center justify-between">
+                        <p class="group-hover: flex items-center gap-x-2 text-sm text-text/90 transition-all duration-200 xl:text-base">
+                            {{ category.title }}
+                            <span class="i-lucide-chevron-left size-4"></span>
+                        </p>
+                        <div class="w-6 rounded-lg bg-primary py-px text-center text-sm font-medium text-white dark:bg-emerald-600">
+                            {{ category.active_posts_count }}
+                        </div>
+                    </div>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>

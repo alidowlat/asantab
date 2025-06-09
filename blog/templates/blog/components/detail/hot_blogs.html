@@ -1,0 +1,31 @@
+{% load extra_filters %}
+<div class="mb-8 rounded-lg bg-muted px-2 py-3 shadow xl:px-4">
+    <p class="mb-4 text-center text-sm font-medium xl:text-base">
+        مطالب محبوب
+    </p>
+    <ul class="space-y-8">
+        {% for post in most_viewed_posts %}
+            <li>
+                <a href="{{ post.get_absolute_url }}">
+                    <div class="group flex gap-x-2 xl:gap-x-4">
+                        <div class="min-w-fit overflow-hidden rounded-xl">
+                            <img src="{{ post.image.url }}" alt="blog"
+                                 class="aspect-[1.2/1] w-25 rounded-xl object-cover duration-300 group-hover:scale-110">
+                        </div>
+                        <div class="flex flex-col gap-y-2">
+                            <p class="line-clamp-2 text-sm text-text/90 xl:text-base">
+                                {{ post.title }}
+                            </p>
+                            <div class="flex items-center gap-2 text-text/60">
+                                <div class="i-lucide-clock size-4"></div>
+                                <p class="text-xs text-text/60 xl:text-sm">
+                                    {{ post.created_at|show_date_with_month }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
