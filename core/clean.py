@@ -108,3 +108,26 @@ class PasswordCleanMixin(forms.Form):
 
         return cleaned
 
+
+def create_visit_clean(
+        user,
+        model,
+        request,
+        fk_name: str,
+        http_service,
+        loaded_obj
+):
+    ip, user_agent, referer = http_service(request)
+
+    filter_kwargs = {
+        'ip': ip,
+        fk_name: loaded_obj,
+    }
+
+    if not model.objects.filter(**filter_kwargs).exists():
+        model.objects.create(
+            **filter_kwargs,
+            user=user,
+            user_agent=user_agent,
+            referer=referer,
+        )
