@@ -1,4 +1,3 @@
-from django.contrib.auth.decorators import login_required
 from django.db.models import Q, Count, Min, Max
 from django.http import HttpRequest, JsonResponse
 from django.shortcuts import get_object_or_404
@@ -7,8 +6,9 @@ from django.views.decorators.http import require_POST
 from django.views.generic import DetailView
 
 from core import get_client_info
+from core.clean import create_visit_clean
 from reviews.models.service_review import ServiceReview, ServiceReviewReaction
-from services.models import Service, Visit, Favorite
+from services.models import Service, ServiceVisit, Favorite
 
 
 class ServiceDetailView(DetailView):
@@ -62,17 +62,14 @@ class ServiceDetailView(DetailView):
         context['liked_ids'] = liked_ids
         context['disliked_ids'] = disliked_ids
 
-        ip, user_agent, referer = get_client_info(self.request)
-
-        visit_exists = Visit.objects.filter(ip=ip, service=loaded_service).exists()
-        if not visit_exists:
-            Visit.objects.create(
-                service=loaded_service,
-                ip=ip,
-                user=user,
-                user_agent=user_agent,
-                referer=referer
-            )
+        create_visit_clean(
+            user=self.request.user,
+            model=ServiceVisit,
+            request=self.request,
+            fk_name='service',
+            http_service=get_client_info,
+            loaded_obj=loaded_service,
+        )
 
         return context
 
