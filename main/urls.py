@@ -30,6 +30,8 @@ urlpatterns = [
     path('auth/provider/', include('accounts.urls.provider')),
     path('services/', include('services.urls.list')),
     path('services/', include('services.urls.detail')),
+    path('blog/', include('blog.urls.list')),
+    path('blog/', include('blog.urls.detail')),
     path('profile/', include('dashboard.urls.profile')),
     path('profile/', include('dashboard.urls.favorite')),
     path('profile/', include('dashboard.urls.visit')),
