@@ -1,0 +1,8 @@
+{% for post in posts %}
+    {% include 'blog/components/post_card.html' with post=post %}
+{% empty %}
+    <div class="flex flex-col gap-y-4 items-center justify-center text-text">
+        <div class="i-ic-outline-search-off size-24"></div>
+        <div class="text-2xl"> پستی در بلاگ یافت نشد!</div>
+    </div>
+{% endfor %}
