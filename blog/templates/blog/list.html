@@ -1,0 +1,138 @@
+{% extends 'shared/_layout.html' %}
+
+{% block title %}
+    بلاگ | آسان تب
+{% endblock %}
+
+
+{% block content %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {#    <script src="/static/scripts/filter.js"></script>#}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <main class="flex-grow bg-background pt-[106px]">
+        <div class="container pt-10">
+            <a href="{% url 'index_page' %}" class="mb-10 inline-block pl-4 text-sm font-medium text-text/60">فروشگاه اینترنتی آسان
+                تب</a>
+
+            <!-- Mobile Filters -->
+            <div class="flex items-center gap-4 lg:hidden">
+                <button type="button" data-drawer-target="sort-drawer" data-drawer-show="sort-drawer" data-drawer-placement="bottom"
+                        aria-controls="sort-drawer" class="flex w-full items-center gap-2 rounded-lg bg-muted px-2 py-2">
+                    <div class="i-lucide-list-filter size-6"></div>
+                    مرتب سازی
+                </button>
+            </div>
+
+            <div class="grid grid-cols-12 grid-rows-[60px_min(500px,_1fr)] lg:gap-8">
+                <!-- Desktop Filters -->
+                <div class="col-span-4 row-span-2 hidden lg:block xl:col-span-3">
+                    <div class="sticky top-32 mb-4 overflow-hidden rounded-lg bg-muted">
+                        <div dir="ltr" class="flex max-h-[calc(90vh_-_100px)] flex-col overflow-y-auto overflow-x-hidden">
+                            <!-- Filters Loading Animation -->
+                            <!-- <div class="animate-pulse rounded-md bg-secondary min-h-[calc(70vh_-_100px)]"></div> -->
+                            <div dir="rtl">
+                                <div class="flex h-full flex-col gap-4">
+                                    <div class="flex items-center justify-between p-4 pb-0">
+                                        <div class="text-lg font-medium">فیلترها</div>
+                                        <button id="clear-filters-btn" class="text-sm text-primary disabled:text-text/60">
+                                            لغو فیلترها
+                                        </button>
+                                    </div>
+                                    <!-- Filters -->
+                                    {% include "blog/components/filters/desktop.html" %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-span-12 space-y-4 lg:col-span-8 xl:col-span-9">
+                    <!-- Desktop Sort -->
+                    <div class="hidden lg:block">
+                        <div class="flex h-14 items-center gap-x-2 rounded-lg bg-muted px-2 shadow lg:px-4">
+                            <div class="flex items-center gap-x-2 text-sm lg:text-base">
+                                <div class="i-lucide-list-filter size-6"></div>
+                                <p>مرتب سازی بر اساس</p>
+                            </div>
+                            <button class="rounded-lg bg-primary/15 px-1 py-1.5 text-sm text-primary duration-200 lg:px-4 lg:text-base">
+                                جدید ترین
+                            </button>
+                            <button class="rounded-lg px-1 py-1.5 text-sm duration-200 hover:text-primary lg:px-4 lg:text-base">
+                                پربازدید ترین
+                            </button>
+                        </div>
+                    </div>
+                    <!--  Empty Search Result -->
+                    <!--                    <div class="flex flex-col gap-y-4 items-center justify-center text-text">-->
+                    <!--                        <div class="i-ic-outline-search-off size-24"></div>-->
+                    <!--                        <div class="text-2xl"> مطلبی یافت نشد!</div>-->
+                    <!--                    </div>-->
+
+                    <div id="post-list"
+                         class="grid grid-cols-1 gap-2 gap-y-2 xs:grid-cols-2 xs:gap-4 md:grid-cols-2 xl:grid-cols-3">
+                        {% include 'blog/components/post_list_partial.html' with post=post %}
+                    </div>
+
+                    <!-- Pagination -->
+                    {% if is_paginated %}
+                        <nav id="pagination" class="!mt-10">
+                            <div class="flex items-center justify-center gap-1">
+                                {# First Page #}
+                                {% if page_obj.number > 1 %}
+                                    <a href="?page=1" aria-label="First Page"
+                                       class="inline-flex h-10 w-10 items-center justify-center rounded-md border bg-muted p-0 text-sm">
+                                        <i class="i-lucide-chevrons-right"></i>
+                                    </a>
+                                {% endif %}
+
+                                {# Previous Page #}
+                                {% if page_obj.has_previous %}
+                                    <a href="?page={{ page_obj.previous_page_number }}" aria-label="Previous Page"
+                                       class="inline-flex h-10 w-10 items-center justify-center rounded-md border bg-muted p-0 text-sm">
+                                        <i class="i-lucide-chevron-right"></i>
+                                    </a>
+                                {% endif %}
+
+                                {# Page Numbers #}
+                                {% for page in page_obj.paginator.page_range %}
+                                    {% if page == 1 or page == page_obj.paginator.num_pages or page >= page_obj.number|add:'-1' and page <= page_obj.number|add:'1' %}
+                                        {% if page == page_obj.number %}
+                                            <span class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-primary-btn bg-primary-btn p-0 text-sm text-white">
+                            {{ page }}
+                        </span>
+                                        {% else %}
+                                            <a href="?page={{ page }}"
+                                               class="inline-flex h-10 w-10 items-center justify-center rounded-md border bg-muted p-0 text-sm">
+                                                {{ page }}
+                                            </a>
+                                        {% endif %}
+                                    {% elif page == 2 and page_obj.number > 4 or page == page_obj.paginator.num_pages|add:'-1' and page_obj.number < page_obj.paginator.num_pages|add:'-3' %}
+                                        <div class="flex h-9 w-9 items-center justify-center">
+                                            <i class="i-lucide-ellipsis text-text/80"></i>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {# Next Page #}
+                                {% if page_obj.has_next %}
+                                    <a href="?page={{ page_obj.next_page_number }}" aria-label="Next Page"
+                                       class="inline-flex h-10 w-10 items-center justify-center rounded-md border bg-muted p-0 text-sm">
+                                        <i class="i-lucide-chevron-left"></i>
+                                    </a>
+                                {% endif %}
+
+                                {# Last Page #}
+                                {% if page_obj.number < page_obj.paginator.num_pages %}
+                                    <a href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last Page"
+                                       class="inline-flex h-10 w-10 items-center justify-center rounded-md border bg-muted p-0 text-sm">
+                                        <i class="i-lucide-chevrons-left"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </nav>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </main>
+    {% include "blog/components/filters/mobile.html" %}
+{% endblock %}
