@@ -30,7 +30,7 @@ class Service(models.Model):
     category = models.ForeignKey('services.Category', on_delete=models.SET_NULL, null=True, related_name='services',
                                  verbose_name='دسته بندی')
     profession = models.ManyToManyField('services.Profession', related_name='services', verbose_name='صنف')
-    tags = models.ManyToManyField('services.Tag', related_name='services', verbose_name='تگ / تگ ها')
+    tags = models.ManyToManyField('services.ServiceTag', related_name='services', verbose_name='تگ / تگ ها')
     locations = models.ManyToManyField('locations.City', related_name='services', verbose_name='شهر های قابل ارائه برای خدمات')
 
     def get_min_price(self):
