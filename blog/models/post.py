@@ -14,6 +14,7 @@ class Post(models.Model):
     is_active = models.BooleanField(default=False, verbose_name='فعال است؟')
     is_unique = models.BooleanField(default=False, verbose_name='ویژه است؟')
     category = models.ForeignKey('blog.Category', on_delete=models.SET_NULL, null=True, related_name='posts', verbose_name='دسته بندی')
+    tags = models.ManyToManyField('blog.PostTag', related_name='posts', verbose_name='تگ / تگ ها')
 
     def get_absolute_url(self):
         return reverse('post_detail', kwargs={'slug': self.slug})
