@@ -2,6 +2,7 @@ from django.contrib.auth import login
 from django.shortcuts import redirect, render, get_object_or_404
 from accounts.models import Provider
 from core import is_valid_otp, set_user_otp
+from core.cache import delete_inactive_users
 
 
 def phone_input_view_shared(
@@ -14,6 +15,8 @@ def phone_input_view_shared(
     already_authenticated_template='home/index.html',
     is_provider_route = False
 ):
+    delete_inactive_users(exp_in_min=1)
+
     if request.user.is_authenticated:
         return render(request, already_authenticated_template)
 
