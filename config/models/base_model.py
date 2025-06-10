@@ -81,3 +81,14 @@ class BaseVisit(models.Model):
         abstract = True
         verbose_name = "Visit"
         verbose_name_plural = "Visits"
+
+
+class BaseTag(models.Model):
+    title = models.CharField(max_length=35, verbose_name='عنوان', unique=True)
+    slug = models.SlugField(default="", null=False, db_index=True, blank=True, max_length=35, unique=True)
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return self.title
