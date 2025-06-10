@@ -13,7 +13,7 @@ class PostListView(ListView):
     model = Post
     context_object_name = 'posts'
     ordering = ['-id']
-    paginate_by = 12
+    paginate_by = 9
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
