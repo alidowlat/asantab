@@ -3,7 +3,7 @@ from django.db.models import Max, Min, Count, Q
 from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.views.generic import ListView
-from blog.models import Post
+from blog.models import Post, PostTag
 from blog.models import Category
 from config.views import apply_filters
 
@@ -21,11 +21,13 @@ class PostListView(ListView):
         user = self.request.user if self.request.user.is_authenticated else None
         context['latest_posts'] = latest_posts
 
-        categories = (
-            Category.objects
-            .filter(is_active=True)
-        )
-        context['categories'] = categories
+        model_fields = [
+            ('categories', Category.objects.filter(is_active=True)),
+            ('tags', PostTag.objects.all()),
+        ]
+
+        for field_name, queryset in model_fields:
+            context[field_name] = queryset
 
         return context
 
