@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 ('slug', models.SlugField(blank=True, default='', max_length=35, unique=True)),
             ],
             options={
-                'db_table': 'posts_tags',
+                'db_table': 'blog_posttag',
             },
         ),
     ]
