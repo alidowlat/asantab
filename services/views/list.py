@@ -6,7 +6,7 @@ from django.views.generic import ListView
 
 from config.views import apply_filters
 from locations.models import City
-from services.models import Service, Category, Profession, Tag, Platform
+from services.models import Service, Category, Profession, ServiceTag, Platform
 
 
 class ServiceListView(ListView):
@@ -39,7 +39,7 @@ class ServiceListView(ListView):
             ('platforms', Platform.objects.all()),
             ('categories', Category.objects.filter(is_active=True)),
             ('professions', Profession.objects.all()),
-            ('tags', Tag.objects.all()),
+            ('tags', ServiceTag.objects.all()),
             ('locations', City.objects.filter(services__is_active=True).distinct())
         ]
 
