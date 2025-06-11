@@ -1,6 +1,7 @@
 from django.db.models import Prefetch
 from django.views.generic import TemplateView
 from django.shortcuts import render
+from blog.models import Post
 from config.models import SiteSetting, FooterBox, SocialLink, MainCategory
 from services.models import Service, Platform, Favorite
 
@@ -12,11 +13,14 @@ class HomeView(TemplateView):
         context = super(HomeView, self).get_context_data(**kwargs)
         request = self.request
 
-        featured_services = Service.objects.filter(is_unique=True, is_active=True, status='approved').order_by('-id')[:5]
-        context['featured_services'] = featured_services
+        model_fields = [
+            ('featured_services', Service.objects.filter(is_unique=True, is_active=True, status='approved').order_by('-id')[:5]),
+            ('newest_services', Service.objects.filter(is_active=True, status='approved').order_by('-id')[:10]),
+            ('blog', Post.objects.filter(is_active=True).order_by('-created_at')[:8]),
+        ]
 
-        newest_services = Service.objects.filter(is_active=True, status='approved').order_by('-id')[:10]
-        context['newest_services'] = newest_services
+        for field_name, queryset in model_fields:
+            context[field_name] = queryset
 
         return context
 
