@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'jalali_date',
     'debug_toolbar',
+    'ckeditor',
 ]
 
 MIDDLEWARE = [
