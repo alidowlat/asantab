@@ -1,8 +1,10 @@
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Count, F
+from django.db.models.functions import Lower
 from django.views.generic import TemplateView
 from django.shortcuts import render
 from blog.models import Post
 from config.models import SiteSetting, FooterBox, SocialLink, MainCategory
+from search.models import SearchQuery
 from services.models import Service, Platform, Favorite
 
 
@@ -35,10 +37,35 @@ def site_header_component(request):
     else:
         favorite_list = []
 
+    popular_search = list(
+        SearchQuery.objects
+        .annotate(query_lower=Lower('query'))
+        .values(name=F('query_lower'))
+        .annotate(count=Count('id'))
+        .order_by('-count')[:10]
+    )
+
+    if request.user.is_authenticated:
+        raw_queries = SearchQuery.objects.filter(user_id=request.user.id).order_by('-created_at').values_list('query', flat=True)
+
+        seen = set()
+        search_history = []
+        for q in raw_queries:
+            cleaned = q.strip().lower()
+            if cleaned not in seen:
+                seen.add(cleaned)
+                search_history.append(q.strip())
+            if len(search_history) >= 10:
+                break
+    else:
+        search_history = []
+
     context = {
         'site_settings': site_settings,
         'platforms': platforms,
         'favorite_list': favorite_list,
+        'search_history': search_history,
+        'popular_search': popular_search,
     }
     return render(request, 'shared/header_comp.html', context)
 
