@@ -1,0 +1,47 @@
+<div class="swiper-wrapper" style="transition-duration: 0ms; transform: translate3d(0px, 0px, 0px); transition-delay: 0ms;"
+     aria-live="polite">
+    {% if results.services %}
+        {% for service in results.services %}
+            <div class="swiper-slide" style="width: 275px; margin-left: 10px;" role="group"
+                 aria-label="{{ forloop.counter }} / {{ results.services|length }}">
+                <a href="{{ service.get_absolute_url }}"
+                   class="flex items-center gap-x-2 rounded-xl border p-2 hover:border-border/50">
+                    <img src="{{ service.image.url }}" alt="search pic"
+                         class="h-20 w-20 rounded-lg object-cover">
+                    <p class="line-clamp-2 text-text/95">{{ service.title }}</p>
+                </a>
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% if results.posts %}
+        {% for post in results.posts %}
+            <div class="swiper-slide" style="width: 275px; margin-left: 10px;" role="group"
+                 aria-label="{{ forloop.counter }} / {{ results.services|length }}">
+                <a href="{{ post.get_absolute_url }}"
+                   class="flex items-center gap-x-2 rounded-xl border p-2 hover:border-border/50">
+                    <img src="{{ post.image.url }}" alt="post pic"
+                         class="h-20 w-20 rounded-lg object-cover">
+                    <p class="line-clamp-2 text-text/95">{{ post.title }}</p>
+                </a>
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% if results.providers %}
+        {% for provider in results.providers %}
+            <div class="swiper-slide" style="width: 275px; margin-left: 10px;" role="group"
+                 aria-label="{{ forloop.counter }} / {{ results.services|length }}">
+                <a href="#"
+                   class="flex items-center gap-x-2 rounded-xl border p-2 hover:border-border/50">
+                    <img src="{% if provider.profile_image %}{{ provider.profile_image.url }}{% else %}/static/images/user.png{% endif %}"
+                         alt="provider pic"
+                         class="h-20 w-20 rounded-lg object-cover">
+                    <div>
+                        <p class="line-clamp-2 text-text/95">{{ provider.user.get_full_name }}</p>
+                        <p class="text-xs opacity-75 mt-2">فروشنده</p>
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+<span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
