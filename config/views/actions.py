@@ -2,7 +2,9 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_POST
+from search.models import SearchQuery
 from services.models import Favorite, ServiceVisit
+
 
 
 def apply_filters(request, queryset):
@@ -82,4 +84,11 @@ def delete_visit(request):
 @login_required
 def delete_all_visits(request):
     ServiceVisit.objects.filter(user=request.user).delete()
+    return JsonResponse({'status': 'ok'})
+
+
+@require_POST
+@login_required
+def delete_all_searches(request):
+    SearchQuery.objects.filter(user=request.user).delete()
     return JsonResponse({'status': 'ok'})
