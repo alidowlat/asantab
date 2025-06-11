@@ -40,9 +40,9 @@ class PostListView(ListView):
             case 'most_viewed':
                 filtered_qs = filtered_qs.order_by('-visit_count', '-id')
             case 'newest':
-                filtered_qs = filtered_qs.order_by('-id')
-            case 'oldest':
                 filtered_qs = filtered_qs.order_by('id')
+            case 'oldest':
+                filtered_qs = filtered_qs.order_by('-id')
 
         return filtered_qs
 
