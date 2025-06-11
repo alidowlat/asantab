@@ -1,6 +1,8 @@
 {% load extra_filters %}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="/static/scripts/actions.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <header class="fixed inset-x-0 top-0 z-30 bg-muted">
     <!-- Ad Banner -->
     {% if request.path == '/' %}
@@ -21,9 +23,11 @@
                 <div class="relative">
                     <div id="desktopSearchInputWrapper"
                          class="group relative z-20 flex items-center overflow-hidden rounded-lg border bg-background pr-2 duration-150">
+
                         <div class="i-carbon-search h-6 w-6 text-text/60"></div>
                         <label for="desktopSearchInput" class="sr-only">header Search Label</label>
-                        <input id="desktopSearchInput" onfocus="desktopSearchFocus()" onkeyup="desktopSearchOnType(event)" type="text"
+                        <input id="desktopSearchInput" oninput="searchHandler(this.value)" onfocus="desktopSearchFocus()"
+                               onkeyup="desktopSearchOnType(event)" type="text"
                                placeholder="جستجو در بلسر"
                                class="h-12 w-full bg-transparent px-2 outline-none placeholder:text-sm placeholder:text-text/60 placeholder:duration-200 group-focus-within:placeholder:-translate-x-2">
                         <button id="desktopSearchClearButton" onclick="desktopSearchClearValue()"
@@ -33,56 +37,42 @@
                     </div>
                     <!-- Result Drop down -->
                     <div id="desktopSearchResult" class="absolute left-0 top-16 z-20 hidden w-full space-y-8 rounded-lg bg-muted p-4">
-                        <!-- Product Result -->
-                        <div class="swiper search-result-slider swiper-initialized swiper-horizontal swiper-free-mode swiper-rtl">
-                            <div class="swiper-wrapper" id="swiper-wrapper-4b4e71001b3518930" aria-live="polite"
-                                 style="transition-duration: 0ms; transition-delay: 0ms;">
-                                <div class="swiper-slide">
-                                    <a href="./product-detail.html"
-                                       class="flex items-center gap-x-2 rounded-xl border p-2 hover:border-border/50">
-                                        <img src="/static/images/p1.png" alt="نایک زوم پگاسوس توربو مشکی"
-                                             class="h-20 w-20 rounded-lg object-cover">
-                                        <p class="line-clamp-2 text-text/95">
-                                            نایک زوم پگاسوس توربو مشکی
-                                        </p>
-                                    </a>
+                        <!-- Search Result -->
+                        <div id="searchResult"
+                             class="swiper search-result-slider swiper-initialized swiper-horizontal swiper-free-mode swiper-rtl swiper-backface-hidden"></div>
+                        {% if search_history %}
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-6">
+                                    <div>جستجوهای اخیر شما</div>
+                                    <button id="delete-all-searches"
+                                            class="flex items-center gap-2 text-sm text-warning duration-200 hover:text-warning/80">
+                                        حذف همه
+                                        <i class="i-lucide-trash size-5"></i>
+                                    </button>
+                                </div>
+                                <div class="flex flex-wrap gap-4 pt-3">
+                                    {% for item in search_history %}
+                                        <a href="#"
+                                           class="search-history-item-mobile rounded-2xl border px-2 py-1 text-sm text-text/80 duration-200 hover:bg-background">
+                                            {{ item.title }}
+                                        </a>
+                                    {% endfor %}
                                 </div>
                             </div>
-                            <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div>
-                        <!-- Brand Result -->
-                        <ul class="space-y-2">
-                            <li>
-                                <a href="./shop.html" class="flex items-center gap-2 py-2 duration-200 hover:text-primary">
-                                    برند نایک
-                                    <span class="i-ic-outline-arrow-outward"></span>
-                                </a>
-                            </li>
-                        </ul>
-                        <!-- Search History-->
-                        <div class="space-y-2">
-                            <div class="flex items-center gap-6">
-                                <div>جستجوهای اخیر شما</div>
-                                <button class="flex items-center gap-2 text-sm text-warning duration-200 hover:text-warning/80">
-                                    حذف همه
-                                    <i class="i-lucide-trash size-5"></i>
-                                </button>
+                        {% endif %}
+                        {% if popular_search %}
+                            <div class="space-y-2">
+                                <div>جستجوهای محبوب</div>
+                                <div class="flex flex-wrap gap-4 pt-3">
+                                    {% for item in popular_search %}
+                                        <a href="#"
+                                           class="rounded-2xl border px-2 py-1 text-sm text-text/80 duration-200 hover:bg-background">
+                                            {{ item.name }}
+                                        </a>
+                                    {% endfor %}
+                                </div>
                             </div>
-
-                            <div class="flex flex-wrap gap-4 pt-3">
-                                <a href="#" class="rounded-2xl border px-2 py-1 text-sm text-text/80 duration-200 hover:bg-background">
-                                    کفش نایک
-                                </a>
-                            </div>
-                        </div>
-                        <!-- Popular Search -->
-                        <div class="space-y-2">
-                            <div>جستجوهای پرتکرار</div>
-                            <div class="flex flex-wrap gap-4 pt-3">
-                                <a href="#" class="rounded-2xl border px-2 py-1 text-sm text-text/80 duration-200 hover:bg-background">
-                                    کفش نایک
-                                </a>
-                            </div>
-                        </div>
+                        {% endif %}
                     </div>
                 </div>
                 <div onclick="desktopSearchUnFocus()" id="desktopSearchResultOverlay" class="relative z-10 hidden">
@@ -152,7 +142,25 @@
                                 </li>
                                 <!-- exit -->
                                 <li>
-                                    <a href="{% if request.user.is_provider %}{% url 'logout_provider' %}{% else %}{% url 'logout' %}{% endif %}"
+                                    <a href="
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                            {% if request.user.is_provider %}{% url 'logout_provider' %}{% else %}{% url 'logout' %}{% endif %}"
                                        class="my-1 flex items-center justify-between px-5 py-3 text-warning duration-150 hover:bg-warning/10">
                                         <div class="flex items-center gap-x-3">
                                             <svg class="i-mingcute-exit-line h-6 w-6"></svg>
@@ -420,8 +428,8 @@
                     <!-- Favorite -->
                     {% if request.user.is_authenticated %}
                         <a href="{% url 'favorite_list_page' %}" data-drawer-show="favorite-drawer"
-                                data-drawer-placement="bottom" aria-controls="favorite-drawer"
-                                class="icon-btn relative h-10 w-10 border-primary">
+                           data-drawer-placement="bottom" aria-controls="favorite-drawer"
+                           class="icon-btn relative h-10 w-10 border-primary">
                             <div class="i-lucide-heart h-6 w-6"></div>
                             <div class="favorite-count absolute -right-1.5 -top-1.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
                                 {{ favorite_list.count }}
@@ -446,7 +454,7 @@
                         <div class="group flex w-full items-center overflow-hidden rounded-lg border bg-background pr-2 duration-200 focus-within:border-primary">
                             <div class="i-carbon-search h-6 w-6 text-text/60"></div>
                             <label for="mobileSearchInput" class="sr-only">Mobile Search</label>
-                            <input id="mobileSearchInput" type="text" autocomplete="off" onkeyup="mobileSearchOnType(event)"
+                            <input id="mobileSearchInput" type="text" autocomplete="off" oninput="searchHandler(this.value)" onkeyup="mobileSearchOnType(event)"
                                    onfocus="mobileSearchOnFocus()" placeholder="جستجو در بلسر"
                                    class="duration-400 h-10 w-full bg-transparent px-2 outline-none placeholder:text-sm placeholder:duration-200 focus:placeholder:-translate-x-2">
                             <button id="mobileSearchClearButton" onclick="mobileSearchClearValue()"
@@ -463,53 +471,123 @@
             <div class="fixed inset-0 mt-[64px] h-[calc(100dvh-64px)] bg-muted">
                 <div class="h-full space-y-6 overflow-y-auto p-5">
                     <!-- Product Result -->
-                    <div class="swiper search-result-slider swiper-initialized swiper-horizontal swiper-free-mode swiper-rtl swiper-backface-hidden">
-                        <div class="swiper-wrapper" id="swiper-wrapper-a27bd3bd03ba87d1" aria-live="polite"
-                             style="transition-duration: 0ms; transition-delay: 0ms; transform: translate3d(0px, 0px, 0px);">
-                            <div class="swiper-slide" role="group" aria-label="4 / 4" style="width: 304px; margin-left: 10px;">
-                                <a href="./product-detail.html"
-                                   class="flex items-center gap-x-2 rounded-xl border p-2 hover:border-border/50">
-                                    <img src="/static/images/p1.png" alt="نایک زوم پگاسوس توربو مشکی"
-                                         class="h-20 w-20 rounded-lg object-cover">
-                                    <p class="line-clamp-2 text-text/95">
-                                        نایک زوم پگاسوس توربو مشکی
-                                    </p>
-                                </a>
+                    <div id="searchResultMobile"
+                         class="swiper search-result-slider swiper-initialized swiper-horizontal swiper-free-mode swiper-rtl swiper-backface-hidden"></div>
+                    {% if search_history %}
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-6">
+                                <div>جستجوهای اخیر شما</div>
+                                <button id="delete-all-searches-mobile"
+                                        class="flex items-center gap-2 text-sm text-warning duration-200 hover:text-warning/80">
+                                    حذف همه
+                                    <i class="i-lucide-trash size-5"></i>
+                                </button>
+                            </div>
+                            <div class="flex flex-wrap gap-4 pt-3">
+                                {% for item in search_history %}
+                                    <a href="#"
+                                       class="search-history-item-mobile rounded-2xl border px-2 py-1 text-sm text-text/80 duration-200 hover:bg-background">
+                                        {{ item.title }}
+                                    </a>
+                                {% endfor %}
                             </div>
                         </div>
-                        <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div>
-                    <!-- Brand Result -->
-                    <ul class="space-y-2">
-                        <li>
-                            <a href="./shop.html" class="flex items-center gap-2 py-2 duration-200 hover:text-primary">
-                                برند نایک
-                                <span class="i-ic-outline-arrow-outward"></span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="./shop.html" class="flex items-center gap-2 py-2 duration-200 hover:text-primary">
-                                برند نیو بالانس
-                                <span class="i-ic-outline-arrow-outward"></span>
-                            </a>
-                        </li>
-                    </ul>
-                    <!-- User Recent Search -->
-                    <div>
-                        <div class="flex items-center justify-between">
-                            <div>جستجوهای اخیر شما</div>
-                            <button class="flex items-center gap-2 text-sm text-warning duration-200 hover:text-warning/80">
-                                حذف همه
-                                <i class="i-lucide-trash size-5"></i>
-                            </button>
+                    {% endif %}
+                    {% if popular_search %}
+                        <div class="space-y-2">
+                            <div>جستجوهای محبوب</div>
+                            <div class="flex flex-wrap gap-4 pt-3">
+                                {% for item in popular_search %}
+                                    <a href="#"
+                                       class="rounded-2xl border px-2 py-1 text-sm text-text/80 duration-200 hover:bg-background">
+                                        {{ item.name }}
+                                    </a>
+                                {% endfor %}
+                            </div>
                         </div>
-                        <div class="flex flex-wrap gap-4 pt-3">
-                            <a href="#" class="rounded-2xl border px-2 py-1 text-sm text-text/80 duration-200 hover:bg-background">
-                                کفش نایک
-                            </a>
-                        </div>
-                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
 </header>
+
+<script>
+    function initSearchSwiper() {
+        document.querySelectorAll('.search-result-slider').forEach(el => {
+            new Swiper(el, {
+                slidesPerView: 'auto',
+                spaceBetween: 16,
+                freeMode: true,
+                direction: 'horizontal',
+            });
+        });
+    }
+
+    let debounceTimer;
+
+    function searchHandler(query) {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            if (query.length < 2) {
+                ['searchResult', 'searchResultMobile'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.classList.add('hidden');
+                        el.innerHTML = '';
+                    }
+                });
+                return;
+            }
+
+            fetch(`/search/?search=${encodeURIComponent(query)}`)
+                .then(response => response.text())
+                .then(html => {
+                    ['searchResult', 'searchResultMobile'].forEach(id => {
+                        const container = document.getElementById(id);
+                        if (container) {
+                            container.innerHTML = html;
+                            container.classList.remove('hidden');
+                        }
+                    });
+                    initSearchSwiper();
+                })
+                .catch(error => console.error('Search Error:', error));
+        }, 300);
+    }
+
+    function clearSearchHistoryFromDOM() {
+        document.querySelectorAll('.search-history-item, .search-history-item-mobile').forEach(el => el.remove());
+    }
+
+    document.getElementById('delete-all-searches')?.addEventListener('click', deleteAllSearches);
+    document.getElementById('delete-all-searches-mobile')?.addEventListener('click', deleteAllSearches);
+
+    async function deleteAllSearches() {
+        const response = await fetch("{% url 'delete_all_searches' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": getCookie('csrftoken'),
+                "Content-Type": "application/json",
+            }
+        });
+
+        if (response.ok) {
+            clearSearchHistoryFromDOM();
+        }
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            for (let cookie of document.cookie.split(';')) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
