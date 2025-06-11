@@ -2,6 +2,7 @@ from django.core.files.storage import default_storage
 from django.db import models
 from django.urls import reverse
 from core import get_image_upload_to, compress_and_convert_to_webp
+from ckeditor.fields import RichTextField
 
 
 class Post(models.Model):
@@ -15,6 +16,7 @@ class Post(models.Model):
     is_unique = models.BooleanField(default=False, verbose_name='ویژه است؟')
     category = models.ForeignKey('blog.Category', on_delete=models.SET_NULL, null=True, related_name='posts', verbose_name='دسته بندی')
     tags = models.ManyToManyField('blog.PostTag', related_name='posts', verbose_name='تگ / تگ ها')
+    content = RichTextField(null=True, verbose_name='محتوای متن')
 
     def get_absolute_url(self):
         return reverse('post_detail', kwargs={'slug': self.slug})
