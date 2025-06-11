@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'stats',
     'tickets',
     'wallet',
+    'search',
 
     # libs and packages
     'django_render_partial',
