@@ -1,10 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
+from notifications.models import Notification
 from search.models import SearchQuery
 from services.models import Favorite, ServiceVisit
-
 
 
 def apply_filters(request, queryset):
@@ -92,3 +92,27 @@ def delete_all_visits(request):
 def delete_all_searches(request):
     SearchQuery.objects.filter(user=request.user).delete()
     return JsonResponse({'status': 'ok'})
+
+
+@require_POST
+@login_required
+def read_notif(request):
+    notif_id = request.POST.get('notif_id')
+    notif = get_object_or_404(Notification, user=request.user, id=notif_id)
+    if not notif.is_read:
+        notif.is_read = True
+        notif.save()
+    return JsonResponse({'status': 'ok'})
+
+
+@require_POST
+@login_required
+def read_all_notifs(request):
+    Notification.objects.filter(user_id=request.user.id, is_read=False).update(is_read=True)
+    return JsonResponse({'status': 'ok'})
+
+
+@login_required
+def unread_notifications_count(request):
+    count = Notification.objects.filter(user_id=request.user.id, is_read=False).count()
+    return JsonResponse({'count': count})
