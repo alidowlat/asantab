@@ -23,15 +23,13 @@
             </a>
         </li>
         <li>
-            <a href=""
+            <a href="{% url 'notifications_page' %}"
                class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == '' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
                 <div class="flex items-center gap-4">
                     <div class="i-lucide-bell size-6"></div>
-                    پیام ها
+                    اعلان ها
                 </div>
-                <div class="h-6 w-6 rounded-full bg-primary-btn text-center leading-6 text-white">
-                    2
-                </div>
+                <div class="notif-badge h-6 w-6 rounded-full bg-primary-btn text-center leading-6 text-white"></div>
             </a>
         </li>
         <li>
