@@ -1,3 +1,4 @@
+{% load static %}
 {% load render_partial %}
 <!doctype html>
 <html lang="en">
@@ -15,6 +16,7 @@
         {#            "description": "دیجی اوند، مرجع تخصصی کیف و کوله های لپ تاپ، ارائه‌دهنده طیف وسیعی از برندهای معتبر با قیمت‌های رقابتی و مناسب برای تجربه خریدی مطمئن و آسان."#}
         }
     </script>
+    <script src="{% static 'scripts/notif-count.js' %}"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <meta name="keywords" content="فروشگاه آنلاین, خدمات تبلیغات, تبلیغ آسان">
     <meta name="author" content="آسان تب">
@@ -111,11 +113,11 @@
                     </a>
                 </li>
                 <li>
-                    <a href="./profile-notification.html"
+                    <a href="{% url 'notifications_page' %}"
                        class="inline-flex w-full items-center justify-between rounded-lg p-4 text-text/80 duration-300 hover:text-primary">
                         <div class="flex items-center gap-4">
                             <div class="i-lucide-bell size-6"></div>
-                            پیام ها
+                            اعلان ها
                         </div>
                         <div class="h-6 w-6 rounded-full bg-primary-btn text-center leading-6 text-white">
                             2
