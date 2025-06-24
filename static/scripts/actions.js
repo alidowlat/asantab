@@ -213,7 +213,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-
     function reloadFavoriteList() {
         fetch('/favorites/partial/')
             .then(res => res.text())
@@ -460,4 +459,102 @@ document.addEventListener('DOMContentLoaded', function () {
     bindRemoveButtons();
     toggleRemoveAllButton();
     checkVisitListEmpty();
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    function toggleReadAllButton() {
+        const unreadNotifs = document.querySelectorAll('.unread-notification');
+        const hasUnread = unreadNotifs.length > 0;
+
+        document.querySelectorAll('.read-all-notifications-btn').forEach(btn => {
+            btn.disabled = !hasUnread;
+            btn.classList.toggle('opacity-45', !hasUnread);
+            btn.classList.toggle('cursor-not-allowed', !hasUnread);
+        });
+    }
+
+    const container = document.getElementById('notifications-dashboard');
+
+    function checkReadListEmpty() {
+        if (container.children.length === 0 || container.innerText.trim() === 'موردی یافت نشد.') {
+            container.className = 'flex items-center justify-center';
+        }
+    }
+
+    function reloadNotifListDashboard() {
+        fetch('/profile/notifications/partial/')
+            .then(res => res.text())
+            .then(html => {
+                container.innerHTML = html;
+                bindReadButtons();
+                toggleReadAllButton();
+                checkReadListEmpty();
+            });
+    }
+
+    function bindReadButtons() {
+        document.querySelectorAll('.read-notification-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                const notifId = this.dataset.notifId;
+
+
+                const formData = new FormData();
+                formData.append('notif_id', notifId);
+
+                fetch('/notifications/read/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                    },
+                    body: formData,
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === 'ok') {
+                            const notifCard = btn.closest('.notification-card');
+                            if (notifCard) notifCard.classList.add('opacity-45');
+                            btn.disabled = true;
+
+                            updateUnreadCount();
+                            toggleReadAllButton();
+                            checkReadListEmpty();
+                        } else {
+                            console.error('خطا در حذف:', data.message);
+                        }
+                    });
+            });
+        });
+    }
+
+    document.querySelectorAll('.read-all-notifications-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+
+            fetch('/notifications/read/all/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'ok') {
+                        reloadNotifListDashboard();
+                        updateUnreadCount();
+                        Swal.fire({
+                            toast: true,
+                            position: 'top',
+                            icon: 'info',
+                            title: 'تمام اعلان ها خوانده شدند',
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+                    }
+                });
+        });
+    });
+
+    bindReadButtons();
+    toggleReadAllButton();
+    checkReadListEmpty();
 });
