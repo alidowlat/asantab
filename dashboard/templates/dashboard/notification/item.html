@@ -1,0 +1,41 @@
+{% if not notif.is_read %}
+    <li class="notification-card px-5 py-6 {% if not notif.is_read %}unread-notification{% endif %}">
+        <div class="mb-4 flex items-center gap-x-2 text-primary">
+            <div class="i-lucide-bell size-6"></div>
+            <p class="md:text-lg">
+                {{ notif.title }}
+            </p>
+        </div>
+        <p class="mb-4 text-sm text-text/90 md:text-base">
+            {{ notif.message }}
+        </p>
+        <div class="flex justify-end">
+            <button data-notif-id="{{ notif.id }}" class="read-notification-btn rounded-lg bg-orange-500 hover:bg-orange-500/80 w-full px-4 py-2 text-sm sm:w-fit ml-2">
+                علامت به عنوان خوانده شده
+            </button>
+            <a href="{{ notif.link }}" class="btn-primary w-full px-4 py-2 text-sm sm:w-fit">
+                {{ notif.notif_type }}
+            </a>
+        </div>
+    </li>
+{% elif notif.is_read %}
+    <li class="notification-card px-5 py-6 opacity-45">
+        <div class="mb-4 flex items-center gap-x-2 text-primary">
+            <div class="i-lucide-bell size-6"></div>
+            <p class="md:text-lg">
+                {{ notif.title }}
+            </p>
+        </div>
+        <p class="mb-4 text-sm text-text/90 md:text-base">
+            {{ notif.message }}
+        </p>
+        <div class="flex justify-end">
+            <button data-notif-id="{{ notif.id }}" class="read-notification-btn rounded-lg bg-orange-500 hover:bg-orange-500/80 bg-blue-700 w-full px-4 py-2 text-sm sm:w-fit ml-2 disabled" disabled>
+                علامت به عنوان خوانده شده
+            </button>
+            <a href="{{ notif.link }}" class="btn-primary w-full px-4 py-2 text-sm sm:w-fit">
+                {{ notif.notif_type }}
+            </a>
+        </div>
+    </li>
+{% endif %}

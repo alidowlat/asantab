@@ -1,0 +1,24 @@
+{% extends 'dashboard/_layout.html' %}
+{% load extra_filters %}
+
+
+{% block title %}
+    اعلان ها | آسان تب
+{% endblock %}
+
+{% block content %}
+    <div class="rounded-lg bg-muted shadow">
+        <div class="py-5">
+            <div class="mb-16 flex justify-between px-5">
+                <h1 class="relative w-fit font-medium lg:text-lg">
+                    اعلان های شما
+                    <span class="absolute right-0 top-10 h-[3px] w-full animate-fill-border rounded-full bg-primary"></span>
+                </h1>
+                <button class="read-all-notifications-btn btn-primary px-4 py-1.5">خواندن همه</button>
+            </div>
+            <ul id="notifications-dashboard" class="space-y-4 divide-y">
+                {% include 'dashboard/notification/list.html' %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}
