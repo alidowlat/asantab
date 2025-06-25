@@ -16,7 +16,7 @@
                 </h1>
                 <button class="read-all-notifications-btn btn-primary px-4 py-1.5">خواندن همه</button>
             </div>
-            <ul id="notifications-dashboard" class="space-y-4 divide-y">
+            <ul class="notifications-dashboard space-y-4 divide-y" data-fetch-url="/profile/notifications/partial/">
                 {% include 'dashboard/notification/list.html' %}
             </ul>
         </div>

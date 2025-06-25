@@ -1,5 +1,5 @@
 {% if not notif.is_read %}
-    <li class="notification-card px-5 py-6 {% if not notif.is_read %}unread-notification{% endif %}">
+    <li class="notification-card px-5 py-6 {% if not notif.is_read %}unread-notification{% endif %}" data-id="{{ notif.id }}">
         <div class="mb-4 flex items-center gap-x-2 text-primary">
             <div class="i-lucide-bell size-6"></div>
             <p class="md:text-lg">
