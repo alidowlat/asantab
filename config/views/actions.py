@@ -48,6 +48,12 @@ def favorite_list_partial(request):
 
 
 @login_required
+def notif_list_partial(request):
+    notif_list = Notification.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'includes/notif_list.html', {'notif_list': notif_list})
+
+
+@login_required
 def favorite_count(request):
     count = Favorite.objects.filter(user=request.user).count()
     return JsonResponse({'count': count})
