@@ -118,6 +118,19 @@
                                         <svg class="i-lucide-chevron-left text-text/60 group-hover:text-primary"></svg>
                                     </a>
                                 </li>
+                                <!-- notifications -->
+                                {% if request.user.is_authenticated %}
+                                    <li class="group">
+                                        <a href="{% url 'notifications_page' %}"
+                                           class="flex items-center justify-between px-5 py-4 transition-all group-hover:text-primary">
+                                            <div class="flex items-center gap-x-3">
+                                                <svg class="i-lucide-bell h-6 w-6 text-text/70 group-hover:text-primary"></svg>
+                                                <p>اعلان ها</p>
+                                            </div>
+                                            <svg class="i-lucide-chevron-left text-text/60 group-hover:text-primary"></svg>
+                                        </a>
+                                    </li>
+                                {% endif %}
                                 <!-- favorite -->
                                 {% if request.user.is_authenticated %}
                                     <li class="group">
@@ -145,23 +158,6 @@
                                 <!-- exit -->
                                 <li>
                                     <a href="
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                                             {% if request.user.is_provider %}{% url 'logout_provider' %}{% else %}{% url 'logout' %}{% endif %}"
                                        class="my-1 flex items-center justify-between px-5 py-3 text-warning duration-150 hover:bg-warning/10">
                                         <div class="flex items-center gap-x-3">
@@ -185,6 +181,36 @@
 
                 <!-- Account Logged out -->
                 {% if request.user.is_authenticated %}
+                    <!-- Notification -->
+                    <div>
+                        <button data-dropdown-toggle="desktopNotificationDropdown" class="icon-btn relative h-10 w-10 border-primary">
+                            <div class="i-lucide-bell h-6 w-6"></div>
+                            <div class="notif-badge absolute -right-1.5 -top-2.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
+
+                            </div>
+                        </button>
+                        <!-- Dropdown Shopping -->
+                        <div id="desktopNotificationDropdown"
+                             class="left-10 z-10 !ml-5 hidden w-[420px] rounded-lg border bg-muted shadow"
+                             data-popper-placement="bottom"
+                             style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(296px, 116px);">
+                            <div>
+                                <div class="flex items-center justify-between px-4 pb-2 pt-3">
+                                    <div>لیست اعلان ها</div>
+                                    <button class="read-all-notifications-btn btn-primary px-4 py-2 text-sm ">
+                                        خواندن همه
+                                    </button>
+                                </div>
+                                <div class="{% if not notif_list %}h-25{% endif %}">
+                                    <ul id="notif-list"
+                                        class="notifications-dashboard h-full space-y-2 divide-y overflow-y-auto p-2 pb-0 pl-2"
+                                        data-fetch-url="/notif-list/partial/">
+                                        {% include 'includes/notif_list.html' %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <!-- Favorite -->
                     <div>
                         <button data-dropdown-toggle="desktopFavoriteDropdown" class="icon-btn relative h-10 w-10 border-primary">
@@ -296,6 +322,7 @@
                             </div>
                         </div>
                     </div>
+
                 {% endif %}
                 <!-- Theme -->
                 <div>
@@ -427,6 +454,15 @@
                     <img class="h-10" src="{{ site_settings.transparent_logo.url }}" alt="Blesser">
                 </a>
                 <div class="flex gap-2">
+                    <!-- Notification -->
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'notifications_page' %}" data-drawer-show="notif-drawer"
+                           data-drawer-placement="bottom" aria-controls="notif-drawer"
+                           class="icon-btn relative h-10 w-10 border-primary">
+                            <div class="i-lucide-heart h-6 w-6"></div>
+                            <div class="notif-badge absolute -right-1.5 -top-1.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white"></div>
+                        </a>
+                    {% endif %}
                     <!-- Favorite -->
                     {% if request.user.is_authenticated %}
                         <a href="{% url 'favorite_list_page' %}" data-drawer-show="favorite-drawer"
@@ -456,7 +492,8 @@
                         <div class="group flex w-full items-center overflow-hidden rounded-lg border bg-background pr-2 duration-200 focus-within:border-primary">
                             <div class="i-carbon-search h-6 w-6 text-text/60"></div>
                             <label for="mobileSearchInput" class="sr-only">Mobile Search</label>
-                            <input id="mobileSearchInput" type="text" autocomplete="off" oninput="searchHandler(this.value)" onkeyup="mobileSearchOnType(event)"
+                            <input id="mobileSearchInput" type="text" autocomplete="off" oninput="searchHandler(this.value)"
+                                   onkeyup="mobileSearchOnType(event)"
                                    onfocus="mobileSearchOnFocus()" placeholder="جستجو در بلسر"
                                    class="duration-400 h-10 w-full bg-transparent px-2 outline-none placeholder:text-sm placeholder:duration-200 focus:placeholder:-translate-x-2">
                             <button id="mobileSearchClearButton" onclick="mobileSearchClearValue()"
