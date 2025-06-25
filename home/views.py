@@ -4,6 +4,7 @@ from django.views.generic import TemplateView
 from django.shortcuts import render
 from blog.models import Post
 from config.models import SiteSetting, FooterBox, SocialLink, MainCategory
+from notifications.models import Notification
 from search.models import SearchQuery
 from services.models import Service, Platform, Favorite
 
@@ -34,8 +35,10 @@ def site_header_component(request):
     )
     if request.user.is_authenticated:
         favorite_list = Favorite.objects.filter(user=request.user).select_related('service').order_by('-created_at')
+        notif_list = Notification.objects.filter(user=request.user).order_by('-created_at')
     else:
         favorite_list = []
+        notif_list = []
 
     popular_search = list(
         SearchQuery.objects
@@ -64,6 +67,7 @@ def site_header_component(request):
         'site_settings': site_settings,
         'platforms': platforms,
         'favorite_list': favorite_list,
+        'notif_list': notif_list,
         'search_history': search_history,
         'popular_search': popular_search,
     }
