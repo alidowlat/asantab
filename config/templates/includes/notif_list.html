@@ -1,0 +1,7 @@
+{% if notif_list %}
+    {% for notif in notif_list %}
+        {% include 'includes/notif_item.html' with notif=notif %}
+    {% endfor %}
+{% else %}
+    <div class="text-center text-gray-400 text-sm py-2">موردی یافت نشد.</div>
+{% endif %}
