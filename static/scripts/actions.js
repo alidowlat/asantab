@@ -474,30 +474,40 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    const container = document.getElementById('notifications-dashboard');
+    function reloadNotifListDashboard() {
+        document.querySelectorAll('.notifications-dashboard').forEach(container => {
+            const url = container.dataset.fetchUrl;
 
-    function checkReadListEmpty() {
+            fetch(url)
+                .then(res => res.text())
+                .then(html => {
+                    container.innerHTML = html;
+                    bindReadButtons();
+                    toggleReadAllButton();
+                    checkReadListEmpty(container);
+                });
+        });
+    }
+
+    function checkReadListEmpty(container) {
         if (container.children.length === 0 || container.innerText.trim() === 'موردی یافت نشد.') {
             container.className = 'flex items-center justify-center';
         }
     }
 
-    function reloadNotifListDashboard() {
-        fetch('/profile/notifications/partial/')
-            .then(res => res.text())
-            .then(html => {
-                container.innerHTML = html;
-                bindReadButtons();
-                toggleReadAllButton();
-                checkReadListEmpty();
-            });
+    function markNotifAsReadEverywhere(notifId) {
+        document.querySelectorAll(`[data-id="${notifId}"]`).forEach(card => {
+            card.classList.add('opacity-45');
+            const btn = card.querySelector('.read-notification-btn');
+            if (btn) btn.disabled = true;
+        });
     }
+
 
     function bindReadButtons() {
         document.querySelectorAll('.read-notification-btn').forEach(function (btn) {
             btn.addEventListener('click', function () {
                 const notifId = this.dataset.notifId;
-
 
                 const formData = new FormData();
                 formData.append('notif_id', notifId);
@@ -516,11 +526,12 @@ document.addEventListener('DOMContentLoaded', function () {
                             if (notifCard) notifCard.classList.add('opacity-45');
                             btn.disabled = true;
 
+                            markNotifAsReadEverywhere(notifId);
                             updateUnreadCount();
                             toggleReadAllButton();
                             checkReadListEmpty();
                         } else {
-                            console.error('خطا در حذف:', data.message);
+                            console.error('خطا در خواندن:', data.message);
                         }
                     });
             });
@@ -538,7 +549,7 @@ document.addEventListener('DOMContentLoaded', function () {
             })
                 .then(res => res.json())
                 .then(data => {
-                    if (data.status === 'ok') {
+                    {
                         reloadNotifListDashboard();
                         updateUnreadCount();
                         Swal.fire({
