@@ -1,3 +1,6 @@
 from django.contrib import admin
+from discounts.models import DiscountCode, DiscountCodeUser
 
-# Register your models here.
+
+admin.site.register(DiscountCode)
+admin.site.register(DiscountCodeUser)
