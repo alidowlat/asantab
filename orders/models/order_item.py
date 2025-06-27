@@ -9,6 +9,6 @@ class OrderItem(models.Model):
     final_price = models.PositiveIntegerField(verbose_name='قیمت نهایی')
 
     class Meta:
-        verbose_name = 'آیتم سفارش'
-        verbose_name_plural = 'آیتم‌های سفارش'
+        verbose_name = 'Order Item'
+        verbose_name_plural = 'Order Items'
         db_table = 'order_items'

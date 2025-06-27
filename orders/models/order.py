@@ -29,6 +29,6 @@ class Order(models.Model):
 
     class Meta:
         ordering = ['-created_at']
-        verbose_name = 'سفارش'
-        verbose_name_plural = 'سفارش‌ها'
+        verbose_name = 'Order'
+        verbose_name_plural = 'Orders'
         db_table = 'orders'
