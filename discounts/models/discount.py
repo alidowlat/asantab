@@ -34,6 +34,7 @@ class DiscountCode(models.Model):
         verbose_name_plural = 'Discount Codes'
         db_table = 'discount_codes'
 
+
 class DiscountCodeUser(models.Model):
     user = models.ForeignKey('accounts.User', on_delete=models.CASCADE, verbose_name='کاربر')
     discount_code = models.ForeignKey(DiscountCode, null=True, blank=True, on_delete=models.SET_NULL, verbose_name='کد تخفیف')
