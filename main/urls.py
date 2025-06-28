@@ -39,6 +39,7 @@ urlpatterns = [
     path('profile/', include('dashboard.urls.change_number')),
     path('profile/', include('dashboard.urls.notification')),
     path('', include('search.urls')),
+    path('orders/', include('orders.urls.cart')),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
