@@ -67,13 +67,6 @@ def otp_verify_view_shared(
             if is_valid_otp(user, otp):
                 user.is_verified = True
                 user.save(update_fields=['is_verified'])
-                notify_user(
-                    user=user,
-                    title='تکمیل حساب کاربری',
-                    message='خوش آمدید! لطفا نسبت به تکمیل حساب کاربری خود اقدام کنید.',
-                    link=reverse('account_info_page'),
-                    type_key='complete_profile'
-                )
                 login(request, user)
                 if user.is_provider:
                     provider = get_object_or_404(Provider, user=user)
