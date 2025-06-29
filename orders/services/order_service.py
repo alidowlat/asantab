@@ -5,9 +5,6 @@ class OrderCalculator:
     def total_price(self):
         return sum(item.final_price for item in self.order.items.all())
 
-    def total_discount(self):
-        return sum(item.discount_amount or 0 for item in self.order.items.all())
-
     def discount_amount(self):
         if self.order.discount_code:
             if self.order.discount_code.amount:
@@ -17,4 +14,4 @@ class OrderCalculator:
         return 0
 
     def final_price(self):
-        return self.total_price() - self.total_discount() - self.discount_amount()
+        return self.total_price() - self.discount_amount()
