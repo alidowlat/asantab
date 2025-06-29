@@ -21,6 +21,10 @@ class DiscountCode(models.Model):
             return 'percent'
         return 'none'
 
+    @property
+    def value(self):
+        return self.amount if self.amount is not None else self.percent or 0
+
     def is_valid_for_user(self, user):
         if self.expiration_date < date.today():
             return False
