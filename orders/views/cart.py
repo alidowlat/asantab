@@ -1,19 +1,19 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import Prefetch
 from django.http import HttpRequest, JsonResponse
 from django.shortcuts import render, redirect
 from orders.forms import DiscountForm
-from orders.models import Order
+from orders.models import Order, OrderItem
 from orders.services import OrderCalculator
 from orders.services.cart_service import CartManager, CartAction
 
 
 @login_required
 def user_cart(request: HttpRequest):
-    current_order, created = Order.objects.get_or_create(
-        is_paid=False,
-        user=request.user
-    )
+    current_order, created = Order.objects.prefetch_related(
+        Prefetch('items', queryset=OrderItem.objects.select_related('service', 'option'))
+    ).get_or_create(is_paid=False, user=request.user)
 
     calc = OrderCalculator(current_order)
     cart_manager = CartManager(current_order)
@@ -27,10 +27,10 @@ def user_cart(request: HttpRequest):
             return redirect('user_cart_page')
 
     context = {
-        'order': current_order,
+        'orders': current_order,
         'discount_form': discount_form,
         'sum': calc.total_price(),
-        'total_discount': calc.total_discount(),
+        'discount_amount': calc.discount_amount(),
         'final_price': calc.final_price(),
     }
     return render(request, 'orders/cart.html', context)
