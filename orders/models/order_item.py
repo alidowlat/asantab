@@ -5,6 +5,7 @@ class OrderItem(models.Model):
     order = models.ForeignKey('orders.Order', on_delete=models.CASCADE, related_name='items', verbose_name='سفارش')
     service = models.ForeignKey('services.Service', on_delete=models.CASCADE, verbose_name='خدمت')
     option = models.ForeignKey('services.Option', on_delete=models.SET_NULL, null=True, blank=True, verbose_name='آپشن انتخابی')
+    reserve = models.ForeignKey('services.Reservation', on_delete=models.PROTECT, null=True, blank=True, verbose_name='تاریخ رزرو')
     count = models.PositiveIntegerField(verbose_name='تعداد')
     final_price = models.PositiveIntegerField(verbose_name='قیمت نهایی')
 
