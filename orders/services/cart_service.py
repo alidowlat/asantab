@@ -33,8 +33,22 @@ class CartManager:
             'message': 'آیتم از سبد خرید حذف شد.'
         }
 
+    def clear_cart(self):
+        if not self.order:
+            return {'status': 'items_not_found', 'message': 'سفارشی یافت نشد.'}
+
+        has_items = self.order.items.exists()
+        self.order.delete()
+
+        return {
+            'status': 'success',
+            'order_deleted': True,
+            'message': 'سفارش از سبد خرید حذف شد.' if has_items else 'سبد خرید خالی بود.'
+        }
+
     def change_item_count(self, item_id, state):
-        item = self.order.items.select_related('service__options').filter(id=item_id).first()
+        item = self.order.items.select_related('option', 'reserve').filter(id=item_id).first()
+
         if not item:
             return {'status': 'item_not_found'}
 
@@ -52,7 +66,7 @@ class CartManager:
             return {'status': 'state_invalid'}
 
         try:
-            unit_price = item.service.options.unit_price
+            unit_price = item.option.unit_price
         except AttributeError:
             return {'status': 'invalid_item_price'}
 
@@ -71,7 +85,7 @@ class CartManager:
 
         return {
             'total_price': rounded(calc.total_price()),
-            'total_discount': rounded(calc.total_discount()),
+            'total_discount': rounded(calc.discount_amount()),
             'final_price': rounded(calc.final_price()),
             'discount_code': rounded(calc.discount_amount())
         }
@@ -90,6 +104,15 @@ class CartManager:
         self.order.save()
         return True, "کد تخفیف اعمال شد."
 
+    def remove_discount_code(self, user):
+        if not self.order.discount_code:
+            return False, "کدی برای حذف وجود ندارد."
+        DiscountCodeUser.objects.filter(user=user, discount_code=self.order.discount_code).delete()
+        self.order.discount_code = None
+        self.order.save()
+        return True, "کد تخفیف حذف شد."
+
+
 class CartAction:
     def __init__(self, request):
         self.request = request
@@ -103,13 +126,16 @@ class CartAction:
         if not self.order or not self.manager:
             return JsonResponse({'status': 'order_not_found'})
 
-        if result.get('order_deleted'):
-            body = render_to_string('orders/cart_content.html', {'order': None, 'sum': 0})
+        if result.get('order_deleted') or not self.order.items.exists():
+            body = render_to_string('orders/cart_content.html', {'orders': None, 'sum': 0})
         else:
             calc = OrderCalculator(self.order)
             body = render_to_string('orders/cart_content.html', {
-                'order': self.order,
+                'orders': self.order,
                 'sum': calc.total_price(),
+                'discount_amount': calc.discount_amount(),
+                'final_price': calc.final_price(),
             })
 
         return JsonResponse({**result, 'body': body})
+
