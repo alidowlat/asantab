@@ -1,0 +1,128 @@
+{% load widget_tweaks %}
+{% load extra_filters %}
+<div class="relative mx-auto max-w-xl overflow-hidden rounded-lg bg-muted p-3 shadow md:p-6">
+    <div class="relative h-10 w-full">
+        <div class="absolute -top-24 h-full w-full">
+            <div class="relative flex h-full w-full items-center justify-center [--baseOpacity:1] [--baseSize:80px] [--duration:1.5s] [--opacityStep:0.05] [--scale:1.2] [--sizeStep:64px]">
+                <div class="border- ripple absolute rounded-full bg-primary/30 [--i:0]"></div>
+                <div class="border- ripple absolute rounded-full bg-primary/30 [--i:1]"></div>
+                <div class="border- ripple absolute rounded-full bg-primary/30 [--i:2]"></div>
+                <div class="border- ripple absolute rounded-full bg-primary/30 [--i:3]"></div>
+            </div>
+        </div>
+    </div>
+    <div class="relative">
+        <h1 class="mb-8 text-center text-lg lg:text-xl">جزئیات سفارش</h1>
+        <div class="mb-6">
+            <div class="mb-4 w-full">
+                <form action="{% url 'order_checkout_page' %}" method="post">
+                    {% csrf_token %}
+                    <div class="space-y-2">
+                        <div class="flex w-full items-center justify-between rounded-lg border bg-muted transition-all duration-300 focus-within:border-primary">
+                            {% if orders.discount_code %}
+                                <input type="text" value="{{ orders.discount_code.code }}" readonly
+                                       class="peer w-full rounded-lg border-none bg-transparent px-4 py-3 text-right text-text placeholder:text-sm focus:outline-none"/>
+                                <button type="submit" name="remove_discount"
+                                        class="px-3 text-warning duration-300 hover:text-danger/80">
+                                    حذف
+                                </button>
+                            {% else %}
+                                {{ discount_form.discount_code|add_class:"peer w-full rounded-lg border-none bg-transparent px-4 py-3 text-right text-text placeholder:text-sm placeholder:duration-300 focus:outline-none focus:ring-offset-0" |attr:"placeholder:کد تخفیف" }}
+                                <button type="submit"
+                                        class="px-3 text-primary duration-300 hover:text-primary/80 disabled:text-primary/50 disabled:hover:text-primary/40">
+                                    اعمال
+                                </button>
+                            {% endif %}
+                        </div>
+                        {% for message in messages %}
+                            {% if 'error' in message.tags %}
+                                <p class="h-5 text-sm text-warning">{{ message }}</p>
+                            {% elif 'success' in message.tags %}
+                                <p class="h-5 text-sm text-success">{{ message }}</p>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </form>
+            </div>
+            <div class="flex items-center justify-between gap-x-2 py-6">
+                <div class="text-sm text-text/95 lg:text-base">
+                    قیمت کالا ها
+                </div>
+                <div class="flex items-center gap-1 text-sm text-primary lg:text-base">
+                    <div class="font-bold">{{ sum|rounded|three_digits }}</div>
+                    <div class="text-xs lg:text-sm">تومان</div>
+                </div>
+            </div>
+            <div class="relative rounded-lg bg-muted" data-accordion-item="">
+                <button type="button" class="w-full py-3 text-right md:py-5" data-accordion-button="">
+                    <div class="flex items-center justify-between gap-2 text-sm md:text-base">
+                        <span> لیست کالا ها </span>
+                        <div class="min-w-fit">
+                            <span class="i-lucide-chevron-left duration-300" data-accordion-chevron=""></span>
+                        </div>
+                    </div>
+                </button>
+                <div class="relative max-h-0 overflow-hidden transition-all duration-300" data-accordion-content="">
+                    <ul class="max-h-72 space-y-4 overflow-y-auto pl-1">
+                        {% for item in orders.items.all %}
+                            <li>
+                                <div class="space-y-4 rounded-lg bg-secondary/50 p-2 md:p-4">
+                                    <div class="flex items-start gap-4">
+                                        <img src="{{ item.service.image.url }}" class="aspect-1 w-[75px] rounded-lg"
+                                             alt="{{ item.service.title }}">
+                                        <div class="space-y-2">
+                                            <div class="line-clamp-1">{{ item.service.title }}</div>
+                                            <div>تعداد : {{ item.count }}</div>
+                                            <div class="flex items-center gap-x-2">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="flex items-center gap-2">
+                                                        <div>تاریخ رزرو :</div>
+                                                        <div>
+                                                            <div>{{ item.reserve.display_reserve_date|show_date }}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-end">
+                                        <div class="flex items-center gap-1 text-primary">
+                                            <span class="font-bold">{{ item.final_price|rounded|three_digits }}</span><span
+                                                class="text-xs">تومان</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="flex items-center justify-between gap-x-2 py-6">
+                <div class="text-sm text-text/95 lg:text-base">
+                    تخفیف کالا ها
+                </div>
+                <div class="flex items-center gap-1 text-sm font-medium text-warning lg:text-base">
+                    <div class="font-bold">{{ discount_amount|rounded|three_digits }}</div>
+                    <div class="text-xs lg:text-sm">تومان</div>
+                </div>
+            </div>
+            <div class="flex items-center justify-between gap-x-2 py-6">
+                <div class="text-sm text-text/95 lg:text-base">
+                    مبلغ قابل پرداخت
+                </div>
+                <div class="flex items-center gap-1 text-sm font-medium text-primary lg:text-base">
+                    <div class="font-bold">{{ final_price|rounded|three_digits }}</div>
+                    <div class="text-xs lg:text-sm">تومان</div>
+                </div>
+            </div>
+        </div>
+        <div class="space-y-4">
+            <p class="text-center text-xs text-text/80 sm:text-sm">
+                پس از تایید امکان ویرایش سبد خرید وجود ندارد
+            </p>
+            <button class="btn-primary w-full py-2.5">
+                تایید و پرداخت
+            </button>
+        </div>
+    </div>
+</div>
