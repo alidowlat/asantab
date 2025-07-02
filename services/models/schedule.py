@@ -15,3 +15,8 @@ class Schedule(models.Model):
     def __str__(self):
         day = self.date.strftime('%A')
         return f"{self.service.title} - {self.date} ({day})"
+
+    def display_date(self):
+        if self.date:
+            return self.date
+        return None
