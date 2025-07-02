@@ -9,6 +9,7 @@
     {% block extra_css %}
         <meta name="description" content="{{ service.description }}"/>
         <script src="/static/scripts/actions.js"></script>
+        <script src="/static/scripts/dependencies/jquery.min.js"></script>
     {% endblock %}
 {% endblock %}
 
@@ -296,9 +297,24 @@
                         </div>
                     </div>
                     <div>
+                        <select id="option-select">
+                            <option value="">انتخاب نوع تبلیغ</option>
+                            {% for option in service.options.all %}
+                                <option value="{{ option.id }}">{{ option.title }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <select id="schedule-select">
+                            <option value="">انتخاب زمان</option>
+                            {% for schedule in service.schedules.all %}
+                                <option value="{{ schedule.id }}">{{ schedule.date }} - {{ schedule.time }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <input id="service-count" type="number" value="1" min="1">
                         <div>
                             <div>
-                                <button class="btn-primary w-full py-2.5" aria-label="Add to Cart">
+                                <button onclick="addServiceToCart({{ service.id }})" class="btn-primary w-full py-2.5" aria-label="Add to Cart">
                                     افزودن به سبد خرید
                                 </button>
                             </div>
