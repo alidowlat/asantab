@@ -569,3 +569,36 @@ document.addEventListener('DOMContentLoaded', function () {
     toggleReadAllButton();
     checkReadListEmpty();
 });
+
+function addServiceToCart(serviceId) {
+    const count = parseInt(document.getElementById('service-count').value);
+    const optionId = document.getElementById('option-select').value;
+    const scheduleId = document.getElementById('schedule-select').value;
+
+    if (!optionId || !scheduleId) {
+        Swal.fire({
+            title: "خطا",
+            text: "لطفاً نوع تبلیغ و زمان را انتخاب کنید",
+            icon: "error",
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "باشه",
+            showCloseButton: true,
+        });
+        return;
+    }
+
+    $.get(`/services/add-to-cart?service_id=${serviceId}&option_id=${optionId}&schedule_id=${scheduleId}&count=${count}`)
+        .then(res => {
+            Swal.fire({
+                title: "اعلان",
+                text: res.message,
+                icon: res.status === 'success' ? "success" : "error",
+                confirmButtonText: "باشه",
+                showCloseButton: true,
+            }).then(result => {
+                if (res.status === 'success' && result.isConfirmed) {
+                    window.location.href = "/orders/cart";
+                }
+            });
+        });
+}

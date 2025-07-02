@@ -1,15 +1,61 @@
 from datetime import date
+
+from django.db import transaction
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from core.templatetags.extra_filters import rounded
 from discounts.models import DiscountCode, DiscountCodeUser
 from orders.models import OrderItem, Order
 from orders.services import OrderCalculator
+from services.models import Reservation
 
 
 class CartManager:
     def __init__(self, order):
         self.order = order
+
+    def _is_schedule_available(self, schedule):
+        return not Reservation.objects.filter(schedule=schedule).exists()
+
+    def _create_reserve(self, user, provider, schedule, option):
+        return Reservation.objects.create(
+            user=user,
+            provider=provider,
+            service=option.service,
+            option=option,
+            schedule=schedule,
+            status='pending',
+        )
+
+    @transaction.atomic
+    def add_to_cart(self, service, schedule, final_price, option, count):
+        if not self._is_schedule_available(schedule):
+            return False, "زمان‌بندی انتخاب‌شده قبلاً رزرو شده است."
+
+        item = OrderItem.objects.filter(
+            order=self.order,
+            option=option,
+        ).first()
+
+        if item:
+            item.count += count
+            item.final_price = final_price * item.count
+            item.save()
+        else:
+            OrderItem.objects.create(
+                order=self.order,
+                service=service,
+                schedule=schedule,
+                option=option,
+                count=count,
+                final_price=final_price,
+            )
+
+        calculator = OrderCalculator(self.order)
+        self.order.final_price = calculator.final_price()
+        self.order.save()
+
+        return True, "آیتم با موفقیت به سبد خرید افزوده شد."
 
     def remove_item(self, item_id):
         try:
@@ -47,7 +93,7 @@ class CartManager:
         }
 
     def change_item_count(self, item_id, state):
-        item = self.order.items.select_related('option', 'reserve').filter(id=item_id).first()
+        item = self.order.items.select_related('option', 'schedule').filter(id=item_id).first()
 
         if not item:
             return {'status': 'item_not_found'}
@@ -138,4 +184,3 @@ class CartAction:
             })
 
         return JsonResponse({**result, 'body': body})
-

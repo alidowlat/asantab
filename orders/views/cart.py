@@ -7,12 +7,13 @@ from orders.forms import DiscountForm
 from orders.models import Order, OrderItem
 from orders.services import OrderCalculator
 from orders.services.cart_service import CartManager, CartAction
+from services.models import Option, Schedule, Service
 
 
 @login_required
 def user_cart(request: HttpRequest):
     current_order, created = Order.objects.prefetch_related(
-        Prefetch('items', queryset=OrderItem.objects.select_related('service', 'option', 'reserve'))
+        Prefetch('items', queryset=OrderItem.objects.select_related('service', 'option', 'schedule'))
     ).get_or_create(is_paid=False, user=request.user)
     calc = OrderCalculator(current_order)
 
@@ -26,10 +27,38 @@ def user_cart(request: HttpRequest):
 
 
 @login_required
+def add_service_to_cart(request):
+    service_id = request.GET.get('service_id')
+    option_id = request.GET.get('option_id')
+    count = int(request.GET.get('count', 1))
+    schedule_id = int(request.GET.get('schedule_id'))
+
+    if count < 1:
+        return JsonResponse({'status': 'invalid_count', 'message': 'تعداد معتبر نیست'})
+
+    service = Service.objects.filter(id=service_id).first()
+    option = Option.objects.filter(id=option_id).first()
+    schedule = Schedule.objects.filter(id=schedule_id).first()
+
+    if not service or not option or not schedule:
+        return JsonResponse({'status': 'not_found', 'message': 'پارامترهای ورودی نامعتبر است'})
+
+    order, created = Order.objects.get_or_create(user=request.user, is_paid=False)
+
+    cart_manager = CartManager(order)
+
+    final_price = option.unit_price * count
+
+    cart_manager.add_to_cart(service, schedule, final_price, option, count)
+
+    return JsonResponse({'status': 'success', 'message': 'خدمت به سبد اضافه شد'})
+
+
+@login_required
 def order_checkout(request: HttpRequest):
     order, created = Order.objects.get_or_create(is_paid=False, user=request.user)
     order = Order.objects.prefetch_related(
-        Prefetch('items', queryset=OrderItem.objects.select_related('service', 'option', 'reserve'))
+        Prefetch('items', queryset=OrderItem.objects.select_related('service', 'option', 'schedule'))
     ).get(pk=order.pk)
 
     if not order.items.exists():
