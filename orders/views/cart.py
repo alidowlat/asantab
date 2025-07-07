@@ -1,3 +1,4 @@
+from datetime import date
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Prefetch
@@ -17,11 +18,23 @@ def user_cart(request: HttpRequest):
     ).get_or_create(is_paid=False, user=request.user)
     calc = OrderCalculator(current_order)
 
+    invalid_items = []
+
+    for item in current_order.items.all():
+        if item.schedule and item.schedule.date < date.today():
+            # jalali_date = show_jalali_date(item.schedule.date)
+            invalid_items.append(f"زمان رزرو «{item.schedule.date}» برای سرویس «{item.service.title}» منقضی شده است.")
+        if not item.service:
+            invalid_items.append(
+                f"سرویس با شناسه «{item.service_id}» دیگر در دسترس نیست. لطفاً آن را از سبد خرید حذف کنید."
+            )
+
     context = {
         'orders': current_order,
         'sum': calc.total_price(),
         'discount_amount': calc.discount_amount(),
         'final_price': calc.final_price(),
+        'invalid_items': invalid_items,
     }
     return render(request, 'orders/cart.html', context)
 
@@ -49,9 +62,23 @@ def add_service_to_cart(request):
 
     final_price = option.unit_price * count
 
-    cart_manager.add_to_cart(service, schedule, final_price, option, count)
+    success, message = cart_manager.add_to_cart(service, schedule, final_price, option, count)
 
-    return JsonResponse({'status': 'success', 'message': 'خدمت به سبد اضافه شد'})
+    if not success:
+        return JsonResponse({
+            'status': 'error',
+            'message': message,
+            'confirm_button_text': 'باشه',
+            'icon': 'error',
+        })
+
+    return JsonResponse({
+        'status': 'success',
+        'message': message,
+        'confirm_button_text': 'برو به سبد خرید',
+        'icon': 'success',
+        'url': '/user/cart/'
+    })
 
 
 @login_required
@@ -60,6 +87,9 @@ def order_checkout(request: HttpRequest):
     order = Order.objects.prefetch_related(
         Prefetch('items', queryset=OrderItem.objects.select_related('service', 'option', 'schedule'))
     ).get(pk=order.pk)
+    for item in order.items.all():
+        if not item.service or (item.schedule and item.schedule.date < date.today()):
+            return redirect('user_cart_page')
 
     if not order.items.exists():
         return redirect('user_cart_page')
