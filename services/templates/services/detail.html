@@ -8,7 +8,7 @@
 {% block extra_header %}
     {% block extra_css %}
         <meta name="description" content="{{ service.description }}"/>
-        <script src="/static/scripts/actions.js"></script>
+{#        <script src="/static/scripts/actions.js"></script>#}
         <script src="/static/scripts/dependencies/jquery.min.js"></script>
     {% endblock %}
 {% endblock %}
@@ -297,28 +297,69 @@
                         </div>
                     </div>
                     <div>
-                        <select id="option-select">
-                            <option value="">انتخاب نوع تبلیغ</option>
-                            {% for option in service.options.all %}
-                                <option value="{{ option.id }}">{{ option.title }}</option>
-                            {% endfor %}
-                        </select>
-
-                        <select id="schedule-select">
-                            <option value="">انتخاب زمان</option>
-                            {% for schedule in service.schedules.all %}
-                                <option value="{{ schedule.id }}">{{ schedule.date }} - {{ schedule.time }}</option>
-                            {% endfor %}
-                        </select>
-
-                        <input id="service-count" type="number" value="1" min="1">
-                        <div>
+                        <div class="space-y-4">
                             <div>
-                                <button onclick="addServiceToCart({{ service.id }})" class="btn-primary w-full py-2.5" aria-label="Add to Cart">
-                                    افزودن به سبد خرید
-                                </button>
+                                <label for="option-select" class="mb-2 block text-sm font-medium text-gray-700">
+                                    نوع تبلیغ
+                                </label>
+                                <select id="option-select"
+                                        class="block w-full rounded-lg border bg-muted p-2.5 text-sm outline-none focus:border-primary focus:ring-primary dark:placeholder-zinc-400 dark:focus:border-primary dark:focus:ring-primary">
+                                    <option value="">انتخاب نوع تبلیغ</option>
+                                    {% for option in service.options.all %}
+                                        <option value="{{ option.id }}">{{ option.title }} - <p>{{ option.unit_price|three_digits_toman }}</p></option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="schedule-select" class="mb-2 block text-sm font-medium text-gray-700">
+                                    زمان‌ بندی
+                                </label>
+                                <select id="schedule-select"
+                                        class="block w-full rounded-lg border bg-muted p-2.5 text-sm outline-none focus:border-primary focus:ring-primary dark:placeholder-zinc-400 dark:focus:border-primary dark:focus:ring-primary">
+                                    <option value="">انتخاب زمان</option>
+                                    {% for schedule in service.schedules.all %}
+                                        <option value="{{ schedule.id }}">{{ schedule.date }} - {{ schedule.time }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="flex items-center gap-x-2 xs:justify-center">
+                                <div class="flex h-10 w-24 items-center justify-between rounded-lg border px-2 py-1">
+
+                                    <!-- Increase button -->
+                                    <button type="button" class="text-success increase-qty">
+                                        <div class="i-lucide-plus size-6"></div>
+                                    </button>
+
+                                    <!-- Quantity input -->
+                                    <input
+                                            type="number"
+                                            name="count"
+                                            id="service-count"
+                                            class="w-full text-center text-sm bg-transparent border-none focus:outline-none appearance-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                            value="1"
+                                            min="1"
+                                    />
+
+                                    <!-- Decrease button -->
+                                    <button type="button" class="text-warning decrease-qty">
+                                        <div class="i-lucide-minus size-6"></div>
+                                    </button>
+
+                                </div>
+                            </div>
+
+                            <div>
+                                <div>
+                                    <button onclick="addServiceToCart({{ service.id }})" class="btn-primary w-full py-2.5"
+                                            aria-label="Add to Cart">
+                                        افزودن به سبد خرید
+                                    </button>
+                                </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
 
