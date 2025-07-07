@@ -593,7 +593,7 @@ function addServiceToCart(serviceId) {
                 title: "اعلان",
                 text: res.message,
                 icon: res.status === 'success' ? "success" : "error",
-                confirmButtonText: "باشه",
+                confirmButtonText: res.confirm_button_text,
                 showCloseButton: true,
             }).then(result => {
                 if (res.status === 'success' && result.isConfirmed) {
@@ -602,3 +602,18 @@ function addServiceToCart(serviceId) {
             });
         });
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  const increaseBtn = document.querySelector(".increase-qty");
+  const decreaseBtn = document.querySelector(".decrease-qty");
+  const countInput = document.getElementById("service-count");
+
+  increaseBtn.addEventListener("click", function () {
+    countInput.value = parseInt(countInput.value) + 1;
+  });
+
+  decreaseBtn.addEventListener("click", function () {
+    const current = parseInt(countInput.value);
+    if (current > 1) countInput.value = current - 1;
+  });
+});
