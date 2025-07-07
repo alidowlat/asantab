@@ -1,5 +1,4 @@
 from datetime import date
-
 from django.db import transaction
 from django.http import JsonResponse
 from django.template.loader import render_to_string
@@ -29,6 +28,9 @@ class CartManager:
 
     @transaction.atomic
     def add_to_cart(self, service, schedule, final_price, option, count):
+        if schedule.date < date.today():
+            return False, "نمی‌توان زمان رزرو گذشته را انتخاب کرد."
+
         if not self._is_schedule_available(schedule):
             return False, "زمان‌بندی انتخاب‌شده قبلاً رزرو شده است."
 
