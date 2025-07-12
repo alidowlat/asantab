@@ -1,5 +1,5 @@
 {% load extra_filters %}
-<a href="." class="block rounded-lg border p-4 shadow">
+<a href="{{ order.get_absolute_url }}" class="block rounded-lg border p-4 shadow">
     <div class="flex items-center justify-between pb-6">
         <div class="flex items-center gap-x-2 text-success">
             <div class="i-lucide-circle-check size-6"></div>
@@ -44,7 +44,7 @@
                     <p class="text-sm font-medium md:text-base">
                         {{ order.get_status_display }}
                         {% if order.status == 'rejected' %}
-                        	{{ order.rejection_reason }}
+                            {{ order.rejection_reason }}
                         {% endif %}
                     </p>
                 </div>
@@ -58,8 +58,6 @@
             {% endwith %}
         </div>
     </div>
-
-    <!-- Items Image -->
     <div class="swiper small-product-image-swiper swiper-initialized swiper-horizontal swiper-free-mode swiper-rtl swiper-backface-hidden">
         <div class="swiper-wrapper"
              style="transition-duration: 0ms; transition-delay: 0ms; transform: translate3d(0px, 0px, 0px);"
