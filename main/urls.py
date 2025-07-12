@@ -38,6 +38,7 @@ urlpatterns = [
     path('profile/', include('dashboard.urls.account')),
     path('profile/', include('dashboard.urls.change_number')),
     path('profile/', include('dashboard.urls.notification')),
+    path('profile/', include('dashboard.urls.order')),
     path('', include('search.urls')),
     path('orders/', include('orders.urls.cart')),
 ]
