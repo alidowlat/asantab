@@ -1,5 +1,7 @@
 from django.db import models
 import random
+from django.urls import reverse
+
 
 STATUS_CHOICES = [
     ('pending', 'در حال بررسی'),
@@ -88,6 +90,9 @@ class Order(models.Model):
         on_delete=models.SET_NULL,
         verbose_name='کد تخفیف'
     )
+
+    def get_absolute_url(self):
+        return reverse('order_detail', kwargs={'pk': self.pk})
 
     def generate_tracking_code(self):
         while True:
