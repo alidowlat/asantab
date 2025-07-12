@@ -5,40 +5,113 @@
         data-tabs-inactive-classes="btn-secondary"
         role="tablist">
         <li role="presentation">
-            <button id="filter-all-tab" data-tabs-target="#filter-all" type="button" role="tab" aria-controls="all"
-                    aria-selected="true" class="flex items-center gap-2 rounded-lg px-6 py-2 text-sm btn-primary">
+            <button id="filter-all-tab" data-tabs-target="#filter-all" type="button" role="tab"
+                    aria-controls="filter-all"
+                    aria-selected="true"
+                    class="flex items-center gap-2 rounded-lg px-6 py-2 text-sm btn-primary">
                 همه
-                <span>1</span>
+                <span>{{ order_items|length }}</span>
             </button>
         </li>
         <li role="presentation">
-            <button id="filter-current-tab" data-tabs-target="#filter-current" type="button" role="tab" aria-controls="current"
-                    aria-selected="false" class="flex items-center gap-2 rounded-lg px-6 py-2 text-sm btn-secondary">
+            <button id="filter-pending-tab" data-tabs-target="#filter-pending" type="button" role="tab"
+                    aria-controls="filter-pending"
+                    aria-selected="false"
+                    class="flex items-center gap-2 rounded-lg px-6 py-2 text-sm btn-secondary">
+                درحال بررسی
+                <span>{{ order_pending|length }}</span>
+            </button>
+        </li>
+        <li role="presentation">
+            <button id="filter-accepted-tab" data-tabs-target="#filter-accepted" type="button" role="tab"
+                    aria-controls="filter-accepted"
+                    aria-selected="false"
+                    class="flex items-center gap-2 rounded-lg px-6 py-2 text-sm btn-secondary">
                 فعلی
-                <span>1</span>
+                <span>{{ order_accepted|length }}</span>
             </button>
         </li>
         <li role="presentation">
             <button id="filter-delivered-tab" data-tabs-target="#filter-delivered" type="button" role="tab"
-                    aria-controls="delivered"
-                    aria-selected="false" class="flex items-center gap-2 rounded-lg px-6 py-2 text-sm btn-secondary">
+                    aria-controls="filter-delivered"
+                    aria-selected="false"
+                    class="flex items-center gap-2 rounded-lg px-6 py-2 text-sm btn-secondary">
                 تکمیل شده
-                <span>1</span>
+                <span>{{ order_completed|length }}</span>
             </button>
         </li>
         <li role="presentation">
-            <button id="filter-canceled-tab" data-tabs-target="#filter-canceled" type="button" role="tab" aria-controls="canceled"
-                    aria-selected="false" class="flex items-center gap-2 rounded-lg px-6 py-2 text-sm btn-secondary">
+            <button id="filter-canceled-tab" data-tabs-target="#filter-canceled" type="button" role="tab"
+                    aria-controls="filter-canceled"
+                    aria-selected="false"
+                    class="flex items-center gap-2 rounded-lg px-6 py-2 text-sm btn-secondary">
                 لغو شده
-                <span>1</span>
+                <span>{{ order_rejected|length }}</span>
             </button>
         </li>
     </ul>
+
+    <!-- Tab Content -->
     <div id="order-filter-tab-content">
-        <div class="" id="filter-all" role="tabpanel" aria-labelledby="all-tab">
+        <!-- همه -->
+        <div class="block" id="filter-all" role="tabpanel" aria-labelledby="filter-all-tab">
             <div class="space-y-4">
                 {% for order in order_items %}
-                    {% include 'dashboard/order/order_item.html' with item=item %}
+                    {% include 'dashboard/order/order_item.html' with order=order %}
+                {% empty %}
+                    <div class="text-center text-gray-400">سفارشی یافت نشد.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- درحال بررسی -->
+        <div class="hidden" id="filter-pending" role="tabpanel" aria-labelledby="filter-pending-tab">
+            <div class="space-y-4">
+                {% for order in order_items %}
+                    {% if order.status == 'pending' %}
+                        {% include 'dashboard/order/order_item.html' with order=order %}
+                    {% endif %}
+                {% empty %}
+                    <div class="text-center text-gray-400">سفارشی یافت نشد.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- فعلی -->
+        <div class="hidden" id="filter-accepted" role="tabpanel" aria-labelledby="filter-accepted-tab">
+            <div class="space-y-4">
+                {% for order in order_items %}
+                    {% if order.status == 'accepted' %}
+                        {% include 'dashboard/order/order_item.html' with order=order %}
+                    {% endif %}
+                {% empty %}
+                    <div class="text-center text-gray-400">سفارشی یافت نشد.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- تکمیل شده -->
+        <div class="hidden" id="filter-delivered" role="tabpanel" aria-labelledby="filter-delivered-tab">
+            <div class="space-y-4">
+                {% for order in order_items %}
+                    {% if order.status == 'completed' %}
+                        {% include 'dashboard/order/order_item.html' with order=order %}
+                    {% endif %}
+                {% empty %}
+                    <div class="text-center text-gray-400">سفارشی یافت نشد.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- لغو شده -->
+        <div class="hidden" id="filter-canceled" role="tabpanel" aria-labelledby="filter-canceled-tab">
+            <div class="space-y-4">
+                {% for order in order_items %}
+                    {% if order.status == 'rejected' %}
+                        {% include 'dashboard/order/order_item.html' with order=order %}
+                    {% endif %}
+                {% empty %}
+                    <div class="text-center text-gray-400">سفارشی یافت نشد.</div>
                 {% endfor %}
             </div>
         </div>
