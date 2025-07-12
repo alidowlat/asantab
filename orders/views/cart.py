@@ -13,28 +13,19 @@ from services.models import Option, Schedule, Service
 
 @login_required
 def user_cart(request: HttpRequest):
-    current_order, created = Order.objects.prefetch_related(
+    order, _ = Order.objects.prefetch_related(
         Prefetch('items', queryset=OrderItem.objects.select_related('service', 'option', 'schedule'))
     ).get_or_create(is_paid=False, user=request.user)
-    calc = OrderCalculator(current_order)
 
-    invalid_items = []
-
-    for item in current_order.items.all():
-        if item.schedule and item.schedule.date < date.today():
-            # jalali_date = show_jalali_date(item.schedule.date)
-            invalid_items.append(f"زمان رزرو «{item.schedule.date}» برای سرویس «{item.service.title}» منقضی شده است.")
-        if not item.service:
-            invalid_items.append(
-                f"سرویس با شناسه «{item.service_id}» دیگر در دسترس نیست. لطفاً آن را از سبد خرید حذف کنید."
-            )
+    cart_manager = CartManager(order)
+    order = cart_manager.cleanup_order_if_invalid()
+    calc = OrderCalculator(order) if order else None
 
     context = {
-        'orders': current_order,
-        'sum': calc.total_price(),
-        'discount_amount': calc.discount_amount(),
-        'final_price': calc.final_price(),
-        'invalid_items': invalid_items,
+        'orders': order,
+        'sum': calc.total_price() if calc else 0,
+        'discount_amount': calc.discount_amount() if calc else 0,
+        'final_price': calc.final_price() if calc else 0,
     }
     return render(request, 'orders/cart.html', context)
 
