@@ -1,9 +1,8 @@
 from django.contrib.admin.views.decorators import staff_member_required
-from django.db.models import Max, Min, Count, Q
+from django.db.models import Max, Min, Count
 from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.views.generic import ListView
-
 from config.views import apply_filters
 from locations.models import City
 from services.models import Service, Category, Profession, ServiceTag, Platform
@@ -20,20 +19,6 @@ class ServiceListView(ListView):
         context = super().get_context_data(object_list=object_list, **kwargs)
         latest_service = self.object_list.first()
         context['latest_service'] = latest_service
-
-        all_prices = []
-
-        for service in context['services']:
-            prices = list(service.options.filter(unit_price__isnull=False).values_list('unit_price', flat=True))
-            service.min_price = min(prices) if prices else None
-            service.max_price = max(prices) if prices else None
-            all_prices.extend(prices)
-
-        global_min_price = min(all_prices) if all_prices else 0
-        global_max_price = max(all_prices) if all_prices else 0
-
-        context['global_min_price'] = global_min_price
-        context['global_max_price'] = global_max_price
 
         model_fields = [
             ('platforms', Platform.objects.all()),
