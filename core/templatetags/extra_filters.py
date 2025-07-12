@@ -4,6 +4,7 @@ import pytz
 from jalali_date import date2jalali
 from jdatetime import datetime as jdatetime
 import jdatetime
+from datetime import datetime, date
 
 register = template.Library()
 
@@ -32,6 +33,7 @@ def time_since_custom(value):
     else:
         return "امروز"
 
+
 @register.filter(name='slice_after_space')
 def truncate_words_smart(text, limit=40):
     if not text:
@@ -46,6 +48,7 @@ def truncate_words_smart(text, limit=40):
         trimmed = trimmed[:last_space]
 
     return trimmed + '...'
+
 
 @register.filter(name='cut')
 def cut(value, arg):
@@ -74,6 +77,36 @@ def to_jalali(value):
     jalali_date = jdatetime.datetime.fromgregorian(datetime=value)
     month_name = JALALI_MONTHS[jalali_date.month]
     return f"{jalali_date.day} {month_name} {jalali_date.year}"
+
+@register.filter(name='show_date_slash')
+def to_jalali(value):
+    if not value:
+        return ''
+    jalali_date = jdatetime.datetime.fromgregorian(datetime=value)
+    month_name = JALALI_MONTHS[jalali_date.month]
+    return f"{jalali_date.day} / {month_name} / {jalali_date.year}"
+
+
+JALALI_WEEKDAYS = ['دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه', 'شنبه', 'یکشنبه']
+
+
+@register.filter(name='show_weekday')
+def show_weekday(value):
+    if isinstance(value, (datetime, date)):
+        jalali_date = jdatetime.date.fromgregorian(date=value)
+        weekday_index = jalali_date.weekday()
+        return JALALI_WEEKDAYS[weekday_index - 2]
+    return ''
+
+
+@register.filter(name='show_time')
+def show_time(value):
+    if isinstance(value, datetime):
+        iran_tz = pytz.timezone('Asia/Tehran')
+        value = value.astimezone(iran_tz)
+        jalali = jdatetime.datetime.fromgregorian(datetime=value)
+        return jalali.strftime('%M : %H')
+    return ''
 
 
 @register.filter(name='show_date_with_month')
