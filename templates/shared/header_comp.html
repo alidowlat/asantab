@@ -4,7 +4,8 @@
 <script src="/static/scripts/actions.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script src="{% static 'scripts/notif-count.js' %}"></script>
+<script src="{% static 'scripts/count.js' %}"></script>
+<script src="{% static 'scripts/cart.js' %}"></script>
 <header class="fixed inset-x-0 top-0 z-30 bg-muted">
     <!-- Ad Banner -->
     {% if request.path == '/' %}
@@ -109,7 +110,7 @@
                                 </li>
                                 <!-- order -->
                                 <li class="group">
-                                    <a href="./profile-order.html"
+                                    <a href="{% url 'orders_page' %}"
                                        class="flex items-center justify-between px-5 py-4 transition-all group-hover:text-primary">
                                         <div class="flex items-center gap-x-3">
                                             <svg class="i-mingcute-shopping-bag-3-line h-6 w-6 text-text/70 group-hover:text-primary"></svg>
@@ -157,8 +158,7 @@
                                 </li>
                                 <!-- exit -->
                                 <li>
-                                    <a href="
-                                            {% if request.user.is_provider %}{% url 'logout_provider' %}{% else %}{% url 'logout' %}{% endif %}"
+                                    <a href="{% if request.user.is_provider %}{% url 'logout_provider' %}{% else %}{% url 'logout' %}{% endif %}"
                                        class="my-1 flex items-center justify-between px-5 py-3 text-warning duration-150 hover:bg-warning/10">
                                         <div class="flex items-center gap-x-3">
                                             <svg class="i-mingcute-exit-line h-6 w-6"></svg>
@@ -185,9 +185,7 @@
                     <div>
                         <button data-dropdown-toggle="desktopNotificationDropdown" class="icon-btn relative h-10 w-10 border-primary">
                             <div class="i-lucide-bell h-6 w-6"></div>
-                            <div class="notif-badge absolute -right-1.5 -top-2.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
-
-                            </div>
+                            <div class="notif-badge hidden absolute -right-1.5 -top-2.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white"></div>
                         </button>
                         <!-- Dropdown Shopping -->
                         <div id="desktopNotificationDropdown"
@@ -215,9 +213,11 @@
                     <div>
                         <button data-dropdown-toggle="desktopFavoriteDropdown" class="icon-btn relative h-10 w-10 border-primary">
                             <div class="i-lucide-heart h-6 w-6"></div>
-                            <div class="favorite-count absolute -right-1.5 -top-2.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
-                                {{ favorite_list.count }}
-                            </div>
+                            {% if favorite_list.count > 0 %}
+                                <div class="favorite-count absolute -right-1.5 -top-2.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
+                                    {{ favorite_list.count }}
+                                </div>
+                            {% endif %}
                         </button>
                         <!-- Dropdown Shopping -->
                         <div id="desktopFavoriteDropdown" class="left-10 z-10 !ml-5 hidden w-[420px] rounded-lg border bg-muted shadow"
@@ -242,87 +242,33 @@
                     <div>
                         <button data-dropdown-toggle="desktopShoppingDropdown" class="icon-btn relative h-10 w-10 border-primary">
                             <span class="i-lucide-shopping-cart h-6 w-6"></span>
-                            <span class="absolute -right-1.5 -top-2.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
-                    4
-                  </span>
+                            <span class="order-item-badge hidden absolute -right-1.5 -top-2.5 h-5 w-5 items-center justify-center rounded-full bg-primary-btn text-center text-sm leading-6 text-white">
+
+                            </span>
                         </button>
                         <!-- Dropdown Shopping -->
-                        <div id="desktopShoppingDropdown" class="left-10 z-10 !ml-5 hidden w-[420px] rounded-lg border bg-muted shadow"
+                        <div id="desktopShoppingDropdown" class="left-10 z-10 !ml-5 hidden w-1/3 rounded-lg border bg-muted shadow"
                              data-popper-placement="bottom"
                              style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(200px, 116px);">
                             <div class="flex flex-col justify-between text-sm">
-                                <!-- header -->
-                                <div class="flex justify-between px-5 py-4">
-                                    <div>2 مورد</div>
-                                    <a href="./checkout-cart.html"
+                                <!-- Header -->
+                                <div class="flex justify-between px-5 py-4 border-b">
+                                    <div class="flex justify-start">
+                                        <p>سبد خرید</p>
+                                    </div>
+                                    <a href="{% url 'user_cart_page' %}"
                                        class="flex items-center text-primary duration-200 hover:text-primary/80">
                                         <p>مشاهده سبد خرید</p>
                                         <div class="i-lucide-chevron-left"></div>
                                     </a>
                                 </div>
-                                <!-- Products -->
-                                <ul class="max-h-60 divide-y overflow-y-auto p-5">
-                                    <!-- product1 -->
-                                    <li class="flex gap-x-3 pb-5 pt-8">
-                                        <!-- Image -->
-                                        <div class="relative min-w-fit">
-                                            <button class="absolute -top-2 right-0 rounded-lg border bg-muted duration-200 hover:bg-background">
-                                                <div class="i-lucide-trash m-2 h-4 w-4 text-warning"></div>
-                                            </button>
-                                            <a href="./product-detail.html">
-                                                <img class="h-[120px] w-[120px] rounded-2xl" src="/static/images/p1.png" alt="Blesser">
-                                            </a>
-                                        </div>
-                                        <!-- Information -->
-                                        <div class="flex w-full flex-col">
-                                            <a href="./product-detail.html" class="line-clamp-2 h-10">
-                                                کفش نیوبالانس NewBalanceوبالانس NewBalanceوبالانس
-                                                NewBalanceوبالانس NewBalanceوبالانس NewBalance
-                                            </a>
-                                            <div class="flex items-center gap-x-4 pt-3 text-text/80">
-                                                <p>تعداد : 1</p>
-                                                <div class="h-3 w-0.5 bg-secondary"></div>
-                                                <p>سایز : 44</p>
-                                            </div>
-                                            <div class="flex items-center justify-between gap-x-5 py-3">
-                                                <!-- price -->
-                                                <div class="flex items-center gap-x-2">
-                                                    <div class="text-lg font-medium text-primary">
-                                                        1,300,000,000
-                                                    </div>
-                                                    <p class="text-sm text-primary">تومان</p>
-                                                </div>
-                                                <!-- Quantity -->
-
-                                                <div class="flex h-10 w-24 items-center justify-between rounded-lg border px-2 py-1">
-                                                    <button type="button" class="i-lucide-plus size-8 text-success"></button>
-                                                    <input value="1" disabled="" type="number"
-                                                           class="flex h-5 w-full grow select-none items-center justify-center bg-transparent text-center text-sm outline-none">
-                                                    <button type="button" class="i-lucide-minus size-8 text-warning"></button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
+                                <ul id="cart-partial" data-fetch-url="/order-items/partial/"
+                                    class="max-h-72 divide-y overflow-y-auto p-4">
+                                    {% include 'includes/cart_partial.html' %}
                                 </ul>
-                                <!-- footer -->
-                                <div class="flex items-center justify-between border-t p-5">
-                                    <div class="flex flex-col items-center">
-                                        <p class="text-text/60">مبلغ قابل پرداخت</p>
-                                        <div class="flex items-center gap-x-1 text-primary">
-                                            <p class="text-lg font-bold">10,130,000</p>
-                                            <p class="text-sm">تومان</p>
-                                        </div>
-                                    </div>
-                                    <a href="checkout-shipping-not-selected.html">
-                                        <button class="w-32 rounded-md bg-primary-btn py-3 text-white duration-200 hover:bg-primary-btn/80">
-                                            ثبت سفارش
-                                        </button>
-                                    </a>
-                                </div>
                             </div>
                         </div>
                     </div>
-
                 {% endif %}
                 <!-- Theme -->
                 <div>

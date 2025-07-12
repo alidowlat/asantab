@@ -1,0 +1,51 @@
+{% load extra_filters %}
+<!-- Products -->
+{% if cart.items.all %}
+    <li class="cart-item-card flex gap-x-3 pb-5 pt-8">
+        <!-- Image -->
+        <div class="relative min-w-fit">
+            <button onclick="removeCartItem({{ item.id }})"
+                    class="absolute -top-2 right-0 rounded-lg border bg-muted duration-200 hover:bg-background">
+                <div class="i-lucide-trash m-2 h-4 w-4 text-warning"></div>
+            </button>
+            <a href="{{ item.service.get_absolute_url }}">
+                <img class="h-[85px] w-[85px] rounded-md" src="{{ item.service.image.url }}"
+                     alt="{{ item.service.title }}">
+            </a>
+        </div>
+        <!-- Information -->
+        <div class="flex w-full flex-col">
+            <a href="{{ item.service.get_absolute_url }}"
+               class="line-clamp-2 text-base h-5">{{ item.service.title }}</a>
+            <div class="flex items-center text-sm gap-x-4 pt-3 text-text/80">
+                <p>نوع تبلیغ : {{ item.option.title }}</p>
+                <div class="h-4 w-0.5 bg-secondary"></div>
+                <p>تاریخ : {{ item.schedule.date|show_date }}</p>
+            </div>
+            <div class="flex items-center justify-between gap-x-5 py-3">
+                <!-- price -->
+                <div class="flex items-center gap-x-2">
+                    <div class="text-base font-medium text-primary">
+                        {{ item.final_price|rounded|three_digits }}
+                    </div>
+                    <p class="text-sm text-primary">تومان</p>
+                </div>
+                <!-- Quantity -->
+                <div class="flex h-10 w-24 items-center justify-between rounded-lg border px-2 py-1">
+                    <button type="button" onclick="changeCartItemCount({{ item.id }}, 'increase')"
+                            class="text-success">
+                        <div class="i-lucide-plus size-6"></div>
+                    </button>
+                    <div class="flex h-5 w-full grow select-none items-center justify-center text-sm text-text quantity-display"
+                         data-id="{{ item.id }}">
+                        {{ item.count }}
+                    </div>
+                    <button type="button" onclick="changeCartItemCount({{ item.id }}, 'decrease')"
+                            class="text-warning">
+                        <div class="i-lucide-minus size-6"></div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </li>
+{% endif %}
