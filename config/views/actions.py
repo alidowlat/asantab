@@ -1,8 +1,11 @@
 from django.contrib.auth.decorators import login_required
+from django.db.models import Prefetch
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
 from notifications.models import Notification
+from orders.models import Order, OrderItem
+from orders.services import OrderCalculator
 from search.models import SearchQuery
 from services.models import Favorite, ServiceVisit
 
@@ -51,6 +54,19 @@ def favorite_list_partial(request):
 def notif_list_partial(request):
     notif_list = Notification.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'includes/notif_list.html', {'notif_list': notif_list})
+
+
+@login_required
+def cart_partial(request):
+    cart = Order.objects.filter(user=request.user, is_paid=False).prefetch_related(
+        Prefetch('items', queryset=OrderItem.objects.select_related('service', 'option', 'schedule'))
+    ).first()
+    calc = OrderCalculator(cart)
+
+    if cart is None:
+        return render(request, 'includes/cart_partial.html', {'cart': None, 'final_price': 0})
+
+    return render(request, 'includes/cart_partial.html', {'cart': cart, 'final_price': calc.final_price()})
 
 
 @login_required
@@ -121,4 +137,11 @@ def read_all_notifs(request):
 @login_required
 def unread_notifications_count(request):
     count = Notification.objects.filter(user_id=request.user.id, is_read=False).count()
+    return JsonResponse({'count': count})
+
+
+@login_required
+def order_items_count(request):
+    order = Order.objects.filter(user=request.user, is_paid=False).first()
+    count = order.items.count() if order else 0
     return JsonResponse({'count': count})
