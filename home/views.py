@@ -5,6 +5,7 @@ from django.shortcuts import render
 from blog.models import Post
 from config.models import SiteSetting, FooterBox, SocialLink, MainCategory
 from notifications.models import Notification
+from orders.models import Order, OrderItem
 from search.models import SearchQuery
 from services.models import Service, Platform, Favorite
 
@@ -33,12 +34,17 @@ def site_header_component(request):
     platforms = Platform.objects.all().prefetch_related(
         Prefetch('main_categories', queryset=MainCategory.objects.prefetch_related('category_items').order_by('order'))
     )
+
     if request.user.is_authenticated:
         favorite_list = Favorite.objects.filter(user=request.user).select_related('service').order_by('-created_at')
         notif_list = Notification.objects.filter(user=request.user).order_by('-created_at')
+        order = Order.objects.filter(user=request.user, is_paid=False).prefetch_related(
+            Prefetch('items', queryset=OrderItem.objects.select_related('service', 'option', 'schedule'))
+        ).first()
     else:
         favorite_list = []
         notif_list = []
+        order = []
 
     popular_search = list(
         SearchQuery.objects
@@ -65,6 +71,7 @@ def site_header_component(request):
 
     context = {
         'site_settings': site_settings,
+        'orders': order,
         'platforms': platforms,
         'favorite_list': favorite_list,
         'notif_list': notif_list,
