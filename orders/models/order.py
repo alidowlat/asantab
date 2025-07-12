@@ -1,4 +1,5 @@
 from django.db import models
+import random
 
 STATUS_CHOICES = [
     ('pending', 'در حال بررسی'),
@@ -7,8 +8,41 @@ STATUS_CHOICES = [
     ('completed', 'تکمیل شده'),
 ]
 
+ORDER_STATUS_STYLES = {
+    'pending': {
+        'color': 'text-yellow-500',
+        'bg': 'bg-yellow-500',
+        'icon': 'i-ic-baseline-pending-actions ',
+        'progress': 30
+    },
+    'accepted': {
+        'color': 'text-success',
+        'bg': 'bg-success',
+        'icon': 'i-lucide-thumbs-up',
+        'progress': 60
+    },
+    'rejected': {
+        'color': 'text-red-600',
+        'bg': 'bg-red-500',
+        'icon': 'i-lucide-circle-x',
+        'progress': 100
+    },
+    'completed': {
+        'color': 'text-teal-500',
+        'bg': 'bg-teal-500',
+        'icon': 'i-lucide-circle-check',
+        'progress': 100
+    }
+}
+
 
 class Order(models.Model):
+    tracking_code = models.CharField(
+        max_length=6,
+        unique=True,
+        null=True,
+        blank=True
+    )
     user = models.ForeignKey(
         'accounts.User',
         on_delete=models.CASCADE,
@@ -29,14 +63,15 @@ class Order(models.Model):
         default='pending',
         verbose_name='وضعیت سفارش'
     )
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name=
-        'تاریخ ثبت')
+    paid_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name='تاریخ پرداخت'
+    )
     updated_at = models.DateTimeField(
         auto_now=True,
-        verbose_name=
-        'تاریخ بروزرسانی')
+        verbose_name='تاریخ بروزرسانی'
+    )
     rejection_reason = models.TextField(
         null=True,
         blank=True,
@@ -54,6 +89,15 @@ class Order(models.Model):
         verbose_name='کد تخفیف'
     )
 
+    def generate_tracking_code(self):
+        while True:
+            code = str(random.randint(100000, 999999))
+            if not Order.objects.filter(tracking_code=code).exists():
+                return code
+
+    def get_status_style(self):
+        return ORDER_STATUS_STYLES.get(self.status, {})
+
     def __str__(self):
         return f'{self.is_paid} | {self.user} - {self.provider} --> {self.status}'
 
@@ -63,7 +107,6 @@ class Order(models.Model):
         super().save(*args, **kwargs)
 
     class Meta:
-        ordering = ['-created_at']
         verbose_name = 'Order'
         verbose_name_plural = 'Orders'
         db_table = 'orders'
