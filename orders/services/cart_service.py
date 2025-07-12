@@ -68,6 +68,8 @@ class CartManager:
         item.delete()
 
         if not self.order.items.exists():
+            if self.order.discount_code:
+                DiscountCodeUser.objects.filter(user=self.order.user, discount_code=self.order.discount_code).delete()
             self.order.delete()
             return {
                 'status': 'success',
@@ -159,6 +161,19 @@ class CartManager:
         self.order.discount_code = None
         self.order.save()
         return True, "کد تخفیف حذف شد."
+
+    def cleanup_order_if_invalid(self):
+        for item in self.order.items.all():
+            if not item.service or (item.schedule and item.schedule.date < date.today()):
+                item.delete()
+
+        if not self.order.items.exists():
+            if self.order.discount_code:
+                DiscountCodeUser.objects.filter(user=self.order.user, discount_code=self.order.discount_code).delete()
+            self.order.delete()
+            return None
+
+        return self.order
 
 
 class CartAction:
