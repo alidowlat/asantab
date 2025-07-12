@@ -267,11 +267,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     formData.append('service_id', serviceId);
 
                     fetch('/favorites/delete/', {
-                        method: 'POST',
-                        headers: {
+                        method: 'POST', headers: {
                             'X-CSRFToken': getCookie('csrftoken'),
-                        },
-                        body: formData,
+                        }, body: formData,
                     })
                         .then(res => res.json())
                         .then(data => {
@@ -310,8 +308,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (!result.isConfirmed) return;
 
                 fetch('/favorites/delete/all/', {
-                    method: 'POST',
-                    headers: {
+                    method: 'POST', headers: {
                         'X-CSRFToken': getCookie('csrftoken'),
                     },
                 })
@@ -391,11 +388,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     formData.append('service_id', serviceId);
 
                     fetch('/visits/delete/', {
-                        method: 'POST',
-                        headers: {
+                        method: 'POST', headers: {
                             'X-CSRFToken': getCookie('csrftoken'),
-                        },
-                        body: formData,
+                        }, body: formData,
                     })
                         .then(res => res.json())
                         .then(data => {
@@ -433,8 +428,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (!result.isConfirmed) return;
 
                 fetch('/visits/delete/all/', {
-                    method: 'POST',
-                    headers: {
+                    method: 'POST', headers: {
                         'X-CSRFToken': getCookie('csrftoken'),
                     },
                 })
@@ -503,7 +497,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-
     function bindReadButtons() {
         document.querySelectorAll('.read-notification-btn').forEach(function (btn) {
             btn.addEventListener('click', function () {
@@ -513,11 +506,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 formData.append('notif_id', notifId);
 
                 fetch('/notifications/read/', {
-                    method: 'POST',
-                    headers: {
+                    method: 'POST', headers: {
                         'X-CSRFToken': getCookie('csrftoken'),
-                    },
-                    body: formData,
+                    }, body: formData,
                 })
                     .then(res => res.json())
                     .then(data => {
@@ -542,8 +533,7 @@ document.addEventListener('DOMContentLoaded', function () {
         btn.addEventListener('click', function () {
 
             fetch('/notifications/read/all/', {
-                method: 'POST',
-                headers: {
+                method: 'POST', headers: {
                     'X-CSRFToken': getCookie('csrftoken'),
                 },
             })
@@ -569,6 +559,19 @@ document.addEventListener('DOMContentLoaded', function () {
     toggleReadAllButton();
     checkReadListEmpty();
 });
+
+function loadCartPartial() {
+    const cartElement = document.getElementById('cart-partial');
+    const url = cartElement.getAttribute('data-fetch-url');
+
+    fetch(url)
+        .then(res => res.text())
+        .then(html => {
+            cartElement.innerHTML = html;
+            showOrderItemsCount();
+        });
+}
+
 
 function addServiceToCart(serviceId) {
     const count = parseInt(document.getElementById('service-count').value);
@@ -604,16 +607,25 @@ function addServiceToCart(serviceId) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  const increaseBtn = document.querySelector(".increase-qty");
-  const decreaseBtn = document.querySelector(".decrease-qty");
-  const countInput = document.getElementById("service-count");
+    document.querySelectorAll('.cart-item-card').forEach(card => {
+        const increaseBtn = card.querySelector(".increase-qty");
+        const decreaseBtn = card.querySelector(".decrease-qty");
+        const countInput = card.querySelector("#service-count");
 
-  increaseBtn.addEventListener("click", function () {
-    countInput.value = parseInt(countInput.value) + 1;
-  });
+        if (!increaseBtn || !decreaseBtn || !countInput) return;
 
-  decreaseBtn.addEventListener("click", function () {
-    const current = parseInt(countInput.value);
-    if (current > 1) countInput.value = current - 1;
-  });
+        increaseBtn.addEventListener("click", function () {
+            countInput.value = parseInt(countInput.value) + 1;
+        });
+
+        decreaseBtn.addEventListener("click", function () {
+            const current = parseInt(countInput.value);
+            if (current > 1) countInput.value = current - 1;
+        });
+    });
+});
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    loadCartPartial();
 });

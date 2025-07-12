@@ -21,12 +21,6 @@ $(document).ready(function () {
             search: $('input[name="search-filter"]').val() || $('input[name="search-filter-mobile"]').val() || ''
         };
 
-        const slider = document.querySelector('[data-id="shop-price-slider"]');
-        if (slider && slider.noUiSlider) {
-            const priceValues = slider.noUiSlider.get();
-            pendingFilters.min_price = priceValues[0].replace(/,/g, '');
-            pendingFilters.max_price = priceValues[1].replace(/,/g, '');
-        }
     }
 
     function showServiceLoader() {
@@ -162,7 +156,6 @@ $(document).ready(function () {
         filterServices(page);
     });
 
-    // مقداردهی اولیه
     let params = new URLSearchParams(window.location.search);
     let filters = {
         sort_by: params.get('sort_by') || 'newest',
