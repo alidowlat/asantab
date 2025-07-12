@@ -1,0 +1,41 @@
+{% load extra_filters %}
+<div class="space-y-4">
+    <a href="{% url 'user_cart_page' %}" class="block rounded-lg border p-4 shadow">
+        <div class="flex items-center justify-between pb-6">
+            <div class="flex items-center gap-x-2 text-yellow-500 dark:text-yellow-400">
+                <div class="i-lucide-circle-alert size-6"></div>
+                <p class="font-medium md:text-lg">در انتظار پرداخت</p>
+            </div>
+            <div class="i-lucide-chevron-left size-6"></div>
+        </div>
+        <div class="flex flex-col gap-6 lg:flex-row lg:justify-between xl:gap-16">
+            <div class="flex flex-col gap-4 md:flex-row">
+                <div class="flex items-center justify-between gap-x-2 md:justify-start">
+                    <div class="text-sm text-text/60 md:text-base">
+                        سرویس انتخابی:
+                    </div>
+                    <div class="text-sm text-text/95 md:text-base">
+                        {{ item.service }}
+                    </div>
+                </div>
+                <div class="flex items-center justify-between gap-x-2 md:justify-start">
+                    <div class="text-sm text-text/60 md:text-base">
+                        نوع سرویس:
+                    </div>
+                    <div class="text-sm text-text/95 md:text-base">
+                        {{ item.option.title }}
+                    </div>
+                </div>
+                <div class="flex items-center justify-between gap-x-2 md:justify-start">
+                    <div class="text-sm text-text/60 md:text-base">
+                        مبلغ کل:
+                    </div>
+                    <div class="flex items-center gap-1 text-primary">
+                        <div class="font-bold md:text-lg">{{ item.final_price|rounded|three_digits }}</div>
+                        <div class="text-sm md:text-base">تومان</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </a>
+</div>

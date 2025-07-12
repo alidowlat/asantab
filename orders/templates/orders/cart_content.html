@@ -63,8 +63,8 @@
                                     </div>
                                     <div class="flex items-center gap-2 text-primary xs:col-span-2 sm:col-span-3 lg:text-lg xl:col-span-5">
                                         <span class="font-bold item-price"
-                                              data-id="{{ item.id }}">{{ item.final_price|rounded|three_digits }}</span><span
-                                            class="text-sm lg:text-base">تومان</span>
+                                              data-id="{{ item.id }}">{{ item.final_price|rounded|three_digits }}</span>
+                                        <span class="text-sm lg:text-base">تومان</span>
                                     </div>
                                 </div>
                             </div>
@@ -112,16 +112,6 @@
                         ادامه فرایند خرید
                     </a>
                 </div>
-                {% if invalid_items %}
-                    <div class="space-y-2 rounded-xl border border-warning bg-warning/10 p-4 text-warning text-sm leading-6">
-                        <strong class="block font-semibold">برخی آیتم‌ها نامعتبر هستند:</strong>
-                        <ul class="list-disc pr-4 mt-2 space-y-1">
-                            {% for error in invalid_items %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                {% endif %}
             </div>
             <div class="fixed inset-x-0 bottom-0 z-20 rounded-t-xl bg-muted px-4 pb-20 pt-4 transition-all duration-300 lg:hidden"
                  data-onscrollclass="translate-y-1/2">

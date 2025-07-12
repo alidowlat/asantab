@@ -1,0 +1,7 @@
+{% if cart_items %}
+    {% for order in cart_items %}
+        {% for item in order.items.all %}
+            {% include 'dashboard/order/cart_item.html' with item=item %}
+        {% endfor %}
+    {% endfor %}
+{% endif %}

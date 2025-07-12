@@ -1,0 +1,75 @@
+{% load extra_filters %}
+<a href="." class="block rounded-lg border p-4 shadow">
+    <div class="flex items-center justify-between pb-6">
+        <div class="flex items-center gap-x-2 text-success">
+            <div class="i-lucide-circle-check size-6"></div>
+            <p class="font-medium md:text-lg">پرداخت شده</p>
+        </div>
+        <div class="i-lucide-chevron-left size-6"></div>
+    </div>
+    <div class="mb-6 flex flex-col gap-6 xl:flex-row xl:justify-between xl:gap-16">
+        <div class="flex flex-col gap-4 md:flex-row">
+            <div class="flex items-center justify-between gap-x-2 md:justify-start">
+                <div class="text-sm text-text/60 md:text-base">
+                    شماره سفارش
+                </div>
+                <div class="text-sm text-text/95 md:text-base">
+                    {{ order.tracking_code }}
+                </div>
+            </div>
+            <div class="flex items-center justify-between gap-x-2 md:justify-start">
+                <div class="text-sm text-text/60 md:text-base">
+                    مبلغ کل
+                </div>
+                <div class="flex items-center gap-1 text-primary">
+                    <div class="font-bold md:text-lg">
+                        {{ final_price|rounded|three_digits }}
+                    </div>
+                    <div class="text-sm md:text-base">تومان</div>
+                </div>
+            </div>
+            <div class="flex items-center justify-between gap-x-2 md:justify-start">
+                <div class="text-sm text-text/60 md:text-base">
+                    تاریخ پرداخت
+                </div>
+                <div class="flex items-center gap-1 text-text/95">
+                    {{ order.paid_at|show_date_slash }}
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-grow flex-col gap-y-4">
+            {% with style=order.get_status_style %}
+                <div class="flex items-center gap-x-2 {{ style.color }}">
+                    <div class="{{ style.icon }} size-5"></div>
+                    <p class="text-sm font-medium md:text-base">
+                        {{ order.get_status_display }}
+                        {% if order.status == 'rejected' %}
+                        	{{ order.rejection_reason }}
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="relative h-2 w-full rounded-full bg-secondary">
+                <span style="width: {{ style.progress }}%"
+                      class="absolute inset-y-0 right-0 rounded-full {{ style.bg }}"></span>
+                </div>
+                <div class="flex items-center justify-between text-sm {{ style.color }} md:text-base">
+                    <span> {{ order.updated_at.date|show_date_slash }}</span><span> ساعت {{ order.updated_at|show_time }} </span>
+                </div>
+            {% endwith %}
+        </div>
+    </div>
+
+    <!-- Items Image -->
+    <div class="swiper small-product-image-swiper swiper-initialized swiper-horizontal swiper-free-mode swiper-rtl swiper-backface-hidden">
+        <div class="swiper-wrapper"
+             style="transition-duration: 0ms; transition-delay: 0ms; transform: translate3d(0px, 0px, 0px);"
+             id="swiper-wrapper-24dff76a81071001010" aria-live="polite">
+            {% for item in order.items.all %}
+                <div class="swiper-slide" style="width: 109px; margin-left: 10px;" role="group"
+                     aria-label="{{ forloop.counter }} / {{ forloop.last }}">
+                    <img src="{{ item.service.image.url }}" alt="{{ item.service.title }} image" class="size-18 rounded-md">
+                </div>
+            {% endfor %}
+        </div>
+        <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div>
+</a>

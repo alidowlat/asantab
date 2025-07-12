@@ -1,0 +1,46 @@
+<div class="mb-8">
+    <!-- Filter Tabs -->
+    <ul class="mb-8 flex flex-wrap items-center justify-center gap-2 md:justify-start" id="order-filter-tab"
+        data-tabs-toggle="#order-filter-tab-content" data-tabs-active-classes="btn-primary"
+        data-tabs-inactive-classes="btn-secondary"
+        role="tablist">
+        <li role="presentation">
+            <button id="filter-all-tab" data-tabs-target="#filter-all" type="button" role="tab" aria-controls="all"
+                    aria-selected="true" class="flex items-center gap-2 rounded-lg px-6 py-2 text-sm btn-primary">
+                همه
+                <span>1</span>
+            </button>
+        </li>
+        <li role="presentation">
+            <button id="filter-current-tab" data-tabs-target="#filter-current" type="button" role="tab" aria-controls="current"
+                    aria-selected="false" class="flex items-center gap-2 rounded-lg px-6 py-2 text-sm btn-secondary">
+                فعلی
+                <span>1</span>
+            </button>
+        </li>
+        <li role="presentation">
+            <button id="filter-delivered-tab" data-tabs-target="#filter-delivered" type="button" role="tab"
+                    aria-controls="delivered"
+                    aria-selected="false" class="flex items-center gap-2 rounded-lg px-6 py-2 text-sm btn-secondary">
+                تکمیل شده
+                <span>1</span>
+            </button>
+        </li>
+        <li role="presentation">
+            <button id="filter-canceled-tab" data-tabs-target="#filter-canceled" type="button" role="tab" aria-controls="canceled"
+                    aria-selected="false" class="flex items-center gap-2 rounded-lg px-6 py-2 text-sm btn-secondary">
+                لغو شده
+                <span>1</span>
+            </button>
+        </li>
+    </ul>
+    <div id="order-filter-tab-content">
+        <div class="" id="filter-all" role="tabpanel" aria-labelledby="all-tab">
+            <div class="space-y-4">
+                {% for order in order_items %}
+                    {% include 'dashboard/order/order_item.html' with item=item %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>

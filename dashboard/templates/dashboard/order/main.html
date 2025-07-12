@@ -1,0 +1,48 @@
+{% extends 'dashboard/_layout.html' %}
+{% load extra_filters %}
+
+
+{% block title %}
+    سفارشات | آسان تب
+{% endblock %}
+
+{% block content %}
+    <div class="rounded-lg bg-muted shadow">
+        <div class="p-5">
+            <div class="mb-16 flex justify-between">
+                <h1 class="relative w-fit font-medium lg:text-lg">
+                    سفارشات شما
+                    <span class="absolute right-0 top-10 h-[3px] w-full animate-fill-border rounded-full bg-primary"></span>
+                </h1>
+            </div>
+            {% if not cart_items and not order_items %}
+                <div class="flex-container">
+                    <img class="w-60 pb-10" src="/static/images/empty/empty-cart.svg" alt="empty page picture">
+                    <div class="text-center text-gray-400 text-lg pb-10">موردی یافت نشد.</div>
+                </div>
+            {% endif %}
+            {% if cart_items %}
+                <div class="mb-8 flex flex-wrap items-center justify-between gap-4">
+                    <h3 class="flex items-center gap-x-4 text-lg text-text/80">
+                        <span class="h-2 w-2 rounded-full bg-primary"></span>
+                        سفارشات در انتظار پرداخت
+                    </h3>
+                </div>
+                <ul class="space-y-4 divide-y mb-8">
+                    {% include 'dashboard/order/cart_list.html' %}
+                </ul>
+            {% endif %}
+            {% if order_items %}
+                <div class="mb-8 flex flex-wrap items-center justify-between gap-4">
+                    <h3 class="flex items-center gap-x-4 text-lg text-text/80">
+                        <span class="h-2 w-2 rounded-full bg-primary"></span>
+                        سفارشات
+                    </h3>
+                </div>
+                <ul class="space-y-4 divide-y mb-8">
+                    {% include 'dashboard/order/order_list.html' %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
