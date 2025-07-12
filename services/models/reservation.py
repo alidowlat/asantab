@@ -32,8 +32,8 @@ class Reservation(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='زمان ثبت')
 
     class Meta:
-        verbose_name = 'رزرو'
-        verbose_name_plural = 'رزروها'
+        verbose_name = 'Reserve'
+        verbose_name_plural = 'Reserves'
         db_table = 'reservations'
         ordering = ['-created_at']
         unique_together = ('user', 'schedule', 'option')
