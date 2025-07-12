@@ -4,11 +4,10 @@ from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
 from django.views.generic import DetailView
-
 from core import get_client_info
 from core.clean import create_visit_clean
 from reviews.models.service_review import ServiceReview, ServiceReviewReaction
-from services.models import Service, ServiceVisit, Favorite
+from services.models import Service, ServiceVisit, Favorite, Schedule
 
 
 class ServiceDetailView(DetailView):
@@ -31,6 +30,9 @@ class ServiceDetailView(DetailView):
             Q(tags__in=loaded_service.tags.all())
         ).exclude(id=loaded_service.id).distinct()
         context['related_services'] = related_services
+
+        schedules = Schedule.objects.filter(is_active=True, service=loaded_service, capacity__gte=1).distinct()
+        context['schedules'] = schedules
 
         base_reviews_qs = ServiceReview.objects.filter(
             service_id=loaded_service.id, status='approved'
