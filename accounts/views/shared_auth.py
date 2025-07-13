@@ -1,21 +1,22 @@
 from django.contrib.auth import login
 from django.shortcuts import redirect, render, get_object_or_404
-from django.urls import reverse
 from accounts.models import Provider
 from core import is_valid_otp, set_user_otp
-from notifications.services import notify_user
+from core.cache import delete_inactive_users
 
 
 def phone_input_view_shared(
-        request,
-        form_class,
-        user_model,
-        get_redirect_name,
-        session_key='user_phone',
-        template='accounts/user/auth.html',
-        already_authenticated_template='home/index.html',
-        is_provider_route=False
+    request,
+    form_class,
+    user_model,
+    get_redirect_name,
+    session_key='user_phone',
+    template='accounts/user/auth.html',
+    already_authenticated_template='home/index.html',
+    is_provider_route = False
 ):
+    delete_inactive_users(exp_in_min=1)
+
     if request.user.is_authenticated:
         return render(request, already_authenticated_template)
 
@@ -40,14 +41,14 @@ def phone_input_view_shared(
 
 
 def otp_verify_view_shared(
-        request,
-        form_class,
-        user_model,
-        get_success_redirect,
-        dashboard_redirect,
-        session_key='user_phone',
-        template='accounts/user/verify.html',
-        fallback_redirect='auth_page'
+    request,
+    form_class,
+    user_model,
+    get_success_redirect,
+    dashboard_redirect,
+    session_key='user_phone',
+    template='accounts/user/verify.html',
+    fallback_redirect='auth_page'
 ):
     if request.user.is_authenticated:
         return redirect(get_success_redirect)
