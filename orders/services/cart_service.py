@@ -41,7 +41,7 @@ class CartManager:
 
         if item:
             item.count += count
-            item.final_price = final_price * item.count
+            item.final_price = item.count * option.unit_price
             item.save()
         else:
             OrderItem.objects.create(
@@ -50,7 +50,7 @@ class CartManager:
                 schedule=schedule,
                 option=option,
                 count=count,
-                final_price=final_price,
+                final_price=count * option.unit_price,
             )
 
         calculator = OrderCalculator(self.order)
