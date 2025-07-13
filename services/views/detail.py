@@ -7,6 +7,7 @@ from django.views.generic import DetailView
 from core import get_client_info
 from core.clean import create_visit_clean
 from reviews.models.service_review import ServiceReview, ServiceReviewReaction
+from services.helper import ServiceDataFetcher
 from services.models import Service, ServiceVisit, Favorite, Schedule
 
 
@@ -16,64 +17,57 @@ class ServiceDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        loaded_service = self.object
+        service = self.object
         user = self.request.user if self.request.user.is_authenticated else None
 
-        price_range = loaded_service.options.aggregate(
-            min_price=Min('unit_price'), max_price=Max('unit_price')
-        )
+        fetcher = ServiceDataFetcher(service)
+
+        # min and max price
+        price_range = fetcher.get_price_range()
         context['min_price'] = price_range['min_price']
         context['max_price'] = price_range['max_price']
 
-        related_services = Service.objects.filter(
-            Q(profession__in=loaded_service.profession.all()) |
-            Q(tags__in=loaded_service.tags.all())
-        ).exclude(id=loaded_service.id).distinct()
-        context['related_services'] = related_services
+        # related services
+        context['related_services'] = fetcher.get_related_services()
 
-        schedules = Schedule.objects.filter(is_active=True, service=loaded_service, capacity__gte=1).distinct()
-        context['schedules'] = schedules
+        # schedules
+        context['schedules'] = fetcher.get_schedules()
 
-        base_reviews_qs = ServiceReview.objects.filter(
-            service_id=loaded_service.id, status='approved'
-        ).select_related('user')
+        # reviews
+        reviews, reviews_count = fetcher.get_annotated_reviews()
+        context['service_reviews'] = reviews
+        context['last_review'] = reviews.first()
+        context['reviews_count'] = reviews_count
 
-        annotated_reviews = base_reviews_qs.annotate(
-            like_count=Count('reactions', filter=Q(reactions__reaction='like')),
-            dislike_count=Count('reactions', filter=Q(reactions__reaction='dislike'))
-        ).order_by('-created_at')
+        # favorites
+        context['is_favorite'] = Favorite.objects.filter(service=service, user=user).exists() if user else False
 
-        context['service_reviews'] = annotated_reviews
-        context['last_review'] = annotated_reviews.first()
-        context['reviews_count'] = base_reviews_qs.count()
+        # likes and dislikes
+        context['liked_ids'], context['disliked_ids'] = self.get_review_reactions()
 
-        is_favorite = Favorite.objects.filter(service=loaded_service, user=user).exists()
-        context['is_favorite'] = is_favorite
-
-        if self.request.user.is_authenticated:
-            liked_ids = set(
-                ServiceReviewReaction.objects.filter(user=self.request.user, reaction='like').values_list('review_id', flat=True)
-            )
-            disliked_ids = set(
-                ServiceReviewReaction.objects.filter(user=self.request.user, reaction='dislike').values_list('review_id', flat=True)
-            )
-        else:
-            liked_ids = set()
-            disliked_ids = set()
-
-        context['liked_ids'] = liked_ids
-        context['disliked_ids'] = disliked_ids
-
+        # create visit
         create_visit_clean(
             user=self.request.user,
             model=ServiceVisit,
             request=self.request,
             fk_name='service',
             http_service=get_client_info,
-            loaded_obj=loaded_service,
+            loaded_obj=service,
         )
 
         return context
+
+    def get_review_reactions(self):
+        user = self.request.user
+        if not user.is_authenticated:
+            return set(), set()
+
+        liked_ids = set(ServiceReviewReaction.objects.filter(
+            user=user, reaction='like').values_list('review_id', flat=True))
+        disliked_ids = set(ServiceReviewReaction.objects.filter(
+            user=user, reaction='dislike').values_list('review_id', flat=True))
+
+        return liked_ids, disliked_ids
 
 
 def add_service_review(request: HttpRequest):
