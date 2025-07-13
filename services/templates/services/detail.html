@@ -310,7 +310,6 @@
                                     {% endfor %}
                                 </select>
                             </div>
-
                             <div>
                                 <label for="schedule-select" class="mb-2 block text-sm font-medium text-gray-700">
                                     زمان‌ بندی
@@ -323,9 +322,8 @@
                                     {% endfor %}
                                 </select>
                             </div>
-
                             <div class="flex items-center gap-x-2 xs:justify-center">
-                                <div class="flex h-10 w-24 items-center justify-between rounded-lg border px-2 py-1">
+                                <div class="cart-item-card flex h-10 w-24 items-center justify-between rounded-lg border px-2 py-1">
                                     <!-- Increase button -->
                                     <button type="button" class="text-success increase-qty">
                                         <div class="i-lucide-plus size-6"></div>
@@ -334,8 +332,7 @@
                                     <input
                                             type="number"
                                             name="count"
-                                            id="service-count"
-                                            class="w-full text-center text-sm bg-transparent border-none focus:outline-none appearance-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                            class="service-count w-full text-center text-sm bg-transparent border-none focus:outline-none appearance-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                             value="1"
                                             min="1"
                                     />
@@ -345,7 +342,6 @@
                                     </button>
                                 </div>
                             </div>
-
                             <div>
                                 <div>
                                     <button onclick="addServiceToCart({{ service.id }})" class="btn-primary w-full py-2.5"
@@ -355,7 +351,6 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
 
