@@ -318,20 +318,18 @@
                                 <select id="schedule-select"
                                         class="block w-full rounded-lg border bg-muted p-2.5 text-sm outline-none focus:border-primary focus:ring-primary dark:placeholder-zinc-400 dark:focus:border-primary dark:focus:ring-primary">
                                     <option value="">انتخاب زمان</option>
-                                    {% for schedule in service.schedules.all %}
-                                        <option value="{{ schedule.id }}">{{ schedule.date }} - {{ schedule.time }}</option>
+                                    {% for schedule in schedules %}
+                                        <option value="{{ schedule.id }}">{{ schedule.date|show_date }} - {{ schedule.date|show_weekday }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
 
                             <div class="flex items-center gap-x-2 xs:justify-center">
                                 <div class="flex h-10 w-24 items-center justify-between rounded-lg border px-2 py-1">
-
                                     <!-- Increase button -->
                                     <button type="button" class="text-success increase-qty">
                                         <div class="i-lucide-plus size-6"></div>
                                     </button>
-
                                     <!-- Quantity input -->
                                     <input
                                             type="number"
@@ -341,12 +339,10 @@
                                             value="1"
                                             min="1"
                                     />
-
                                     <!-- Decrease button -->
                                     <button type="button" class="text-warning decrease-qty">
                                         <div class="i-lucide-minus size-6"></div>
                                     </button>
-
                                 </div>
                             </div>
 
@@ -368,7 +364,7 @@
                      class="fixed inset-x-0 bottom-0 z-20 rounded-t-xl bg-muted px-4 pb-20 pt-4 transition-all duration-300 lg:hidden translate-y-1/2">
                     <div>
                         <button class="btn-primary w-full py-2" aria-label="Add to Cart">
-                            افزودن | 2,000,000 <span class="text-xs"> تومان </span>
+                            افزودن | 2,000,000 <span class="text-xs">تومان </span>
                         </button>
                     </div>
                 </div>
