@@ -574,7 +574,7 @@ function loadCartPartial() {
 
 
 function addServiceToCart(serviceId) {
-    const count = parseInt(document.getElementById('service-count').value);
+    const count = parseInt(document.querySelector('.service-count').value);
     const optionId = document.getElementById('option-select').value;
     const scheduleId = document.getElementById('schedule-select').value;
 
@@ -606,11 +606,11 @@ function addServiceToCart(serviceId) {
         });
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+function bindCartItemEvents() {
     document.querySelectorAll('.cart-item-card').forEach(card => {
         const increaseBtn = card.querySelector(".increase-qty");
         const decreaseBtn = card.querySelector(".decrease-qty");
-        const countInput = card.querySelector("#service-count");
+        const countInput = card.querySelector(".service-count");
 
         if (!increaseBtn || !decreaseBtn || !countInput) return;
 
@@ -623,7 +623,10 @@ document.addEventListener("DOMContentLoaded", function () {
             if (current > 1) countInput.value = current - 1;
         });
     });
-});
+}
+
+document.addEventListener("DOMContentLoaded", bindCartItemEvents);
+
 
 
 document.addEventListener('DOMContentLoaded', function () {
