@@ -4,9 +4,12 @@ from django.http import JsonResponse
 from django.template.loader import render_to_string
 from core.templatetags.extra_filters import rounded
 from discounts.models import DiscountCode, DiscountCodeUser
+from notifications.models import Notification
+from notifications.services import notify_user
 from orders.models import OrderItem, Order
 from orders.services import OrderCalculator
 from services.models import Reservation
+from django.utils.timezone import now, timedelta
 
 
 class CartManager:
