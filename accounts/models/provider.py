@@ -39,6 +39,7 @@ class Provider(models.Model):
                                             verbose_name='تصویر کارت ملی')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name='وضعیت')
     is_verified = models.BooleanField(default=False, verbose_name='تایید شده؟')
+    is_profile_complete = models.BooleanField(default=False, verbose_name='پروفایل تکمیل شده؟')
 
     def __str__(self):
         return self.user.get_full_name() or self.user.phone_number
