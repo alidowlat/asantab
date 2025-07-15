@@ -39,7 +39,7 @@
                 </div>
 
                 <!-- Desktop Menu -->
-                {% include 'dashboard/sidebar/_menu.html' %}
+                {% render_partial 'dashboard.views.dashboard_menu' %}
             </div>
             <!-- Content -->
             <div class="col-span-12 lg:col-span-9">
@@ -62,13 +62,12 @@
                 </a>
             </div>
             <div class="w-1/4 py-1">
-                <a href="./checkout-cart.html" class="flex flex-col items-center justify-center">
+                <a href="{% url 'user_cart_page' %}" class="flex flex-col items-center justify-center">
                     <i class="i-lucide-shopping-cart size-6"></i>
                     <p class="pt-2 text-xs xs:text-sm">سبد خرید</p>
                 </a>
             </div>
             <div class="w-1/4 py-1">
-
                 {% if request.user.is_authenticated %}
                     <a href="{% url 'account_info_page' %}" class="flex flex-col items-center justify-center">
                         <i class="i-lucide-user-round size-6"></i>

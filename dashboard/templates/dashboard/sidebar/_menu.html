@@ -1,70 +1,95 @@
-<div class="hidden rounded-lg shadow lg:block">
+<div class="hidden rounded-lg shadow lg:block mb-4">
     <ul class="relative space-y-2 rounded-lg bg-muted p-2">
         {% with request.resolver_match.url_name as current_url %}
-        <li>
-            <a href="{% url 'dashboard_page' %}"
-               class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == 'dashboard_page' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
-                <div class="flex items-center gap-4">
-                    <div class="i-solar-home-smile-linear size-6"></div>
-                    پیشخوان
-                </div>
-            </a>
-        </li>
-        <li>
-            <a href="{% url 'orders_page' %}"
-               class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == '' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
-                <div class="flex items-center gap-4">
-                    <div class="i-mingcute-shopping-bag-3-line size-6"></div>
-                    سفارش ها
-                </div>
-                <div class="order-item-badge h-6 w-6 rounded-full bg-yellow-500 text-center leading-6 text-white dark:bg-yellow-600"></div>
-            </a>
-        </li>
-        <li>
-            <a href="{% url 'notifications_page' %}"
-               class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == '' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
-                <div class="flex items-center gap-4">
-                    <div class="i-lucide-bell size-6"></div>
-                    اعلان ها
-                </div>
-                <div class="notif-badge h-6 w-6 rounded-full bg-primary-btn text-center leading-6 text-white"></div>
-            </a>
-        </li>
-        <li>
-            <a href="{% url 'favorite_list_page' %}"
-               class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == 'favorite_list_page' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
-                <div class="flex items-center gap-4">
-                    <div class="i-lucide-heart size-6"></div>
-                    علاقه‌‍مندی ها
-                </div>
-            </a>
-        </li>
-        <li>
-            <a href="{% url 'visit_list_page' %}"
-               class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == 'visit_list_page' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
-                <div class="flex items-center gap-4">
-                    <div class="i-lucide-mouse-pointer-click size-6"></div>
-                    بازدید های اخیر
-                </div>
-            </a>
-        </li>
-        <li>
-            <a href="{% url 'account_info_page' %}"
-               class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == 'account_info_page' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
-                <div class="flex items-center gap-4">
-                    <div class="i-lucide-user-cog size-6"></div>
-                    اطلاعات حساب کاربری
-                </div>
-            </a>
-        </li>
-        <li>
-            <a href="{% if request.user.is_provider %}{% url 'logout_provider' %}{% else %}{% url 'logout' %}{% endif %}" type="button" class="inline-flex w-full items-center justify-between p-4 text-warning">
-                <div class="flex items-center gap-4">
-                    <div class="i-mingcute-exit-line size-6"></div>
-                    خروج
-                </div>
-            </a>
-        </li>
+            <li>
+                <a href="{% url 'dashboard_page' %}"
+                   class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == 'dashboard_page' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                    <div class="flex items-center gap-4">
+                        <div class="i-solar-home-smile-linear size-6"></div>
+                        پیشخوان
+                    </div>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'orders_page' %}"
+                   class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == '' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                    <div class="flex items-center gap-4">
+                        <div class="i-mingcute-shopping-bag-3-line size-6"></div>
+                        سفارش ها
+                    </div>
+                    <div class="order-item-badge h-6 w-6 rounded-full bg-yellow-500 text-center leading-6 text-white dark:bg-yellow-600"></div>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'notifications_page' %}"
+                   class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == '' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                    <div class="flex items-center gap-4">
+                        <div class="i-lucide-bell size-6"></div>
+                        اعلان ها
+                    </div>
+                    <div class="notif-badge h-6 w-6 rounded-full bg-primary-btn text-center leading-6 text-white"></div>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'favorite_list_page' %}"
+                   class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == 'favorite_list_page' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                    <div class="flex items-center gap-4">
+                        <div class="i-lucide-heart size-6"></div>
+                        علاقه‌‍مندی ها
+                    </div>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'visit_list_page' %}"
+                   class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == 'visit_list_page' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                    <div class="flex items-center gap-4">
+                        <div class="i-lucide-mouse-pointer-click size-6"></div>
+                        بازدید های اخیر
+                    </div>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'account_info_page' %}"
+                   class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == 'account_info_page' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                    <div class="flex items-center gap-4">
+                        <div class="i-lucide-user-cog size-6"></div>
+                        اطلاعات حساب کاربری
+                    </div>
+                </a>
+            </li>
+            <li>
+                <a href="{% if request.user.is_provider %}{% url 'logout_provider' %}{% else %}{% url 'logout' %}{% endif %}"
+                   type="button" class="inline-flex w-full items-center justify-between p-4 text-warning">
+                    <div class="flex items-center gap-4">
+                        <div class="i-mingcute-exit-line size-6"></div>
+                        خروج
+                    </div>
+                </a>
+            </li>
         {% endwith %}
+    </ul>
+</div>
+<div class="rounded-lg shadow lg:block">
+    <ul class="relative space-y-2 rounded-lg bg-muted p-2">
+        {% if completion_percent %}
+            <li class="rounded-lg p-4 shadow">
+                <div class="flex flex-col gap-y-2">
+                    <div class="flex items-center gap-x-2 text-{{ progress_color }} justify-center mb-4">
+                        <p class="text-sm font-medium md:text-base">
+                            پروفایل شما ٪{{ completion_percent }} تکمیل شده است </p>
+                    </div>
+                    <div class="relative h-3 w-full rounded-full bg-secondary">
+                            <span class="absolute inset-y-0 right-0 rounded-full bg-{{ progress_color }}"
+                                  style="width: {{ completion_percent }}%"></span>
+                    </div>
+                </div>
+                {% if completion_percent < 100 %}
+                    <button onclick="window.location.href = '{% url 'account_info_page' %}'"
+                            class="btn-primary mt-6 w-full rounded-lg px-4 py-2">
+                        تکمیل پروفایل
+                    </button>
+                {% endif %}
+            </li>
+        {% endif %}
     </ul>
 </div>
