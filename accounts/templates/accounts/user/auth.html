@@ -104,6 +104,15 @@
                         </div>
                     {% endfor %}
                 </div>
+                <ul class="mb-6 space-y-4">
+                    <li>
+                        <a href="{% url 'auth_page_provider' %}"
+                           class="flex items-center gap-1 text-sm text-primary duration-200 hover:text-primary/80">
+                            ورود فروشنده
+                            <i class="i-carbon-chevron-left size-4"></i>
+                        </a>
+                    </li>
+                </ul>
 
                 <button type="submit" class="btn-primary py-3">ورود</button>
                 <p class="mt-5 text-center text-sm text-text/80">
