@@ -16,7 +16,6 @@ class DashboardView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        provider = getattr(self.request.user, 'provider', None)
 
         if user.is_provider:
             context['provider'] = get_object_or_404(Provider, user=user)
@@ -52,7 +51,11 @@ def get_progress_color(percent):
 
 @login_required
 def dashboard_menu(request):
-    provider = Provider.objects.get(user=request.user)
+    if request.user.is_provider:
+        provider = Provider.objects.get(user=request.user)
+    else:
+        provider = None
+
     if provider:
         completion_percent = calculate_profile_completion(provider)
         progress_color = get_progress_color(completion_percent)
