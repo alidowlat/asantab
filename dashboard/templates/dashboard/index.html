@@ -71,6 +71,17 @@
                             </div>
                         </a>
                     {% endif %}
+                    {% if not provider %}
+                        <a href="{% url 'become_provider' %}"
+                           class="flex flex-col items-center justify-center gap-4 rounded-lg border px-4 py-3 hover:border-border/50 md:flex-row md:justify-start">
+                            <div class="flex size-12 items-center justify-center rounded-full bg-red-500 text-white dark:bg-red-600">
+                                <div class="i-lucide-user-cog size-8"></div>
+                            </div>
+                            <div class="flex flex-col items-center md:items-start">
+                                <p class="font-medium">فروشنده شوید!</p>
+                            </div>
+                        </a>
+                    {% endif %}
                 </div>
             </div>
             <div class="mb-8">
@@ -80,77 +91,83 @@
                         وضعیت سفارش های شما
                     </h3>
                 </div>
-                <div class="grid grid-cols-2 gap-4 md:gap-6 xl:grid-cols-3">
-                    {% if current_orders_count > 0 %}
-                        <a href="{% url 'orders_page' %}"
-                           class="col-span-2 flex flex-col items-center justify-center gap-4 rounded-lg border px-4 py-3 hover:border-border/50 md:flex-row md:justify-start xl:col-span-1">
-                            <div class="relative flex size-12 items-center justify-center rounded-full bg-primary-btn text-white">
-                                <div class="i-carbon-process-automate size-8"></div>
-                                <div class="absolute -right-4 -top-2 flex size-8 items-center justify-center rounded-full border bg-muted text-text md:hidden">
-                                    {{ current_orders_count }}
+                {% if orders %}
+                    <div class="grid grid-cols-2 gap-4 md:gap-6 xl:grid-cols-3">
+                        {% if current_orders_count > 0 %}
+                            <a href="{% url 'orders_page' %}"
+                               class="col-span-2 flex flex-col items-center justify-center gap-4 rounded-lg border px-4 py-3 hover:border-border/50 md:flex-row md:justify-start xl:col-span-1">
+                                <div class="relative flex size-12 items-center justify-center rounded-full bg-primary-btn text-white">
+                                    <div class="i-carbon-process-automate size-8"></div>
+                                    <div class="absolute -right-4 -top-2 flex size-8 items-center justify-center rounded-full border bg-muted text-text md:hidden">
+                                        {{ current_orders_count }}
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="flex flex-col items-center md:items-start">
-                                <p class="hidden font-medium md:block">{{ current_orders_count }} سفارش</p>
-                                <p>فعلی</p>
-                            </div>
-                        </a>
-                    {% endif %}
+                                <div class="flex flex-col items-center md:items-start">
+                                    <p class="hidden font-medium md:block">{{ current_orders_count }} سفارش</p>
+                                    <p>فعلی</p>
+                                </div>
+                            </a>
+                        {% endif %}
 
-                    {% if completed_orders_count > 0 %}
-                        <a href="{% url 'orders_page' %}"
-                           class="flex flex-col items-center justify-center gap-4 rounded-lg border px-4 py-3 hover:border-border/50
+                        {% if completed_orders_count > 0 %}
+                            <a href="{% url 'orders_page' %}"
+                               class="flex flex-col items-center justify-center gap-4 rounded-lg border px-4 py-3 hover:border-border/50
                         md:flex-row md:justify-start">
-                            <div class="relative flex size-12 items-center justify-center rounded-full bg-emerald-500 text-white dark:bg-emerald-600">
-                                <div class="i-icon-park-outline-delivery size-8"></div>
-                                <div class="absolute -right-4 -top-2 flex size-8 items-center justify-center rounded-full border bg-muted text-text text-white md:hidden">
-                                    {{ completed_orders_count }}
+                                <div class="relative flex size-12 items-center justify-center rounded-full bg-emerald-500 text-white dark:bg-emerald-600">
+                                    <div class="i-icon-park-outline-delivery size-8"></div>
+                                    <div class="absolute -right-4 -top-2 flex size-8 items-center justify-center rounded-full border bg-muted text-text text-white md:hidden">
+                                        {{ completed_orders_count }}
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="flex flex-col items-center md:items-start">
-                                <p class="hidden font-medium md:block">{{ completed_orders_count }} سفارش</p>
-                                <p>تحویل شده</p>
-                            </div>
-                        </a>
-                    {% endif %}
+                                <div class="flex flex-col items-center md:items-start">
+                                    <p class="hidden font-medium md:block">{{ completed_orders_count }} سفارش</p>
+                                    <p>تحویل شده</p>
+                                </div>
+                            </a>
+                        {% endif %}
 
-                    {% if canceled_orders_count > 0 %}
+                        {% if canceled_orders_count > 0 %}
+                            <a href="{% url 'orders_page' %}"
+                               class="flex flex-col items-center justify-center gap-4 rounded-lg border px-4 py-3 hover:border-border/50 md:flex-row md:justify-start">
+                                <div class="relative flex size-12 items-center justify-center rounded-full bg-red-500 text-white dark:bg-red-600">
+                                    <div class="i-mdi-close-circle-multiple-outline size-8"></div>
+                                    <div class="absolute -right-4 -top-2 flex size-8 items-center justify-center rounded-full border bg-muted text-text text-white md:hidden">
+                                        {{ canceled_orders_count }}
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-center md:items-start">
+                                    <p class="hidden font-medium md:block">{{ canceled_orders_count }} سفارش</p>
+                                    <p>لغو شده</p>
+                                </div>
+                            </a>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <p class="text-center opacity-45">
+                    سفارشی برای شما ثبت نشده است.
+                    </p>
+                {% endif %}
+            </div>
+            {% if orders %}
+                <div class="mb-8">
+                    <div class="mb-8 flex flex-wrap items-center justify-between gap-4">
+                        <h3 class="flex items-center gap-x-4 text-lg text-text/80">
+                            <span class="h-2 w-2 rounded-full bg-primary"></span>
+                            سفارشات اخیر
+                        </h3>
                         <a href="{% url 'orders_page' %}"
-                           class="flex flex-col items-center justify-center gap-4 rounded-lg border px-4 py-3 hover:border-border/50 md:flex-row md:justify-start">
-                            <div class="relative flex size-12 items-center justify-center rounded-full bg-red-500 text-white dark:bg-red-600">
-                                <div class="i-mdi-close-circle-multiple-outline size-8"></div>
-                                <div class="absolute -right-4 -top-2 flex size-8 items-center justify-center rounded-full border bg-muted text-text text-white md:hidden">
-                                    {{ canceled_orders_count }}
-                                </div>
-                            </div>
-                            <div class="flex flex-col items-center md:items-start">
-                                <p class="hidden font-medium md:block">{{ canceled_orders_count }} سفارش</p>
-                                <p>لغو شده</p>
-                            </div>
+                           class="flex items-center gap-1 text-sm text-primary duration-300 hover:text-primary/80 xl:text-base">
+                            <div>مشاهده همه</div>
+                            <div class="i-lucide-chevron-left size-5"></div>
                         </a>
-                    {% endif %}
-
+                    </div>
+                    <div class="space-y-4">
+                        {% for order in orders %}
+                            {% include 'dashboard/order/order_item.html' with order=order %}
+                        {% endfor %}
+                    </div>
                 </div>
-            </div>
-            <div class="mb-8">
-                <div class="mb-8 flex flex-wrap items-center justify-between gap-4">
-                    <h3 class="flex items-center gap-x-4 text-lg text-text/80">
-                        <span class="h-2 w-2 rounded-full bg-primary"></span>
-                        سفارشات اخیر
-                    </h3>
-                    <a href="{% url 'orders_page' %}"
-                       class="flex items-center gap-1 text-sm text-primary duration-300 hover:text-primary/80 xl:text-base">
-                        <div>مشاهده همه</div>
-                        <div class="i-lucide-chevron-left size-5"></div>
-                    </a>
-                </div>
-
-                <div class="space-y-4">
-                    {% for order in orders %}
-                        {% include 'dashboard/order/order_item.html' with order=order %}
-                    {% endfor %}
-                </div>
-            </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
