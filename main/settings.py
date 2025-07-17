@@ -129,3 +129,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 Kavenegar_API = "3755324A6D424E2B7269706C316C5939466E76777552757A56616F766E475876685254524B4464594E56673D"
 
 INTERNAL_IPS = ['127.0.0.1', '0.0.0.0', 'localhost']
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'asantab.supp@gmail.com'
+EMAIL_HOST_PASSWORD = 'vgqo xhkp jpft nvup'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
