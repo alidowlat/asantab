@@ -16,9 +16,9 @@
                 </h1>
             </div>
             {% if not cart_items and not order_items %}
-                <div class="flex-container">
+                <div class="flex flex-col items-center">
                     <img class="w-60 pb-10" src="/static/images/empty/empty-cart.svg" alt="empty page picture">
-                    <div class="text-center text-gray-400 text-lg pb-10">موردی یافت نشد.</div>
+                    <div class="text-center text-gray-400 text-lg pb-10">لیست سفارشات شما خالی است.</div>
                 </div>
             {% endif %}
             {% if cart_items %}
