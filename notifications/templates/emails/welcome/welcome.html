@@ -1,0 +1,125 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f0f2f5;
+            font-family: Tahoma, sans-serif;
+            direction: rtl
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff
+        }
+
+        .header {
+            padding: 20px;
+            text-align: center;
+            background: #0057b7;
+            color: #ffffff;
+            font-size: 24px
+        }
+
+        .hero {
+            padding: 40px 20px;
+            text-align: center
+        }
+
+        .hero img {
+            max-width: 160px;
+            height: auto;
+            border-radius: 6px
+        }
+
+        .content {
+            padding: 30px 20px;
+            color: #333333;
+            line-height: 2;
+            text-align: right;
+            font-size: 15px
+        }
+
+        .button {
+            display: inline-block;
+            padding: 12px 30px;
+            margin: 25px 0;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold
+        }
+
+        .btn-primary {
+            background: #0057b7;
+            color: #ffffff
+        }
+
+        .footer {
+            padding: 25px;
+            text-align: center;
+            font-size: 12px;
+            color: #999999;
+            border-top: 1px solid #eee
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                font-size: 20px;
+                padding: 15px
+            }
+
+            .content {
+                padding: 15px
+            }
+
+            .button {
+                width: 100%;
+                box-sizing: border-box;
+                text-align: center
+            }
+        }
+    </style>
+</head>
+<body>
+<table class="container" cellpadding="0" cellspacing="0">
+    <tr>
+        <td class="header">
+            به {{ platform_name }} خوش آمدید
+        </td>
+    </tr>
+    <tr>
+        <td class="hero">
+            <img src="{% static 'images/logo/asan-tab-tr.png' %}" alt="لوگوی {{ platform_name }}">
+        </td>
+    </tr>
+    <tr>
+        <td class="content">
+            {{ name }} عزیز،
+            <p>با خوش‌وقتی عضویت شما در <strong>{{ platform_name }}</strong> را خوش‌آمد می‌گوییم.</p>
+
+            <p>برای استفاده کامل از خدمات پلتفرم، لطفاً با کلیک روی دکمه زیر، فرایند <strong>تکمیل حساب کاربری</strong> خود را انجام
+                دهید.</p>
+
+            <p style="text-align:center">
+                <a href="{{ complete_profile_url }}" class="button btn-primary">تکمیل حساب کاربری</a>
+            </p>
+
+            <p>در صورت بروز هرگونه مشکل یا نیاز به راهنمایی، تیم پشتیبانی ما در کنار شماست.</p>
+            <p>با آرزوی موفقیت،<br>{{ platform_name }}.</p>
+        </td>
+    </tr>
+    <tr>
+        <td class="footer">
+            © {{ year }} {{ platform_name }} - تمامی حقوق محفوظ است.
+        </td>
+    </tr>
+</table>
+</body>
+</html>
