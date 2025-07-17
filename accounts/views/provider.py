@@ -1,4 +1,5 @@
 from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse
 from django.views import View
@@ -45,7 +46,7 @@ def provider_otp_verify_view(request):
 
 def provider_complete_info_view(request):
     phone_number = request.session.get('provider_phone')
-    if not phone_number:
+    if not request.session.get('become_provider') and not phone_number:
         return redirect('index_page')
 
     user = get_object_or_404(User, phone_number=phone_number)
@@ -85,6 +86,13 @@ def provider_password_input_view(request):
         form.add_error('password', 'اطلاعات وارد شده نادرست است.')
 
     return render(request, 'accounts/provider/password_auth.html', {'form': form})
+
+
+@login_required
+def become_provider_view(request):
+    request.session['become_provider'] = True
+    request.session['provider_phone'] = request.user.phone_number
+    return redirect('complete_info_page_provider')
 
 
 class LogoutView(View):
