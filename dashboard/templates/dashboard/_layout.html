@@ -99,12 +99,36 @@
                         </div>
                     </a>
                 </li>
+                {% if request.user.is_provider %}
+                    <li>
+                        <a href="{% url 'received_orders_page' %}"
+                           class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == '' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                            <div class="flex items-center gap-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                     class="lucide lucide-store-icon lucide-store">
+                                    <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/>
+                                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                                    <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/>
+                                    <path d="M2 7h20"/>
+                                    <path d="M22 7v3a2 2 0 0 1-2 2a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12a2 2 0 0 1-2-2V7"/>
+                                </svg>
+                                سفارشات دریافتی
+                            </div>
+                            <div class="order-item-badge h-6 w-6 rounded-full bg-yellow-500 text-center leading-6 text-white dark:bg-yellow-600"></div>
+                        </a>
+                    </li>
+                {% endif %}
                 <li>
-                    <a href=""
-                       class="inline-flex w-full items-center justify-between rounded-lg p-4 text-text/80 duration-300 hover:text-primary">
+                    <a href="{% url 'orders_page' %}"
+                       class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == '' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
                         <div class="flex items-center gap-4">
                             <div class="i-mingcute-shopping-bag-3-line size-6"></div>
-                            سفارش ها
+                            {% if request.user.is_provider %}
+                                خرید های من
+                            {% else %}
+                                سفارش ها
+                            {% endif %}
                         </div>
                         <div class="order-item-badge h-6 w-6 rounded-full bg-yellow-500 text-center leading-6 text-white dark:bg-yellow-600"></div>
                     </a>
@@ -147,7 +171,8 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{% if request.user.is_provider %}{% url 'logout_provider' %}{% else %}{% url 'logout' %}{% endif %}" type="button" class="inline-flex w-full items-center justify-between p-4 text-warning">
+                    <a href="{% if request.user.is_provider %}{% url 'logout_provider' %}{% else %}{% url 'logout' %}{% endif %}"
+                       type="button" class="inline-flex w-full items-center justify-between p-4 text-warning">
                         <div class="flex items-center gap-4">
                             <div class="i-mingcute-exit-line size-6"></div>
                             خروج
