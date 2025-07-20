@@ -35,7 +35,7 @@ def calculate_profile_completion(provider):
     provider.is_profile_complete = percent >= 80 and all([
         provider.iban_number,
         provider.card_number,
-        provider.national_card_image,
+        # provider.national_card_image,
         provider.user.national_id,
     ])
     provider.save(update_fields=['is_profile_complete'])
