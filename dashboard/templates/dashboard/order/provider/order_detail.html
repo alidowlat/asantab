@@ -1,0 +1,183 @@
+{% extends 'dashboard/_layout.html' %}
+{% load extra_filters %}
+
+{% block title %}
+    جزئیات سفارش {{ order.tracking_code }}
+    | آسان تب
+{% endblock %}
+
+{% block content %}
+    <div class="rounded-lg bg-muted shadow">
+        <div class="p-5">
+            <div class="mb-16 flex justify-between">
+                <h1 class="relative w-fit font-medium lg:text-lg">
+                    جزئیات سفارش {{ order.tracking_code }}
+                    <span class="absolute right-0 top-10 h-[3px] w-full animate-fill-border rounded-full bg-primary"></span>
+                </h1>
+                <a href="{% url 'received_orders_page' %}" class="btn-primary flex items-center gap-1 px-4 py-1.5">
+                    برگشت
+                    <span class="i-lucide-chevron-left size-5"></span>
+                </a>
+            </div>
+            <div class="mb-8">
+                <div class="block rounded-lg border p-4 shadow">
+                    <div class="flex items-center justify-between pb-6">
+                        <div class="flex items-center gap-x-2 text-success">
+                            <div class="i-lucide-circle-check size-6"></div>
+                            <p class="font-medium md:text-lg">پرداخت شده</p>
+                        </div>
+                    </div>
+                    <div class="mb-6 flex flex-col gap-6 xl:flex-row xl:justify-between xl:gap-16">
+                        <div class="flex flex-col gap-4 md:flex-row">
+                            <div class="flex items-center justify-between gap-x-2 md:justify-start">
+                                <div class="text-sm text-text/60 md:text-base">
+                                    شماره سفارش
+                                </div>
+                                <div class="text-sm text-text/95 md:text-base">
+                                    {{ order.tracking_code }}
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between gap-x-2 md:justify-start">
+                                <div class="text-sm text-text/60 md:text-base">
+                                    مبلغ کل
+                                </div>
+                                <div class="flex items-center gap-1 text-primary">
+                                    <div class="font-bold md:text-lg">
+                                        {{ final_price|rounded|three_digits }}
+                                    </div>
+                                    <div class="text-sm md:text-base">تومان</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between gap-x-2 md:justify-start">
+                                <div class="text-sm text-text/60 md:text-base">
+                                    تاریخ پرداخت
+                                </div>
+                                <div class="flex items-center gap-1 text-text/95">
+                                    {{ order.paid_at|show_date_slash }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-grow flex-col gap-y-4">
+                            {% with style=order.get_status_style %}
+                                <div class="flex items-center gap-x-2 {{ style.color }}">
+                                    <div class="{{ style.icon }} size-5"></div>
+                                    <p class="text-sm font-medium md:text-base">
+                                        {{ order.get_status_display }}
+                                        {% if order.status == 'rejected' %}
+                                            {{ order.rejection_reason }}
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <div class="relative h-2 w-full rounded-full bg-secondary">
+                                    <span style="width: {{ style.progress }}%"
+                                          class="absolute inset-y-0 right-0 rounded-full {{ style.bg }}"></span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm {{ style.color }} md:text-base">
+                                    <span> {{ order.updated_at.date|show_date_slash }}</span><span> ساعت {{ order.updated_at|show_time }} </span>
+                                </div>
+                            {% endwith %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-8">
+                <div class="rounded-lg border p-4 shadow">
+                    <div class="mb-6 flex flex-col flex-wrap gap-4 md:flex-row">
+                        <div class="flex items-center justify-between gap-x-2 lg:justify-start">
+                            <div class="text-sm text-text/60 md:text-base">
+                                مبلغ مرسوله ها
+                            </div>
+                            <div class="flex items-center gap-1 text-primary">
+                                <span class="font-bold md:text-lg">{{ final_price|rounded|three_digits }}</span><span
+                                    class="text-sm md:text-base">تومان</span>
+                            </div>
+                        </div>
+                        {% if order.discount_code %}
+                            <div class="flex items-center justify-between gap-x-2 lg:justify-start">
+                                <div class="text-sm text-text/60 md:text-base">
+                                    کد تخفیف
+                                </div>
+                                <div class="flex items-center gap-1 text-warning">
+                                    <span class="font-bold md:text-lg">{{ discount_amount|rounded|three_digits }}</span><span
+                                        class="text-sm md:text-base">تومان</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="flex flex-col gap-4 md:flex-row">
+                        <div class="flex justify-between gap-x-2 lg:justify-start">
+                            <div class="text-sm text-text/60 md:text-base">
+                                روش ارسال
+                            </div>
+                            <div class="text-sm text-text/95 md:text-base">
+                                تیپاکس
+                            </div>
+                        </div>
+                        <div class="flex justify-between gap-x-2 lg:justify-start">
+                            <div class="text-sm text-text/60 md:text-base">
+                                هزینه ارسال
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-1 text-primary">
+                                    <span class="font-bold md:text-lg">20,000</span><span class="text-sm md:text-base">تومان</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-8">
+                <h3 class="mb-8 flex items-center gap-x-4 text-lg text-text/80">
+                    <span class="h-2 w-2 rounded-full bg-primary"></span> اقلام
+                    سفارش <span class="text-sm text-text/60"> ( {{ order.items.all|length }} آیتم ) </span>
+                </h3>
+                <ul class="divide-y divide-border">
+                    {% for item in order.items.all %}
+                        <li>
+                            <div class="py-4 sm:py-6">
+                                <div class="grid grid-cols-2 items-center justify-start gap-2 xs:grid-cols-3 xs:gap-6 sm:grid-cols-4 xl:grid-cols-6">
+                                    <div class="row-span-2 min-w-fit xs:mx-auto">
+                                        <a href="{{ item.service.get_absolute_url }}">
+                                            <img src="{{ item.service.image.url }}" alt="item pic"
+                                                 class="h-25 w-25 rounded-lg object-cover sm:h-28 sm:w-28">
+                                        </a>
+                                    </div>
+                                    <div class="row-span-2 space-y-3 xs:col-span-2 sm:col-span-3 xl:col-span-5">
+                                        <a href="{{ item.service.get_absolute_url }}" class="line-clamp-2 text-sm md:text-base">{{ item.service.title }}</a>
+                                        <div class="flex flex-col gap-2">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="opacity-75">نوع تبلیغ:</div>
+                                                    <div>{{ item.option.title }}</div>
+                                                </div>
+                                                <div class="flex items-center gap-2">
+                                                    <div class="opacity-75">تاریخ انتخابی:</div>
+                                                    <div>{{ item.schedule.display_date|show_date }}</div>
+                                                </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-x-2 xs:justify-center">
+                                        <div class="flex h-10 w-24 items-center justify-center gap-x-3 rounded-lg border px-4 py-1 sm:w-28">
+                                            <div class="flex h-5 w-5 select-none items-center justify-center text-sm font-medium sm:h-6 sm:w-6 sm:text-lg">
+                                                {{ item.count }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row-span-2 xs:col-span-2 sm:col-span-3 xl:col-span-5">
+{#                                        <del class="flex items-center gap-1 text-sm text-warning xs:col-span-2 sm:col-span-3 lg:text-lg xl:col-span-5">#}
+{#                                            1,900,000#}
+{#                                        </del>#}
+                                        <div class="flex items-center gap-1 text-primary xs:col-span-2 sm:col-span-3 lg:text-lg xl:col-span-5">
+                                            <span class="font-bold">{{ item.final_price|rounded|three_digits }}</span>
+                                            <span class="text-sm lg:text-base"> تومان</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
