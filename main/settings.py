@@ -137,3 +137,19 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'asantab.supp@gmail.com'
 EMAIL_HOST_PASSWORD = 'vgqo xhkp jpft nvup'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',
+        },
+    },
+    'root': {
+        'handlers': ['file'],
+        'level': 'DEBUG',
+    },
+}
