@@ -1,0 +1,24 @@
+{% extends 'dashboard/_layout.html' %}
+{% load extra_filters %}
+
+
+{% block title %}
+    خدمت های من | آسان تب
+{% endblock %}
+
+{% block content %}
+    <div class="rounded-lg bg-muted shadow">
+        <div class="py-5">
+            <div class="mb-16 flex justify-between px-5">
+                <h1 class="relative w-fit font-medium lg:text-lg">
+                    خدمت های من
+                    <span class="absolute right-0 top-10 h-[3px] w-full animate-fill-border rounded-full bg-primary"></span>
+                </h1>
+                <button class="btn-primary px-4 py-1.5">ایجاد خدمت جدید</button>
+            </div>
+            <div id="service-list-dashboard" class="grid gap-2 xs:grid-cols-2 md:grid-cols-3">
+                {% include 'dashboard/services/list.html' %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

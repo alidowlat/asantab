@@ -1,0 +1,27 @@
+{% load widget_tweaks %}
+<div class="mb-8 option-form border p-4 rounded-lg bg-muted relative" data-id="{{ form.instance.pk }}">
+    {{ form.id }}{{ form.DELETE|add_class:'hidden' }}
+    <button type="button" class="absolute top-2 left-2 text-red-500 remove-option">حذف</button>
+
+    {{ form.title.label_tag }}
+    {{ form.title|add_class:"w-64 rounded-lg border bg-background px-4 py-2.5" }}
+
+    {{ form.unit_price.label_tag }}
+    {{ form.unit_price|add_class:"w-64 rounded-lg border bg-background px-4 py-2.5" }}
+
+    {{ form.is_active.label_tag }}
+    <label for="{{ form.is_active.id_for_label }}">
+        <input type="hidden" name="{{ form.is_active.html_name }}" value="false">
+        <div class="relative inline-flex cursor-pointer items-center">
+            <input
+                    type="checkbox"
+                    name="{{ form.is_active.html_name }}"
+                    id="{{ form.is_active.id_for_label }}"
+                    class="peer sr-only"
+                    value="true"
+                    {% if form.initial.is_active %}checked{% endif %}
+            >
+            <div class="peer h-6 w-11 rounded-full bg-background after:absolute after:left-[2px] after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-muted after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full"></div>
+        </div>
+    </label>
+</div>

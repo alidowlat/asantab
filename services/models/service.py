@@ -35,11 +35,11 @@ class Service(models.Model):
 
     def get_min_price(self):
         prices = self.options.filter(unit_price__isnull=False).values_list('unit_price', flat=True)
-        return min(prices) if prices else None
+        return min(prices) if prices else 0
 
     def get_max_price(self):
         prices = self.options.filter(unit_price__isnull=False).values_list('unit_price', flat=True)
-        return max(prices) if prices else None
+        return max(prices) if prices else 0
 
     def get_absolute_url(self):
         return reverse('service_detail', kwargs={'slug': self.slug})

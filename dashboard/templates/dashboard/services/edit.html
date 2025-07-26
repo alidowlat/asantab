@@ -1,0 +1,256 @@
+{% extends 'dashboard/_layout.html' %}
+{% load widget_tweaks %}
+{% load extra_filters %}
+
+{% block title %}
+    ویرایش {{ service.title }} | آسان تب
+{% endblock %}
+
+
+{% block content %}
+    <div class="rounded-lg bg-muted shadow">
+        <div class="p-5">
+            <div class="mb-16 flex justify-between">
+                <h1 class="relative w-fit font-medium lg:text-lg">
+                    ویرایش خدمت: {{ service.title }}
+                    <span class="absolute right-0 top-10 h-[3px] w-full animate-fill-border rounded-full bg-primary"></span>
+                </h1>
+                <a href="{% url 'provider_service_list' %}" class="btn-primary flex items-center gap-1 px-4 py-1.5">
+                    برگشت
+                    <span class="i-lucide-chevron-left size-5"></span>
+                </a>
+            </div>
+            <div class="mb-8">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="block rounded-lg border p-4 shadow grid grid-cols-1">
+                        <div class="mb-8">
+                            {{ service_form.title.label_tag }}
+                            {{ service_form.title|add_class:"w-64 rounded-lg border bg-background px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2" }}
+                        </div>
+
+                        <div class="mb-8">
+                            {{ service_form.slug.label_tag }}
+                            {{ service_form.slug|add_class:"w-64 rounded-lg border bg-background px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2" }}
+                        </div>
+
+                        <div class="mb-8">
+                            {{ service_form.description.label_tag }}
+                            {{ service_form.description|add_class:"w-64 rounded-lg border bg-background px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2" }}
+                        </div>
+
+                        <div class="mb-8">
+                            {{ service_form.image.label_tag }}
+                            {{ service_form.image|add_class:"w-64 rounded-lg border bg-background px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2" }}
+                        </div>
+
+                        <div class="mb-8">
+                            {{ service_form.category.label_tag }}
+                            {{ service_form.category|add_class:"w-64 rounded-lg border bg-background px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2" }}
+                        </div>
+
+                        <div class="mb-8">
+                            {{ service_form.platform.label_tag }}
+                            {{ service_form.platform|add_class:"w-64 rounded-lg border bg-background px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2" }}
+                        </div>
+
+                        <div class="mb-8">
+                            {{ service_form.platform_link.label_tag }}
+                            {{ service_form.platform_link|add_class:"w-64 rounded-lg border bg-background px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2" }}
+                        </div>
+
+                        <div class="mb-8">
+                            {{ service_form.locations.label_tag }}
+                            {{ service_form.locations|add_class:"w-64 rounded-lg border bg-background px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2" }}
+                        </div>
+
+                        <div class="mb-8">
+                            {{ service_form.tags.label_tag }}
+                            {{ service_form.tags|add_class:"w-64 rounded-lg border bg-background px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2" }}
+                        </div>
+
+                        <div class="mb-8">
+                            {{ service_form.profession.label_tag }}
+                            {{ service_form.profession|add_class:"w-64 rounded-lg border bg-background px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2" }}
+                        </div>
+
+                        <div class="dynamic-form-wrapper mb-8">
+                            <div class="option-formset">
+                                {{ option_formset.management_form }}
+                                {% for form in option_formset %}
+                                    {% include 'dashboard/services/option_form.html' with form=form %}
+                                {% endfor %}
+                            </div>
+                            <button type="button" class="add-option bg-primary w-fit text-white px-4 py-2 rounded-lg">+ افزودن
+                                گزینه
+                            </button>
+                        </div>
+
+                        <div class="mb-8 hidden">
+                            <div id="schedule-formset">
+                                {% for item in schedule_forms %}
+                                    <div class="mb-8 schedule-form border p-4 rounded-lg bg-muted relative">
+                                        {{ item.id }}
+                                        {{ item.DELETE }}
+                                        <button type="button" class="absolute top-2 left-2 text-red-500 remove-schedule">حذف</button>
+
+                                        {{ item.date.label_tag }}
+                                        {{ item.date|add_class:"w-64 rounded-lg border bg-background px-4 py-2.5" }}
+
+                                        {{ item.capacity.label_tag }}
+                                        {{ item.capacity|add_class:"w-64 rounded-lg border bg-background px-4 py-2.5" }}
+
+                                        {{ item.is_active.label_tag }}
+                                        <label for="{{ item.is_active.id_for_label }}">
+                                            <div class="relative inline-flex cursor-pointer items-center">
+                                                <input
+                                                        type="checkbox"
+                                                        name="{{ item.is_active.name }}"
+                                                        id="{{ item.is_active.id_for_label }}"
+                                                        class="peer sr-only"
+                                                        {% if item.is_active.value %}checked{% endif %}
+                                                >
+                                                <div class="peer h-6 w-11 rounded-full bg-background after:absolute after:left-[2px] after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-muted after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full"></div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <button type="button" id="add-schedule" class="bg-primary w-fit text-white px-4 py-2 rounded-lg">+ افزودن
+                                برنامه
+                            </button>
+                        </div>
+
+                        <div class="mb-8">
+                            {{ service_form.is_active.label_tag }}
+                            <label for="{{ service_form.is_active.id_for_label }}">
+                                <input type="hidden" name="{{ service_form.is_active.name }}" value="false">
+                                <div class="relative inline-flex cursor-pointer items-center">
+                                    <input
+                                            type="checkbox"
+                                            name="{{ service_form.is_active.name }}"
+                                            id="{{ service_form.is_active.id_for_label }}"
+                                            class="peer sr-only"
+                                            value="true"
+                                            {% if service_form.initial.is_active %}checked{% endif %}
+                                    >
+                                    <div class="peer h-6 w-11 rounded-full bg-background after:absolute after:left-[2px] after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-muted after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full"></div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div>
+                            <button type="submit"
+                                    class="rounded-lg bg-primary px-6 py-2 text-white hover:bg-primary/80 transition-all">
+                                ذخیره تغییرات
+                            </button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        function setupDynamicForms({
+                                       addButtonSelector,
+                                       formsetSelector,
+                                       fetchUrl,
+                                       deleteUrlBase,
+                                       formClass,
+                                       removeBtnClass,
+                                       csrfToken,
+                                       prefix
+                                   }) {
+            document.querySelectorAll(addButtonSelector).forEach(addBtn => {
+                const wrapper = addBtn.closest(".dynamic-form-wrapper");
+                const formset = wrapper.querySelector(formsetSelector);
+                const totalFormsInput = document.querySelector(`#id_${prefix}-TOTAL_FORMS`);
+
+                addBtn.addEventListener("click", function () {
+                    const formIndex = parseInt(totalFormsInput.value);
+
+                    fetch(`${fetchUrl}?prefix=${prefix}&index=${formIndex}`, {
+                        method: 'GET',
+                        headers: {'X-Requested-With': 'XMLHttpRequest'}
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                formset.insertAdjacentHTML('beforeend', data.html);
+                                totalFormsInput.value = formIndex + 1;
+                            } else {
+                                console.error(data.errors);
+                            }
+                        });
+                });
+
+                formset.addEventListener("click", function (e) {
+                    if (e.target.classList.contains(removeBtnClass)) {
+                        const item = e.target.closest(`.${formClass}`);
+                        const deleteInput = item.querySelector(`input[name$="-DELETE"]`);
+                        const id = item.getAttribute("data-id");
+
+                        Swal.fire({
+                            title: 'آیا مطمئنی؟',
+                            text: "این عملیات قابل بازگشت نیست!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'بله، حذف کن',
+                            cancelButtonText: 'نه، منصرف شدم',
+                            reverseButtons: true
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                const isNew = !id || id === "None" || id === "";
+
+                                if (isNew) {
+                                    item.remove();
+                                    const totalFormsInput = document.querySelector(`#id_${prefix}-TOTAL_FORMS`);
+                                    const visibleForms = formset.querySelectorAll(`.${formClass}:not([style*="display: none"])`);
+                                    totalFormsInput.value = visibleForms.length;
+                                } else {
+                                    if (deleteInput) {
+                                        deleteInput.checked = true;
+                                        item.style.display = "none";
+                                    } else {
+                                        // اگر اصلاً input delete نیست، یک ارور یا هشدار بده یا لاگ بگیر
+                                        console.error("DELETE input not found for existing form");
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const csrfToken = "{{ csrf_token }}";
+
+            setupDynamicForms({
+                addButtonSelector: ".add-option",
+                formsetSelector: ".option-formset",
+                fetchUrl: "{% url 'add_option' %}",
+                deleteUrlBase: "/profile/services/option/delete/",
+                formClass: "option-form",
+                removeBtnClass: "remove-option",
+                csrfToken: csrfToken,
+                prefix: "option"
+            });
+
+            {#setupDynamicForms({#}
+            {#    addButtonSelector: ".add-schedule",#}
+            {#    formsetSelector: ".schedule-formset",#}
+            {#    fetchUrl: "{% url 'add_schedule' %}",#}
+            {#    deleteUrlBase: "/profile/services/schedule/delete/",#}
+            {#    formClass: "schedule-form",#}
+            {#    removeBtnClass: "remove-schedule",#}
+            {#    csrfToken: csrfToken,#}
+            {#    prefix: "schedule"});#}
+        });
+    </script>
+
+{% endblock %}
+
+

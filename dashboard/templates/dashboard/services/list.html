@@ -1,0 +1,10 @@
+{% if services %}
+    {% for service in services %}
+        {% include 'dashboard/services/item.html' with service=service %}
+    {% endfor %}
+{% else %}
+    <div class="flex flex-col items-center">
+        <img class="w-60 pb-10" src="/static/images/empty/empty-cart.svg" alt="empty page picture">
+        <div class="text-center text-gray-400 text-lg pb-10">موردی یافت نشد.</div>
+    </div>
+{% endif %}
