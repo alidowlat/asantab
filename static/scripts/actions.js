@@ -572,7 +572,6 @@ function loadCartPartial() {
         });
 }
 
-
 function addServiceToCart(serviceId) {
     const count = parseInt(document.querySelector('.service-count').value);
     const optionId = document.getElementById('option-select').value;
@@ -627,7 +626,88 @@ function bindCartItemEvents() {
 
 document.addEventListener("DOMContentLoaded", bindCartItemEvents);
 
+document.addEventListener('DOMContentLoaded', function () {
 
+    function reloadServiceList() {
+        fetch('/services/partial/')
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('service-list').innerHTML = html;
+                bindRemoveButtons();
+            });
+    }
+
+    const container = document.getElementById('service-list-dashboard');
+
+    function checkFavoriteListEmpty() {
+        if (container.children.length === 0 || container.innerText.trim() === 'موردی یافت نشد.') {
+            container.className = 'flex items-center justify-center';
+        } else {
+            container.className = 'grid gap-2 xs:grid-cols-2 md:grid-cols-3';
+        }
+    }
+
+    function reloadServiceListDashboard() {
+        fetch('/profile/services/partial/')
+            .then(res => res.text())
+            .then(html => {
+                container.innerHTML = html;
+                bindRemoveButtons();
+                checkFavoriteListEmpty();
+            });
+    }
+
+    function bindRemoveButtons() {
+        document.querySelectorAll('.remove-service-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                const serviceId = this.dataset.serviceId;
+
+                Swal.fire({
+                    title: 'مطمئنی؟',
+                    text: 'این سرویس از خدمت های شما حذف بشه؟',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'بله',
+                    cancelButtonText: 'نه',
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                }).then((result) => {
+                    if (!result.isConfirmed) return;
+
+                    const formData = new FormData();
+                    formData.append('service_id', serviceId);
+
+                    fetch('/profile/services/delete/', {
+                        method: 'POST', headers: {
+                            'X-CSRFToken': getCookie('csrftoken'),
+                        }, body: formData,
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.status === 'ok') {
+                                reloadServiceList();
+                                reloadServiceListDashboard();
+                                Swal.fire({
+                                    toast: true,
+                                    position: 'top-end',
+                                    icon: 'info',
+                                    title: 'خدمت حذف شد',
+                                    showConfirmButton: false,
+                                    timer: 1500,
+                                });
+                            }
+                            else {
+                                console.error('خطا در حذف:', data.message);
+                            }
+                        });
+                });
+            });
+        });
+    }
+
+    bindRemoveButtons();
+    checkFavoriteListEmpty();
+});
 
 document.addEventListener('DOMContentLoaded', function () {
     loadCartPartial();
