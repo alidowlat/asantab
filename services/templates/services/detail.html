@@ -361,7 +361,9 @@
             {% include 'services/components/service_information.html' %}
 
             <!-- Related Products -->
-            {% include 'services/components/related_service.html' %}
+            {% if related_services %}
+                {% include 'services/components/related_service.html' %}
+            {% endif %}
         </div>
     </main>
 
