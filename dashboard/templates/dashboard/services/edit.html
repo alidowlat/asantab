@@ -1,9 +1,14 @@
 {% extends 'dashboard/_layout.html' %}
+{% load static %}
 {% load widget_tweaks %}
 {% load extra_filters %}
 
 {% block title %}
     ویرایش {{ service.title }} | آسان تب
+{% endblock %}
+
+{% block extra_header %}
+	{% static 'scripts/actions.js' %}
 {% endblock %}
 
 
@@ -151,106 +156,6 @@
             </div>
         </div>
     </div>
-    <script>
-        function setupDynamicForms({
-                                       addButtonSelector,
-                                       formsetSelector,
-                                       fetchUrl,
-                                       deleteUrlBase,
-                                       formClass,
-                                       removeBtnClass,
-                                       csrfToken,
-                                       prefix
-                                   }) {
-            document.querySelectorAll(addButtonSelector).forEach(addBtn => {
-                const wrapper = addBtn.closest(".dynamic-form-wrapper");
-                const formset = wrapper.querySelector(formsetSelector);
-                const totalFormsInput = document.querySelector(`#id_${prefix}-TOTAL_FORMS`);
-
-                addBtn.addEventListener("click", function () {
-                    const formIndex = parseInt(totalFormsInput.value);
-
-                    fetch(`${fetchUrl}?prefix=${prefix}&index=${formIndex}`, {
-                        method: 'GET',
-                        headers: {'X-Requested-With': 'XMLHttpRequest'}
-                    })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                formset.insertAdjacentHTML('beforeend', data.html);
-                                totalFormsInput.value = formIndex + 1;
-                            } else {
-                                console.error(data.errors);
-                            }
-                        });
-                });
-
-                formset.addEventListener("click", function (e) {
-                    if (e.target.classList.contains(removeBtnClass)) {
-                        const item = e.target.closest(`.${formClass}`);
-                        const deleteInput = item.querySelector(`input[name$="-DELETE"]`);
-                        const id = item.getAttribute("data-id");
-
-                        Swal.fire({
-                            title: 'آیا مطمئنی؟',
-                            text: "این عملیات قابل بازگشت نیست!",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonText: 'بله، حذف کن',
-                            cancelButtonText: 'نه، منصرف شدم',
-                            reverseButtons: true
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                const isNew = !id || id === "None" || id === "";
-
-                                if (isNew) {
-                                    item.remove();
-                                    const totalFormsInput = document.querySelector(`#id_${prefix}-TOTAL_FORMS`);
-                                    const visibleForms = formset.querySelectorAll(`.${formClass}:not([style*="display: none"])`);
-                                    totalFormsInput.value = visibleForms.length;
-                                } else {
-                                    if (deleteInput) {
-                                        deleteInput.checked = true;
-                                        item.style.display = "none";
-                                    } else {
-                                        // اگر اصلاً input delete نیست، یک ارور یا هشدار بده یا لاگ بگیر
-                                        console.error("DELETE input not found for existing form");
-                                    }
-                                }
-                            }
-                        });
-                    }
-                });
-
-            });
-        }
-
-        document.addEventListener("DOMContentLoaded", function () {
-            const csrfToken = "{{ csrf_token }}";
-
-            setupDynamicForms({
-                addButtonSelector: ".add-option",
-                formsetSelector: ".option-formset",
-                fetchUrl: "{% url 'add_option' %}",
-                deleteUrlBase: "/profile/services/option/delete/",
-                formClass: "option-form",
-                removeBtnClass: "remove-option",
-                csrfToken: csrfToken,
-                prefix: "option"
-            });
-
-            {#setupDynamicForms({#}
-            {#    addButtonSelector: ".add-schedule",#}
-            {#    formsetSelector: ".schedule-formset",#}
-            {#    fetchUrl: "{% url 'add_schedule' %}",#}
-            {#    deleteUrlBase: "/profile/services/schedule/delete/",#}
-            {#    formClass: "schedule-form",#}
-            {#    removeBtnClass: "remove-schedule",#}
-            {#    csrfToken: csrfToken,#}
-            {#    prefix: "schedule"});#}
-        });
-    </script>
-
 {% endblock %}
 
 
