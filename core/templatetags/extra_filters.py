@@ -146,9 +146,10 @@ def three_digits(value):
 def rounded(value):
     try:
         value = int(value)
-        rounded_value = (value // 1000) * 1000
-        return rounded_value
-    except ValueError:
+        if value < 1000:
+            return value
+        return (value // 1000) * 1000
+    except (ValueError, TypeError):
         return value
 
 
