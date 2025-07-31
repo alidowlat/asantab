@@ -1,24 +1,25 @@
 {% load widget_tweaks %}
-<div class="option-form relative mb-8 border p-4 rounded-lg bg-muted flex flex-col gap-4" data-id="{{ form.instance.pk }}">
+<div class="schedule-form relative mb-8 border p-4 rounded-lg bg-muted flex flex-col gap-4" data-id="{{ form.instance.pk }}">
     {{ form.id }}{{ form.DELETE|add_class:'hidden' }}
 
-    <button type="button" class="remove-option absolute -top-2.5 left-2 rounded-lg border bg-muted duration-200 hover:bg-background">
-        <div class="i-lucide-trash m-2 h-4 w-4 text-warning"></div>
+    <button type="button"
+            class="remove-schedule absolute -top-2.5 left-2 flex items-center justify-center
+               rounded-lg border bg-muted p-2 duration-200 hover:bg-background">
+        <div class="i-lucide-trash h-4 w-4 text-warning pointer-events-none"></div>
     </button>
 
     <div class="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4 w-full pt-4">
-        {{ form.title.label_tag }}
-        {{ form.title|add_class:"w-full sm:max-w-[180px] rounded-lg border bg-background text-center px-3 py-2" }}
+        {{ form.date.label_tag }}
+        {{ form.date|add_class:"w-full sm:max-w-[180px] rounded-lg border bg-background text-center px-3 py-2" }}
     </div>
 
     <div class="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4 w-full">
-        {{ form.unit_price.label_tag }}
-        {{ form.unit_price|add_class:"w-full sm:max-w-[100px] rounded-lg border bg-background text-center px-3 py-2" }}
+        {{ form.capacity.label_tag }}
+        {{ form.capacity|add_class:"w-full sm:max-w-[100px] rounded-lg border bg-background text-center px-3 py-2" }}
     </div>
 
-
     <div class="flex flex-row items-center justify-between gap-4">
-        <span class="text-sm font-medium">وضعیت آپشن:</span>
+        <span class="text-sm font-medium">وضعیت آیتم:</span>
         <label for="{{ form.is_active.id_for_label }}" class="flex items-center">
             <input type="hidden" name="{{ form.is_active.html_name }}" value="false">
             <div class="relative inline-flex cursor-pointer items-center">
@@ -37,4 +38,6 @@
             </div>
         </label>
     </div>
+
 </div>
+

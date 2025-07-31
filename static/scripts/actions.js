@@ -708,155 +708,130 @@ document.addEventListener('DOMContentLoaded', function () {
     checkFavoriteListEmpty();
 });
 
-function setupDynamicForms({
-                               addButtonSelector,
-                               formsetSelector,
-                               fetchUrl,
-                               deleteUrlBase,
-                               formClass,
-                               removeBtnClass,
-                               prefix
-                           }) {
-    document.querySelectorAll(addButtonSelector).forEach(addBtn => {
-        const wrapper = addBtn.closest(".dynamic-form-wrapper");
-        const formset = wrapper.querySelector(formsetSelector);
-        const totalFormsInput = document.querySelector(`#id_${prefix}-TOTAL_FORMS`);
+document.addEventListener("DOMContentLoaded", function () {
 
-        const persianToEnglishNumber = (str) => {
-            return str.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
-        };
+    const persianToEnglishNumber = (str) => {
+        return str.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+    };
 
-        function formatNumberWithCommas(value) {
-            return value.replace(/\B(?=(\d{3})+(?!\d))/g, "٬");
-        }
+    const formatNumberWithCommas = (value) => {
+        return value.replace(/\B(?=(\d{3})+(?!\d))/g, "٬");
+    };
 
-        function setupPriceFormatting(root) {
-            const priceInputs = root.querySelectorAll("input[name$='unit_price']");
-            priceInputs.forEach(input => {
-                input.type = "text";
-                input.style.direction = "rtl";
+function bindPriceFormatter(input) {
+    input.type = "text";
+    input.style.direction = "ltr";
 
-                if (input.value.trim() !== "") {
-                    let raw = input.value
-                        .replace(/[٬,]/g, '')
-                        .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
-                    input.value = formatNumberWithCommas(raw);
-                }
+    const initialValue = input.defaultValue || input.value;
+    if (initialValue.trim() !== "") {
+        let raw = initialValue
+            .replace(/[٬,]/g, '')
+            .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+        input.value = formatNumberWithCommas(raw);
+    }
 
-                input.addEventListener("input", function (e) {
-                    const el = e.target;
-                    let cursorPosition = el.selectionStart;
-
-                    let english = persianToEnglishNumber(el.value).replace(/\D/g, "");
-
-                    const oldLength = el.value.length;
-
-                    let formatted = formatNumberWithCommas(english);
-
-                    el.value = formatted;
-
-                    const newLength = formatted.length;
-                    cursorPosition = cursorPosition + (newLength - oldLength);
-                    el.setSelectionRange(cursorPosition, cursorPosition);
-                });
-            });
-        }
-
-        setupPriceFormatting(formset);
-
-        addBtn.addEventListener("click", function () {
-            const formIndex = parseInt(totalFormsInput.value);
-
-            fetch(`${fetchUrl}?prefix=${prefix}&index=${formIndex}`, {
-                method: 'GET',
-                headers: {'X-Requested-With': 'XMLHttpRequest'}
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        formset.insertAdjacentHTML('beforeend', data.html);
-                        totalFormsInput.value = formIndex + 1;
-
-                        const newForm = formset.lastElementChild;
-                        setupPriceFormatting(newForm);
-                    } else {
-                        console.error(data.errors);
-                    }
-                });
-        });
-
-        formset.addEventListener("click", function (e) {
-            if (e.target.classList.contains(removeBtnClass)) {
-                const item = e.target.closest(`.${formClass}`);
-                const deleteInput = item.querySelector(`input[name$="-DELETE"]`);
-                const id = item.getAttribute("data-id");
-
-                Swal.fire({
-                    title: 'آیا مطمئنی؟',
-                    text: "این عملیات قابل بازگشت نیست!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'بله، حذف کن',
-                    cancelButtonText: 'نه، منصرف شدم',
-                    reverseButtons: true
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        const isNew = !id || id === "None" || id === "";
-
-                        if (isNew) {
-                            item.remove();
-                            const visibleForms = formset.querySelectorAll(`.${formClass}:not([style*="display: none"])`);
-                            totalFormsInput.value = visibleForms.length;
-                        } else {
-                            if (deleteInput) {
-                                deleteInput.checked = true;
-                                item.style.display = "none";
-                            } else {
-                                console.error("DELETE input not found for existing form");
-                            }
-                        }
-                    }
-                });
-            }
-        });
+    input.addEventListener("input", function () {
+        let raw = input.value
+            .replace(/[٬,]/g, '')
+            .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+        input.value = formatNumberWithCommas(raw);
     });
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    const csrfToken = "{{ csrf_token }}";
 
-    setupDynamicForms({
-        addButtonSelector: ".add-option",
-        formsetSelector: ".option-formset",
-        fetchUrl: "/profile/services/option/add/",
-        deleteUrlBase: "/profile/services/option/delete/",
-        formClass: "option-form",
-        removeBtnClass: "remove-option",
-        csrfToken: csrfToken,
-        prefix: "option"
-    });
 
     document.querySelectorAll("input[name$='unit_price']").forEach(input => {
-        input.style.direction = "ltr";
-
-        if (input.value.trim() !== "") {
-            let raw = input.value
-                .replace(/[٬,]/g, '')
-                .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
-            input.value = raw.replace(/\B(?=(\d{3})+(?!\d))/g, "٬");
-        }
+        bindPriceFormatter(input);
     });
 
-    document.querySelectorAll("form").forEach(form => {
-        form.addEventListener("submit", function () {
-            form.querySelectorAll("input[name$='unit_price']").forEach(input => {
+    document.addEventListener("submit", function (e) {
+        if (e.target.tagName === "FORM") {
+            e.target.querySelectorAll("input[name$='unit_price']").forEach(input => {
                 let raw = input.value
                     .replace(/[٬,]/g, '')
                     .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
                 input.value = raw;
             });
+        }
+    }, true);
+
+    function setupDynamicForms({addButtonSelector, formsetSelector, fetchUrl, formClass, removeBtnClass, prefix}) {
+        document.querySelectorAll(addButtonSelector).forEach(addBtn => {
+            const wrapper = addBtn.closest(".dynamic-form-wrapper");
+            const formset = wrapper.querySelector(formsetSelector);
+            const totalFormsInput = document.querySelector(`#id_${prefix}-TOTAL_FORMS`);
+
+            addBtn.addEventListener("click", function () {
+                const formIndex = parseInt(totalFormsInput.value);
+
+                fetch(`${fetchUrl}?prefix=${prefix}&index=${formIndex}`, {
+                    method: 'GET',
+                    headers: {'X-Requested-With': 'XMLHttpRequest'}
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            formset.insertAdjacentHTML('beforeend', data.html);
+                            totalFormsInput.value = formIndex + 1;
+
+                            const newForm = formset.lastElementChild;
+                            newForm.querySelectorAll("input[name$='unit_price']").forEach(input => {
+                                bindPriceFormatter(input);
+                            });
+                        }
+                    });
+            });
+
+            formset.addEventListener("click", function (e) {
+                if (e.target.classList.contains(removeBtnClass)) {
+                    const item = e.target.closest(`.${formClass}`);
+                    const deleteInput = item.querySelector(`input[name$="-DELETE"]`);
+                    const id = item.getAttribute("data-id");
+
+                    Swal.fire({
+                        title: 'آیا مطمئنی؟',
+                        text: "این عملیات قابل بازگشت نیست!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'بله، حذف کن',
+                        cancelButtonText: 'نه، منصرف شدم',
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const isNew = !id || id === "None" || id === "";
+                            if (isNew) {
+                                item.remove();
+                                const visibleForms = formset.querySelectorAll(`.${formClass}:not([style*="display: none"])`);
+                                totalFormsInput.value = visibleForms.length;
+                            } else if (deleteInput) {
+                                deleteInput.checked = true;
+                                item.style.display = "none";
+                            }
+                        }
+                    });
+                }
+            });
         });
+    }
+
+    setupDynamicForms({
+        addButtonSelector: ".add-option",
+        formsetSelector: ".option-formset",
+        fetchUrl: "/profile/services/option/add/",
+        formClass: "option-form",
+        removeBtnClass: "remove-option",
+        prefix: "option"
     });
+
+    setupDynamicForms({
+        addButtonSelector: ".add-schedule",
+        formsetSelector: ".schedule-formset",
+        fetchUrl: "/profile/services/schedule/add/",
+        formClass: "schedule-form",
+        removeBtnClass: "remove-schedule",
+        prefix: "schedule"
+    });
+
 });
 
 document.addEventListener('DOMContentLoaded', function () {

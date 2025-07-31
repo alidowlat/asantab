@@ -1,6 +1,8 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.forms import modelformset_factory
+from django.db.models import ProtectedError
+from django.forms import inlineformset_factory
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.views import View
@@ -10,7 +12,7 @@ from services.forms import ServiceForm, ScheduleFormSet, OptionFormSet, OptionFo
 from django.views.generic import CreateView, ListView
 from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse_lazy
-from services.models import Service, Option
+from services.models import Service, Option, Schedule
 
 
 class ProviderServiceList(LoginRequiredMixin, ListView):
@@ -72,8 +74,21 @@ class ProviderServiceCreate(LoginRequiredMixin, CreateView):
         return self.render_to_response(context)
 
 
-OptionFormSet = modelformset_factory(Option, form=OptionForm, extra=0, can_delete=True)
+OptionFormSet = inlineformset_factory(
+    Service,
+    Option,
+    form=OptionForm,
+    extra=0,
+    can_delete=True
+)
 
+ScheduleFormSet = inlineformset_factory(
+    Service,
+    Schedule,
+    form=ScheduleForm,
+    extra=0,
+    can_delete=True
+)
 
 
 class ProviderServiceEdit(LoginRequiredMixin, View):
@@ -85,40 +100,68 @@ class ProviderServiceEdit(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         service_form = ServiceForm(instance=self.service)
-        option_formset = OptionFormSet(queryset=self.service.options.all(), prefix='option')
-        schedule_forms = [ScheduleForm(prefix=f'schedule-{i}', instance=schedule) for i, schedule in enumerate(self.service.schedules.all())]
+        option_formset = OptionFormSet(instance=self.service, prefix='option')
+        schedule_formset = ScheduleFormSet(instance=self.service, prefix='schedule')
 
         return render(request, self.template_name, {
             'service_form': service_form,
             'option_formset': option_formset,
-            'schedule_forms': schedule_forms,
+            'schedule_formset': schedule_formset,
             'is_edit': True
         })
 
     def post(self, request, *args, **kwargs):
         service_form = ServiceForm(request.POST, request.FILES, instance=self.service)
-        option_formset = OptionFormSet(request.POST, queryset=self.service.options.all(), prefix='option')
+        option_formset = OptionFormSet(request.POST, request.FILES, instance=self.service, prefix='option')
+        schedule_formset = ScheduleFormSet(request.POST, request.FILES, instance=self.service, prefix='schedule')
 
-        if service_form.is_valid() and option_formset.is_valid():
+        if service_form.is_valid():
             service = service_form.save()
-            options = option_formset.save(commit=False)
 
-            for opt in options:
-                opt.service = service
-                opt.save()
+            if option_formset.is_valid():
+                options = option_formset.save(commit=False)
+                for opt in options:
+                    opt.service = service
+                    opt.save()
+                for deleted in option_formset.deleted_objects:
+                    try:
+                        deleted.delete()
+                    except ProtectedError:
+                        messages.error(request, f"زمان بندی {deleted.date} در سفارشات استفاده شده و قابل حذف نیست.")
+                        return redirect("provider_service_edit", slug=service.slug)
 
-            for deleted in option_formset.deleted_objects:
-                deleted.delete()
+            if schedule_formset.is_valid():
+                schedules = schedule_formset.save(commit=False)
+                for schedule in schedules:
+                    schedule.service = service
+                    schedule.save()
+                for deleted in schedule_formset.deleted_objects:
+                    try:
+                        deleted.delete()
+                    except ProtectedError:
+                        messages.error(request, f"زمان بندی {deleted.date} در سفارشات استفاده شده و قابل حذف نیست.")
+                        return redirect("provider_service_edit", slug=service.slug)
 
-            return redirect("provider_service_list")
+            if option_formset.is_valid() and schedule_formset.is_valid():
+                return redirect("provider_service_list")
+
+        print("🔴 ServiceForm Errors:", service_form.errors.as_json())
+        print("🔴 OptionFormset Management Errors:",
+              option_formset.management_form.errors.as_json() if option_formset.management_form.errors else "None")
+        for i, form in enumerate(option_formset.forms):
+            print(f"🔴 OptionForm #{i} Errors:", form.errors.as_json() if form.errors else "Valid")
+
+        print("🔴 ScheduleFormset Management Errors:",
+              schedule_formset.management_form.errors.as_json() if schedule_formset.management_form.errors else "None")
+        for i, form in enumerate(schedule_formset.forms):
+            print(f"🔴 ScheduleForm #{i} Errors:", form.errors.as_json() if form.errors else "Valid")
 
         return render(request, self.template_name, {
             'service_form': service_form,
             'option_formset': option_formset,
+            'schedule_formset': schedule_formset,
             'is_edit': True
         })
-
-
 
 
 @login_required
@@ -154,4 +197,22 @@ def add_option(request):
 @login_required
 def delete_option(request, pk):
     Option.objects.filter(pk=pk).delete()
+    return JsonResponse({'success': True})
+
+
+@login_required
+def add_schedule(request):
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        prefix = request.GET.get("prefix", "schedule")
+        index = request.GET.get("index")
+        form = ScheduleForm(prefix=f"{prefix}-{index}")
+        html = render_to_string("dashboard/services/schedule_form.html", {"form": form})
+        return JsonResponse({"success": True, "html": html})
+    return JsonResponse({"success": False, "errors": "Invalid request"})
+
+
+@require_POST
+@login_required
+def delete_schedule(request, pk):
+    Schedule.objects.filter(pk=pk).delete()
     return JsonResponse({'success': True})

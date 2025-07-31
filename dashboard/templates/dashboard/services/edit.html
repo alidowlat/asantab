@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block extra_header %}
-	{% static 'scripts/actions.js' %}
+    {% static 'scripts/actions.js' %}
 {% endblock %}
 
 
@@ -25,137 +25,228 @@
                     <span class="i-lucide-chevron-left size-5"></span>
                 </a>
             </div>
-            <div class="mb-8">
-                <form method="post" enctype="multipart/form-data">
+
+            <div class="mb-8 px-4 md:px-0">
+                <form method="post" enctype="multipart/form-data" class="space-y-6">
                     {% csrf_token %}
-                    <div class="block rounded-lg border p-4 shadow grid grid-cols-1">
-                        <div class="mb-8">
-                            {{ service_form.title.label_tag }}
-                            {{ service_form.title|add_class:"w-64 rounded-lg border bg-background px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2" }}
-                        </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 py">
+                        <span class="text-lg">
+                        {{ service_form.title.label_tag }}
+                        </span>
+                        {{ service_form.title|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full w-60" }}
 
-                        <div class="mb-8">
-                            {{ service_form.slug.label_tag }}
-                            {{ service_form.slug|add_class:"w-64 rounded-lg border bg-background px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2" }}
-                        </div>
+                        <span class="text-lg">
+                        {{ service_form.slug.label_tag }}
+                        </span>
+                        {{ service_form.slug|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full"|attr:'dir:ltr' }}
 
-                        <div class="mb-8">
-                            {{ service_form.description.label_tag }}
-                            {{ service_form.description|add_class:"w-64 rounded-lg border bg-background px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2" }}
-                        </div>
+                        <span class="text-lg">
+                        {{ service_form.description.label_tag }}
+                        </span>
+                        {{ service_form.description|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full" }}
 
-                        <div class="mb-8">
-                            {{ service_form.image.label_tag }}
-                            {{ service_form.image|add_class:"w-64 rounded-lg border bg-background px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2" }}
-                        </div>
+                        <span class="text-lg">
+                        {{ service_form.platform.label_tag }}
+                        </span>
+                        {{ service_form.platform|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full" }}
 
-                        <div class="mb-8">
-                            {{ service_form.category.label_tag }}
-                            {{ service_form.category|add_class:"w-64 rounded-lg border bg-background px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2" }}
-                        </div>
+                        <span class="text-lg">
+                        {{ service_form.platform_link.label_tag }}
+                        </span>
+                        {{ service_form.platform_link|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full" }}
 
-                        <div class="mb-8">
-                            {{ service_form.platform.label_tag }}
-                            {{ service_form.platform|add_class:"w-64 rounded-lg border bg-background px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2" }}
-                        </div>
+                        <span class="text-lg">
+                        {{ service_form.category.label_tag }}
+                        </span>
+                        {{ service_form.category|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full" }}
 
-                        <div class="mb-8">
-                            {{ service_form.platform_link.label_tag }}
-                            {{ service_form.platform_link|add_class:"w-64 rounded-lg border bg-background px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2" }}
-                        </div>
+                        <span class="text-lg">
+                        {{ service_form.locations.label_tag }}
+                        </span>
+                        {{ service_form.locations|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full" }}
 
-                        <div class="mb-8">
-                            {{ service_form.locations.label_tag }}
-                            {{ service_form.locations|add_class:"w-64 rounded-lg border bg-background px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2" }}
-                        </div>
+                        <span class="text-lg">
+                        {{ service_form.tags.label_tag }}
+                        </span>
+                        {{ service_form.tags|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full" }}
 
-                        <div class="mb-8">
-                            {{ service_form.tags.label_tag }}
-                            {{ service_form.tags|add_class:"w-64 rounded-lg border bg-background px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2" }}
-                        </div>
+                        <span class="text-lg">
+                        {{ service_form.profession.label_tag }}
+                        </span>
+                        {{ service_form.profession|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full" }}
+                    </div>
 
-                        <div class="mb-8">
-                            {{ service_form.profession.label_tag }}
-                            {{ service_form.profession|add_class:"w-64 rounded-lg border bg-background px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2" }}
-                        </div>
+                    <div class="flex justify-between">
+                        <label class="block text-lg mb-2">تصویر سرویس:</label>
 
-                        <div class="dynamic-form-wrapper mb-8">
-                            <div class="option-formset">
-                                {{ option_formset.management_form }}
-                                {% for form in option_formset %}
-                                    {% include 'dashboard/services/option_form.html' with form=form %}
-                                {% endfor %}
-                            </div>
-                            <button type="button" class="add-option bg-primary w-fit text-white px-4 py-2 rounded-lg">+ افزودن
-                                گزینه
-                            </button>
-                        </div>
-
-                        <div class="mb-8 hidden">
-                            <div id="schedule-formset">
-                                {% for item in schedule_forms %}
-                                    <div class="mb-8 schedule-form border p-4 rounded-lg bg-muted relative">
-                                        {{ item.id }}
-                                        {{ item.DELETE }}
-                                        <button type="button" class="absolute top-2 left-2 text-red-500 remove-schedule">حذف</button>
-
-                                        {{ item.date.label_tag }}
-                                        {{ item.date|add_class:"w-64 rounded-lg border bg-background px-4 py-2.5" }}
-
-                                        {{ item.capacity.label_tag }}
-                                        {{ item.capacity|add_class:"w-64 rounded-lg border bg-background px-4 py-2.5" }}
-
-                                        {{ item.is_active.label_tag }}
-                                        <label for="{{ item.is_active.id_for_label }}">
-                                            <div class="relative inline-flex cursor-pointer items-center">
-                                                <input
-                                                        type="checkbox"
-                                                        name="{{ item.is_active.name }}"
-                                                        id="{{ item.is_active.id_for_label }}"
-                                                        class="peer sr-only"
-                                                        {% if item.is_active.value %}checked{% endif %}
-                                                >
-                                                <div class="peer h-6 w-11 rounded-full bg-background after:absolute after:left-[2px] after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-muted after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full"></div>
-                                            </div>
-                                        </label>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                            <button type="button" id="add-schedule" class="bg-primary w-fit text-white px-4 py-2 rounded-lg">+ افزودن
-                                برنامه
-                            </button>
-                        </div>
-
-                        <div class="mb-8">
-                            {{ service_form.is_active.label_tag }}
-                            <label for="{{ service_form.is_active.id_for_label }}">
-                                <input type="hidden" name="{{ service_form.is_active.name }}" value="false">
-                                <div class="relative inline-flex cursor-pointer items-center">
-                                    <input
-                                            type="checkbox"
-                                            name="{{ service_form.is_active.name }}"
-                                            id="{{ service_form.is_active.id_for_label }}"
-                                            class="peer sr-only"
-                                            value="true"
-                                            {% if service_form.initial.is_active %}checked{% endif %}
-                                    >
-                                    <div class="peer h-6 w-11 rounded-full bg-background after:absolute after:left-[2px] after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-muted after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full"></div>
+                        <div class="flex items-center gap-6">
+                            {% if service_form.instance.image %}
+                                <div>
+                                    <img src="{{ service_form.instance.image.url }}" alt="Current Image"
+                                         class="w-32 object-cover rounded-xl border border-gray-300">
                                 </div>
-                            </label>
-                        </div>
+                            {% endif %}
 
-                        <div>
-                            <button type="submit"
-                                    class="rounded-lg bg-primary px-6 py-2 text-white hover:bg-primary/80 transition-all">
-                                ذخیره تغییرات
-                            </button>
+                            <div class="relative w-full">
+                                <div id="dropzone"
+                                     class="w-50 border-2 border-gray-400 rounded-xl p-4 text-center text-gray-500 cursor-pointer transition hover:border-blue-500 hover:bg-blue-50 flex flex-col items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                         class="lucide lucide-package-open-icon lucide-package-open mb-2">
+                                        <path d="M12 22v-9"/>
+                                        <path d="M15.17 2.21a1.67 1.67 0 0 1 1.63 0L21 4.57a1.93 1.93 0 0 1 0 3.36L8.82 14.79a1.655 1.655 0 0 1-1.64 0L3 12.43a1.93 1.93 0 0 1 0-3.36z"/>
+                                        <path d="M20 13v3.87a2.06 2.06 0 0 1-1.11 1.83l-6 3.08a1.93 1.93 0 0 1-1.78 0l-6-3.08A2.06 2.06 0 0 1 4 16.87V13"></path>
+                                        <path d="M21 12.43a1.93 1.93 0 0 0 0-3.36L8.83 2.2a1.64 1.64 0 0 0-1.63 0L3 4.57a1.93 1.93 0 0 0 0 3.36l12.18 6.86a1.636 1.636 0 0 0 1.63 0z"/>
+                                    </svg>
+                                    کلیک کنید یا تصویر را اینجا رها کنید
+                                    <input id="imageInput"
+                                           type="file"
+                                           name="{{ service_form.image.name }}"
+                                           class="hidden"
+                                           accept="image/*">
+                                </div>
+
+                                <div id="loader"
+                                     class="absolute inset-0 hidden items-center justify-center bg-white bg-opacity-60 rounded-xl">
+                                    <svg class="w-10 h-10 animate-spin text-blue-600" viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="35" stroke="currentColor" stroke-width="10"
+                                                fill="none" stroke-linecap="round"
+                                                stroke-dasharray="200" stroke-dashoffset="0"></circle>
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
+                    <div class="dynamic-form-wrapper space-y-4 border-t pb-1">
+                        <h3 class="flex items-center gap-x-4 text-xl text-text/80 pt-5 pb-5">
+                            <span class="h-2 w-2 rounded-full bg-primary"></span>
+                            آپشن ها
+                        </h3>
+                        <div class="option-formset grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            {{ option_formset.management_form }}
+                            {% for form in option_formset %}
+                                {% include 'dashboard/services/option_form.html' with form=form %}
+                            {% endfor %}
+                        </div>
+                        <button type="button" class="add-option btn-primary flex items-center gap-1 px-4 py-1.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                 class="lucide lucide-plus-icon lucide-plus">
+                                <path d="M5 12h14"></path>
+                                <path d="M12 5v14"></path>
+                            </svg>
+                            آپشن جدید
+                        </button>
+                    </div>
+
+                    <div class="dynamic-form-wrapper space-y-4 border-t border-b pb-6">
+                        <h3 class="flex items-center gap-x-4 text-xl text-text/80 pt-5 pb-5">
+                            <span class="h-2 w-2 rounded-full bg-primary"></span>
+                            زمان بندی ها
+                        </h3>
+                        <div class="schedule-formset grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            {{ schedule_formset.management_form }}
+                            {% for form in schedule_formset %}
+                                {% include 'dashboard/services/schedule_form.html' with form=form %}
+                            {% endfor %}
+                        </div>
+                        <button type="button" class="add-schedule btn-primary flex items-center gap-1 px-4 py-1.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                 class="lucide lucide-plus-icon lucide-plus">
+                                <path d="M5 12h14"></path>
+                                <path d="M12 5v14"></path>
+                            </svg>
+                            زمان بندی جدید
+                        </button>
+                    </div>
+
+                    <div class="flex">
+                        <p class="ml-2">وضعیت سرویس:</p>
+                        <label for="{{ service_form.is_active.id_for_label }}">
+                            <input type="hidden" name="{{ service_form.is_active.name }}" value="false">
+                            <div class="relative inline-flex cursor-pointer items-center">
+                                <input
+                                        type="checkbox"
+                                        name="{{ service_form.is_active.name }}"
+                                        id="{{ service_form.is_active.id_for_label }}"
+                                        class="peer sr-only"
+                                        value="true"
+                                        {% if service_form.initial.is_active %}checked{% endif %}
+                                >
+                                <div class="peer h-6 w-11 rounded-full bg-background after:absolute after:left-[2px] after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-muted after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full"></div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button type="submit"
+                                class="w-40 flex flex-row md:w-auto btn-primary px-4 py-1 text-white hover:bg-primary/80 transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                 class="lucide lucide-check-icon lucide-check pl-2">
+                                <path d="M20 6 9 17l-5-5"></path>
+                            </svg>
+                            ذخیره تغییرات
+                        </button>
+                    </div>
                 </form>
             </div>
+            {% if messages %}
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            {% endif %}
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        const dropzone = document.getElementById('dropzone');
+        const input = document.getElementById('imageInput');
+        const loader = document.getElementById('loader');
+
+        dropzone.addEventListener('click', () => input.click());
+
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.classList.add('border-blue-600', 'bg-blue-50');
+        });
+
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.classList.remove('border-blue-600', 'bg-blue-50');
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            input.files = e.dataTransfer.files;
+            dropzone.classList.remove('border-blue-600', 'bg-blue-50');
+            simulateUpload();
+        });
+
+        input.addEventListener('change', simulateUpload);
+
+        function simulateUpload() {
+            if (!input.files.length) return;
+
+            loader.classList.remove('hidden');
+
+            setTimeout(() => {
+                loader.classList.add('hidden');
+
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'تصویر با موفقیت آپلود شد',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true,
+                });
+            }, 2000);
+        }
+    </script>
 {% endblock %}
 
 

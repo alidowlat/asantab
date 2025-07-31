@@ -26,7 +26,7 @@ class ServiceForm(forms.ModelForm):
 class ScheduleForm(forms.ModelForm):
     class Meta:
         model = Schedule
-        fields = ['date', 'is_active', 'capacity']
+        fields = ['date', 'capacity', 'is_active']
 
 
 class OptionForm(forms.ModelForm):

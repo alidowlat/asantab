@@ -3,6 +3,7 @@ from django import forms
 from accounts.models import Provider
 from core.clean import UsernameCleanMixin, IbanNumberCleanMixin, CardNumberCleanMixin, PasswordCleanMixin
 from django.conf import settings
+from locations.models import City
 
 
 class UpdateUsernameForm(UsernameCleanMixin, forms.ModelForm):
@@ -63,6 +64,12 @@ class UpdateLocationForm(forms.ModelForm):
                 'required': 'وارد کردن این فیلد الزامی است.',
             },
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['city'].queryset = City.objects.select_related('province').all()
+
 
 
 class UpdateIbanForm(IbanNumberCleanMixin, forms.ModelForm):

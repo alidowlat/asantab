@@ -8,9 +8,7 @@ class City(models.Model):
     name_en = models.CharField(max_length=50, unique=True, null=True, blank=True, verbose_name='نام شهر به انگلیسی')
 
     def __str__(self):
-        if self.name_en:
-            return f'{self.name_fa} - {self.name_en} ({self.province.name_fa})'
-        return f'{self.name_fa} ({self.province.name_fa})'
+        return f'{self.name_fa}'
 
     class Meta:
         verbose_name = 'City'

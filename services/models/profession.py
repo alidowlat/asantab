@@ -12,4 +12,4 @@ class Profession(models.Model):
         db_table = 'professions'
 
     def __str__(self):
-        return f'{self.title} - {self.slug}'
+        return f'{self.title}'
