@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Count
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
+from accounts.models import Provider
 from notifications.models import Notification
 from orders.models import Order, OrderItem
 from orders.services import OrderCalculator
@@ -144,4 +145,15 @@ def unread_notifications_count(request):
 def order_items_count(request):
     order = Order.objects.filter(user=request.user, is_paid=False).first()
     count = order.items.count() if order else 0
+    return JsonResponse({'count': count})
+
+
+@login_required
+def received_orders_count(request):
+    provider = get_object_or_404(Provider, user=request.user)
+    count = Order.objects.filter(
+        provider=provider,
+        is_paid=True,
+        status__in=['pending', 'accepted']
+    ).count()
     return JsonResponse({'count': count})

@@ -24,4 +24,5 @@ urlpatterns = [
     # --- Orders / Cart ---
     path('order-items/partial/', cart_partial, name='cart_partial'),
     path('order-items/count/', order_items_count, name='order_items_count'),
+    path('received-orders/count/', received_orders_count, name='received_orders_count'),
 ]
