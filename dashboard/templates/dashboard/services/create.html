@@ -1,0 +1,246 @@
+{% extends 'dashboard/_layout.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load extra_filters %}
+
+{% block title %}
+    ویرایش {{ service.title }} | آسان تب
+{% endblock %}
+
+{% block extra_header %}
+    {% static 'scripts/actions.js' %}">
+{% endblock %}
+
+
+{% block content %}
+    <div class="rounded-lg bg-muted shadow">
+        <div class="p-5">
+            <div class="mb-16 flex justify-between">
+                <h1 class="relative w-fit font-medium lg:text-lg">
+                    ویرایش خدمت: {{ service.title }}
+                    <span class="absolute right-0 top-10 h-[3px] w-full animate-fill-border rounded-full bg-primary"></span>
+                </h1>
+                <a href="{% url 'provider_service_list' %}" class="btn-primary flex items-center gap-1 px-4 py-1.5">
+                    برگشت
+                    <span class="i-lucide-chevron-left size-5"></span>
+                </a>
+            </div>
+
+            <div class="mb-8 px-4 md:px-0">
+                <form id="create-service-form" action="{% url 'provider_service_create' %}" method="post"
+                      enctype="multipart/form-data" class="space-y-6">
+                    {% csrf_token %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 py">
+                        <span class="text-lg">
+                            {{ service_form.title.label_tag }}
+                        </span>
+                        {{ service_form.title|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full w-60" }}
+
+                        <span class="text-lg">
+                            {{ service_form.slug.label_tag }}
+                        </span>
+                        {{ service_form.slug|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full"|attr:'dir:ltr' }}
+
+                        <span class="text-lg">
+                            {{ service_form.description.label_tag }}
+                        </span>
+                        {{ service_form.description|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full" }}
+
+                        <span class="text-lg">
+                            {{ service_form.platform.label_tag }}
+                        </span>
+                        {{ service_form.platform|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full" }}
+
+                        <span class="text-lg">
+                            {{ service_form.platform_link.label_tag }}
+                        </span>
+                        {{ service_form.platform_link|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full" }}
+
+                        <span class="text-lg">
+                            {{ service_form.category.label_tag }}
+                        </span>
+                        {{ service_form.category|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full" }}
+
+                        <span class="text-lg block">شهر های ارائه حضوری:</span>
+                        <div class="flex items-center gap-4">
+                            <select id="province" name="province"
+                                    class="w-1/2 rounded-lg border bg-background px-4 py-2.5 cursor-pointer">
+                                {% for province in provinces %}
+                                    <option value="{{ province.id }}"
+                                            {% if province.id == selected_province_id %}selected{% endif %}>{{ province.name_fa }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="relative w-1/2">
+                                <div id="city-dropdown" class="border rounded-lg bg-background px-4 py-2.5 cursor-pointer">
+                                    انتخاب شهر ها
+                                </div>
+                                <div id="city-options"
+                                     class="hidden absolute top-full left-0 w-full bg-background shadow rounded-lg mt-1 z-50 max-h-48 overflow-y-auto">
+                                    <!-- Ajax will populate -->
+                                </div>
+                            </div>
+                        </div>
+                        <span class="text-sm font-medium block"></span>
+                        <div class="pb-10">
+                            <span class="text-sm font-medium">شهرهای انتخاب‌شده:</span>
+                            <div id="selected-cities" class="mt-2 flex flex-wrap gap-2"></div>
+                        </div>
+                        <input type="hidden" name="cities" id="selected-cities-input">
+                        <input type="hidden" id="preselected-cities" value='[
+                            {% for city in selected_cities %}
+                                {"id": {{ city.id }}, "name": "{{ city.name_fa }}"}{% if not forloop.last %},{% endif %}
+                            {% endfor %}
+                        ]'>
+
+                        <span class="text-lg">
+                            {{ service_form.tags.label_tag }}
+                        </span>
+                        {{ service_form.tags|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full" }}
+
+                        <span class="text-lg">
+                            {{ service_form.profession.label_tag }}
+                        </span>
+                        {{ service_form.profession|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full" }}
+                    </div>
+
+                    <div class="flex justify-between">
+                        <label class="block text-lg mb-2">تصویر سرویس:</label>
+
+                        <div class="flex items-center gap-6">
+                            {% if service_form.instance.image %}
+                                <div class="w-50">
+                                    <img src="{{ service_form.instance.image.url }}" alt="Current Image"
+                                         class="w-full h-full object-cover rounded-xl border border-gray-300">
+                                </div>
+                            {% endif %}
+
+                            <div class="relative w-full">
+                                <div id="dropzone"
+                                     class="w-50 border-2 border-gray-400 rounded-xl p-4 text-center text-gray-500 cursor-pointer transition hover:border-blue-500 hover:bg-blue-50 flex flex-col items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                         class="lucide lucide-package-open-icon lucide-package-open mb-2">
+                                        <path d="M12 22v-9"/>
+                                        <path d="M15.17 2.21a1.67 1.67 0 0 1 1.63 0L21 4.57a1.93 1.93 0 0 1 0 3.36L8.82 14.79a1.655 1.655 0 0 1-1.64 0L3 12.43a1.93 1.93 0 0 1 0-3.36z"/>
+                                        <path d="M20 13v3.87a2.06 2.06 0 0 1-1.11 1.83l-6 3.08a1.93 1.93 0 0 1-1.78 0l-6-3.08A2.06 2.06 0 0 1 4 16.87V13"></path>
+                                        <path d="M21 12.43a1.93 1.93 0 0 0 0-3.36L8.83 2.2a1.64 1.64 0 0 0-1.63 0L3 4.57a1.93 1.93 0 0 0 0 3.36l12.18 6.86a1.636 1.636 0 0 0 1.63 0z"/>
+                                    </svg>
+                                    کلیک کنید یا تصویر را اینجا رها کنید
+                                    <input id="imageInput"
+                                           type="file"
+                                           name="{{ service_form.image.name }}"
+                                           class="hidden"
+                                           accept="image/*">
+                                </div>
+
+                                <div id="loader"
+                                     class="w-50 absolute bg-muted border-2 border-gray-400 inset-0 hidden flex items-center justify-center bg-opacity-60 rounded-xl">
+                                    <svg class="w-20 h-20 animate-spin text-blue-600" viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="35" stroke="currentColor" stroke-width="10"
+                                                fill="none" stroke-linecap="round"
+                                                stroke-dasharray="200" stroke-dashoffset="0"></circle>
+                                    </svg>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dynamic-form-wrapper space-y-4 border-t pb-1">
+                        <h3 class="flex items-center gap-x-4 text-xl text-text/80 pt-5 pb-5">
+                            <span class="h-2 w-2 rounded-full bg-primary"></span>
+                            آپشن ها
+                        </h3>
+                        <div class="option-formset grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            {{ option_formset.management_form }}
+                            {% if option_formset %}
+                                {% for form in option_formset %}
+                                    {% include 'dashboard/services/option_form.html' with form=form %}
+                                {% endfor %}
+                            {% else %}
+                                <div class="absolute inset-0 flex flex-col items-center justify-center gap-4 rounded-lg blur">
+                                    <h5 class="text-center pb-4">هیچ آیتمی اضافه نشده</h5>
+                                    <button type="button" class="add-schedule btn-primary flex items-center gap-1 px-4 py-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                             class="lucide lucide-plus-icon lucide-plus">
+                                            <path d="M5 12h14"></path>
+                                            <path d="M12 5v14"></path>
+                                        </svg>
+                                        آپشن جدید
+                                    </button>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <button type="button" class="add-option btn-primary flex items-center gap-1 px-4 py-1.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                 class="lucide lucide-plus-icon lucide-plus">
+                                <path d="M5 12h14"></path>
+                                <path d="M12 5v14"></path>
+                            </svg>
+                            آپشن جدید
+                        </button>
+                    </div>
+
+                    <div class="dynamic-form-wrapper space-y-4 border-t border-b pb-6">
+                        <h3 class="flex items-center gap-x-4 text-xl text-text/80 pt-5 pb-5">
+                            <span class="h-2 w-2 rounded-full bg-primary"></span>
+                            زمان بندی ها
+                        </h3>
+                        <div class="schedule-formset grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            {{ schedule_formset.management_form }}
+                            {% if schedule_formset %}
+                                {% for form in schedule_formset %}
+                                    {% include 'dashboard/services/schedule_form.html' with form=form %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <button type="button" class="add-schedule btn-primary flex items-center gap-1 px-4 py-1.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                 class="lucide lucide-plus-icon lucide-plus">
+                                <path d="M5 12h14"></path>
+                                <path d="M12 5v14"></path>
+                            </svg>
+                            زمان بندی جدید
+                        </button>
+                    </div>
+
+                    <div class="flex">
+                        <p class="ml-2">وضعیت سرویس:</p>
+                        <label for="{{ service_form.is_active.id_for_label }}">
+                            <input type="hidden" name="{{ service_form.is_active.name }}" value="false">
+                            <div class="relative inline-flex cursor-pointer items-center">
+                                <input
+                                        type="checkbox"
+                                        name="{{ service_form.is_active.name }}"
+                                        id="{{ service_form.is_active.id_for_label }}"
+                                        class="peer sr-only"
+                                        value="true"
+                                        {% if service_form.initial.is_active %}checked{% endif %}
+                                >
+                                <div class="peer h-6 w-11 rounded-full bg-background after:absolute after:left-[2px] after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-muted after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full"></div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button type="submit"
+                                class="w-40 flex flex-row md:w-auto btn-primary px-4 py-1 text-white hover:bg-primary/80 transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                 class="lucide lucide-check-icon lucide-check pl-2">
+                                <path d="M20 6 9 17l-5-5"></path>
+                            </svg>
+                            ذخیره تغییرات
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div id="form-errors">
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% endblock %}
