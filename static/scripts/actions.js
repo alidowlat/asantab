@@ -708,131 +708,424 @@ document.addEventListener('DOMContentLoaded', function () {
     checkFavoriteListEmpty();
 });
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
 
-    const persianToEnglishNumber = (str) => {
-        return str.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
-    };
+    function setupServiceForm({
+                                  formId,
+                                  optionFetchUrl,
+                                  scheduleFetchUrl,
+                                  optionPrefix = "option",
+                                  schedulePrefix = "schedule",
+                                  provinceSelectId = "province",
+                                  cityDropdownId = "city-dropdown",
+                                  cityOptionsId = "city-options",
+                                  selectedCitiesDivId = "selected-cities",
+                                  selectedCitiesInputId = "selected-cities-input",
+                                  preselectedCitiesInputId = "preselected-cities"
+                              }) {
 
-    const formatNumberWithCommas = (value) => {
-        return value.replace(/\B(?=(\d{3})+(?!\d))/g, "٬");
-    };
+        // ========== قیمت با کاما و اعداد فارسی ==========
+        const persianToEnglishNumber = (str) => str.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+        const formatNumberWithCommas = (value) => value.replace(/\B(?=(\d{3})+(?!\d))/g, "٬");
 
-function bindPriceFormatter(input) {
-    input.type = "text";
-    input.style.direction = "ltr";
+        function bindPriceFormatter(input) {
+            input.type = "text";
+            input.style.direction = "ltr";
 
-    const initialValue = input.defaultValue || input.value;
-    if (initialValue.trim() !== "") {
-        let raw = initialValue
-            .replace(/[٬,]/g, '')
-            .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
-        input.value = formatNumberWithCommas(raw);
-    }
+            const initialValue = input.defaultValue || input.value;
+            if (initialValue.trim() !== "") {
+                let raw = initialValue.replace(/[٬,]/g, '').replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+                input.value = formatNumberWithCommas(raw);
+            }
 
-    input.addEventListener("input", function () {
-        let raw = input.value
-            .replace(/[٬,]/g, '')
-            .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
-        input.value = formatNumberWithCommas(raw);
-    });
-}
-
-
-
-    document.querySelectorAll("input[name$='unit_price']").forEach(input => {
-        bindPriceFormatter(input);
-    });
-
-    document.addEventListener("submit", function (e) {
-        if (e.target.tagName === "FORM") {
-            e.target.querySelectorAll("input[name$='unit_price']").forEach(input => {
-                let raw = input.value
-                    .replace(/[٬,]/g, '')
-                    .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
-                input.value = raw;
+            input.addEventListener("input", function () {
+                let raw = input.value.replace(/[٬,]/g, '').replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+                input.value = formatNumberWithCommas(raw);
             });
         }
-    }, true);
 
-    function setupDynamicForms({addButtonSelector, formsetSelector, fetchUrl, formClass, removeBtnClass, prefix}) {
-        document.querySelectorAll(addButtonSelector).forEach(addBtn => {
-            const wrapper = addBtn.closest(".dynamic-form-wrapper");
-            const formset = wrapper.querySelector(formsetSelector);
-            const totalFormsInput = document.querySelector(`#id_${prefix}-TOTAL_FORMS`);
+        document.querySelectorAll("input[name$='unit_price']").forEach(input => bindPriceFormatter(input));
 
-            addBtn.addEventListener("click", function () {
-                const formIndex = parseInt(totalFormsInput.value);
+        document.addEventListener("submit", function (e) {
+            if (e.target.id === formId) {
+                e.target.querySelectorAll("input[name$='unit_price']").forEach(input => {
+                    let raw = input.value.replace(/[٬,]/g, '').replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+                    input.value = raw;
+                });
+            }
+        }, true);
 
-                fetch(`${fetchUrl}?prefix=${prefix}&index=${formIndex}`, {
-                    method: 'GET',
-                    headers: {'X-Requested-With': 'XMLHttpRequest'}
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            formset.insertAdjacentHTML('beforeend', data.html);
-                            totalFormsInput.value = formIndex + 1;
+        // ========== پیام خالی فرم ها ==========
+        function showEmptyMessage(formset, prefix) {
+            if (!formset.querySelector(".empty-message")) {
+                const msg = document.createElement("div");
+                msg.className = "empty-message col-span-full flex flex-col items-center justify-center gap-4 rounded-lg backdrop-blur-sm";
+                msg.innerHTML = `
+                <h5 class="text-center pb-4">هیچ آیتمی اضافه نشده</h5>
+                <button type="button" class="btn-primary flex items-center gap-1 px-4 py-2 add-${prefix}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <path d="M5 12h14"></path>
+                        <path d="M12 5v14"></path>
+                    </svg>
+                    ${prefix === "option" ? "آپشن جدید" : "زمان‌بندی جدید"}
+                </button>`;
+                formset.appendChild(msg);
+            }
+        }
 
-                            const newForm = formset.lastElementChild;
-                            newForm.querySelectorAll("input[name$='unit_price']").forEach(input => {
-                                bindPriceFormatter(input);
-                            });
-                        }
-                    });
-            });
+        function hideEmptyMessage(formset) {
+            const msg = formset.querySelector(".empty-message");
+            if (msg) msg.remove();
+        }
 
-            formset.addEventListener("click", function (e) {
-                if (e.target.classList.contains(removeBtnClass)) {
-                    const item = e.target.closest(`.${formClass}`);
-                    const deleteInput = item.querySelector(`input[name$="-DELETE"]`);
-                    const id = item.getAttribute("data-id");
+        function updateEmptyState(wrapper, formClass, prefix) {
+            const targetFormset = prefix === "option"
+                ? wrapper.querySelector(".option-formset")
+                : wrapper.querySelector(".schedule-formset");
 
-                    Swal.fire({
-                        title: 'آیا مطمئنی؟',
-                        text: "این عملیات قابل بازگشت نیست!",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'بله، حذف کن',
-                        cancelButtonText: 'نه، منصرف شدم',
-                        reverseButtons: true
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            const isNew = !id || id === "None" || id === "";
-                            if (isNew) {
-                                item.remove();
-                                const visibleForms = formset.querySelectorAll(`.${formClass}:not([style*="display: none"])`);
-                                totalFormsInput.value = visibleForms.length;
-                            } else if (deleteInput) {
-                                deleteInput.checked = true;
-                                item.style.display = "none";
+            const visibleForms = targetFormset.querySelectorAll(`.${formClass}:not([style*="display: none"])`);
+            const mainButton = wrapper.querySelector(`.add-${prefix}`);
+
+            if (visibleForms.length === 0) {
+                if (mainButton) mainButton.style.display = "none";
+                showEmptyMessage(wrapper, prefix);
+            } else {
+                if (mainButton) mainButton.style.display = "flex";
+                hideEmptyMessage(wrapper, prefix);
+            }
+        }
+
+        // ========== داینامیک فرم ها ==========
+        function setupDynamicForms({addButtonSelector, formsetSelector, fetchUrl, formClass, removeBtnClass, prefix}) {
+            document.querySelectorAll(addButtonSelector).forEach(addBtn => {
+                const wrapper = addBtn.closest(".dynamic-form-wrapper");
+                const formset = wrapper.querySelector(formsetSelector);
+                const totalFormsInput = document.querySelector(`#id_${prefix}-TOTAL_FORMS`);
+
+                updateEmptyState(wrapper, formClass, prefix);
+
+                wrapper.addEventListener("click", function (e) {
+                    if (e.target.closest(`.add-${prefix}`) && e.target.closest(".empty-message")) {
+                        addBtn.click();
+                    }
+                });
+
+                addBtn.addEventListener("click", function () {
+                    const formIndex = parseInt(totalFormsInput.value);
+                    fetch(`${fetchUrl}?prefix=${prefix}&index=${formIndex}`, {
+                        method: 'GET',
+                        headers: {'X-Requested-With': 'XMLHttpRequest'}
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                formset.insertAdjacentHTML('beforeend', data.html);
+                                totalFormsInput.value = formIndex + 1;
+
+                                const newForm = formset.lastElementChild;
+                                newForm.querySelectorAll("input[name$='unit_price']").forEach(input => bindPriceFormatter(input));
+                                updateEmptyState(wrapper, formClass, prefix);
                             }
-                        }
-                    });
-                }
+                        });
+                });
+
+                formset.addEventListener("click", function (e) {
+                    if (e.target.classList.contains(removeBtnClass)) {
+                        const item = e.target.closest(`.${formClass}`);
+                        const id = item.getAttribute("data-id");
+
+                        Swal.fire({
+                            title: 'آیا مطمئنی؟',
+                            text: "این عملیات قابل بازگشت نیست!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'بله، حذف کن',
+                            cancelButtonText: 'نه، منصرف شدم',
+                            reverseButtons: true
+                        }).then((result) => {
+                            if (result.isConfirmed && id) {
+
+                                if (!id || id === "None" || id === "") {
+                                    item.remove();
+                                    const visibleForms = formset.querySelectorAll(`.${formClass}:not([style*="display: none"])`);
+                                    totalFormsInput.value = visibleForms.length;
+                                    updateEmptyState(wrapper, formClass, prefix);
+                                    return;
+                                }
+
+                                fetch(`/profile/services/${prefix}/delete/${id}`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-Requested-With': 'XMLHttpRequest',
+                                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                                    }
+                                })
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                            item.remove();
+                                            const visibleForms = formset.querySelectorAll(`.${formClass}:not([style*="display: none"])`);
+                                            totalFormsInput.value = visibleForms.length;
+                                            updateEmptyState(wrapper, formClass, prefix);
+
+                                            Swal.fire({
+                                                toast: true,
+                                                position: 'top-end',
+                                                icon: 'success',
+                                                title: data.message || 'با موفقیت حذف شد',
+                                                showConfirmButton: false,
+                                                timer: 2000
+                                            });
+                                        } else {
+                                            let errorBox = document.getElementById("form-errors");
+                                            if (!errorBox) {
+                                                errorBox = document.createElement("div");
+                                                errorBox.id = "form-errors";
+                                                document.querySelector("form").prepend(errorBox);
+                                            }
+                                            errorBox.className = "bg-red-100 text-red-600 p-4 rounded mb-2";
+                                            errorBox.textContent = data.error || 'خطایی رخ داد';
+
+                                            errorBox.scrollIntoView({
+                                                behavior: 'smooth',
+                                                block: 'center'
+                                            });
+                                        }
+                                    });
+                            }
+                        });
+                    }
+                });
             });
+        }
+
+        // ========== شهر ها ==========
+        const provinceSelect = document.getElementById(provinceSelectId);
+        const dropdownBtn = document.getElementById(cityDropdownId);
+        const cityOptions = document.getElementById(cityOptionsId);
+        const selectedCitiesDiv = document.getElementById(selectedCitiesDivId);
+        const selectedCitiesInput = document.getElementById(selectedCitiesInputId);
+        const preselectedCitiesInput = document.getElementById(preselectedCitiesInputId);
+
+        let selectedCities = [];
+
+        if (preselectedCitiesInput && preselectedCitiesInput.value.trim() !== "") {
+            try {
+                selectedCities = JSON.parse(preselectedCitiesInput.value);
+            } catch (e) {
+                selectedCities = [];
+            }
+        }
+
+        function renderSelectedCities() {
+            selectedCitiesDiv.innerHTML = "";
+            selectedCities.forEach(city => {
+                const tag = document.createElement("div");
+                tag.className = "bg-indigo-500 text-white text-sm px-2 py-1 rounded flex items-center gap-1";
+                tag.innerHTML = `${city.name} <button type="button" data-id="${city.id}" class="remove-city i-lucide-x size-5"></button>`;
+                selectedCitiesDiv.appendChild(tag);
+            });
+            selectedCitiesInput.value = selectedCities.map(c => c.id).join(",");
+        }
+
+        function fetchCities(provinceId) {
+            fetch(`/profile/services/load-cities/?province=${provinceId}`)
+                .then(res => res.json())
+                .then(data => {
+                    cityOptions.innerHTML = "";
+                    data.cities.forEach(city => {
+                        const checked = selectedCities.some(c => c.id === city.id) ? "checked" : "";
+                        const item = document.createElement("div");
+                        item.className = "px-4 py-2 hover:bg-muted cursor-pointer flex items-center gap-2";
+                        item.innerHTML = `
+                            <input type="checkbox" class="city-checkbox" data-id="${city.id}" data-name="${city.name_fa}" ${checked}>
+                            <span>${city.name_fa}</span>
+                        `;
+                        cityOptions.appendChild(item);
+                    });
+                });
+        }
+
+        provinceSelect.addEventListener("change", e => fetchCities(e.target.value));
+
+        dropdownBtn.addEventListener("click", () => {
+            cityOptions.classList.toggle("hidden");
+        });
+
+        cityOptions.addEventListener("change", e => {
+            if (e.target.classList.contains("city-checkbox")) {
+                const cityId = parseInt(e.target.dataset.id);
+                const cityName = e.target.dataset.name;
+
+                if (e.target.checked) {
+                    if (!selectedCities.some(c => c.id === cityId)) {
+                        selectedCities.push({id: cityId, name: cityName});
+                    }
+                } else {
+                    selectedCities = selectedCities.filter(c => c.id !== cityId);
+                }
+                renderSelectedCities();
+            }
+        });
+
+        selectedCitiesDiv.addEventListener("click", e => {
+            if (e.target.classList.contains("remove-city")) {
+                const cityId = parseInt(e.target.dataset.id);
+                selectedCities = selectedCities.filter(c => c.id !== cityId);
+                renderSelectedCities();
+                const checkbox = cityOptions.querySelector(`.city-checkbox[data-id="${cityId}"]`);
+                if (checkbox) checkbox.checked = false;
+            }
+        });
+
+        renderSelectedCities();
+        fetchCities(provinceSelect.value);
+
+        // ========== ارسال فرم ==========
+        const form = document.getElementById(formId);
+
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            fetch(this.action, {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'با موفقیت ذخیره شد',
+                            text: 'در حال بازگشت به لیست سرویس‌ها...',
+                            timer: 2000,
+                            timerProgressBar: true,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.href = data.redirect_url;
+                        });
+                    } else {
+                        const errorContainer = document.getElementById("form-errors");
+                        errorContainer.innerHTML = data.errors_html;
+                        errorContainer.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+                    }
+                })
+                .catch(() => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'مشکل در ارسال فرم',
+                        text: 'لطفاً دوباره تلاش کنید.',
+                        timer: 3000
+                    });
+                });
+        });
+
+        const dropzone = document.getElementById('dropzone');
+        const input = document.getElementById('imageInput');
+        const loader = document.getElementById('loader');
+
+        dropzone.addEventListener('click', () => input.click());
+
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.classList.add('border-blue-600', 'bg-blue-50');
+        });
+
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.classList.remove('border-blue-600', 'bg-blue-50');
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            input.files = e.dataTransfer.files;
+            dropzone.classList.remove('border-blue-600', 'bg-blue-50');
+            simulateUpload();
+        });
+
+        input.addEventListener('change', simulateUpload);
+
+        function simulateUpload() {
+            if (!input.files.length) return;
+
+            loader.classList.remove('hidden');
+
+            setTimeout(() => {
+                loader.classList.add('hidden');
+
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'تصویر با موفقیت آپلود شد',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true,
+                });
+            }, 2000);
+        }
+
+        // ========== داینامیک فرم‌ها ==========
+        setupDynamicForms({
+            addButtonSelector: `.add-${optionPrefix}`,
+            formsetSelector: ".option-formset",
+            fetchUrl: optionFetchUrl,
+            formClass: "option-form",
+            removeBtnClass: "remove-option",
+            prefix: optionPrefix
+        });
+
+        setupDynamicForms({
+            addButtonSelector: `.add-${schedulePrefix}`,
+            formsetSelector: ".schedule-formset",
+            fetchUrl: scheduleFetchUrl,
+            formClass: "schedule-form",
+            removeBtnClass: "remove-schedule",
+            prefix: schedulePrefix
+        });
+
+    }
+
+    // اجرا با پارامترهای مناسب
+    if (document.getElementById("edit-service-form")) {
+        setupServiceForm({
+            formId: "edit-service-form",
+            optionFetchUrl: "/profile/services/option/add/",
+            scheduleFetchUrl: "/profile/services/schedule/add/",
+            optionPrefix: "option",
+            schedulePrefix: "schedule",
+            provinceSelectId: "province",
+            cityDropdownId: "city-dropdown",
+            cityOptionsId: "city-options",
+            selectedCitiesDivId: "selected-cities",
+            selectedCitiesInputId: "selected-cities-input",
+            preselectedCitiesInputId: "preselected-cities"
+        });
+    } else if (document.getElementById("create-service-form")) {
+        setupServiceForm({
+            formId: "create-service-form",
+            optionFetchUrl: "/profile/services/option/add/",
+            scheduleFetchUrl: "/profile/services/schedule/add/",
+            optionPrefix: "option",
+            schedulePrefix: "schedule",
+            provinceSelectId: "province",
+            cityDropdownId: "city-dropdown",
+            cityOptionsId: "city-options",
+            selectedCitiesDivId: "selected-cities",
+            selectedCitiesInputId: "selected-cities-input",
+            preselectedCitiesInputId: "preselected-cities"
         });
     }
 
-    setupDynamicForms({
-        addButtonSelector: ".add-option",
-        formsetSelector: ".option-formset",
-        fetchUrl: "/profile/services/option/add/",
-        formClass: "option-form",
-        removeBtnClass: "remove-option",
-        prefix: "option"
-    });
-
-    setupDynamicForms({
-        addButtonSelector: ".add-schedule",
-        formsetSelector: ".schedule-formset",
-        fetchUrl: "/profile/services/schedule/add/",
-        formClass: "schedule-form",
-        removeBtnClass: "remove-schedule",
-        prefix: "schedule"
-    });
-
 });
+
 
 document.addEventListener('DOMContentLoaded', function () {
     loadCartPartial();
