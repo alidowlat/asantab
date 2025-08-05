@@ -1,0 +1,27 @@
+{% if global_error %}
+<div class="bg-red-100 text-red-600 p-4 rounded mb-4">
+    {{ global_error }}
+</div>
+{% endif %}
+
+{% if service_form.errors %}
+<div class="bg-red-100 text-red-600 p-4 rounded mb-4">
+    {{ service_form.errors }}
+</div>
+{% endif %}
+
+{% for form in option_formset.forms %}
+    {% if form.errors %}
+    <div class="bg-red-100 text-red-600 p-2 rounded mb-2">
+        {{ form.errors }}
+    </div>
+    {% endif %}
+{% endfor %}
+
+{% for form in schedule_formset.forms %}
+    {% if form.errors %}
+    <div class="bg-red-100 text-red-600 p-2 rounded mb-2">
+        {{ form.errors }}
+    </div>
+    {% endif %}
+{% endfor %}
