@@ -27,51 +27,78 @@
             </div>
 
             <div class="mb-8 px-4 md:px-0">
-                <form method="post" enctype="multipart/form-data" class="space-y-6">
+                <form id="edit-service-form" action="{% url 'provider_service_edit' slug=service_form.instance.slug %}" method="post"
+                      enctype="multipart/form-data" class="space-y-6">
                     {% csrf_token %}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 py">
                         <span class="text-lg">
-                        {{ service_form.title.label_tag }}
+                            {{ service_form.title.label_tag }}
                         </span>
                         {{ service_form.title|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full w-60" }}
 
                         <span class="text-lg">
-                        {{ service_form.slug.label_tag }}
+                            {{ service_form.slug.label_tag }}
                         </span>
                         {{ service_form.slug|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full"|attr:'dir:ltr' }}
 
                         <span class="text-lg">
-                        {{ service_form.description.label_tag }}
+                            {{ service_form.description.label_tag }}
                         </span>
                         {{ service_form.description|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full" }}
 
                         <span class="text-lg">
-                        {{ service_form.platform.label_tag }}
+                            {{ service_form.platform.label_tag }}
                         </span>
                         {{ service_form.platform|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full" }}
 
                         <span class="text-lg">
-                        {{ service_form.platform_link.label_tag }}
+                            {{ service_form.platform_link.label_tag }}
                         </span>
                         {{ service_form.platform_link|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full" }}
 
                         <span class="text-lg">
-                        {{ service_form.category.label_tag }}
+                            {{ service_form.category.label_tag }}
                         </span>
                         {{ service_form.category|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full" }}
 
-                        <span class="text-lg">
-                        {{ service_form.locations.label_tag }}
-                        </span>
-                        {{ service_form.locations|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full" }}
+                        <span class="text-lg block">شهر های ارائه حضوری:</span>
+                        <div class="flex items-center gap-4">
+                            <select id="province" name="province"
+                                    class="w-1/2 rounded-lg border bg-background px-4 py-2.5 cursor-pointer">
+                                {% for province in provinces %}
+                                    <option value="{{ province.id }}"
+                                            {% if province.id == selected_province_id %}selected{% endif %}>{{ province.name_fa }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="relative w-1/2">
+                                <div id="city-dropdown" class="border rounded-lg bg-background px-4 py-2.5 cursor-pointer">
+                                    انتخاب شهر ها
+                                </div>
+                                <div id="city-options"
+                                     class="hidden absolute top-full left-0 w-full bg-background shadow rounded-lg mt-1 z-50 max-h-48 overflow-y-auto">
+                                    <!-- Ajax will populate -->
+                                </div>
+                            </div>
+                        </div>
+                        <span class="text-sm font-medium block"></span>
+                        <div class="pb-10">
+                            <span class="text-sm font-medium">شهرهای انتخاب‌شده:</span>
+                            <div id="selected-cities" class="mt-2 flex flex-wrap gap-2"></div>
+                        </div>
+                        <input type="hidden" name="cities" id="selected-cities-input">
+                        <input type="hidden" id="preselected-cities" value='[
+                            {% for city in selected_cities %}
+                                {"id": {{ city.id }}, "name": "{{ city.name_fa }}"}{% if not forloop.last %},{% endif %}
+                            {% endfor %}
+                        ]'>
 
                         <span class="text-lg">
-                        {{ service_form.tags.label_tag }}
+                            {{ service_form.tags.label_tag }}
                         </span>
                         {{ service_form.tags|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full" }}
 
                         <span class="text-lg">
-                        {{ service_form.profession.label_tag }}
+                            {{ service_form.profession.label_tag }}
                         </span>
                         {{ service_form.profession|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full" }}
                     </div>
@@ -81,9 +108,9 @@
 
                         <div class="flex items-center gap-6">
                             {% if service_form.instance.image %}
-                                <div>
+                                <div class="w-50">
                                     <img src="{{ service_form.instance.image.url }}" alt="Current Image"
-                                         class="w-32 object-cover rounded-xl border border-gray-300">
+                                         class="w-full h-full object-cover rounded-xl border border-gray-300">
                                 </div>
                             {% endif %}
 
@@ -107,13 +134,14 @@
                                 </div>
 
                                 <div id="loader"
-                                     class="absolute inset-0 hidden items-center justify-center bg-white bg-opacity-60 rounded-xl">
-                                    <svg class="w-10 h-10 animate-spin text-blue-600" viewBox="0 0 100 100">
+                                     class="w-50 absolute bg-muted border-2 border-gray-400 inset-0 hidden flex items-center justify-center bg-opacity-60 rounded-xl">
+                                    <svg class="w-20 h-20 animate-spin text-blue-600" viewBox="0 0 100 100">
                                         <circle cx="50" cy="50" r="35" stroke="currentColor" stroke-width="10"
                                                 fill="none" stroke-linecap="round"
                                                 stroke-dasharray="200" stroke-dashoffset="0"></circle>
                                     </svg>
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -125,9 +153,24 @@
                         </h3>
                         <div class="option-formset grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                             {{ option_formset.management_form }}
-                            {% for form in option_formset %}
-                                {% include 'dashboard/services/option_form.html' with form=form %}
-                            {% endfor %}
+                            {% if option_formset %}
+                                {% for form in option_formset %}
+                                    {% include 'dashboard/services/option_form.html' with form=form %}
+                                {% endfor %}
+                            {% else %}
+                                <div class="absolute inset-0 flex flex-col items-center justify-center gap-4 rounded-lg blur">
+                                    <h5 class="text-center pb-4">هیچ آیتمی اضافه نشده</h5>
+                                    <button type="button" class="add-schedule btn-primary flex items-center gap-1 px-4 py-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                             class="lucide lucide-plus-icon lucide-plus">
+                                            <path d="M5 12h14"></path>
+                                            <path d="M12 5v14"></path>
+                                        </svg>
+                                        آپشن جدید
+                                    </button>
+                                </div>
+                            {% endif %}
                         </div>
                         <button type="button" class="add-option btn-primary flex items-center gap-1 px-4 py-1.5">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -147,9 +190,11 @@
                         </h3>
                         <div class="schedule-formset grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                             {{ schedule_formset.management_form }}
-                            {% for form in schedule_formset %}
-                                {% include 'dashboard/services/schedule_form.html' with form=form %}
-                            {% endfor %}
+                            {% if schedule_formset %}
+                                {% for form in schedule_formset %}
+                                    {% include 'dashboard/services/schedule_form.html' with form=form %}
+                                {% endfor %}
+                            {% endif %}
                         </div>
                         <button type="button" class="add-schedule btn-primary flex items-center gap-1 px-4 py-1.5">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -193,60 +238,9 @@
                     </div>
                 </form>
             </div>
-            {% if messages %}
-                {% for message in messages %}
-                    {{ message }}
-                {% endfor %}
-            {% endif %}
+            <div id="form-errors">
+            </div>
         </div>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        const dropzone = document.getElementById('dropzone');
-        const input = document.getElementById('imageInput');
-        const loader = document.getElementById('loader');
-
-        dropzone.addEventListener('click', () => input.click());
-
-        dropzone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropzone.classList.add('border-blue-600', 'bg-blue-50');
-        });
-
-        dropzone.addEventListener('dragleave', () => {
-            dropzone.classList.remove('border-blue-600', 'bg-blue-50');
-        });
-
-        dropzone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            input.files = e.dataTransfer.files;
-            dropzone.classList.remove('border-blue-600', 'bg-blue-50');
-            simulateUpload();
-        });
-
-        input.addEventListener('change', simulateUpload);
-
-        function simulateUpload() {
-            if (!input.files.length) return;
-
-            loader.classList.remove('hidden');
-
-            setTimeout(() => {
-                loader.classList.add('hidden');
-
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'تصویر با موفقیت آپلود شد',
-                    showConfirmButton: false,
-                    timer: 2000,
-                    timerProgressBar: true,
-                });
-            }, 2000);
-        }
-    </script>
 {% endblock %}
-
-
