@@ -2,8 +2,10 @@
 <div class="option-form relative mb-8 border p-4 rounded-lg bg-muted flex flex-col gap-4" data-id="{{ form.instance.pk }}">
     {{ form.id }}{{ form.DELETE|add_class:'hidden' }}
 
-    <button type="button" class="remove-option absolute -top-2.5 left-2 rounded-lg border bg-muted duration-200 hover:bg-background">
-        <div class="i-lucide-trash m-2 h-4 w-4 text-warning"></div>
+    <button type="button"
+            class="remove-option absolute -top-2.5 left-2 flex items-center justify-center
+               rounded-lg border bg-muted p-2 duration-200 hover:bg-background">
+        <div class="i-lucide-trash h-4 w-4 text-warning pointer-events-none"></div>
     </button>
 
     <div class="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4 w-full pt-4">
@@ -15,7 +17,6 @@
         {{ form.unit_price.label_tag }}
         {{ form.unit_price|add_class:"w-full sm:max-w-[100px] rounded-lg border bg-background text-center px-3 py-2" }}
     </div>
-
 
     <div class="flex flex-row items-center justify-between gap-4">
         <span class="text-sm font-medium">وضعیت آپشن:</span>

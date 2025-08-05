@@ -1,3 +1,4 @@
+{% load extra_filters %}
 {% load widget_tweaks %}
 <div class="schedule-form relative mb-8 border p-4 rounded-lg bg-muted flex flex-col gap-4" data-id="{{ form.instance.pk }}">
     {{ form.id }}{{ form.DELETE|add_class:'hidden' }}
@@ -10,7 +11,7 @@
 
     <div class="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4 w-full pt-4">
         {{ form.date.label_tag }}
-        {{ form.date|add_class:"w-full sm:max-w-[180px] rounded-lg border bg-background text-center px-3 py-2" }}
+        {{ form.date }}
     </div>
 
     <div class="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4 w-full">
@@ -38,6 +39,5 @@
             </div>
         </label>
     </div>
-
 </div>
 
