@@ -1,4 +1,3 @@
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import ProtectedError
@@ -8,10 +7,11 @@ from django.template.loader import render_to_string
 from django.views import View
 from django.views.decorators.http import require_POST
 from accounts.models import Provider
+from locations.models import City, Province
 from services.forms import ServiceForm, ScheduleFormSet, OptionFormSet, OptionForm, ScheduleForm
-from django.views.generic import CreateView, ListView
+from django.views.generic import ListView
 from django.shortcuts import redirect, get_object_or_404, render
-from django.urls import reverse_lazy
+from django.urls import reverse
 from services.models import Service, Option, Schedule
 
 
@@ -30,48 +30,84 @@ class ProviderServiceList(LoginRequiredMixin, ListView):
         return context
 
 
-class ProviderServiceCreate(LoginRequiredMixin, CreateView):
-    model = Service
+class ProviderServiceCreate(LoginRequiredMixin, View):
     template_name = 'dashboard/services/create.html'
-    form_class = ServiceForm
-    success_url = reverse_lazy('dashboard_page')
 
-    formset_classes = {
-        'schedule_formset': ScheduleFormSet,
-        'option_formset': OptionFormSet,
-    }
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        for name, formset_class in self.formset_classes.items():
-            context[name] = kwargs.get(name) or formset_class()
-        return context
-
-    def post(self, request, *args, **kwargs):
-        form = self.get_form()
-        formsets = {
-            name: cls(request.POST)
-            for name, cls in self.formset_classes.items()
+    def get_context_data(self):
+        provinces = Province.objects.all()
+        return {
+            'service_form': ServiceForm(),
+            'option_formset': OptionFormSet(prefix='option'),
+            'schedule_formset': ScheduleFormSet(prefix='schedule'),
+            'provinces': provinces,
+            'selected_cities': [],
+            'selected_city_ids': [],
+            'selected_province_id': None,
+            'is_edit': False
         }
 
-        if form.is_valid() and all(fs.is_valid() for fs in formsets.values()):
-            return self.form_valid(form, formsets)
-        return self.form_invalid(form, formsets)
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data()
 
-    def form_valid(self, form, formsets):
-        self.object = form.save(commit=False)
-        self.object.provider = self.request.user.provider
-        self.object.save()
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            html = render_to_string(self.template_name, context, request=request)
+            return JsonResponse({'success': True, 'html': html})
 
-        for formset in formsets.values():
-            formset.instance = self.object
-            formset.save()
+        return render(request, self.template_name, context)
 
-        return redirect(self.success_url)
+    def post(self, request, *args, **kwargs):
+        service_form = ServiceForm(request.POST, request.FILES)
+        option_formset = OptionFormSet(request.POST, request.FILES, prefix='option')
+        schedule_formset = ScheduleFormSet(request.POST, request.FILES, prefix='schedule')
 
-    def form_invalid(self, form, formsets):
-        context = self.get_context_data(form=form, **formsets)
-        return self.render_to_response(context)
+        global_error = None
+
+        if service_form.is_valid() and option_formset.is_valid() and schedule_formset.is_valid():
+            service = service_form.save(commit=False)
+            provider = get_object_or_404(Provider, user=self.request.user)
+            service.provider = provider
+            service.save()
+
+            city_ids = [int(cid) for cid in request.POST.get("cities", "").split(",") if cid]
+            service.locations.set(city_ids)
+
+            # ذخیره آپشن‌ها
+            options = option_formset.save(commit=False)
+            for opt in options:
+                opt.service = service
+                opt.save()
+
+            # ذخیره زمان‌بندی‌ها
+            schedules = schedule_formset.save(commit=False)
+            for schedule in schedules:
+                schedule.service = service
+                schedule.save()
+
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'success': True, 'redirect_url': reverse("provider_service_list")})
+
+            return redirect("provider_service_list")
+
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            errors_html = render_to_string(
+                'dashboard/services/errors.html',
+                {
+                    'service_form': service_form,
+                    'option_formset': option_formset,
+                    'schedule_formset': schedule_formset,
+                    'global_error': global_error
+                },
+                request=request
+            )
+            return JsonResponse({'success': False, 'errors_html': errors_html})
+
+        return render(request, self.template_name, {
+            'service_form': service_form,
+            'option_formset': option_formset,
+            'schedule_formset': schedule_formset,
+            'is_edit': False,
+            'global_error': global_error
+        })
 
 
 OptionFormSet = inlineformset_factory(
@@ -98,70 +134,126 @@ class ProviderServiceEdit(LoginRequiredMixin, View):
         self.service = get_object_or_404(Service, slug=kwargs['slug'], provider_id=request.user.id)
         return super().dispatch(request, *args, **kwargs)
 
-    def get(self, request, *args, **kwargs):
-        service_form = ServiceForm(instance=self.service)
-        option_formset = OptionFormSet(instance=self.service, prefix='option')
-        schedule_formset = ScheduleFormSet(instance=self.service, prefix='schedule')
+    def get_context_data(self):
+        provinces = Province.objects.all()
+        selected_cities = self.service.locations.all()
+        selected_city_ids = list(selected_cities.values_list('id', flat=True))
+        selected_province_id = selected_cities.first().province.id if selected_cities.exists() else None
 
-        return render(request, self.template_name, {
-            'service_form': service_form,
-            'option_formset': option_formset,
-            'schedule_formset': schedule_formset,
+        return {
+            'service_form': ServiceForm(instance=self.service),
+            'option_formset': OptionFormSet(instance=self.service, prefix='option'),
+            'schedule_formset': ScheduleFormSet(instance=self.service, prefix='schedule'),
+            'provinces': provinces,
+            'selected_cities': selected_cities,
+            'selected_city_ids': selected_city_ids,
+            'selected_province_id': selected_province_id,
             'is_edit': True
-        })
+        }
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data()
+
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            html = render_to_string(self.template_name, context, request=request)
+            return JsonResponse({'success': True, 'html': html})
+
+        return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
         service_form = ServiceForm(request.POST, request.FILES, instance=self.service)
         option_formset = OptionFormSet(request.POST, request.FILES, instance=self.service, prefix='option')
         schedule_formset = ScheduleFormSet(request.POST, request.FILES, instance=self.service, prefix='schedule')
 
-        if service_form.is_valid():
+        global_error = None
+        failed_ids = []
+
+        if service_form.is_valid() and option_formset.is_valid() and schedule_formset.is_valid():
             service = service_form.save()
+            city_ids = [int(cid) for cid in request.POST.get("cities", "").split(",") if cid]
+            service.locations.set(city_ids)
 
-            if option_formset.is_valid():
-                options = option_formset.save(commit=False)
-                for opt in options:
-                    opt.service = service
-                    opt.save()
-                for deleted in option_formset.deleted_objects:
-                    try:
-                        deleted.delete()
-                    except ProtectedError:
-                        messages.error(request, f"زمان بندی {deleted.date} در سفارشات استفاده شده و قابل حذف نیست.")
-                        return redirect("provider_service_edit", slug=service.slug)
+            # ✅ حذف Options
+            options = option_formset.save(commit=False)
+            for opt in options:
+                opt.service = service
+                opt.save()
 
-            if schedule_formset.is_valid():
-                schedules = schedule_formset.save(commit=False)
-                for schedule in schedules:
-                    schedule.service = service
-                    schedule.save()
-                for deleted in schedule_formset.deleted_objects:
-                    try:
-                        deleted.delete()
-                    except ProtectedError:
-                        messages.error(request, f"زمان بندی {deleted.date} در سفارشات استفاده شده و قابل حذف نیست.")
-                        return redirect("provider_service_edit", slug=service.slug)
+            for deleted in option_formset.deleted_objects:
+                try:
+                    deleted.delete()
+                except ProtectedError:
+                    global_error = "برخی آپشن‌ها به دلیل استفاده در سفارشات حذف نشدند."
+                    failed_ids.append(deleted.pk)
 
-            if option_formset.is_valid() and schedule_formset.is_valid():
+            # ✅ حذف Schedules
+            schedules = schedule_formset.save(commit=False)
+            for schedule in schedules:
+                schedule.service = service
+                schedule.save()
+
+            for deleted in schedule_formset.deleted_objects:
+                try:
+                    deleted.delete()
+                except ProtectedError:
+                    global_error = "برخی زمان‌بندی‌ها به دلیل استفاده در سفارشات حذف نشدند."
+                    failed_ids.append(deleted.pk)
+
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                if global_error:
+                    errors_html = render_to_string(
+                        'dashboard/services/errors.html',
+                        {
+                            'service_form': service_form,
+                            'option_formset': option_formset,
+                            'schedule_formset': schedule_formset,
+                            'global_error': global_error
+                        },
+                        request=request
+                    )
+                    return JsonResponse({
+                        'success': False,
+                        'errors_html': errors_html,
+                        'failed_ids': failed_ids
+                    })
+                return JsonResponse({'success': True, 'redirect_url': reverse("provider_service_list")})
+
+            if not global_error:
                 return redirect("provider_service_list")
 
-        print("🔴 ServiceForm Errors:", service_form.errors.as_json())
-        print("🔴 OptionFormset Management Errors:",
-              option_formset.management_form.errors.as_json() if option_formset.management_form.errors else "None")
-        for i, form in enumerate(option_formset.forms):
-            print(f"🔴 OptionForm #{i} Errors:", form.errors.as_json() if form.errors else "Valid")
-
-        print("🔴 ScheduleFormset Management Errors:",
-              schedule_formset.management_form.errors.as_json() if schedule_formset.management_form.errors else "None")
-        for i, form in enumerate(schedule_formset.forms):
-            print(f"🔴 ScheduleForm #{i} Errors:", form.errors.as_json() if form.errors else "Valid")
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            errors_html = render_to_string(
+                'dashboard/services/errors.html',
+                {
+                    'service_form': service_form,
+                    'option_formset': option_formset,
+                    'schedule_formset': schedule_formset,
+                    'global_error': global_error
+                },
+                request=request
+            )
+            return JsonResponse({
+                'success': False,
+                'errors_html': errors_html,
+                'failed_ids': failed_ids
+            })
 
         return render(request, self.template_name, {
             'service_form': service_form,
             'option_formset': option_formset,
             'schedule_formset': schedule_formset,
-            'is_edit': True
+            'is_edit': True,
+            'global_error': global_error
         })
+
+
+@login_required
+def load_cities(request):
+    province_id = request.GET.get('province')
+    if not province_id or not province_id.isdigit():
+        return JsonResponse({"cities": []})
+    cities = City.objects.filter(province_id=int(province_id)).order_by('name_fa')
+    return JsonResponse({"cities": list(cities.values("id", "name_fa"))})
 
 
 @login_required
@@ -196,8 +288,12 @@ def add_option(request):
 @require_POST
 @login_required
 def delete_option(request, pk):
-    Option.objects.filter(pk=pk).delete()
-    return JsonResponse({'success': True})
+    option = get_object_or_404(Option, pk=pk, service__provider_id=request.user.id)
+    try:
+        option.delete()
+        return JsonResponse({'success': True, 'message': 'آپشن با موفقیت حذف شد'})
+    except ProtectedError:
+        return JsonResponse({'success': False, 'error': f'آپشن "{option.title}" در سفارشات استفاده شده و قابل حذف نیست.'})
 
 
 @login_required
@@ -214,5 +310,9 @@ def add_schedule(request):
 @require_POST
 @login_required
 def delete_schedule(request, pk):
-    Schedule.objects.filter(pk=pk).delete()
-    return JsonResponse({'success': True})
+    schedule = get_object_or_404(Schedule, pk=pk, service__provider_id=request.user.id)
+    try:
+        schedule.delete()
+        return JsonResponse({'success': True, 'message': 'زمان‌بندی با موفقیت حذف شد'})
+    except ProtectedError:
+        return JsonResponse({'success': False, 'error': f' زمان‌بندی "{schedule.date}" در سفارشات استفاده شده و قابل حذف نیست.'})
