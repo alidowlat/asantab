@@ -1,0 +1,106 @@
+{% extends 'shared/_layout.html' %}
+{% load extra_filters %}
+
+{% block title %}
+    {{ provider.user.get_full_name }} | آسان تب
+{% endblock %}
+
+{% block content %}
+    <main class="flex-grow bg-background pt-[106px]">
+        <div class="container pt-10">
+            <!-- Breadcrumb -->
+            <div class="mb-8 flex flex-wrap items-center gap-2 text-sm text-text/60">
+                <a href="{% url 'index_page' %}" class="flex items-center gap-x-1 duration-300 hover:text-primary">
+                    آسان تب
+                    <div class="i-lucide-chevron-left size-4"></div>
+                </a>
+                <div>
+                    <a href="{% url 'provider_list_page' %}" class="flex items-center gap-x-1 duration-300 hover:text-primary">
+                        فروشندگان
+                        <div class="i-lucide-chevron-left size-4"></div>
+                    </a>
+                </div>
+                <div>
+                    <a href="{% url 'provider_detail_page' slug=provider.slug %}"
+                       class="flex items-center gap-x-1 duration-300 hover:text-primary">
+                        {{ provider.user.get_full_name }}
+                    </a>
+                </div>
+            </div>
+            <div class="mb-16 gap-4">
+                <div class="col-span-12 flex-grow rounded-lg bg-muted px-4 py-6 shadow-md lg:col-span-9">
+                    <div class="grid grid-cols-12 gap-6">
+                        <div class="col-span-12 space-y-4 lg:col-span-4 lg:min-w-fit">
+                            <div>
+                                <div class="space-y-4">
+                                    <img src="{{ provider.profile_image.url }}" alt="{{ provider.user.get_full_name }} pic"
+                                         loading="lazy"
+                                         class="mx-auto cursor-pointer rounded-xl">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-span-12 flex min-h-full flex-col lg:col-span-8">
+                            <div class="flex gap-4">
+                                <div class="flex-grow">
+                                    <div class="flex justify-between">
+                                        <h1 class="mb-4 text-lg font-semibold">{{ provider.user.get_full_name }}</h1>
+                                        <div>
+                                            <button data-popover-target="popover-share" data-popover-placement="right" type="button"
+                                                    data-modal-target="share-modal" data-modal-toggle="share-modal"
+                                                    class="icon-btn h-10 w-10">
+                                                <div class="i-lucide-share-2 size-6"></div>
+                                            </button>
+
+                                            <div data-popover="" id="popover-share" role="tooltip"
+                                                 class="absolute z-10 inline-block rounded-lg border bg-background px-2 py-1 text-sm shadow-sm transition-opacity duration-300 opacity-0 invisible"
+                                                 data-popper-placement="right"
+                                                 style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(432px, 315px);">
+                                                <div class="px-3 py-2">
+                                                    <p>اشتراک گذاری</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm opacity-75">{{ provider.bio }}</p>
+                                    <div class="mb-6 flex items-center gap-2 pt-4">
+                                        <span class="h-px flex-grow bg-secondary pt"></span>
+                                    </div>
+                                    <div class="mb-4 flex items-center gap-6 border-b pb-6 text-sm font-light">
+                                        <div class="text-text/95">بستر های تبلیغاتی</div>
+                                        <span class="h-4 w-px rounded-full bg-secondary"></span>
+                                        {% for platform in provider.platforms.all %}
+                                            <button onclick="window.open('{{ platform.url }}')"
+                                                    class="btn-primary rounded-lg px-4 py-2">{{ platform.name }}</button>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-grow flex-col">
+                                <div>
+                                    <p class="mb-6 font-medium">مشخصات فروشنده</p>
+                                    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                                        <div class="space-y-1 rounded-lg bg-background px-4 py-2 flex justify-between items-center">
+                                            <div class="line-clamp-1 text-sm text-text/60">
+                                                تاریخ تولد
+                                            </div>
+                                            <div class="line-clamp-1 text-text/95">
+                                                {{ provider.user.birth_date|show_date }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if related_services %}
+                {% include 'services/components/related_service.html' %}
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- Share Modal -->
+    {% include 'providers/components/modals/share_modal.html' %}
+{% endblock %}

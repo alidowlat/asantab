@@ -1,0 +1,59 @@
+{% extends 'shared/_layout.html' %}
+
+{% block title %}
+    لیست فروشندگان | آسان تب
+{% endblock %}
+
+
+{% block content %}
+    <div class="container pt-[106px]">
+        <div>
+            <div class="space-y-10">
+                <section class="container py-10">
+                    <a href="{% url 'index_page' %}" class="mb-10 inline-block pl-4 text-sm font-medium text-text/60">فروشگاه اینترنتی
+                        آسان تب</a>
+                    <div class="mb-6 flex items-center gap-x-6 text-nowrap">
+                        <h2 class="font-semiBold lg:text-xl">لیست فروشندگان</h2>
+                        <div class="h-[0.25px] w-full bg-secondary"></div>
+                    </div>
+
+                    <div>
+                        <div class="!px-px pt-4">
+                            <div class="grid grid-cols-2 gap-2 gap-y-2 xs:gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 py-px"
+                                 id="swiper-wrapper-b4b5e877cb6dcf86" aria-live="polite">
+                                <!-- product -->
+                                {% for provider in providers %}
+                                    <div class="swiper-slide swiper-slide-active" style="width: 206.333px; margin-left: 20px;"
+                                         role="group"
+                                         aria-label="{{ forloop.counter }} / {{ forloop.last }}">
+                                        <div class="border-gradient relative rounded-[--product-card-radius] p-px [--product-card-radius:theme(borderRadius.2xl)] before:absolute before:-inset-px before:h-[calc(100%+2px)] before:w-[calc(100%+2px)] before:rounded-[--product-card-radius] before:content-['']">
+                                            <a href="{% url 'provider_detail_page' slug=provider.slug %}"
+                                               class="relative block overflow-hidden rounded-[calc(var(--product-card-radius)-1px)] bg-muted">
+                                                <div class="mb-4 bg-secondary p-2 lg:p-4">
+                                                    <img src="
+                                                            {% if provider.profile_image %}{{ provider.profile_image.url }}{% endif %}"
+                                                         alt="{{ provider.username }} pic"
+                                                         class="w-full rounded-xl object-cover">
+                                                </div>
+                                                <div class="px-2 lg:px-4">
+                                                    <p class="line-clamp-2 text-center h-10 text-sm xs:text-base">
+                                                        {{ provider.user.get_full_name }}
+                                                    </p>
+                                                </div>
+                                                <div class="px-2 lg:px-4">
+                                                    <p class="text-center opacity-75 text-sm h-10">
+                                                        {{ provider.province.name_fa }} - {{ provider.city.name_fa }}
+                                                    </p>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+{% endblock %}
