@@ -1,8 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.html import format_html
-
-from accounts.models import User, Provider
+from accounts.models import User, Provider, ProviderPlatform
 
 
 @admin.register(User)
@@ -51,3 +50,6 @@ class ProviderAdmin(admin.ModelAdmin):
                 'fields': ('iban_number', 'card_number', 'national_card_image'),
             }),)
         return fieldsets
+
+
+admin.site.register(ProviderPlatform)
