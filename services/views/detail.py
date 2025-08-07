@@ -4,6 +4,8 @@ from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
 from django.views.generic import DetailView
+
+from accounts.models import Provider
 from core import get_client_info
 from core.clean import create_visit_clean
 from reviews.models.service_review import ServiceReview, ServiceReviewReaction
@@ -68,6 +70,23 @@ class ServiceDetailView(DetailView):
             user=user, reaction='dislike').values_list('review_id', flat=True))
 
         return liked_ids, disliked_ids
+
+
+class ProviderDetailView(DetailView):
+    model = Provider
+    template_name = "providers/detail.html"
+    context_object_name = "provider"
+
+    def get_context_data(self, **kwargs):
+        context = super(ProviderDetailView, self).get_context_data(**kwargs)
+        related_services = Service.objects.filter(
+            is_active=True,
+            provider=self.object
+        ).select_related('provider')
+        context['related_services'] = related_services
+
+        return context
+
 
 
 def add_service_review(request: HttpRequest):

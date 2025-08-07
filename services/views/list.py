@@ -2,7 +2,8 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Max, Min, Count
 from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_POST
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
+from accounts.models import Provider
 from config.views import apply_filters
 from locations.models import City
 from services.models import Service, Category, Profession, ServiceTag, Platform
@@ -54,6 +55,16 @@ class ServiceListView(ListView):
                 filtered_qs = filtered_qs.order_by('-id')
 
         return filtered_qs
+
+
+class ProviderListView(ListView):
+    model = Provider
+    template_name = "providers/list.html"
+    context_object_name = 'providers'
+    paginate_by = 12
+
+    def get_queryset(self):
+        return Provider.objects.select_related("user").order_by("-id")
 
 
 @staff_member_required
