@@ -1,5 +1,6 @@
 from django.core.validators import RegexValidator
 from django.db import models
+from django.urls import reverse
 from django.utils.text import slugify
 from .user import User
 from core.media_path import get_image_upload_to
@@ -44,6 +45,9 @@ class Provider(models.Model):
     def __str__(self):
         return self.user.get_full_name() or self.user.phone_number
 
+    def get_absolute_url(self):
+        return reverse('provider_detail_page', kwargs={'slug': self.slug})
+
     def save(self, *args, **kwargs):
         self.slug = slugify(self.username)
 
@@ -82,3 +86,17 @@ class Provider(models.Model):
         verbose_name = 'Provider'
         verbose_name_plural = 'Providers'
         db_table = 'providers'
+
+
+class ProviderPlatform(models.Model):
+    provider = models.ForeignKey(Provider, on_delete=models.CASCADE, related_name='platforms', verbose_name='فروشنده')
+    name = models.CharField(max_length=50, verbose_name='نام پلتفرم')
+    url = models.URLField(verbose_name='آدرس پلتفرم')
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Provider Platform'
+        verbose_name_plural = 'Provider Platforms'
+        db_table = 'provider_platforms'
