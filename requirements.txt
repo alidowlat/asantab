@@ -11,6 +11,7 @@ django-jalali-date==2.0.0
 django-js-asset==3.1.2
 django-render-partial==0.4
 django-widget-tweaks==1.5.0
+gunicorn==23.0.0
 idna==3.10
 isodate==0.7.2
 jalali_core==1.0.0
@@ -19,6 +20,7 @@ kavenegar==1.1.2
 Khayyam==3.0.17
 lxml==5.4.0
 mysqlclient==2.2.7
+packaging==25.0
 pillow==11.2.1
 platformdirs==4.3.8
 pytz==2025.2
@@ -28,4 +30,5 @@ requests-toolbelt==1.0.0
 setuptools==80.3.0
 sqlparse==0.5.3
 urllib3==2.4.0
+whitenoise==6.9.0
 zeep==4.3.1
