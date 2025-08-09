@@ -92,7 +92,7 @@ DATABASES = {
         'NAME': 'asantab',
         'USER': 'asantab_admin',
         'PASSWORD': 'ad831901!',
-        'HOST': 'localhost',
+        'HOST': '127.0.0.1',
         'PORT': '3306',
     }
 }
