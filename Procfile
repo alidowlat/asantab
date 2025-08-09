@@ -1,1 +1,1 @@
-web: gunicorn asantab.wsgi
+web: gunicorn main.wsgi
