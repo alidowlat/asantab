@@ -724,29 +724,25 @@ document.addEventListener("DOMContentLoaded", () => {
                                   preselectedCitiesInputId = "preselected-cities"
                               }) {
 
-        // ========== قیمت با کاما و اعداد فارسی ==========
-        const persianToEnglishNumber = (str) => str.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
         const formatNumberWithCommas = (value) => value.replace(/\B(?=(\d{3})+(?!\d))/g, "٬");
 
         function bindPriceFormatter(input) {
             input.type = "text";
             input.style.direction = "ltr";
-
             const initialValue = input.defaultValue || input.value;
             if (initialValue.trim() !== "") {
                 let raw = initialValue.replace(/[٬,]/g, '').replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
                 input.value = formatNumberWithCommas(raw);
             }
-
-            input.addEventListener("input", function () {
+            input.addEventListener("input", () => {
                 let raw = input.value.replace(/[٬,]/g, '').replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
                 input.value = formatNumberWithCommas(raw);
             });
         }
 
-        document.querySelectorAll("input[name$='unit_price']").forEach(input => bindPriceFormatter(input));
+        document.querySelectorAll("input[name$='unit_price']").forEach(bindPriceFormatter);
 
-        document.addEventListener("submit", function (e) {
+        document.addEventListener("submit", e => {
             if (e.target.id === formId) {
                 e.target.querySelectorAll("input[name$='unit_price']").forEach(input => {
                     let raw = input.value.replace(/[٬,]/g, '').replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
@@ -755,7 +751,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }, true);
 
-        // ========== پیام خالی فرم ها ==========
+
         function showEmptyMessage(formset, prefix) {
             if (!formset.querySelector(".empty-message")) {
                 const msg = document.createElement("div");
@@ -796,7 +792,20 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        // ========== داینامیک فرم ها ==========
+        function reindexForms(formset, prefix, formClass) {
+            const forms = formset.querySelectorAll(`.${formClass}`);
+            const totalFormsInput = document.querySelector(`#id_${prefix}-TOTAL_FORMS`);
+            forms.forEach((form, index) => {
+                const regex = new RegExp(`${prefix}-(\\d+|__prefix__)`, "g");
+                form.querySelectorAll("input, select, textarea, label").forEach(el => {
+                    if (el.name) el.name = el.name.replace(regex, `${prefix}-${index}`);
+                    if (el.id) el.id = el.id.replace(regex, `${prefix}-${index}`);
+                    if (el.htmlFor) el.htmlFor = el.htmlFor.replace(regex, `${prefix}-${index}`);
+                });
+            });
+            totalFormsInput.value = forms.length;
+        }
+
         function setupDynamicForms({addButtonSelector, formsetSelector, fetchUrl, formClass, removeBtnClass, prefix}) {
             document.querySelectorAll(addButtonSelector).forEach(addBtn => {
                 const wrapper = addBtn.closest(".dynamic-form-wrapper");
@@ -805,13 +814,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 updateEmptyState(wrapper, formClass, prefix);
 
-                wrapper.addEventListener("click", function (e) {
+                wrapper.addEventListener("click", e => {
                     if (e.target.closest(`.add-${prefix}`) && e.target.closest(".empty-message")) {
                         addBtn.click();
                     }
                 });
 
-                addBtn.addEventListener("click", function () {
+                addBtn.addEventListener("click", () => {
                     const formIndex = parseInt(totalFormsInput.value);
                     fetch(`${fetchUrl}?prefix=${prefix}&index=${formIndex}`, {
                         method: 'GET',
@@ -820,21 +829,25 @@ document.addEventListener("DOMContentLoaded", () => {
                         .then(res => res.json())
                         .then(data => {
                             if (data.success) {
-                                formset.insertAdjacentHTML('beforeend', data.html);
-                                totalFormsInput.value = formIndex + 1;
+                                let tempDiv = document.createElement('div');
+                                tempDiv.innerHTML = data.html;
+                                let newForm = tempDiv.firstElementChild;
 
-                                const newForm = formset.lastElementChild;
-                                newForm.querySelectorAll("input[name$='unit_price']").forEach(input => bindPriceFormatter(input));
+                                const idInput = newForm.querySelector(`input[name$='-id']`);
+                                if (idInput) idInput.remove();
+
+                                formset.appendChild(newForm);
+
+                                reindexForms(formset, prefix, formClass);
                                 updateEmptyState(wrapper, formClass, prefix);
+                                newForm.querySelectorAll("input[name$='unit_price']").forEach(bindPriceFormatter);
                             }
                         });
                 });
 
-                formset.addEventListener("click", function (e) {
+                formset.addEventListener("click", e => {
                     if (e.target.classList.contains(removeBtnClass)) {
                         const item = e.target.closest(`.${formClass}`);
-                        const id = item.getAttribute("data-id");
-
                         Swal.fire({
                             title: 'آیا مطمئنی؟',
                             text: "این عملیات قابل بازگشت نیست!",
@@ -843,14 +856,23 @@ document.addEventListener("DOMContentLoaded", () => {
                             confirmButtonText: 'بله، حذف کن',
                             cancelButtonText: 'نه، منصرف شدم',
                             reverseButtons: true
-                        }).then((result) => {
-                            if (result.isConfirmed && id) {
-
+                        }).then(result => {
+                            if (result.isConfirmed) {
+                                const id = item.getAttribute("data-id");
+                                const deleteInput = item.querySelector(`input[name$='-DELETE']`);
                                 if (!id || id === "None" || id === "") {
                                     item.remove();
-                                    const visibleForms = formset.querySelectorAll(`.${formClass}:not([style*="display: none"])`);
-                                    totalFormsInput.value = visibleForms.length;
+                                    reindexForms(formset, prefix, formClass);
                                     updateEmptyState(wrapper, formClass, prefix);
+
+                                    Swal.fire({
+                                        toast: true,
+                                        position: 'top-end',
+                                        icon: 'success',
+                                        title: 'با موفقیت حذف شد',
+                                        showConfirmButton: false,
+                                        timer: 2000
+                                    });
                                     return;
                                 }
 
@@ -864,9 +886,13 @@ document.addEventListener("DOMContentLoaded", () => {
                                     .then(res => res.json())
                                     .then(data => {
                                         if (data.success) {
-                                            item.remove();
-                                            const visibleForms = formset.querySelectorAll(`.${formClass}:not([style*="display: none"])`);
-                                            totalFormsInput.value = visibleForms.length;
+                                            if (deleteInput) {
+                                                deleteInput.checked = true;
+                                                item.style.display = 'none';
+                                            } else {
+                                                item.remove();
+                                            }
+                                            reindexForms(formset, prefix, formClass);
                                             updateEmptyState(wrapper, formClass, prefix);
 
                                             Swal.fire({
@@ -878,20 +904,20 @@ document.addEventListener("DOMContentLoaded", () => {
                                                 timer: 2000
                                             });
                                         } else {
-                                            let errorBox = document.getElementById("form-errors");
-                                            if (!errorBox) {
-                                                errorBox = document.createElement("div");
-                                                errorBox.id = "form-errors";
-                                                document.querySelector("form").prepend(errorBox);
-                                            }
-                                            errorBox.className = "bg-red-100 text-red-600 p-4 rounded mb-2";
-                                            errorBox.textContent = data.error || 'خطایی رخ داد';
-
-                                            errorBox.scrollIntoView({
-                                                behavior: 'smooth',
-                                                block: 'center'
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'خطا در حذف',
+                                                text: data.error || 'امکان حذف این مورد وجود ندارد.',
                                             });
+                                            // حذف فیزیکی انجام نشود چون خطا وجود دارد
                                         }
+                                    })
+                                    .catch(() => {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'خطا در اتصال',
+                                            text: 'ارتباط با سرور برقرار نشد.'
+                                        });
                                     });
                             }
                         });
@@ -900,7 +926,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // ========== شهر ها ==========
         const provinceSelect = document.getElementById(provinceSelectId);
         const dropdownBtn = document.getElementById(cityDropdownId);
         const cityOptions = document.getElementById(cityOptionsId);
@@ -913,7 +938,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (preselectedCitiesInput && preselectedCitiesInput.value.trim() !== "") {
             try {
                 selectedCities = JSON.parse(preselectedCitiesInput.value);
-            } catch (e) {
+            } catch {
                 selectedCities = [];
             }
         }
@@ -949,19 +974,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         provinceSelect.addEventListener("change", e => fetchCities(e.target.value));
 
-        dropdownBtn.addEventListener("click", () => {
-            cityOptions.classList.toggle("hidden");
-        });
+        dropdownBtn.addEventListener("click", () => cityOptions.classList.toggle("hidden"));
 
         cityOptions.addEventListener("change", e => {
             if (e.target.classList.contains("city-checkbox")) {
                 const cityId = parseInt(e.target.dataset.id);
                 const cityName = e.target.dataset.name;
-
                 if (e.target.checked) {
-                    if (!selectedCities.some(c => c.id === cityId)) {
-                        selectedCities.push({id: cityId, name: cityName});
-                    }
+                    if (!selectedCities.some(c => c.id === cityId)) selectedCities.push({id: cityId, name: cityName});
                 } else {
                     selectedCities = selectedCities.filter(c => c.id !== cityId);
                 }
@@ -982,19 +1002,14 @@ document.addEventListener("DOMContentLoaded", () => {
         renderSelectedCities();
         fetchCities(provinceSelect.value);
 
-        // ========== ارسال فرم ==========
         const form = document.getElementById(formId);
-
-        form.addEventListener("submit", function (e) {
+        form.addEventListener("submit", e => {
             e.preventDefault();
-            const formData = new FormData(this);
-
-            fetch(this.action, {
+            const formData = new FormData(form);
+            fetch(form.action, {
                 method: "POST",
                 body: formData,
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest"
-                }
+                headers: {"X-Requested-With": "XMLHttpRequest"}
             })
                 .then(res => res.json())
                 .then(data => {
@@ -1006,73 +1021,21 @@ document.addEventListener("DOMContentLoaded", () => {
                             timer: 2000,
                             timerProgressBar: true,
                             showConfirmButton: false
-                        }).then(() => {
-                            window.location.href = data.redirect_url;
-                        });
+                        }).then(() => window.location.href = data.redirect_url);
                     } else {
                         const errorContainer = document.getElementById("form-errors");
                         errorContainer.innerHTML = data.errors_html;
-                        errorContainer.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center'
-                        });
+                        errorContainer.scrollIntoView({behavior: 'smooth', block: 'center'});
                     }
                 })
-                .catch(() => {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'مشکل در ارسال فرم',
-                        text: 'لطفاً دوباره تلاش کنید.',
-                        timer: 3000
-                    });
-                });
+                .catch(() => Swal.fire({
+                    icon: 'error',
+                    title: 'مشکل در ارسال فرم',
+                    text: 'لطفاً دوباره تلاش کنید.',
+                    timer: 3000
+                }));
         });
 
-        const dropzone = document.getElementById('dropzone');
-        const input = document.getElementById('imageInput');
-        const loader = document.getElementById('loader');
-
-        dropzone.addEventListener('click', () => input.click());
-
-        dropzone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropzone.classList.add('border-blue-600', 'bg-blue-50');
-        });
-
-        dropzone.addEventListener('dragleave', () => {
-            dropzone.classList.remove('border-blue-600', 'bg-blue-50');
-        });
-
-        dropzone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            input.files = e.dataTransfer.files;
-            dropzone.classList.remove('border-blue-600', 'bg-blue-50');
-            simulateUpload();
-        });
-
-        input.addEventListener('change', simulateUpload);
-
-        function simulateUpload() {
-            if (!input.files.length) return;
-
-            loader.classList.remove('hidden');
-
-            setTimeout(() => {
-                loader.classList.add('hidden');
-
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'تصویر با موفقیت آپلود شد',
-                    showConfirmButton: false,
-                    timer: 2000,
-                    timerProgressBar: true,
-                });
-            }, 2000);
-        }
-
-        // ========== داینامیک فرم‌ها ==========
         setupDynamicForms({
             addButtonSelector: `.add-${optionPrefix}`,
             formsetSelector: ".option-formset",
@@ -1090,10 +1053,98 @@ document.addEventListener("DOMContentLoaded", () => {
             removeBtnClass: "remove-schedule",
             prefix: schedulePrefix
         });
-
     }
 
-    // اجرا با پارامترهای مناسب
+    // بخش آپلود تصویر - بدون تغییر
+    document.querySelectorAll('.image-upload-wrapper').forEach(wrapper => {
+        const dropzone = wrapper.querySelector('#dropzone');
+        const input = wrapper.querySelector('#imageInput');
+        const loader = wrapper.querySelector('#loader');
+        const cropModal = document.getElementById('cropModal');
+        const cropImage = document.getElementById('cropImage');
+        const cancelCrop = document.getElementById('cancelCrop');
+        const confirmCrop = document.getElementById('confirmCrop');
+        let cropper;
+
+        cancelCrop.className = "btn-warning w-full rounded-lg px-4 py-2 md:w-auto";
+        confirmCrop.className = "btn-primary w-full rounded-lg px-4 py-2 md:w-auto";
+
+        const handleFileSelect = () => {
+            if (!input.files.length) return;
+            const file = input.files[0];
+            const reader = new FileReader();
+            reader.onload = e => {
+                cropImage.src = e.target.result;
+                document.querySelector('[data-modal-hide="profile_image-modal"]')?.click();
+                cropModal.classList.remove('hidden');
+                if (cropper) cropper.destroy();
+                cropper = new Cropper(cropImage, {aspectRatio: 1, viewMode: 1});
+            };
+            reader.readAsDataURL(file);
+        };
+
+        dropzone.addEventListener('drop', e => {
+            e.preventDefault();
+            input.files = e.dataTransfer.files;
+            dropzone.classList.remove('border-blue-600', 'bg-blue-50');
+            handleFileSelect();
+        });
+        dropzone.addEventListener('click', () => input.click());
+        dropzone.addEventListener('dragover', e => {
+            e.preventDefault();
+            dropzone.classList.add('border-blue-600', 'bg-blue-50');
+        });
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.classList.remove('border-blue-600', 'bg-blue-50');
+        });
+        input.addEventListener('change', handleFileSelect);
+
+        cancelCrop.addEventListener('click', () => {
+            cropModal.classList.add('hidden');
+            if (cropper) cropper.destroy();
+        });
+
+        confirmCrop.addEventListener('click', () => {
+            loader.classList.remove('hidden');
+            cropper.getCroppedCanvas().toBlob(blob => {
+                const formData = new FormData();
+                formData.append(input.name, blob, 'cropped_image.png');
+                formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+
+                fetch(wrapper.dataset.uploadUrl, {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'same-origin',
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        loader.classList.add('hidden');
+                        cropModal.classList.add('hidden');
+                        if (cropper) cropper.destroy();
+                        if (data.success) {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'تصویر با موفقیت آپلود شد',
+                                showConfirmButton: false,
+                                timer: 2000,
+                                timerProgressBar: true,
+                            });
+                        } else {
+                            Swal.fire({icon: 'error', title: 'خطا در آپلود', text: 'مشکلی پیش آمد. لطفاً دوباره تلاش کنید.'});
+                        }
+                    })
+                    .catch(() => {
+                        loader.classList.add('hidden');
+                        cropModal.classList.add('hidden');
+                        if (cropper) cropper.destroy();
+                        Swal.fire({icon: 'error', title: 'خطا در اتصال', text: 'ارتباط با سرور برقرار نشد.'});
+                    });
+            });
+        });
+    });
+
     if (document.getElementById("edit-service-form")) {
         setupServiceForm({
             formId: "edit-service-form",
