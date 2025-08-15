@@ -48,11 +48,9 @@ class ProviderServiceCreate(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data()
-
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             html = render_to_string(self.template_name, context, request=request)
             return JsonResponse({'success': True, 'html': html})
-
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
@@ -71,21 +69,26 @@ class ProviderServiceCreate(LoginRequiredMixin, View):
             city_ids = [int(cid) for cid in request.POST.get("cities", "").split(",") if cid]
             service.locations.set(city_ids)
 
-            # ذخیره آپشن‌ها
-            options = option_formset.save(commit=False)
-            for opt in options:
+            profession_ids = [int(pid) for pid in request.POST.get("profession", "").split(",") if pid]
+            service.profession.set(profession_ids)
+
+            tag_ids = [int(tid) for tid in request.POST.get("tags", "").split(",") if tid]
+            service.tags.set(tag_ids)
+
+            for opt in option_formset.save(commit=False):
+                if not getattr(opt, 'title', '').strip():
+                    continue
                 opt.service = service
                 opt.save()
 
-            # ذخیره زمان‌بندی‌ها
-            schedules = schedule_formset.save(commit=False)
-            for schedule in schedules:
+            for schedule in schedule_formset.save(commit=False):
+                if not getattr(schedule, 'date', None):
+                    continue
                 schedule.service = service
                 schedule.save()
 
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({'success': True, 'redirect_url': reverse("provider_service_list")})
-
             return redirect("provider_service_list")
 
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -173,31 +176,33 @@ class ProviderServiceEdit(LoginRequiredMixin, View):
             city_ids = [int(cid) for cid in request.POST.get("cities", "").split(",") if cid]
             service.locations.set(city_ids)
 
-            # ✅ حذف Options
-            options = option_formset.save(commit=False)
-            for opt in options:
-                opt.service = service
-                opt.save()
-
-            for deleted in option_formset.deleted_objects:
+            # حذف آیتم‌های حذف‌شده
+            for deleted in getattr(option_formset, 'deleted_objects', []):
                 try:
                     deleted.delete()
                 except ProtectedError:
                     global_error = "برخی آپشن‌ها به دلیل استفاده در سفارشات حذف نشدند."
                     failed_ids.append(deleted.pk)
 
-            # ✅ حذف Schedules
-            schedules = schedule_formset.save(commit=False)
-            for schedule in schedules:
-                schedule.service = service
-                schedule.save()
-
-            for deleted in schedule_formset.deleted_objects:
+            for deleted in getattr(schedule_formset, 'deleted_objects', []):
                 try:
                     deleted.delete()
                 except ProtectedError:
                     global_error = "برخی زمان‌بندی‌ها به دلیل استفاده در سفارشات حذف نشدند."
                     failed_ids.append(deleted.pk)
+
+            # ذخیره آیتم‌های جدید/ویرایش‌شده
+            for opt in option_formset.save(commit=False):
+                if not getattr(opt, 'title', '').strip():
+                    continue
+                opt.service = service
+                opt.save()
+
+            for schedule in schedule_formset.save(commit=False):
+                if not getattr(schedule, 'date', None):
+                    continue
+                schedule.service = service
+                schedule.save()
 
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 if global_error:
