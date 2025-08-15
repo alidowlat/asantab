@@ -24,39 +24,192 @@
 
             <!-- Content -->
             <div class="space-y-6 px-4 py-5 sm:p-6">
-                <form class="space-y-6 w-full" novalidate>
+                <form class="space-y-6 w-full" id="profileImageForm" method="post" enctype="multipart/form-data" novalidate>
                     {% csrf_token %}
-                    <div class="space-y-3">
-                        <label dir="ltr"
-                               for="{{ profile_image_form.profile_image.id_for_label }}"
-                               class="relative block w-full rounded-lg border bg-muted shadow-sm duration-300 focus-within:border-primary"
-                        >
-                            {{ profile_image_form.profile_image|add_class:"modal-input peer w-full rounded-lg bg-transparent p-2 placeholder-transparent outline-none focus:ring-0 xs:px-4 xs:py-3" }}
-                            <span dir="rtl"
-                                  class="pointer-events-none absolute start-3 -translate-y-1/2 rounded-full bg-muted px-2 text-base text-text/80 transition-all duration-200"
-                            >
-                                پروفایل
-                            </span>
-                        </label>
-                        <div class="flex">
-                            <i class="hidden i-lucide-circle-alert text-warning ml-2"></i>
-                            <p class="error-text h-5 text-sm text-warning">
-                                {% if profile_image_form.profile_image.errors %}{{ profile_image_form.profile_image.errors.0 }}{% endif %}
-                            </p>
+                    <label class="block text-lg mb-2">تصویر سرویس:</label>
+
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-6">
+                            {% if profile_image_form.instance.profile_image %}
+                                <div class="w-50">
+                                    <img src="{{ profile_image_form.instance.profile_image.url }}" alt="Current Image"
+                                         class="w-full h-full object-cover rounded-xl border border-gray-300">
+                                </div>
+                            {% endif %}
+
+                            <div class="image-upload-wrapper" data-upload-url="/profile/update-profile-image/">
+                                <div class="relative w-full">
+                                    <div id="dropzone"
+                                         class="w-50 border-2 border-gray-400 rounded-xl p-4 text-center text-gray-500 cursor-pointer transition hover:border-blue-500 hover:bg-blue-50 flex flex-col items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                             class="lucide lucide-package-open-icon lucide-package-open mb-2">
+                                            <path d="M12 22v-9"/>
+                                            <path d="M15.17 2.21a1.67 1.67 0 0 1 1.63 0L21 4.57a1.93 1.93 0 0 1 0 3.36L8.82 14.79a1.655 1.655 0 0 1-1.64 0L3 12.43a1.93 1.93 0 0 1 0-3.36z"/>
+                                            <path d="M20 13v3.87a2.06 2.06 0 0 1-1.11 1.83l-6 3.08a1.93 1.93 0 0 1-1.78 0l-6-3.08A2.06 2.06 0 0 1 4 16.87V13"></path>
+                                            <path d="M21 12.43a1.93 1.93 0 0 0 0-3.36L8.83 2.2a1.64 1.64 0 0 0-1.63 0L3 4.57a1.93 1.93 0 0 0 0 3.36l12.18 6.86a1.636 1.636 0 0 0 1.63 0z"/>
+                                        </svg>
+                                        کلیک کنید یا تصویر را اینجا رها کنید
+                                        <input id="imageInput"
+                                               type="file"
+                                               name="{{ profile_image_form.profile_image.name }}"
+                                               class="hidden"
+                                               accept="image/*"
+                                        >
+                                    </div>
+
+                                    <div id="loader"
+                                         class="w-50 absolute bg-muted border-2 border-gray-400 inset-0 hidden flex items-center justify-center bg-opacity-60 rounded-xl">
+                                        <svg class="w-20 h-20 animate-spin text-blue-600" viewBox="0 0 100 100">
+                                            <circle cx="50" cy="50" r="35" stroke="currentColor" stroke-width="10"
+                                                    fill="none" stroke-linecap="round"
+                                                    stroke-dasharray="200" stroke-dashoffset="0"></circle>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Footer -->
-                    <div class="flex justify-end gap-4">
-                        <button
-                                type="button"
-                                class="submit-btn btn-primary w-full rounded-lg px-4 py-2 md:w-auto"
-                        >
-                            ویرایش
-                        </button>
+                    <div class="flex justify-end gap-4 pt-4">
+                        <button type="submit" class="submit-btn btn-primary w-full rounded-lg px-4 py-2 md:w-auto">ذخیره</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<div id="cropModal" class="hidden backdrop-blur bg-black/60 fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
+    <div class="relative max-h-full w-full max-w-md">
+        <div class="overflow-hidden rounded-lg border bg-muted shadow">
+
+            <!-- Header -->
+            <div class="px-4 py-5 sm:px-6 border-b">
+                <div class="flex justify-start">
+                    <h3 class="md:text-lg">برش تصویر پروفایل</h3>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="space-y-6 px-4 py-1.5 sm:p-6 flex justify-center">
+                <img id="cropImage" class="max-w-full max-h-72 rounded-md"/>
+            </div>
+
+            <!-- Footer -->
+            <div class="flex justify-end gap-4 border-t px-4 py-3 sm:px-6">
+                <button id="cancelCrop" type="button">
+                    لغو
+                </button>
+                <button id="confirmCrop" type="button">
+                    تأیید
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.css"/>
+
+<script>
+    document.querySelectorAll('.image-upload-wrapper').forEach(wrapper => {
+        const dropzone = wrapper.querySelector('#dropzone');
+        const input = wrapper.querySelector('#imageInput');
+        const loader = wrapper.querySelector('#loader');
+        const cropModal = document.getElementById('cropModal');
+        const cropImage = document.getElementById('cropImage');
+        const cancelCrop = document.getElementById('cancelCrop');
+        const confirmCrop = document.getElementById('confirmCrop');
+
+        let cropper;
+        cancelCrop.className = "btn-warning w-full rounded-lg px-4 py-2 md:w-auto";
+        confirmCrop.className = "btn-primary w-full rounded-lg px-4 py-2 md:w-auto";
+
+        const handleFileSelect = () => {
+            if (!input.files.length) return;
+            const file = input.files[0];
+            const reader = new FileReader();
+            reader.onload = e => {
+                cropImage.src = e.target.result;
+                document.querySelector('[data-modal-hide="profile_image-modal"]')?.click();
+                cropModal.classList.remove('hidden');
+                if (cropper) cropper.destroy();
+                cropper = new Cropper(cropImage, {aspectRatio: 1, viewMode: 1});
+            };
+            reader.readAsDataURL(file);
+        };
+
+        dropzone.addEventListener('drop', e => {
+            e.preventDefault();
+            input.files = e.dataTransfer.files;
+            dropzone.classList.remove('border-blue-600', 'bg-blue-50');
+            handleFileSelect();
+        });
+
+        dropzone.addEventListener('click', () => input.click());
+        dropzone.addEventListener('dragover', e => {
+            e.preventDefault();
+            dropzone.classList.add('border-blue-600', 'bg-blue-50');
+        });
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.classList.remove('border-blue-600', 'bg-blue-50');
+        });
+        input.addEventListener('change', handleFileSelect);
+
+        cancelCrop.addEventListener('click', () => {
+            cropModal.classList.add('hidden');
+            if (cropper) cropper.destroy();
+        });
+
+        confirmCrop.addEventListener('click', () => {
+            loader.classList.remove('hidden');
+            cropper.getCroppedCanvas().toBlob(blob => {
+                const formData = new FormData();
+                formData.append(input.name, blob, 'cropped_image.png');
+                formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+
+                fetch(wrapper.dataset.uploadUrl, {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'same-origin',
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        loader.classList.add('hidden');
+                        cropModal.classList.add('hidden');
+                        if (cropper) cropper.destroy();
+
+                        if (data.success) {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'تصویر با موفقیت آپلود شد',
+                                showConfirmButton: false,
+                                timer: 2000,
+                                timerProgressBar: true,
+                            }).then(() => {
+                                if (data.redirect_url) window.location.href = data.redirect_url;
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'خطا در آپلود',
+                                text: 'مشکلی پیش آمد. لطفاً دوباره تلاش کنید.'
+                            });
+                        }
+                    })
+                    .catch(() => {
+                        loader.classList.add('hidden');
+                        cropModal.classList.add('hidden');
+                        if (cropper) cropper.destroy();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'خطا در اتصال',
+                            text: 'ارتباط با سرور برقرار نشد.'
+                        });
+                    });
+            });
+        });
+    });
+</script>
