@@ -5,6 +5,30 @@ from django import forms
 import re
 
 
+class PlatformLinkCleanMixin(forms.Form):
+    def clean_url(self):
+        url = self.cleaned_data.get('url', '').strip()
+
+        if url.startswith('https://'):
+            url = url[len('https://'):]
+
+        url = fa_to_en_digits(url)
+
+        if not re.match(r'^[\w\-\./?=&]+$', url):
+            raise ValidationError('آدرس وارد شده معتبر نیست.')
+
+        if len(url) < 5:
+            raise ValidationError('آدرس باید حداقل ۵ کاراکتر داشته باشد.')
+
+        return url
+
+    def clean(self):
+        cleaned_data = super().clean()
+        url = cleaned_data.get('url', '')
+        cleaned_data['url'] = 'https://' + url
+        return cleaned_data
+
+
 class UsernameCleanMixin(forms.Form):
     def clean_username(self):
         username = self.cleaned_data.get('username', '')
