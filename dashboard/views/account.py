@@ -9,7 +9,7 @@ from jalali_date import date2jalali
 from accounts.models import Provider
 from dashboard.forms import UpdateEmailForm, UpdateNameForm, UpdatePhoneForm, UpdateNationalIDForm, UpdateGenderForm, \
     UpdateBirthdateForm, UpdateUsernameForm, UpdateBioForm, UpdateLocationForm, UpdateIbanForm, UpdateCardNumberForm, \
-    UpdateProfileImageForm, UpdatePasswordForm
+    UpdateProfileImageForm, UpdatePasswordForm, UpdatePlatformUrlsForm
 
 
 class AccountView(LoginRequiredMixin, TemplateView):
@@ -35,6 +35,7 @@ class AccountView(LoginRequiredMixin, TemplateView):
             context['iban_form'] = UpdateIbanForm(instance=provider)
             context['card_number_form'] = UpdateCardNumberForm(instance=provider)
             context['profile_image_form'] = UpdateProfileImageForm(instance=provider)
+            context['platformurls_form'] = UpdatePlatformUrlsForm(instance=provider)
             context['password_form'] = UpdatePasswordForm(user=self.request.user)
 
         initial = {}
@@ -243,6 +244,7 @@ class UpdateProfileImageView(LoginRequiredMixin, View):
         if form.is_valid():
             form.save()
             return JsonResponse({'success': True, 'redirect_url': reverse('account_info_page')})
+
         return JsonResponse({'success': False, 'errors': form.errors.get_json_data()})
 
 
@@ -273,4 +275,21 @@ class UpdatePasswordView(LoginRequiredMixin, View):
 
             return JsonResponse({'success': True, 'redirect_url': reverse('account_info_page')})
 
+        return JsonResponse({'success': False, 'errors': form.errors.get_json_data()})
+
+
+class UpdatePlatformUrlsView(LoginRequiredMixin, View):
+    def get(self, request):
+        platformurls_form = UpdatePlatformUrlsForm(instance=request.user)
+        return render(request, 'dashboard/account/modal/platform_modal.html', {'platformurls_form': platformurls_form})
+
+    def post(self, request):
+        if not request.user.is_provider:
+            return JsonResponse({'success': False})
+
+        provider = get_object_or_404(Provider, user=request.user)
+        form = UpdatePlatformUrlsForm(request.POST, instance=provider)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True, 'redirect_url': reverse('account_info_page')})
         return JsonResponse({'success': False, 'errors': form.errors.get_json_data()})
