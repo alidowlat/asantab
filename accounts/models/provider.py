@@ -41,6 +41,8 @@ class Provider(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name='وضعیت')
     is_verified = models.BooleanField(default=False, verbose_name='تایید شده؟')
     is_profile_complete = models.BooleanField(default=False, verbose_name='پروفایل تکمیل شده؟')
+    instagram_url = models.URLField(blank=True, null=True)
+    telegram_url = models.URLField(blank=True, null=True)
 
     def __str__(self):
         return self.user.get_full_name() or self.user.phone_number
@@ -87,16 +89,3 @@ class Provider(models.Model):
         verbose_name_plural = 'Providers'
         db_table = 'providers'
 
-
-class ProviderPlatform(models.Model):
-    provider = models.ForeignKey(Provider, on_delete=models.CASCADE, related_name='platforms', verbose_name='فروشنده')
-    name = models.CharField(max_length=50, verbose_name='نام پلتفرم')
-    url = models.URLField(verbose_name='آدرس پلتفرم')
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = 'Provider Platform'
-        verbose_name_plural = 'Provider Platforms'
-        db_table = 'provider_platforms'
