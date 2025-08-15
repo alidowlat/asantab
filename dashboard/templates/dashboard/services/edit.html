@@ -8,7 +8,8 @@
 {% endblock %}
 
 {% block extra_header %}
-    {% static 'scripts/actions.js' %}
+    <script src="/static/scripts/uploadImage.js"></script>
+    <script src="/static/scripts/action.js"></script>
 {% endblock %}
 
 
@@ -108,9 +109,14 @@
 
                         <div class="flex items-center gap-6">
                             {% if service_form.instance.image %}
-                                <div class="w-50">
+                                <div class="w-50" id="currentImageWrapper">
                                     <img src="{{ service_form.instance.image.url }}" alt="Current Image"
-                                         class="w-full h-full object-cover rounded-xl border border-gray-300">
+                                         class="w-full h-full object-cover rounded-xl border border-gray-300" id="currentImage">
+                                </div>
+                            {% else %}
+                                <div class="w-50">
+                                    <img src="/static/images/p1.png" alt="Current Image"
+                                         class="w-full h-full object-cover rounded-xl border border-gray-300" id="currentImage">
                                 </div>
                             {% endif %}
 
@@ -141,8 +147,8 @@
                                                 stroke-dasharray="200" stroke-dashoffset="0"></circle>
                                     </svg>
                                 </div>
-
                             </div>
+
                         </div>
                     </div>
 
@@ -242,5 +248,36 @@
             </div>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <div id="cropModal" class="hidden backdrop-blur bg-black/60 fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
+        <div class="relative max-h-full w-full max-w-md">
+            <div class="overflow-hidden rounded-lg border bg-muted shadow">
+
+                <!-- Header -->
+                <div class="px-4 py-5 sm:px-6 border-b">
+                    <div class="flex justify-start">
+                        <h3 class="md:text-lg">برش تصویر پروفایل</h3>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="space-y-6 px-4 py-1.5 sm:p-6 flex justify-center">
+                    <img id="cropImage" class="max-w-full max-h-72 rounded-md"/>
+                </div>
+
+                <!-- Footer -->
+                <div class="flex justify-end gap-4 border-t px-4 py-3 sm:px-6">
+                    <button id="cancelCrop" type="button">
+                        لغو
+                    </button>
+                    <button id="confirmCrop" type="button">
+                        تأیید
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.css"/>
 {% endblock %}
