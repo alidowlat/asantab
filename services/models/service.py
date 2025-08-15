@@ -17,7 +17,7 @@ class Service(models.Model):
     title = models.CharField(max_length=85, verbose_name='عنوان خدمت')
     slug = models.SlugField(default="", null=False, db_index=True, blank=True, max_length=85, unique=True)
     description = models.TextField(max_length=800, verbose_name='توضیحات')
-    image = models.ImageField(upload_to=get_image_upload_to, null=True, verbose_name='تصویر خدمت')
+    image = models.ImageField(upload_to=get_image_upload_to, null=True, blank=True,  verbose_name='تصویر خدمت')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='ساخته شده در تاریخ')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='آپدیت شده در تاریخ')
     is_active = models.BooleanField(default=False, verbose_name='فعال است؟')
