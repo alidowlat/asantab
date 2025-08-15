@@ -3,7 +3,7 @@
     <div class="flex gap-x-2 py-5">
         <div class="relative min-w-fit">
             <a href="{{ favorite.service.get_absolute_url }}">
-                <img src="{{ favorite.service.image.url }}" alt="Service Picture"
+                <img src="{% if favorite.service.image %}{{ favorite.service.image.url }}{% else %}/static/images/c17.png{% endif %}" alt="Service Picture"
                      loading="lazy"
                      class="h-25 w-25 rounded-3xl">
             </a>

@@ -3,7 +3,7 @@
     <div class="flex flex-col">
         <div class="mb-4 flex flex-col justify-center">
             <a href="{{ service.get_absolute_url }}">
-                <img src="{{ service.image.url }}" alt="Service Image" loading="lazy"
+                <img src="{% if service.image %}{{ service.image.url }}{% else %}/static/images/c17.png{% endif %}" alt="Service Image" loading="lazy"
                      class="mx-auto aspect-[1/1] w-64 rounded-lg object-cover" draggable="false">
             </a>
         </div>
