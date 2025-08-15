@@ -1,9 +1,39 @@
 import os
 from django import forms
 from accounts.models import Provider
-from core.clean import UsernameCleanMixin, IbanNumberCleanMixin, CardNumberCleanMixin, PasswordCleanMixin
+from core.clean import UsernameCleanMixin, IbanNumberCleanMixin, CardNumberCleanMixin, PasswordCleanMixin, PlatformLinkCleanMixin
 from django.conf import settings
 from locations.models import City
+
+
+class UpdatePlatformUrlsForm(PlatformLinkCleanMixin, forms.ModelForm):
+    class Meta:
+        model = Provider
+        fields = ['instagram_url', 'telegram_url']
+        widgets = {
+            'instagram_url': forms.URLInput(attrs={
+                'class': 'modal-input peer w-full rounded-lg bg-transparent p-2 placeholder-transparent outline-none focus:ring-0 xs:px-4 xs:py-3',
+                'dir': 'ltr',
+                'value': 'https://',
+                'readonly': False
+            }),
+            'telegram_url': forms.URLInput(attrs={
+                'class': 'modal-input peer w-full rounded-lg bg-transparent p-2 placeholder-transparent outline-none focus:ring-0 xs:px-4 xs:py-3',
+                'dir': 'ltr',
+                'value': 'https://',
+                'readonly': False
+            }),
+        }
+        error_messages = {
+            'instagram_url': {
+                'required': 'وارد کردن این فیلد الزامی است.',
+                'invalid': 'آدرس وارد شده معتبر نیست.',
+            },
+            'telegram_url': {
+                'required': 'وارد کردن این فیلد الزامی است.',
+                'invalid': 'آدرس وارد شده معتبر نیست.',
+            }
+        }
 
 
 class UpdateUsernameForm(UsernameCleanMixin, forms.ModelForm):
@@ -69,7 +99,6 @@ class UpdateLocationForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         self.fields['city'].queryset = City.objects.select_related('province').all()
-
 
 
 class UpdateIbanForm(IbanNumberCleanMixin, forms.ModelForm):
