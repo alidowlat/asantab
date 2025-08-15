@@ -1,0 +1,215 @@
+{% extends 'shared/_layout.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+    ارتباط با ما | آسان تب
+{% endblock %}
+
+{% block content %}
+    <main class="flex-grow bg-background pt-[106px]">
+        <div class="container pt-10">
+            <div class="relative mx-auto max-w-[1000px] overflow-hidden rounded-lg border py-16">
+                <!-- Background -->
+                <div class="pointer-events-none absolute inset-0 flex w-screen items-center justify-center overflow-hidden [mask-image:radial-gradient(transparent_15%,white)]">
+                    <svg class="absolute left-0 top-0 h-full w-full stroke-black/80 stroke-[2] [mask-image:linear-gradient(transparent_5%,white,transparent_85%)] dark:stroke-white/60"
+                         data-n-ids="{&quot;1a4MN34vH0:0&quot;:&quot;1a4MN34vH0:0&quot;}">
+                        <rect width="100%" height="100%" stroke-width="0" fill="url(#grid-pattern-1a4MN34vH0:0)"></rect>
+                        <svg>
+                            <rect stroke-width="0" width="95" height="95" x="97" y="97"
+                                  class="pointer-events-auto fill-black/5 transition duration-500 hover:fill-black/10 dark:fill-white/5 dark:hover:fill-white/10"></rect>
+                            <rect stroke-width="0" width="95" height="95" x="385" y="193"
+                                  class="pointer-events-auto fill-black/5 transition duration-500 hover:fill-black/10 dark:fill-white/5 dark:hover:fill-white/10"></rect>
+                            <rect stroke-width="0" width="95" height="95" x="193" y="289"
+                                  class="pointer-events-auto fill-black/5 transition duration-500 hover:fill-black/10 dark:fill-white/5 dark:hover:fill-white/10"></rect>
+                            <rect stroke-width="0" width="95" height="95" x="673" y="289"
+                                  class="pointer-events-auto fill-black/5 transition duration-500 hover:fill-black/10 dark:fill-white/5 dark:hover:fill-white/10"></rect>
+                            <rect stroke-width="0" width="95" height="95" x="481" y="385"
+                                  class="pointer-events-auto fill-black/5 transition duration-500 hover:fill-black/10 dark:fill-white/5 dark:hover:fill-white/10"></rect>
+                            <rect stroke-width="0" width="95" height="95" x="1249" y="97"
+                                  class="pointer-events-auto fill-black/5 transition duration-500 hover:fill-black/10 dark:fill-white/5 dark:hover:fill-white/10"></rect>
+                            <rect stroke-width="0" width="95" height="95" x="1" y="481"
+                                  class="pointer-events-auto fill-black/5 transition duration-500 hover:fill-black/10 dark:fill-white/5 dark:hover:fill-white/10"></rect>
+                            <rect stroke-width="0" width="95" height="95" x="577" y="481"
+                                  class="pointer-events-auto fill-black/5 transition duration-500 hover:fill-black/10 dark:fill-white/5 dark:hover:fill-white/10"></rect>
+                            <rect stroke-width="0" width="95" height="95" x="1441" y="385"
+                                  class="pointer-events-auto fill-black/5 transition duration-500 hover:fill-black/10 dark:fill-white/5 dark:hover:fill-white/10"></rect>
+                            <rect stroke-width="0" width="95" height="95" x="1057" y="289"
+                                  class="pointer-events-auto fill-black/5 transition duration-500 hover:fill-black/10 dark:fill-white/5 dark:hover:fill-white/10"></rect>
+                            <rect stroke-width="0" width="95" height="95" x="961" y="481"
+                                  class="pointer-events-auto fill-black/5 transition duration-500 hover:fill-black/10 dark:fill-white/5 dark:hover:fill-white/10"></rect>
+                            <rect stroke-width="0" width="95" height="95" x="1249" y="577"
+                                  class="pointer-events-auto fill-black/5 transition duration-500 hover:fill-black/10 dark:fill-white/5 dark:hover:fill-white/10"></rect>
+                        </svg>
+                        <defs>
+                            <pattern id="grid-pattern-1a4MN34vH0:0" viewBox="0 0 64 64" width="96" height="96"
+                                     patternUnits="userSpaceOnUse">
+                                <path d="M64 0H0V64" fill="none"></path>
+                            </pattern>
+                        </defs>
+                    </svg>
+                </div>
+
+                <div class="relative grid grid-cols-5 gap-10 lg:gap-4">
+                    <div class="col-span-5 flex justify-center">
+                        <h1 class="relative col-span-5 text-center text-xl font-medium lg:hidden">
+                            تماس با ما
+                            <span class="absolute right-0 top-10 h-[3px] w-full animate-fill-border rounded-full bg-primary"></span>
+                        </h1>
+                    </div>
+
+                    <!-- Form -->
+                    <div class="col-span-5 border-b border-t bg-muted px-6 py-10 lg:col-span-3 lg:rounded-l lg:border-l">
+                        <div class="mb-10">
+                            قبل از مطرح کردن هرگونه سوال ، بخش
+                            <a href="./faq.html" class="text-primary hover:underline">سوالات متداول</a>
+                            را مطالعه نمایید.
+                        </div>
+                        <form id="contactForm" class="grid grid-cols-2 gap-2" action="{% url 'contact_us_page' %}" method="post"
+                              novalidate>
+                            {% csrf_token %}
+
+                            <div class="col-span-2 lg:col-span-1">
+                                <label for="id_name" class="sr-only">نام و نام خانوادگی</label>
+                                {% render_field form.name class="mb-2 w-full rounded-lg border bg-background px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2" id="name" placeholder="نام و نام خانوادگی" %}
+                                <div class="h-5 text-sm text-warning">
+                                    {% if form.name.errors %}
+                                        {{ form.name.errors|first }}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="col-span-2 lg:col-span-1">
+                                <label for="id_email" class="sr-only">ایمیل</label>
+                                {% render_field form.email class="mb-2 w-full rounded-lg border bg-background px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2" id="email" placeholder="ایمیل" %}
+                                <div class="h-5 text-sm text-warning">
+                                    {% if form.email.errors %}
+                                        {{ form.email.errors|first }}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="col-span-2 lg:col-span-2">
+                                <label for="id_subject" class="sr-only">موضوع پیام</label>
+                                {% render_field form.subject class="mb-2 w-full rounded-lg border bg-background px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2" id="subject" placeholder="موضوع پیام" %}
+                                <div class="h-5 text-sm text-warning">
+                                    {% if form.subject.errors %}
+                                        {{ form.subject.errors|first }}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="col-span-2">
+                                <label for="id_message" class="sr-only">پیام شما</label>
+                                {% render_field form.message class="mb-2 w-full rounded-lg border bg-background px-4 py-2.5 outline-none duration-300 placeholder:duration-300 focus:border-primary focus:placeholder:-translate-x-2" id="message" placeholder="پیام شما" rows="4" %}
+                                <div class="h-5 text-sm text-warning">
+                                    {% if form.message.errors %}
+                                        {{ form.message.errors|first }}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="col-span-2">
+                                <div class="flex flex-col items-center justify-between gap-10 sm:flex-row">
+                                    <div class="text-sm text-text/60">
+                                        با ارسال این، تأیید می‌کنم که
+                                        <a href="./rules.html" class="text-primary hover:underline">قوانین و مقررات</a> را خوانده‌ام.
+                                    </div>
+                                    <button type="submit" class="btn-primary rounded-full px-6 py-2">ارسال پیام</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Text -->
+                    <div class="col-span-5 px-4 lg:col-span-2">
+                        <div class="flex justify-center">
+                            <h1 class="relative mb-6 hidden w-fit text-xl font-medium lg:block">
+                                تماس با ما
+                                <span class="absolute right-0 top-10 h-[3px] w-full animate-fill-border rounded-full bg-primary"></span>
+                            </h1>
+                        </div>
+                        <ul class="space-y-6">
+                            <li>
+                                <!-- Email -->
+                                <div class="flex flex-col gap-y-4">
+                                    <p class="text-text/90">آدرس ایمیل</p>
+                                    <a href="#" class="text-primary"> info@blesser.com </a>
+                                </div>
+                            </li>
+
+                            <li>
+                                <!-- phone -->
+                                <div class="flex flex-col gap-y-4">
+                                    <p class="text-text/90">تلفن پشتیبانی</p>
+                                    <a dir="ltr" href="#" class="text-primary">
+                                        021 - 0000000
+                                    </a>
+                                </div>
+                            </li>
+                            <li>
+                                <!-- phone -->
+                                <div class="flex flex-col gap-y-4">
+                                    <p class="min-w-fit text-text/90">آدرس دفتر مرکزی</p>
+                                    <a href="#" class="text-primary">
+                                        استان تهران شهر تهران - خیابان گاندی جنوبی - نبش خیابان
+                                        ۲۱ - پلاک ۲۸
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            const csrftoken = form.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            form.querySelectorAll('.text-warning').forEach(el => el.textContent = '');
+
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken
+                },
+                body: formData,
+                credentials: 'same-origin'
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'success',
+                            title: data.message,
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            if (data.redirect_url) window.location.href = data.redirect_url;
+                            else location.reload(); // اگر redirect_url نبود صفحه reload شود
+                        });
+                        form.reset();
+                    } else if (data.errors) {
+                        for (const key in data.errors) {
+                            const field = form.querySelector(`[name="${key}"]`);
+                            if (field) {
+                                const errorEl = field.parentNode.querySelector('.text-warning');
+                                if (errorEl) errorEl.textContent = data.errors[key];
+                            }
+                        }
+                    }
+                })
+                .catch(err => {
+                    Swal.fire({icon: 'error', title: 'خطا', text: 'ارتباط با سرور برقرار نشد.'});
+                    console.error(err);
+                });
+        });
+    </script>
+{% endblock %}
