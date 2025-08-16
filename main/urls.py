@@ -40,6 +40,7 @@ urlpatterns = [
     path('profile/', include('dashboard.urls.notification')),
     path('profile/', include('dashboard.urls.order')),
     path('profile/', include('dashboard.urls.service')),
+    path('profile/', include('dashboard.urls.users')),
     path('', include('search.urls')),
     path('orders/', include('orders.urls.cart')),
     path('contact-us/', include('tickets.urls.contact_us')),
