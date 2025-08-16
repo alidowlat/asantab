@@ -1,0 +1,32 @@
+{% load extra_filters %}
+<tr>
+    <td>
+        <div class="flex items-center gap-2 whitespace-nowrap">
+            <div class="relative inline-flex flex-shrink-0 items-center justify-center">
+                <span class="relative inline-flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full border">
+                    <img class="rounded-full" src="{{ user.providers.profile_image.url|default:'/static/images/user.png' }}" alt="">
+                </span>
+            </div>
+            <div>{{ user.phone_number }}</div>
+        </div>
+    </td>
+    <td>{{ user.national_id|default:'ثبت نشده' }}</td>
+    <td>
+        <div class="w-fit rounded-full bg-success/10 px-4 py-1 text-sm text-success">
+            تحویل داده شده
+        </div>
+    </td>
+    <td>
+        <div class="flex items-center gap-1 whitespace-nowrap text-success">
+            <span class="font-medium">120,000,000</span>
+            <span class="text-sm">تومان</span>
+        </div>
+    </td>
+    <td>
+        <div class="text-text/80">امروز</div>
+    </td>
+    <td>
+        <a href="#" class="i-mynaui-external-link h-6 w-6 text-success duration-200 hover:text-success/80">
+        </a>
+    </td>
+</tr>

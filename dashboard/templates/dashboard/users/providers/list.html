@@ -1,0 +1,10 @@
+{% if users %}
+    {% for user in users.all %}
+        {% include 'dashboard/users/providers/item.html' with user=user %}
+    {% endfor %}
+{% else %}
+    <div class="flex-container">
+        <img class="w-60 pb-10" src="/static/images/empty/empty-cart.svg" alt="empty page picture">
+        <div class="text-center text-gray-400 text-lg pb-10">موردی یافت نشد.</div>
+    </div>
+{% endif %}
