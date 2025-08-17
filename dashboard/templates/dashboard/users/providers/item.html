@@ -3,30 +3,53 @@
     <td>
         <div class="flex items-center gap-2 whitespace-nowrap">
             <div class="relative inline-flex flex-shrink-0 items-center justify-center">
-                <span class="relative inline-flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full border">
-                    <img class="rounded-full" src="{{ user.providers.profile_image.url|default:'/static/images/user.png' }}" alt="">
+                <span class="relative inline-flex flex-shrink-0 items-center justify-center rounded-full border">
+                    <img class="h-16 w-16 {% if provider.is_verified %} border-[3px] border-primary {% endif %} rounded-full"
+                         src="{{ provider.profile_image.url }}" alt="profile">
                 </span>
             </div>
-            <div>{{ user.phone_number }}</div>
-        </div>
-    </td>
-    <td>{{ user.national_id|default:'ثبت نشده' }}</td>
-    <td>
-        <div class="w-fit rounded-full bg-success/10 px-4 py-1 text-sm text-success">
-            تحویل داده شده
         </div>
     </td>
     <td>
-        <div class="flex items-center gap-1 whitespace-nowrap text-success">
-            <span class="font-medium">120,000,000</span>
-            <span class="text-sm">تومان</span>
+        <div class="flex items-center gap-2 whitespace-nowrap">
+            <div>{{ provider.user.get_full_name }}</div>
+        </div>
+    </td>
+    <td>{{ provider.user.national_id|default:'ثبت نشده' }}</td>
+    <td>
+        <div class="flex items-center gap-2 whitespace-nowrap">
+            <div class="text-lg">{{ provider.username }}</div>
         </div>
     </td>
     <td>
-        <div class="text-text/80">امروز</div>
+        <div class="flex items-center gap-1 whitespace-nowrap">
+            {% if provider.status == 'active' %}
+                <p class="bg-green-500 rounded-full px-4 py-1">فعال</p>
+            {% elif provider.status == 'pending' %}
+                <p class="bg-yellow-500 rounded-full px-4 py-1">در انتظار تایید</p>
+            {% elif provider.status == 'rejected' %}
+                <p class="bg-red-500 rounded-full px-4 py-1">رد شده</p>
+            {% endif %}
+        </div>
     </td>
     <td>
-        <a href="#" class="i-mynaui-external-link h-6 w-6 text-success duration-200 hover:text-success/80">
+        <div class="items-start">
+            {{ provider.user.phone_number }}
+        </div>
+    </td>
+    <td>
+        <div class="items-start">
+            <p class="mb-2">
+                {{ provider.province }} - {{ provider.city }}
+            </p>
+        </div>
+    </td>
+    <td>
+        <div class="text-text/80">{{ provider.user.date_joined|show_date }}</div>
+    </td>
+    <td>
+        <a href="{% url 'impersonate_user' provider.id %}"
+           class="i-mynaui-external-link h-6 w-6 text-success duration-200 hover:text-success/80">
         </a>
     </td>
 </tr>

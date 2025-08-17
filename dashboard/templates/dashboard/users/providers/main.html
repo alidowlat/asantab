@@ -3,22 +3,26 @@
 
 
 {% block title %}
-    لیست کاربران | آسان تب
+    لیست فروشندگان | آسان تب
 {% endblock %}
 
 {% block content %}
     <div class="rounded-lg bg-muted shadow">
         <div class="py-5">
-            <div class="mb-16 flex justify-center px-5">
+            <div class="mb-16 flex justify-between px-5">
                 <h1 class="relative w-fit font-medium lg:text-lg">
-                    کاربران آسان تب
+                    فروشندگان آسان تب
                     <span class="absolute right-0 top-10 h-[3px] w-full animate-fill-border rounded-full bg-primary"></span>
                 </h1>
+                <a href="{% url 'role_list' %}" class="btn-primary flex items-center gap-1 px-4 py-1.5">
+                    برگشت
+                    <span class="i-lucide-chevron-left size-5"></span>
+                </a>
             </div>
-            <div class="mb-10 rounded-lg bg-muted p-4">
+            <div class="rounded-lg bg-muted p-4">
                 <div class="overflow-auto lg:overflow-visible">
                     <table class="w-full table-auto border-separate border-spacing-y-4 space-y-6 text-sm [&amp;&gt;tr]:rounded-lg">
-                        {% include 'dashboard/users/normal_users/list.html' %}
+                        {% include 'dashboard/users/providers/list.html' %}
                     </table>
                 </div>
             </div>

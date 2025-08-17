@@ -101,6 +101,17 @@
                 </li>
                 {% if request.user.is_provider %}
                     <li>
+                        <a href="{% url 'user_list_manager' %}"
+                           class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == 'user_list_manager' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                            <div class="flex items-center gap-4">
+                                <div class="i-lucide-user-round size-6"></div>
+                                لیست کاربران
+                            </div>
+                        </a>
+                    </li>
+                {% endif %}
+                {% if request.user.is_provider %}
+                    <li>
                         <a href="{% url 'provider_service_list' %}"
                            class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == 'provider_service_list' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
                             <div class="flex items-center gap-4">

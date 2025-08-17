@@ -11,13 +11,12 @@
     </tr>
     </thead>
     <tbody class="[&amp;_tr&gt;td:nth-child(1)]:rounded-r-lg [&amp;_tr&gt;td:nth-last-child(1)]:rounded-l-lg [&amp;_tr&gt;td]:whitespace-nowrap [&amp;_tr&gt;td]:p-3 [&amp;_tr]:rounded-lg [&amp;_tr]:shadow [&amp;_tr]:dark:bg-background">
-    {% for user in users.all %}
+    {% for user in users %}
         {% include 'dashboard/users/normal_users/item.html' with user=user %}
     {% endfor %}
     </tbody>
 {% else %}
     <div class="flex-container">
-        <img class="w-60 pb-10" src="/static/images/empty/empty-cart.svg" alt="empty page picture">
-        <div class="text-center text-gray-400 text-lg pb-10">موردی یافت نشد.</div>
+        <div class="text-center text-gray-400 text-lg">موردی یافت نشد.</div>
     </div>
 {% endif %}
