@@ -8,7 +8,7 @@
 {% block extra_header %}
     {% block extra_css %}
         <meta name="description" content="{{ service.description }}"/>
-        {#        <script src="/static/scripts/action.js"></script>#}
+        <script src="/static/scripts/action.js"></script>
         <script src="/static/scripts/dependencies/jquery.min.js"></script>
     {% endblock %}
 {% endblock %}
@@ -370,6 +370,7 @@
 
     <!-- Gallery Modal -->
     {% include 'services/components/modals/gallery_modal.html' %}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         @media (min-width: 768px) and (max-width: 1024px) {

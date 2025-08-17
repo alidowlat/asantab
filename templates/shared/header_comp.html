@@ -98,9 +98,13 @@
                                 <!-- user -->
                                 <li class="group">
                                     <a href="{% url 'dashboard_page' %}"
-                                       class="flex items-center justify-between px-5 py-4 transition-all group-hover:text-primary">
+                                       class="flex items-center justify-between px-5 py-3 transition-all group-hover:text-primary">
                                         <div class="flex items-center gap-x-3">
-                                            <img class="h-8 w-8" src="/static/images/user.png" alt="Profile">
+                                            {% if request.user.is_provider %}
+                                                <img class="h-10 w-10 rounded-full" src="{{ request.user.providers.profile_image.url }}" alt="Profile">
+                                            {% else %}
+                                                <img class="h-8 w-8" src="/static/images/user.png" alt="Profile">
+                                            {% endif %}
                                             <p class="w-32 overflow-hidden font-semibold">
                                                 {{ request.user }}
                                             </p>
@@ -109,12 +113,57 @@
                                     </a>
                                 </li>
                                 <!-- order -->
+                                {% if request.user.is_provider %}
+                                    <li class="group">
+                                        <a href="{% url 'provider_service_list' %}"
+                                           class="flex items-center justify-between px-5 py-4 transition-all group-hover:text-primary">
+                                            <div class="flex items-center gap-x-3">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                                     fill="none"
+                                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                     stroke-linejoin="round"
+                                                     class="lucide lucide-package-icon lucide-package text-text/70">
+                                                    <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/>
+                                                    <path d="M12 22V12"/>
+                                                    <polyline points="3.29 7 12 12 20.71 7"/>
+                                                    <path d="m7.5 4.27 9 5.15"/>
+                                                </svg>
+                                                <p>خدمت های من</p>
+                                            </div>
+                                            <svg class="i-lucide-chevron-left text-text/60 group-hover:text-primary"></svg>
+                                        </a>
+                                    </li>
+                                    <li class="group">
+                                        <a href="{% url 'received_orders_page' %}"
+                                           class="flex items-center justify-between px-5 py-4 transition-all group-hover:text-primary">
+                                            <div class="flex items-center gap-x-3">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                                     fill="none"
+                                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                     stroke-linejoin="round"
+                                                     class="lucide lucide-store-icon lucide-store text-text/70">
+                                                    <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/>
+                                                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                                                    <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/>
+                                                    <path d="M2 7h20"/>
+                                                    <path d="M22 7v3a2 2 0 0 1-2 2a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12a2 2 0 0 1-2-2V7"/>
+                                                </svg>
+                                                <p>سفارشات دریافتی</p>
+                                            </div>
+                                            <svg class="i-lucide-chevron-left text-text/60 group-hover:text-primary"></svg>
+                                        </a>
+                                    </li>
+                                {% endif %}
                                 <li class="group">
                                     <a href="{% url 'orders_page' %}"
                                        class="flex items-center justify-between px-5 py-4 transition-all group-hover:text-primary">
                                         <div class="flex items-center gap-x-3">
-                                            <svg class="i-mingcute-shopping-bag-3-line h-6 w-6 text-text/70 group-hover:text-primary"></svg>
-                                            <p>سفارش ها</p>
+                                            <div class="i-mingcute-shopping-bag-3-line text-text/70 size-6"></div>
+                                            {% if request.user.is_provider %}
+                                                <p>خرید های من</p>
+                                            {% else %}
+                                                <p>سفارش ها</p>
+                                            {% endif %}
                                         </div>
                                         <svg class="i-lucide-chevron-left text-text/60 group-hover:text-primary"></svg>
                                     </a>
@@ -158,7 +207,8 @@
                                 </li>
                                 <!-- exit -->
                                 <li>
-                                    <a href="{% if request.user.is_provider %}{% url 'logout_provider' %}{% else %}{% url 'logout' %}{% endif %}"
+                                    <a href="
+                                            {% if request.user.is_provider %}{% url 'logout_provider' %}{% else %}{% url 'logout' %}{% endif %}"
                                        class="my-1 flex items-center justify-between px-5 py-3 text-warning duration-150 hover:bg-warning/10">
                                         <div class="flex items-center gap-x-3">
                                             <svg class="i-mingcute-exit-line h-6 w-6"></svg>
@@ -383,6 +433,11 @@
                         </div>
                     </div>
                 </ul>
+                {% if request.session.is_impersonating %}
+                    <a href="{% url 'stop_impersonate' %}" class="btn btn-warning">
+                        بازگشت به حساب اصلی
+                    </a>
+                {% endif %}
                 <!-- Indicator -->
                 <div id="desktopNavbarIndicator"
                      class="absolute bottom-0 end-0 z-0 h-[0.15625rem] w-0 touch-none rounded-full bg-primary transition-all duration-300 ease-[ease]"
