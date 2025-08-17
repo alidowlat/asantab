@@ -43,6 +43,7 @@ class Provider(models.Model):
     is_profile_complete = models.BooleanField(default=False, verbose_name='پروفایل تکمیل شده؟')
     instagram_url = models.URLField(blank=True, null=True)
     telegram_url = models.URLField(blank=True, null=True)
+    date_joined = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ عضویت')
 
     def __str__(self):
         return self.user.get_full_name() or self.user.phone_number
