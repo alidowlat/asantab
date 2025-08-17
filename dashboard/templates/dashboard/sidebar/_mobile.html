@@ -1,16 +1,25 @@
 <div class="flex items-center justify-center lg:hidden">
     <div class="flex flex-col items-center justify-center gap-y-4">
         <div class="relative">
-        <img class="h-16 w-16" src="/static/images/user.png" alt="Profile">
-
+            {% if request.user.is_provider %}
+                <img class="h-28 w-28 rounded-full ml-2" src="{{ request.user.providers.profile_image.url }}" alt="profile image">
+            {% else %}
+                <img class="h-16 w-16 ml-2" src="/static/images/user.png" alt="Profile">
+            {% endif %}
             <a href="{% url 'account_info_page' %}"
                class="absolute -right-3 -top-2 rounded-full border bg-muted p-1.5 text-sm text-primary">
                 <div class="i-lucide-pen-line size-5"></div>
             </a>
         </div>
-        <div>
-            <p class="line-clamp-1">{{ user }}</p>
-            <p class="text-text/95 text-center">{{ user.phone_number }}</p>
+        <div class="flex gap-2 items-start mb-5">
+            <p class="">{{ user }}</p>
+            {% if user.is_superuser %}
+                <p class="opacity-75">(مدیر)</p>
+            {% elif user.is_provider %}
+                <p class="opacity-75">(فروشنده)</p>
+            {% else %}
+                <p class="opacity-75">(کاربر)</p>
+            {% endif %}
         </div>
         <div>
             <button type="button" data-drawer-target="profile-drawer" data-drawer-show="profile-drawer"
