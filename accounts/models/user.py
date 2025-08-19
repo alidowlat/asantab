@@ -6,13 +6,14 @@ from accounts.managers import UserManager
 phone_regex = RegexValidator(regex=r'^09\d{9}$', message="لطفا شماره موبایل خود را به درستی وارد کنید.")
 otp_regex = RegexValidator(regex=r'^\d{6}$', message='کد تایید باید دقیقا ۶ رقم عددی باشد.')
 national_id_regex = RegexValidator(regex=r'^\d{10}$', message='کد ملی باید ۱۰ رقم باشد.')
+sheba_regex = RegexValidator(regex=r'^\d{24}$', message='شماره شبا باید ۲۴ رقم باشد.')
+card_regex = RegexValidator(regex=r'^\d{16}$', message='شماره کارت باید ۱۶ رقم باشد.')
 
 GENDER_CHOICES = (
     ('', 'انتخاب کنید...'),
     ('M', 'مرد'),
     ('F', 'زن'),
 )
-
 
 
 class User(AbstractUser):
@@ -103,3 +104,30 @@ class User(AbstractUser):
         verbose_name = 'User'
         verbose_name_plural = 'Users'
         db_table = 'users'
+
+
+class BankAccount(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bank_accounts", verbose_name="کاربر")
+    sheba_number = models.CharField(max_length=24, validators=[sheba_regex], unique=True, verbose_name="شماره شبا")
+    card_number = models.CharField(max_length=16, validators=[card_regex], unique=True, verbose_name="شماره کارت")
+    is_default = models.BooleanField(default=False, verbose_name="پیش‌فرض")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ایجاد")
+
+    def clean(self):
+        if self.is_default:
+            qs = BankAccount.objects.filter(user=self.user, is_default=True).exclude(pk=self.pk)
+            if qs.exists():
+                qs.update(is_default=False)
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.user.get_full_name()} - {self.sheba_number}"
+
+    class Meta:
+        ordering = ('-created_at',)
+        verbose_name = 'Bank Account'
+        verbose_name_plural = 'Bank Accounts'
+        db_table = 'bank_accounts'
