@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.html import format_html
-from accounts.models import User, Provider
+from accounts.models import User, Provider, BankAccount
 
 
 @admin.register(User)
@@ -50,3 +50,25 @@ class ProviderAdmin(admin.ModelAdmin):
                 'fields': ('iban_number', 'card_number', 'national_card_image'),
             }),)
         return fieldsets
+
+
+@admin.register(BankAccount)
+class BankAccountAdmin(admin.ModelAdmin):
+    list_display = ('user', 'sheba_number', 'card_number', 'created_at', 'is_default')
+    list_filter = ('is_default', 'created_at')
+    search_fields = ('user__phone_number', 'sheba_number', 'card_number')
+    ordering = ('-created_at',)
+    readonly_fields = ('created_at',)
+    fieldsets = (
+        (None, {
+            'fields': ('user', 'sheba_number', 'card_number', 'is_default')
+        }),
+        ('اطلاعات سیستمی', {
+            'fields': ('created_at',)
+        }),
+    )
+
+    def save_model(self, request, obj, form, change):
+        if obj.is_default:
+            BankAccount.objects.filter(user=obj.user, is_default=True).exclude(id=obj.id).update(is_default=False)
+        super().save_model(request, obj, form, change)
