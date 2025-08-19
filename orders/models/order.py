@@ -2,7 +2,6 @@ from django.db import models
 import random
 from django.urls import reverse
 
-
 STATUS_CHOICES = [
     ('pending', 'در حال بررسی'),
     ('accepted', 'تایید شده'),
@@ -65,6 +64,14 @@ class Order(models.Model):
         default='pending',
         verbose_name='وضعیت سفارش'
     )
+    wallet_transaction = models.ForeignKey(
+        'wallet.WalletTransaction',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='orders',
+        verbose_name='تراکنش ولت مرتبط'
+    )
     paid_at = models.DateTimeField(
         null=True,
         blank=True,
@@ -73,6 +80,10 @@ class Order(models.Model):
     updated_at = models.DateTimeField(
         auto_now=True,
         verbose_name='تاریخ بروزرسانی'
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='تاریخ ایجاد'
     )
     rejection_reason = models.TextField(
         null=True,
