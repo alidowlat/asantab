@@ -139,6 +139,8 @@ EMAIL_HOST_USER = 'asantab.supp@gmail.com'
 EMAIL_HOST_PASSWORD = 'vgqo xhkp jpft nvup'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+MIN_WITHDRAW_AMOUNT = 100000
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
