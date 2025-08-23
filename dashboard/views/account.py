@@ -8,8 +8,8 @@ from django.views.generic import TemplateView
 from jalali_date import date2jalali
 from accounts.models import Provider
 from dashboard.forms import UpdateEmailForm, UpdateNameForm, UpdatePhoneForm, UpdateNationalIDForm, UpdateGenderForm, \
-    UpdateBirthdateForm, UpdateUsernameForm, UpdateBioForm, UpdateLocationForm, UpdateIbanForm, UpdateCardNumberForm, \
-    UpdateProfileImageForm, UpdatePasswordForm, UpdatePlatformUrlsForm
+    UpdateBirthdateForm, UpdateUsernameForm, UpdateBioForm, UpdateLocationForm, UpdateProfileImageForm, UpdatePasswordForm, \
+    UpdatePlatformUrlsForm, UpdateNationalCardImageForm
 
 
 class AccountView(LoginRequiredMixin, TemplateView):
@@ -32,8 +32,7 @@ class AccountView(LoginRequiredMixin, TemplateView):
             context['username_form'] = UpdateUsernameForm(instance=provider)
             context['bio_form'] = UpdateBioForm(instance=provider)
             context['location_form'] = UpdateLocationForm(instance=provider)
-            context['iban_form'] = UpdateIbanForm(instance=provider)
-            context['card_number_form'] = UpdateCardNumberForm(instance=provider)
+            context['national_card_image_form'] = UpdateNationalCardImageForm(instance=provider)
             context['profile_image_form'] = UpdateProfileImageForm(instance=provider)
             context['platformurls_form'] = UpdatePlatformUrlsForm(instance=provider)
             context['password_form'] = UpdatePasswordForm(user=self.request.user)
@@ -195,38 +194,22 @@ class UpdateLocationView(LoginRequiredMixin, View):
         return JsonResponse({'success': False, 'errors': form.errors.get_json_data()})
 
 
-class UpdateIbanView(LoginRequiredMixin, View):
+class UpdateNationalCardImageView(LoginRequiredMixin, View):
     def get(self, request):
-        iban_form = UpdateIbanForm(instance=request.user)
-        return render(request, 'dashboard/account/modal/iban_modal.html', {'iban_form': iban_form})
+        national_card_image_form = UpdateNationalCardImageForm(instance=request.user)
+        return render(request, 'dashboard/account/modal/national_card_image_modal.html',
+                      {'national_card_image_form': national_card_image_form})
 
     def post(self, request):
         if not request.user.is_provider:
             return JsonResponse({'success': False})
 
         provider = get_object_or_404(Provider, user=request.user)
-        form = UpdateIbanForm(request.POST, instance=provider)
+        form = UpdateNationalCardImageForm(request.POST, request.FILES, instance=provider)
         if form.is_valid():
             form.save()
             return JsonResponse({'success': True, 'redirect_url': reverse('account_info_page')})
 
-        return JsonResponse({'success': False, 'errors': form.errors.get_json_data()})
-
-
-class UpdateCardNumberView(LoginRequiredMixin, View):
-    def get(self, request):
-        card_number_form = UpdateCardNumberForm(instance=request.user)
-        return render(request, 'dashboard/account/modal/card_number_modal.html', {'card_number_form': card_number_form})
-
-    def post(self, request):
-        if not request.user.is_provider:
-            return JsonResponse({'success': False})
-
-        provider = get_object_or_404(Provider, user=request.user)
-        form = UpdateCardNumberForm(request.POST, instance=provider)
-        if form.is_valid():
-            form.save()
-            return JsonResponse({'success': True, 'redirect_url': reverse('account_info_page')})
         return JsonResponse({'success': False, 'errors': form.errors.get_json_data()})
 
 
