@@ -32,10 +32,6 @@ class Provider(models.Model):
     city = models.ForeignKey('locations.City', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="شهر محل سکونت")
     profile_image = models.ImageField(upload_to=get_image_upload_to, null=True, blank=True,
                                       verbose_name='تصویر پروفایل')
-    iban_number = models.CharField(max_length=24, validators=[iban_regex], null=True, blank=True,
-                                   verbose_name='شماره شبا')
-    card_number = models.CharField(max_length=16, validators=[card_regex], null=True, blank=True,
-                                   verbose_name='شماره کارت')
     national_card_image = models.ImageField(upload_to=get_image_upload_to, null=True, blank=True,
                                             verbose_name='تصویر کارت ملی')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name='وضعیت')
