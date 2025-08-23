@@ -101,36 +101,31 @@ class UpdateLocationForm(forms.ModelForm):
         self.fields['city'].queryset = City.objects.select_related('province').all()
 
 
-class UpdateIbanForm(IbanNumberCleanMixin, forms.ModelForm):
+class UpdateNationalCardImageForm(forms.ModelForm):
     class Meta:
         model = Provider
-        fields = ['iban_number']
-
-        widgets = {
-            'iban_number': forms.TextInput(attrs={'class': 'modal-input'}),
-        }
+        fields = ['national_card_image']
 
         error_messages = {
-            'iban_number': {
+            'national_card_image': {
                 'required': 'وارد کردن این فیلد الزامی است.',
             },
         }
 
+    def save(self, commit=True):
+        instance = super().save(commit=False)
 
-class UpdateCardNumberForm(CardNumberCleanMixin, forms.ModelForm):
-    class Meta:
-        model = Provider
-        fields = ['card_number']
+        new_image = self.cleaned_data.get('national_card_image')
+        if new_image:
+            old_image = Provider.objects.filter(pk=instance.pk).values_list('national_card_image', flat=True).first()
+            if old_image:
+                old_path = os.path.join(settings.MEDIA_ROOT, old_image)
+                if os.path.isfile(old_path):
+                    os.remove(old_path)
 
-        widgets = {
-            'card_number': forms.TextInput(attrs={'class': 'modal-input'}),
-        }
-
-        error_messages = {
-            'card_number': {
-                'required': 'وارد کردن این فیلد الزامی است.',
-            },
-        }
+        if commit:
+            instance.save()
+        return instance
 
 
 class UpdateProfileImageForm(forms.ModelForm):
