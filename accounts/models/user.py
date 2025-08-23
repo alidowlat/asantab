@@ -9,6 +9,12 @@ national_id_regex = RegexValidator(regex=r'^\d{10}$', message='کد ملی با�
 sheba_regex = RegexValidator(regex=r'^\d{24}$', message='شماره شبا باید ۲۴ رقم باشد.')
 card_regex = RegexValidator(regex=r'^\d{16}$', message='شماره کارت باید ۱۶ رقم باشد.')
 
+STATUS_CHOICES = [
+    ('pending', 'در انتظار تایید'),
+    ('approved', 'تایید شده'),
+    ('rejected', 'رد شده'),
+]
+
 GENDER_CHOICES = (
     ('', 'انتخاب کنید...'),
     ('M', 'مرد'),
@@ -108,19 +114,20 @@ class User(AbstractUser):
 
 class BankAccount(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bank_accounts", verbose_name="کاربر")
+    bank = models.ForeignKey('accounts.Bank', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="بانک")
     sheba_number = models.CharField(max_length=24, validators=[sheba_regex], unique=True, verbose_name="شماره شبا")
     card_number = models.CharField(max_length=16, validators=[card_regex], unique=True, verbose_name="شماره کارت")
-    is_default = models.BooleanField(default=False, verbose_name="پیش‌فرض")
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending', verbose_name='وضعیت')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ایجاد")
 
-    def clean(self):
-        if self.is_default:
-            qs = BankAccount.objects.filter(user=self.user, is_default=True).exclude(pk=self.pk)
-            if qs.exists():
-                qs.update(is_default=False)
-
     def save(self, *args, **kwargs):
-        self.full_clean()
+        if self.card_number and len(self.card_number) >= 6:
+            prefix = self.card_number[:6]
+            try:
+                self.bank = Bank.objects.get(prefix=prefix)
+            except Bank.DoesNotExist:
+                self.bank = None
+
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -131,3 +138,17 @@ class BankAccount(models.Model):
         verbose_name = 'Bank Account'
         verbose_name_plural = 'Bank Accounts'
         db_table = 'bank_accounts'
+
+
+class Bank(models.Model):
+    name = models.CharField(max_length=40, verbose_name='نام')
+    prefix = models.CharField(max_length=6, unique=True, verbose_name='پیش شماره')
+    logo = models.ImageField(upload_to="banks/", verbose_name='لوگو')
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Bank'
+        verbose_name_plural = 'Banks'
+        db_table = 'banks'
