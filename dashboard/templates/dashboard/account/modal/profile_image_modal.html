@@ -10,7 +10,7 @@
             <!-- Header -->
             <div class="px-4 py-5 sm:px-6">
                 <div class="flex items-center justify-between">
-                    <h3 class="md:text-lg">تغییر عکس پروفایل</h3>
+                    <h3 class="md:text-lg">آپلود عکس پروفایل</h3>
                     <button
                             class="text-text/60 duration-300 hover:text-text/95"
                             data-modal-hide="profile_image-modal"
@@ -33,6 +33,11 @@
                             {% if profile_image_form.instance.profile_image %}
                                 <div class="w-50">
                                     <img src="{{ profile_image_form.instance.profile_image.url }}" alt="Current Image"
+                                         class="w-full h-full object-cover rounded-xl border border-gray-300">
+                                </div>
+                            {% else %}
+                                <div class="w-50">
+                                    <img src="/static/images/empty-image.png" alt="Current Image"
                                          class="w-full h-full object-cover rounded-xl border border-gray-300">
                                 </div>
                             {% endif %}
