@@ -1,10 +1,10 @@
 <div class="flex items-center justify-center lg:hidden">
     <div class="flex flex-col items-center justify-center gap-y-4">
         <div class="relative">
-            {% if request.user.is_provider %}
-                <img class="h-28 w-28 rounded-full ml-2" src="{{ request.user.providers.profile_image.url }}" alt="profile image">
+            {% if request.user.providers.profile_image %}
+                <img class="h-10 w-10 rounded-full ml-2" src="{{ request.user.providers.profile_image.url }}" alt="profile image">
             {% else %}
-                <img class="h-16 w-16 ml-2" src="/static/images/user.png" alt="Profile">
+                <img class="h-10 w-10 rounded-full ml-2" src="/static/images/user.png" alt="profile image">
             {% endif %}
             <a href="{% url 'account_info_page' %}"
                class="absolute -right-3 -top-2 rounded-full border bg-muted p-1.5 text-sm text-primary">

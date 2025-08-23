@@ -1,9 +1,9 @@
 <div class="hidden items-center justify-between gap-2 lg:flex">
     <div class="flex items-center gap-2">
-        {% if request.user.is_provider %}
+        {% if request.user.providers.profile_image %}
             <img class="h-10 w-10 rounded-full ml-2" src="{{ request.user.providers.profile_image.url }}" alt="profile image">
         {% else %}
-            <img class="h-8 w-8 ml-2" src="/static/images/user.png" alt="Profile">
+            <img class="h-10 w-10 rounded-full ml-2" src="/static/images/user.png" alt="profile image">
         {% endif %}
         <p class="line-clamp-1">{{ user.get_full_name }}</p>
         {% if user.is_superuser %}
