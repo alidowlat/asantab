@@ -1,10 +1,8 @@
 PROFILE_WEIGHTS = {
-    'iban_number': 15,
-    'card_number': 15,
-    'national_card_image': 15,
-    'national_id': 15,
-    'first_name': 5,
-    'last_name': 5,
+    'national_card_image': 20,
+    'national_id': 20,
+    'first_name': 15,
+    'last_name': 15,
     'username': 5,
     'email': 5,
     'province': 4,
@@ -33,9 +31,7 @@ def calculate_profile_completion(provider):
 
     percent = int((score / total_weight) * 100)
     provider.is_profile_complete = percent >= 80 and all([
-        provider.iban_number,
-        provider.card_number,
-        # provider.national_card_image,
+        provider.national_card_image,
         provider.user.national_id,
     ])
     provider.save(update_fields=['is_profile_complete'])
