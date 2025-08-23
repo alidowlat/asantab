@@ -1,6 +1,6 @@
 from accounts.models import Provider
 from django import forms
-from core.clean import UsernameCleanMixin, IbanNumberCleanMixin, CardNumberCleanMixin, PhoneNumberCleanMixin
+from core.clean import UsernameCleanMixin, PhoneNumberCleanMixin
 
 
 class ProviderLoginForm(PhoneNumberCleanMixin, forms.Form):
@@ -8,7 +8,7 @@ class ProviderLoginForm(PhoneNumberCleanMixin, forms.Form):
     password = forms.CharField(widget=forms.PasswordInput)
 
 
-class ProviderCompleteInfoForm(UsernameCleanMixin, IbanNumberCleanMixin, CardNumberCleanMixin, forms.ModelForm):
+class ProviderCompleteInfoForm(UsernameCleanMixin, forms.ModelForm):
     class Meta:
         model = Provider
         fields = [
@@ -17,8 +17,6 @@ class ProviderCompleteInfoForm(UsernameCleanMixin, IbanNumberCleanMixin, CardNum
             'province',
             'city',
             'profile_image',
-            'iban_number',
-            'card_number',
             'national_card_image',
         ]
         widgets = {
