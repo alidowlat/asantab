@@ -1,0 +1,39 @@
+{% load extra_filters %}
+<tr id="bank-account-{{ account.id }}" class="text-base">
+    <td>
+        <div class="flex items-center gap-2 whitespace-nowrap">
+            <div class="relative inline-flex flex-shrink-0 items-center justify-center">
+                <span class="relative inline-flex flex-shrink-0 items-center justify-center rounded-full ">
+                    {% if account.bank.logo %}
+                        <img src="{{ account.bank.logo.url }}" alt="logo" class="h-11 w-11 ml-2 rounded-full">
+                    {% else %}
+                        <img src="/static/images/empty-image.png" alt="logo" class="h-11 w-11 ml-2 rounded-full">
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+    </td>
+    <td>
+        <div>{{ account.bank.name }}</div>
+    </td>
+    <td class="text-sm">{{ account.card_number|format_card_number }}</td>
+    <td class="text-sm">IR{{ account.sheba_number }}</td>
+    <td>
+        <div class="w-fit rounded-full {% if account.status == 'pending' %}bg-primary/10 text-primary{% elif account.status == 'approved' %}bg-success/10 text-success{% elif account.status == 'rejected' %}bg-warning/10 text-warning{% endif %} px-3 py-1 text-sm ">
+            {{ account.get_status_display }}
+        </div>
+    </td>
+    <td>
+        <a href="{% url 'bank_account_edit_view' account.pk %}"
+           class="i-lucide-pen-line h-6 w-6 duration-200 hover:text-gray-600">
+        </a>
+    </td>
+    <td>
+        <button type="button" data-id="{{ account.id }}"
+                class="remove-bank-account-btn flex h-10 w-10 items-center justify-center rounded-full bg-background text-warning transition-all duration-200 hover:bg-warning hover:text-white hover:dark:text-black">
+            <span class="i-lucide-trash size-5"></span>
+        </button>
+    </td>
+</tr>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+

@@ -1,0 +1,23 @@
+{% if accounts %}
+    <thead class="rounded-lg shadow dark:bg-background [&amp;_tr&gt;th:nth-child(1)]:rounded-r-lg [&amp;_tr&gt;th:nth-last-child(1)]:rounded-l-lg [&amp;_tr&gt;th]:p-3 [&amp;_tr&gt;th]:text-right [&amp;_tr&gt;th]:font-medium">
+    <tr>
+        <th></th>
+        <th>نام بانک</th>
+        <th>شماره کارت</th>
+        <th>شماره شبا</th>
+        <th>وضعیت</th>
+        <th>ویرایش</th>
+        <th>حذف</th>
+    </tr>
+    </thead>
+    <tbody class="[&amp;_tr&gt;td:nth-child(1)]:rounded-r-lg [&amp;_tr&gt;td:nth-last-child(1)]:rounded-l-lg [&amp;_tr&gt;td]:whitespace-nowrap [&amp;_tr&gt;td]:p-3 [&amp;_tr]:rounded-lg [&amp;_tr]:shadow [&amp;_tr]:dark:bg-background">
+    {% for account in accounts %}
+        {% include 'dashboard/bank_account/item.html' with account=account %}
+    {% endfor %}
+    </tbody>
+{% else %}
+    <div class="flex flex-col items-center">
+        <img class="w-60 pb-10" src="/static/images/empty/empty-cart.svg" alt="empty page picture">
+        <div class="text-center text-gray-400 text-lg pb-10">موردی یافت نشد.</div>
+    </div>
+{% endif %}

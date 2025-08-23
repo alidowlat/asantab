@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.html import format_html
-from accounts.models import User, Provider, BankAccount
+from accounts.models import User, Provider, BankAccount, Bank
 
 
 @admin.register(User)
@@ -40,35 +40,47 @@ class ProviderAdmin(admin.ModelAdmin):
 
     profile_image_display.short_description = 'عکس پروفایل'
 
-    fields = ['user', 'username', 'slug', 'bio', 'province', 'city', 'profile_image', 'status', 'is_verified']
+    fields = ['user', 'username', 'slug', 'bio', 'province', 'city', 'profile_image', 'national_card_image', 'status', 'is_verified']
     list_per_page = 20
-
-    def get_fieldsets(self, request, obj=None):
-        fieldsets = super().get_fieldsets(request, obj)
-        if obj:
-            fieldsets += (('اطلاعات پرداخت', {
-                'fields': ('iban_number', 'card_number', 'national_card_image'),
-            }),)
-        return fieldsets
 
 
 @admin.register(BankAccount)
 class BankAccountAdmin(admin.ModelAdmin):
-    list_display = ('user', 'sheba_number', 'card_number', 'created_at', 'is_default')
-    list_filter = ('is_default', 'created_at')
+    list_display = ('user', 'bank', 'sheba_number', 'card_number', 'created_at', 'status')
+    list_filter = ['created_at']
     search_fields = ('user__phone_number', 'sheba_number', 'card_number')
     ordering = ('-created_at',)
     readonly_fields = ('created_at',)
     fieldsets = (
         (None, {
-            'fields': ('user', 'sheba_number', 'card_number', 'is_default')
+            'fields': ('bank', 'user', 'sheba_number', 'card_number')
         }),
         ('اطلاعات سیستمی', {
-            'fields': ('created_at',)
+            'fields': ('created_at', 'status')
         }),
     )
 
     def save_model(self, request, obj, form, change):
-        if obj.is_default:
-            BankAccount.objects.filter(user=obj.user, is_default=True).exclude(id=obj.id).update(is_default=False)
+        if obj.card_number and len(obj.card_number) >= 6:
+            prefix = obj.card_number[:6]
+            try:
+                obj.bank = Bank.objects.get(prefix=prefix)
+            except Bank.DoesNotExist:
+                obj.bank = None
+
         super().save_model(request, obj, form, change)
+
+
+@admin.register(Bank)
+class BankAdmin(admin.ModelAdmin):
+    list_display = ("name", "prefix", "logo_preview")
+    search_fields = ("name", "prefix")
+    list_filter = ("name",)
+    ordering = ("name",)
+
+    def logo_preview(self, obj):
+        if obj.logo:
+            return format_html('<img src="{}" width="50" style="border-radius:8px;" />', obj.logo.url)
+        return "—"
+
+    logo_preview.short_description = "لوگو"

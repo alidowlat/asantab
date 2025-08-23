@@ -7,3 +7,4 @@ from .notification import *
 from .order import *
 from .service import *
 from .roles import *
+from .bank_account import *

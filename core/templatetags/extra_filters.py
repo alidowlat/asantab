@@ -78,6 +78,7 @@ def to_jalali(value):
     month_name = JALALI_MONTHS[jalali_date.month]
     return f"{jalali_date.day} {month_name} {jalali_date.year}"
 
+
 @register.filter(name='show_date_slash')
 def to_jalali(value):
     if not value:
@@ -172,3 +173,10 @@ def sub(x, y):
         return x - y
     except (ValueError, TypeError):
         return x
+
+
+@register.filter
+def format_card_number(value):
+    if not value:
+        return ""
+    return "-".join([value[i:i + 4] for i in range(0, len(value), 4)])

@@ -1,0 +1,35 @@
+{% extends 'dashboard/_layout.html' %}
+{% load extra_filters %}
+
+
+{% block title %}
+    حساب های بانکی | آسان تب
+{% endblock %}
+
+{% block extra_header %}
+    <script src="/static/scripts/action.js"></script>
+    <script src="/static/scripts/bankAccount.js"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="rounded-lg bg-muted shadow">
+        <div class="py-5">
+            <div class="mb-16 flex justify-between px-5">
+                <h1 class="relative w-fit font-medium lg:text-lg">
+                    حساب های بانکی
+                    <span class="absolute right-0 top-10 h-[3px] w-full animate-fill-border rounded-full bg-primary"></span>
+                </h1>
+                <button onclick="window.open('{% url 'bank_account_create_view' %}')" class="btn-primary px-4 py-1.5">
+                    افزودن حساب بانکی
+                </button>
+            </div>
+            <div id="bank-list-dashboard" class="mb-10 rounded-lg bg-muted p-4">
+                <div class="overflow-auto lg:overflow-visible">
+                    <table class="w-full table-auto border-separate border-spacing-y-4 space-y-6 text-sm [&amp;&gt;tr]:rounded-lg">
+                        {% include 'dashboard/bank_account/list.html' %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

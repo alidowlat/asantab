@@ -1,0 +1,81 @@
+{% extends 'dashboard/_layout.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+    افزودن حساب بانکی | آسان تب
+{% endblock %}
+
+{% block extra_header %}
+    <script src="/static/scripts/action.js"></script>
+    <script src="/static/scripts/bankAccount.js"></script>
+{% endblock %}
+
+
+{% block content %}
+    <div class="rounded-lg bg-muted shadow">
+        <div class="p-5">
+            <div class="mb-16 flex justify-between">
+                <h1 class="relative w-fit font-medium lg:text-lg">
+                    افزودن حساب بانکی:
+                    <span class="absolute right-0 top-10 h-[3px] w-full animate-fill-border rounded-full bg-primary"></span>
+                </h1>
+                <a href="{% url 'bank_accounts_view' %}" class="btn-primary flex items-center gap-1 px-4 py-1.5">
+                    برگشت
+                    <span class="i-lucide-chevron-left size-5"></span>
+                </a>
+            </div>
+
+            <div class="mb-8 px-4 md:px-0">
+                <form id="create-bank-account-form" action="{% url 'bank_account_create_view' %}" method="post"
+                      enctype="multipart/form-data" class="space-y-6">
+                    {% csrf_token %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 py-6">
+                        <div class="flex flex-col gap-6">
+                            <div>
+                                <span class="text-lg font-semibold block mb-2">
+                                    {{ form.card_number.label_tag }}
+                                </span>
+                                {{ form.card_number|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-2/3" }}
+                            </div>
+                            <div>
+                                <span class="text-lg font-semibold block mb-2">
+                                    {{ form.sheba_number.label_tag }}
+                                </span>
+                                {{ form.sheba_number|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-2/3" }}
+                            </div>
+                        </div>
+
+                        <div class="bg-muted rounded-xl shadow-sm p-5">
+                            <div class="flex">
+                                <i class="i-lucide-circle-alert ml-2"></i>
+                                <h3 class="text-xl font-bold mb-5">قوانین و مقررات</h3>
+                            </div>
+                            <ul class="list-disc list-inside space-y-2 mr-1 text-sm leading-6 text-muted-foreground">
+                                <li>شماره شبا باید دقیقاً ۲۴ رقم باشد.</li>
+                                <li>شماره کارت در صورت وارد کردن باید ۱۶ رقم باشد.</li>
+                                <li>تنها یک حساب بانکی به عنوان پیش‌فرض انتخاب می‌شود.</li>
+                                <li>اطلاعات بانکی شما صرفاً برای تسویه حساب استفاده خواهد شد.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button type="submit"
+                                class="w-40 flex flex-row md:w-auto btn-primary px-4 py-1 text-white hover:bg-primary/80 transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                 class="lucide lucide-check-icon lucide-check pl-2">
+                                <path d="M20 6 9 17l-5-5"></path>
+                            </svg>
+                            ذخیره تغییرات
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div id="form-errors">
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% endblock %}
