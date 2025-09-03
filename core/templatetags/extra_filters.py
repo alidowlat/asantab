@@ -88,6 +88,14 @@ def to_jalali(value):
     return f"{jalali_date.day} / {month_name} / {jalali_date.year}"
 
 
+@register.filter(name='to_jalali_simple')
+def to_jalali_simple(value):
+    if not value:
+        return ''
+    jalali_date = jdatetime.datetime.fromgregorian(datetime=value)
+    return f"{jalali_date.year}/{jalali_date.month:02d}/{jalali_date.day:02d}"
+
+
 JALALI_WEEKDAYS = ['دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه', 'شنبه', 'یکشنبه']
 
 
@@ -124,7 +132,10 @@ def jalali_verbose(value):
 
 @register.filter(name='three_digits')
 def three_digits_sp(value: int):
-    return '{:,}'.format(value)
+    try:
+        return f"{int(value):,}"
+    except (ValueError, TypeError):
+        return value
 
 
 @register.filter(name='persian_int')
@@ -180,3 +191,16 @@ def format_card_number(value):
     if not value:
         return ""
     return "-".join([value[i:i + 4] for i in range(0, len(value), 4)])
+
+
+@register.filter(name='transaction_style')
+def transaction_style(trn_type):
+    mapping = {
+        "deposit": ("text-success", "+", "bg-success/10"),
+        "withdraw": ("text-yellow-500", "-", "bg-yellow-10"),
+        "freeze": ("text-red-600", "", "bg-warning/10"),
+        "release": ("text-success", "", "bg-success/10"),
+        "transfer": ("text-yellow-500", "-", "bg-yellow-10"),
+        "commission": ("text-yellow-500", "-", "bg-yellow-10"),
+    }
+    return mapping.get(trn_type, ("text-gray-500", ""))
