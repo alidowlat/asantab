@@ -100,7 +100,7 @@
                                     <a href="{% url 'dashboard_page' %}"
                                        class="flex items-center justify-between px-5 py-3 transition-all group-hover:text-primary">
                                         <div class="flex items-center gap-x-3">
-                                            {% if request.user.is_provider.profile_image %}
+                                            {% if request.user.providers.profile_image %}
                                                 <img class="h-10 w-10 rounded-full" src="{{ request.user.providers.profile_image.url }}" alt="Profile">
                                             {% else %}
                                                 <img class="h-8 w-8" src="/static/images/user.png" alt="Profile">
