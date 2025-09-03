@@ -5,7 +5,7 @@
             <div class="relative inline-flex flex-shrink-0 items-center justify-center">
                 <span class="relative inline-flex flex-shrink-0 items-center justify-center rounded-full border">
                     <img class="h-16 w-16 {% if provider.is_verified %} border-[3px] border-primary {% endif %} rounded-full"
-                         src="{{ provider.profile_image.url }}" alt="profile">
+                         src="{% if provider.profile_image %}{{ provider.profile_image.url }}{% else %}/static/images/user.png{% endif %}" alt="profile">
                 </span>
             </div>
         </div>
