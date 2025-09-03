@@ -19,7 +19,7 @@ class AmountModel(models.Model):
 class PSPReferenceMixin(models.Model):
     ref_id = models.CharField(max_length=100, blank=True, null=True, verbose_name="کد مرجع PSP")
     authority = models.CharField(max_length=100, blank=True, null=True, verbose_name="شناسه درخواست (Authority)")
-    tracking_code = models.CharField(max_length=100, blank=True, null=True, verbose_name="کد پیگیری بانکی")
+    tracking_code = models.CharField(max_length=100, blank=True, null=True, verbose_name="کد پیگیری")
 
     class Meta:
         abstract = True

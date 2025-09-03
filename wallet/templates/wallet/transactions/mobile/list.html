@@ -1,0 +1,7 @@
+{% if transactions %}
+    <div class="grid grid-cols-1 gap-4 sm:hidden">
+        {% for trn in transactions %}
+            {% include 'wallet/transactions/mobile/item.html' %}
+        {% endfor %}
+    </div>
+{% endif %}

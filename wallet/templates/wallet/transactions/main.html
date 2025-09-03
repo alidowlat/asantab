@@ -1,0 +1,26 @@
+{% extends 'dashboard/_layout.html' %}
+{% load extra_filters %}
+
+
+{% block title %}
+    کیف پول | آسان تب
+{% endblock %}
+
+{% block content %}
+    <div class="bg-muted rounded-lg shadow-sm">
+        <div class="p-5 md:p-6">
+            <!-- Header -->
+            <div class="border-border/20 mb-14 flex items-center justify-between pb-4">
+                <h1 class="relative w-fit text-lg font-medium lg:text-xl">
+                    کیف پول
+                    <span class="animate-fill-border bg-primary absolute top-full right-0 mt-2 h-[3px] w-full rounded-full"></span>
+                </h1>
+            </div>
+
+            <div id="transaction-list">
+                <!-- Desktop Table -->
+                {% include 'wallet/transactions/desktop/list.html' %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

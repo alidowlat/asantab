@@ -1,0 +1,73 @@
+{% extends 'dashboard/_layout.html' %}
+{% load extra_filters %}
+
+
+{% block title %}
+    کیف پول | آسان تب
+{% endblock %}
+
+{% block content %}
+    <div class="bg-muted rounded-lg shadow-sm">
+        <div class="p-5 md:p-6">
+            <!-- Header -->
+            <div class="border-border/20 mb-14 flex items-center justify-between pb-4">
+                <h1 class="relative w-fit text-lg font-medium lg:text-xl">
+                    کیف پول
+                    <span class="animate-fill-border bg-primary absolute top-full right-0 mt-2 h-[3px] w-full rounded-full"></span>
+                </h1>
+            </div>
+
+            <!-- Balance Card - Compact & Modern Version -->
+            <div class="bg-muted/30 dark:bg-muted/10 border-border/10 mb-14 flex flex-col items-center justify-between gap-6 rounded-2xl border p-5 shadow-sm lg:flex-row">
+                <div class="flex items-center gap-x-5">
+                    <div class="hidden sm:block">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                             class="text-primary/60">
+                            <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path>
+                            <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path>
+                            <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path>
+                        </svg>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center gap-x-2">
+                            <span class="text-3xl font-bold">{{ wallet.balance|three_digits }}</span>
+                            <span class="text-text/80 text-base font-medium">تومان</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap lg:w-1/2">
+                    <a href="{% url 'deposit_view' %}"
+                            class="btn-primary rounded-lg w-full sm:w-auto px-4 py-2.5 whitespace-nowrap">
+                        افزایش موجودی
+                    </a>
+                    <button type="button"
+                            class="btn-secondary rounded-lg w-full sm:w-auto px-6 py-2.5 whitespace-nowrap">
+                        برداشت وجه
+                    </button>
+                </div>
+            </div>
+
+            <!-- Transactions History -->
+            <div class="flex justify-between space-x-2">
+                <h2 class="text-text mb-4 text-lg font-semibold">
+                    تاریخچه تراکنش‌ها
+                </h2>
+                <a href="{% url 'recent_transactions' %}">
+                    <div class="flex cursor-pointer items-center gap-x-2 text-sm text-primary duration-200 hover:text-primary/80 lg:text-base">
+                        <p>مشاهده همه</p>
+                        <i class="i-lucide-chevrons-left"></i>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Desktop Table -->
+            {% include 'wallet/transactions/desktop/list.html' %}
+
+            <!-- Mobile Cards -->
+            {% include 'wallet/transactions/mobile/list.html' %}
+        </div>
+    </div>
+{% endblock %}

@@ -141,6 +141,12 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 MIN_WITHDRAW_AMOUNT = 100000
 
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "https://panel.aqayepardakht.ir",
+]
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
