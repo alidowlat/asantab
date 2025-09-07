@@ -1,9 +1,9 @@
+import secrets
 from decimal import Decimal, ROUND_DOWN
 from django.db import models, transaction
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from wallet.models.abstracts import TimeStampedModel, AmountModel
-
 from django.db.models import F
 
 User = get_user_model()
@@ -21,6 +21,12 @@ class Wallet(TimeStampedModel):
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, verbose_name="نقش")
     balance = models.DecimalField(max_digits=15, decimal_places=0, default=0, verbose_name="موجودی آزاد")
     frozen_balance = models.DecimalField(max_digits=15, decimal_places=0, default=0, verbose_name="موجودی معلق")
+    secret_code = models.CharField(max_length=64, unique=True, editable=False)
+
+    def save(self, *args, **kwargs):
+        if not self.secret_code:
+            self.secret_code = secrets.token_hex(32)
+        super().save(*args, **kwargs)
 
     def can_withdraw(self, amount: Decimal):
         return self.balance >= amount and amount >= settings.MIN_WITHDRAW_AMOUNT
@@ -172,7 +178,7 @@ class WalletTransaction(AmountModel):
         WITHDRAW = "withdraw", "برداشت"
         FREEZE = "freeze", "مسدودسازی"
         RELEASE = "release", "آزادسازی"
-        TRANSFER = "transfer", "انتقال"
+        TRANSFER = "transfer", "کسر از حساب"
         COMMISSION = "commission", "کمیسیون"
 
     wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE, related_name="transactions")
