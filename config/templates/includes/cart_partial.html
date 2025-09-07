@@ -1,5 +1,5 @@
 {% load extra_filters %}
-{% if cart %}
+{% if cart and cart.items.exists  %}
     {% for item in cart.items.all %}
         {% include 'includes/cart_item.html' with item=item %}
     {% endfor %}
