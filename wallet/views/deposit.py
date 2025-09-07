@@ -1,6 +1,5 @@
 import random
 import string
-
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, Http404
 from django.shortcuts import redirect
@@ -16,6 +15,13 @@ class DepositView(LoginRequiredMixin, FormView):
     template_name = "wallet/deposit.html"
     form_class = DepositForm
     success_url = reverse_lazy("deposit_verify")
+
+    def get_initial(self):
+        initial = super().get_initial()
+        amount = self.request.GET.get("amount")
+        if amount:
+            initial["amount"] = int(amount)
+        return initial
 
     def form_valid(self, form):
         amount = form.cleaned_data["amount"]
