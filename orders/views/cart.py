@@ -1,6 +1,9 @@
+import random
 from datetime import date
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
+from django.utils.timezone import now
 from django.db.models import Prefetch
 from django.http import HttpRequest, JsonResponse
 from django.shortcuts import render, redirect
@@ -9,6 +12,7 @@ from orders.models import Order, OrderItem
 from orders.services import OrderCalculator
 from orders.services.cart_service import CartManager, CartAction
 from services.models import Option, Schedule, Service
+from wallet.models import WalletTransaction
 
 
 @login_required
@@ -78,6 +82,7 @@ def order_checkout(request: HttpRequest):
     order = Order.objects.prefetch_related(
         Prefetch('items', queryset=OrderItem.objects.select_related('service', 'option', 'schedule'))
     ).get(pk=order.pk)
+
     for item in order.items.all():
         if not item.service or (item.schedule and item.schedule.date < date.today()):
             return redirect('user_cart_page')
@@ -88,6 +93,10 @@ def order_checkout(request: HttpRequest):
     calc = OrderCalculator(order)
     cart_manager = CartManager(order)
     discount_form = DiscountForm(request.POST or None)
+
+    wallet_balance = request.user.wallet.balance
+    final_price = calc.final_price()
+    difference = max(final_price - wallet_balance, 0)
 
     if request.method == 'POST':
         if 'remove_discount' in request.POST:
@@ -108,13 +117,44 @@ def order_checkout(request: HttpRequest):
                     messages.error(request, message)
                 return redirect('order_checkout_page')
 
+        elif 'pay_with_wallet' in request.POST:
+            if wallet_balance >= final_price:
+                with transaction.atomic():
+                    WalletTransaction.objects.create(
+                        wallet=request.user.wallet,
+                        amount=final_price,
+                        type='freeze',
+                        description=f"خرید سفارش #{order.items.count()}",
+                    )
+                    request.user.wallet.balance -= final_price
+                    request.user.wallet.save()
+
+                    order.status = 'pending'
+                    order.is_paid = True
+                    order.tracking_code = random.randint(100000, 999999)
+                    order.paid_at = now()
+                    order.save()
+
+                # messages.success(request, "مبلغ از کیف پول شما کسر شد تا فروشنده سفارش را تأیید کند.")
+                request.session['payment_success'] = True
+            else:
+                messages.error(request, f"موجودی کافی نیست. لطفاً {difference} تومان حساب خود را شارژ کنید.")
+
     context = {
         'orders': order,
         'discount_form': discount_form,
         'sum': calc.total_price(),
         'discount_amount': calc.discount_amount(),
-        'final_price': calc.final_price(),
+        'final_price': final_price,
+        'wallet_balance': wallet_balance,
+        'difference': difference,
+        'balance_after': wallet_balance - final_price if wallet_balance >= final_price else wallet_balance,
     }
+
+    if request.session.get('payment_success'):
+        context['payment_success'] = True
+        del request.session['payment_success']
+
     return render(request, 'orders/checkout.html', context)
 
 
