@@ -1,3 +1,4 @@
+{% load extra_filters %}
 {% load static %}
 {% load render_partial %}
 <!doctype html>
@@ -49,12 +50,6 @@
     </main>
     <div data-onscrollclass="translate-y-full" class="fixed inset-x-0 bottom-0 z-20 bg-muted duration-300 lg:hidden">
         <div class="container flex items-center text-sm">
-            <div class="w-1/4 border-b-2 border-primary py-1 font-medium text-primary">
-                <a href="{% url 'index_page' %}" class="flex flex-col items-center justify-center">
-                    <i class="i-solar-home-smile-linear size-6 items-center justify-center"></i>
-                    <p class="pt-2 text-xs xs:text-sm">خانه</p>
-                </a>
-            </div>
             <div class="w-1/4 py-1">
                 <a href="{% url 'services_list_page' %}" class="flex flex-col items-center justify-center">
                     <i class="i-mingcute-shopping-bag-3-line size-6"></i>
@@ -65,6 +60,24 @@
                 <a href="{% url 'user_cart_page' %}" class="flex flex-col items-center justify-center">
                     <i class="i-lucide-shopping-cart size-6"></i>
                     <p class="pt-2 text-xs xs:text-sm">سبد خرید</p>
+                </a>
+            </div>
+            <div class="w-1/4 py-1 border-b-2 border-primary font-medium text-primary">
+                <a href="{% url 'index_page' %}" class="flex flex-col items-center justify-center">
+                    <i class="i-solar-home-smile-linear size-6 items-center justify-center"></i>
+                    <p class="pt-2 text-xs xs:text-sm">خانه</p>
+                </a>
+            </div>
+            <div class="w-1/4 py-1">
+                <a href="{% url 'my_wallet' %}" class="flex flex-col items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path>
+                        <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path>
+                        <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path>
+                    </svg>
+                    <p class="pt-2 text-xs xs:text-sm">کیف پول</p>
                 </a>
             </div>
             <div class="w-1/4 py-1">
@@ -89,75 +102,63 @@
     <div class="flex h-full max-h-[80dvh] flex-col gap-4">
         <!-- Items -->
         <div class="grow overflow-y-auto">
-            <ul class="space-y-2 p-4 pl-2">
-                <li>
-                    <a href="{% url 'dashboard_page' %}"
-                       class="inline-flex w-full items-center justify-between rounded-lg bg-primary/5 p-4 text-primary duration-300">
-                        <div class="flex items-center gap-4">
-                            <div class="i-solar-home-smile-linear size-6"></div>
-                            پیشخوان
-                        </div>
-                    </a>
-                </li>
-            <li>
-                <a href="{% url 'my_wallet' %}"
-                   class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == 'my_wallet' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300 hover:text-primary">
-                    <div class="flex items-center gap-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                             class="lucide lucide-wallet-icon lucide-wallet">
-                            <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"></path>
-                            <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"></path>
-                        </svg>
-                        کیف پول
-                    </div>
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'bank_accounts_view' %}"
-                   class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == 'bank_accounts_view' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300 hover:text-primary">
-                    <div class="flex items-center gap-4">
-                        <div class="i-lucide-credit-card size-6"></div>
-                        حساب های بانکی
-                    </div>
-                </a>
-            </li>
-                {% if request.user.is_provider %}
-                    <li>
-                        <a href="{% url 'user_list_manager' %}"
-                           class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == 'user_list_manager' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+            {% if request.user.is_provider %}
+                <ul class="space-y-2 p-4 pl-2">
+                    {% with request.resolver_match.url_name as current_url %}
+                        <li>
+                            <a href="{% url 'dashboard_page' %}"
+                               class="inline-flex w-full items-center justify-between rounded-lg p-4
+                               {% if current_url == 'dashboard_page' %}bg-primary/5 text-primary
+                                   {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                                <div class="flex items-center gap-4">
+                                    <div class="i-solar-home-smile-linear size-6"></div>
+                                    پیشخوان
+                                </div>
+                            </a>
+                        </li>
+                    {% endwith %}
+                    <li class="border-t border-primary pt-2">
+                        {% url 'user_list_manager' as users_url %}
+                        <a href="{{ users_url }}"
+                           class="inline-flex w-full items-center justify-between rounded-lg p-4
+               {% if request.path|startswith:users_url %}bg-primary/5 text-primary
+               {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
                             <div class="flex items-center gap-4">
                                 <div class="i-lucide-user-round size-6"></div>
                                 لیست کاربران
                             </div>
                         </a>
                     </li>
-                {% endif %}
-                {% if request.user.is_provider %}
                     <li>
-                        <a href="{% url 'provider_service_list' %}"
-                           class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == 'provider_service_list' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                        {% url 'provider_service_list' as service_url %}
+                        <a href="{{ service_url }}"
+                           class="inline-flex w-full items-center justify-between rounded-lg p-4
+               {% if request.path|startswith:service_url %}bg-primary/5 text-primary
+               {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
                             <div class="flex items-center gap-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                     class="lucide lucide-package-icon lucide-package">
+                                     class="lucide lucide-package">
                                     <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/>
                                     <path d="M12 22V12"/>
                                     <polyline points="3.29 7 12 12 20.71 7"/>
                                     <path d="m7.5 4.27 9 5.15"/>
                                 </svg>
-                                خدمت های من
+                                خدمت‌های من
                             </div>
                             <div class="notif-badge h-6 w-6 rounded-full bg-primary-btn text-center leading-6 text-white"></div>
                         </a>
                     </li>
-                    <li>
-                        <a href="{% url 'received_orders_page' %}"
-                           class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == '' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                    <li class="border-b border-primary pb-2">
+                        {% url 'received_orders_page' as received_orders_url %}
+                        <a href="{{ received_orders_url }}"
+                           class="inline-flex w-full items-center justify-between rounded-lg p-4
+               {% if request.path|startswith:received_orders_url %}bg-primary/5 text-primary
+               {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
                             <div class="flex items-center gap-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                     class="lucide lucide-store-icon lucide-store">
+                                     class="lucide lucide-store">
                                     <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/>
                                     <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
                                     <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/>
@@ -166,74 +167,247 @@
                                 </svg>
                                 سفارشات دریافتی
                             </div>
-                            <div class="received-orders-badge h-6 w-6 rounded-full bg-yellow-500 text-center leading-6 text-white dark:bg-yellow-600"></div>
+                            <div class="received-orders-badge h-6 w-6 rounded-full bg-yellow-500 text-center leading-6 text-white"></div>
                         </a>
                     </li>
-                {% endif %}
-                <li>
-                    <a href="{% url 'orders_page' %}"
-                       class="inline-flex w-full items-center justify-between rounded-lg p-4 {% if current_url == '' %}bg-primary/5 text-primary{% else %}text-text/80 hover:text-primary{% endif %} duration-300">
-                        <div class="flex items-center gap-4">
-                            <div class="i-mingcute-shopping-bag-3-line size-6"></div>
-                            {% if request.user.is_provider %}
-                                خرید های من
-                            {% else %}
+                    {% url 'my_wallet' as wallet_url %}
+                    <li>
+                        <a href="{{ wallet_url }}"
+                           class="inline-flex w-full items-center justify-between rounded-lg p-4
+               {% if request.path|startswith:wallet_url %}bg-primary/5 text-primary
+               {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                            <div class="flex items-center gap-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                     class="lucide lucide-wallet-icon lucide-wallet">
+                                    <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"></path>
+                                    <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"></path>
+                                </svg>
+                                کیف پول
+                            </div>
+                        </a>
+                    </li>
+                    {% url 'bank_accounts_view' as bank_url %}
+                    <li>
+                        <a href="{{ bank_url }}"
+                           class="inline-flex w-full items-center justify-between rounded-lg p-4
+               {% if request.path|startswith:bank_url %}bg-primary/5 text-primary
+               {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                            <div class="flex items-center gap-4">
+                                <div class="i-lucide-credit-card size-6"></div>
+                                حساب‌های بانکی
+                            </div>
+                        </a>
+                    </li>
+                    {% url 'orders_page' as orders_url %}
+                    <li>
+                        <a href="{{ orders_url }}"
+                           class="inline-flex w-full items-center justify-between rounded-lg p-4
+               {% if request.path|startswith:orders_url %}bg-primary/5 text-primary
+               {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                            <div class="flex items-center gap-4">
+                                <div class="i-mingcute-shopping-bag-3-line size-6"></div>
+                                خریدهای من
+                            </div>
+                            <div class="order-item-badge h-6 w-6 rounded-full bg-yellow-500 text-center leading-6 text-white"></div>
+                        </a>
+                    </li>
+                    {% url 'notifications_page' as notif_url %}
+                    <li>
+                        <a href="{{ notif_url }}"
+                           class="inline-flex w-full items-center justify-between rounded-lg p-4
+               {% if request.path|startswith:notif_url %}bg-primary/5 text-primary
+               {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                            <div class="flex items-center gap-4">
+                                <div class="i-lucide-bell size-6"></div>
+                                اعلان‌ها
+                            </div>
+                            <div class="notif-badge h-6 w-6 rounded-full bg-primary-btn text-center leading-6 text-white"></div>
+                        </a>
+                    </li>
+                    {% url 'favorite_list_page' as fav_url %}
+                    <li>
+                        <a href="{{ fav_url }}"
+                           class="inline-flex w-full items-center justify-between rounded-lg p-4
+               {% if request.path|startswith:fav_url %}bg-primary/5 text-primary
+               {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                            <div class="flex items-center gap-4">
+                                <div class="i-lucide-heart size-6"></div>
+                                علاقه‌مندی‌ها
+                            </div>
+                        </a>
+                    </li>
+                    {% url 'visit_list_page' as visit_url %}
+                    <li>
+                        <a href="{{ visit_url }}"
+                           class="inline-flex w-full items-center justify-between rounded-lg p-4
+               {% if request.path|startswith:visit_url %}bg-primary/5 text-primary
+               {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                            <div class="flex items-center gap-4">
+                                <div class="i-lucide-mouse-pointer-click size-6"></div>
+                                بازدیدهای اخیر
+                            </div>
+                        </a>
+                    </li>
+                    {% url 'account_info_page' as account_url %}
+                    <li>
+                        <a href="{{ account_url }}"
+                           class="inline-flex w-full items-center justify-between rounded-lg p-4
+               {% if request.path|startswith:account_url %}bg-primary/5 text-primary
+               {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                            <div class="flex items-center gap-4">
+                                <div class="i-lucide-user-cog size-6"></div>
+                                اطلاعات حساب کاربری
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% if request.user.is_provider %}{% url 'logout_provider' %}{% else %}{% url 'logout' %}{% endif %}"
+                           class="inline-flex w-full items-center justify-between p-4 text-warning">
+                            <div class="flex items-center gap-4">
+                                <div class="i-mingcute-exit-line size-6"></div>
+                                خروج
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            {% else %}
+                <ul class="space-y-2 p-4 pl-2">
+                    {% with request.resolver_match.url_name as current_url %}
+                        <li>
+                            <a href="{% url 'dashboard_page' %}"
+                               class="inline-flex w-full items-center justify-between rounded-lg p-4
+                               {% if current_url == 'dashboard_page' %}bg-primary/5 text-primary
+                                   {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                                <div class="flex items-center gap-4">
+                                    <div class="i-solar-home-smile-linear size-6"></div>
+                                    پیشخوان
+                                </div>
+                            </a>
+                        </li>
+                    {% endwith %}
+                    {% url 'my_wallet' as wallet_url %}
+                    <li>
+                        <a href="{{ wallet_url }}"
+                           class="inline-flex w-full items-center justify-between rounded-lg p-4
+               {% if request.path|startswith:wallet_url %}bg-primary/5 text-primary
+               {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                            <div class="flex items-center gap-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                     class="lucide lucide-wallet-icon lucide-wallet">
+                                    <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"></path>
+                                    <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"></path>
+                                </svg>
+                                کیف پول
+                            </div>
+                        </a>
+                    </li>
+                    {% url 'bank_accounts_view' as bank_url %}
+                    <li>
+                        <a href="{{ bank_url }}"
+                           class="inline-flex w-full items-center justify-between rounded-lg p-4
+               {% if request.path|startswith:bank_url %}bg-primary/5 text-primary
+               {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                            <div class="flex items-center gap-4">
+                                <div class="i-lucide-credit-card size-6"></div>
+                                حساب‌های بانکی
+                            </div>
+                        </a>
+                    </li>
+                    {% url 'orders_page' as orders_url %}
+                    <li>
+                        <a href="{{ orders_url }}"
+                           class="inline-flex w-full items-center justify-between rounded-lg p-4
+               {% if request.path|startswith:orders_url %}bg-primary/5 text-primary
+               {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                            <div class="flex items-center gap-4">
+                                <div class="i-mingcute-shopping-bag-3-line size-6"></div>
                                 سفارش ها
-                            {% endif %}
-                        </div>
-                        <div class="order-item-badge h-6 w-6 rounded-full bg-yellow-500 text-center leading-6 text-white dark:bg-yellow-600"></div>
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'notifications_page' %}"
-                       class="inline-flex w-full items-center justify-between rounded-lg p-4 text-text/80 duration-300 hover:text-primary">
-                        <div class="flex items-center gap-4">
-                            <div class="i-lucide-bell size-6"></div>
-                            اعلان ها
-                        </div>
-                        <div class="notif-badge h-6 w-6 rounded-full bg-primary-btn text-center leading-6 text-white"></div>
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'favorite_list_page' %}"
-                       class="inline-flex w-full items-center justify-between rounded-lg p-4 text-text/80 duration-300 hover:text-primary">
-                        <div class="flex items-center gap-4">
-                            <div class="i-lucide-heart size-6"></div>
-                            علاقه‌‍مندی ها
-                        </div>
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'visit_list_page' %}"
-                       class="inline-flex w-full items-center justify-between rounded-lg p-4 text-text/80 duration-300 hover:text-primary">
-                        <div class="flex items-center gap-4">
-                            <div class="i-lucide-mouse-pointer-click size-6"></div>
-                            بازدید های اخیر
-                        </div>
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'account_info_page' %}"
-                       class="inline-flex w-full items-center justify-between rounded-lg p-4 text-text/80 duration-300 hover:text-primary">
-                        <div class="flex items-center gap-4">
-                            <div class="i-lucide-user-cog size-6"></div>
-                            اطلاعات حساب کاربری
-                        </div>
-                    </a>
-                </li>
-                <li>
-                    <a href="{% if request.user.is_provider %}{% url 'logout_provider' %}{% else %}{% url 'logout' %}{% endif %}"
-                       type="button" class="inline-flex w-full items-center justify-between p-4 text-warning">
-                        <div class="flex items-center gap-4">
-                            <div class="i-mingcute-exit-line size-6"></div>
-                            خروج
-                        </div>
-                    </a>
-                </li>
-            </ul>
+                            </div>
+                            <div class="order-item-badge h-6 w-6 rounded-full bg-yellow-500 text-center leading-6 text-white"></div>
+                        </a>
+                    </li>
+                    {% url 'notifications_page' as notif_url %}
+                    <li>
+                        <a href="{{ notif_url }}"
+                           class="inline-flex w-full items-center justify-between rounded-lg p-4
+               {% if request.path|startswith:notif_url %}bg-primary/5 text-primary
+               {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                            <div class="flex items-center gap-4">
+                                <div class="i-lucide-bell size-6"></div>
+                                اعلان‌ها
+                            </div>
+                            <div class="notif-badge h-6 w-6 rounded-full bg-primary-btn text-center leading-6 text-white"></div>
+                        </a>
+                    </li>
+                    {% url 'favorite_list_page' as fav_url %}
+                    <li>
+                        <a href="{{ fav_url }}"
+                           class="inline-flex w-full items-center justify-between rounded-lg p-4
+               {% if request.path|startswith:fav_url %}bg-primary/5 text-primary
+               {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                            <div class="flex items-center gap-4">
+                                <div class="i-lucide-heart size-6"></div>
+                                علاقه‌مندی‌ها
+                            </div>
+                        </a>
+                    </li>
+                    {% url 'visit_list_page' as visit_url %}
+                    <li>
+                        <a href="{{ visit_url }}"
+                           class="inline-flex w-full items-center justify-between rounded-lg p-4
+               {% if request.path|startswith:visit_url %}bg-primary/5 text-primary
+               {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                            <div class="flex items-center gap-4">
+                                <div class="i-lucide-mouse-pointer-click size-6"></div>
+                                بازدیدهای اخیر
+                            </div>
+                        </a>
+                    </li>
+                    {% url 'account_info_page' as account_url %}
+                    <li>
+                        <a href="{{ account_url }}"
+                           class="inline-flex w-full items-center justify-between rounded-lg p-4
+               {% if request.path|startswith:account_url %}bg-primary/5 text-primary
+               {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                            <div class="flex items-center gap-4">
+                                <div class="i-lucide-user-cog size-6"></div>
+                                اطلاعات حساب کاربری
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% if request.user.is_provider %}{% url 'logout_provider' %}{% else %}{% url 'logout' %}{% endif %}"
+                           class="inline-flex w-full items-center justify-between p-4 text-warning">
+                            <div class="flex items-center gap-4">
+                                <div class="i-mingcute-exit-line size-6"></div>
+                                خروج
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            {% endif %}
         </div>
     </div>
 </div>
 {% include 'shared/footer_ref.html' %}
 </body>
 </html>
+
+
+<script>
+    function loadCartPartial() {
+        const cartElement = document.getElementById('cart-partial');
+        const url = cartElement.getAttribute('data-fetch-url');
+
+        fetch(url)
+            .then(res => res.text())
+            .then(html => {
+                cartElement.innerHTML = html;
+                showOrderItemsCount();
+            });
+    }
+
+    document.addEventListener("DOMContentLoaded", loadCartPartial);
+</script>

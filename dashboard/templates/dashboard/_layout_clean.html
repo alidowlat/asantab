@@ -38,3 +38,20 @@
 {% include 'shared/footer_ref.html' %}
 </body>
 </html>
+
+
+<script>
+    function loadCartPartial() {
+        const cartElement = document.getElementById('cart-partial');
+        const url = cartElement.getAttribute('data-fetch-url');
+
+        fetch(url)
+            .then(res => res.text())
+            .then(html => {
+                cartElement.innerHTML = html;
+                showOrderItemsCount();
+            });
+    }
+
+    document.addEventListener("DOMContentLoaded", loadCartPartial);
+</script>
