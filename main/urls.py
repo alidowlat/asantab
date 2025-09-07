@@ -29,6 +29,7 @@ urlpatterns = [
     path('wallet/', include('wallet.urls.wallet')),
     path('wallet/', include('wallet.urls.transactions')),
     path('wallet/', include('wallet.urls.deposit')),
+    path('wallet/', include('wallet.urls.withdrawal')),
     path('auth/user/', include('accounts.urls.user')),
     path('auth/provider/', include('accounts.urls.provider')),
     path('services/', include('services.urls.list')),
