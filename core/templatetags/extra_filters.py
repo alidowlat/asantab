@@ -200,7 +200,14 @@ def transaction_style(trn_type):
         "withdraw": ("text-yellow-500", "-", "bg-yellow-10"),
         "freeze": ("text-red-600", "", "bg-warning/10"),
         "release": ("text-success", "", "bg-success/10"),
-        "transfer": ("text-yellow-500", "-", "bg-yellow-10"),
+        "transfer": ("text-red-600", "-", "bg-warning/10"),
         "commission": ("text-yellow-500", "-", "bg-yellow-10"),
     }
     return mapping.get(trn_type, ("text-gray-500", ""))
+
+
+@register.filter
+def startswith(text, starts):
+    if isinstance(text, str):
+        return text.startswith(starts)
+    return False
