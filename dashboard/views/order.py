@@ -14,31 +14,38 @@ class OrderListView(LoginRequiredMixin, ListView):
     template_name = 'dashboard/order/main.html'
     model = Order
 
+    def get_orders(self, is_paid, select_fields=None, status=None):
+        qs = Order.objects.filter(user=self.request.user, is_paid=is_paid)
+        if status:
+            qs = qs.filter(status=status)
+        if select_fields:
+            qs = qs.prefetch_related(
+                Prefetch('items', queryset=OrderItem.objects.select_related(*select_fields))
+            )
+        else:
+            qs = qs.prefetch_related('items')
+        return qs
+
     def get_context_data(self, **kwargs):
-        context = super(OrderListView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
-        def get_orders(is_paid, select_fields=None, status=None):
-            queryset = Order.objects.filter(user=self.request.user, is_paid=is_paid)
-            if status:
-                queryset = queryset.filter(status=status)
-            if select_fields:
-                queryset = queryset.prefetch_related(
-                    Prefetch('items', queryset=OrderItem.objects.select_related(*select_fields))
-                )
-            else:
-                queryset = queryset.prefetch_related('items')
-            return queryset
+        cart_items = self.get_orders(False, ['service', 'option', 'schedule']).order_by('-created_at')
+        order_items = self.get_orders(True, ['service']).order_by('-paid_at')
 
-        cart_items = get_orders(False, ['service', 'option', 'schedule'])
-        order_items = get_orders(True, ['service'])
+        for order in order_items:
+            order.calculated_final_price = OrderCalculator(order).final_price()
 
-        context['cart_items'] = cart_items
-        context['order_items'] = order_items
+        context.update({
+            "cart_items": cart_items,
+            "order_items": order_items,
+            "pending_orders": order_items.filter(status="pending"),
+            "accepted_orders": order_items.filter(status="accepted"),
+            "completed_orders": order_items.filter(status="completed"),
+            "rejected_orders": order_items.filter(status="rejected"),
+        })
 
         for status_value, _ in STATUS_CHOICES:
-            context[f'order_{status_value}'] = get_orders(True, ['service'], status_value)
-
-        context['final_price'] = sum(OrderCalculator(order).final_price() for order in order_items)
+            context[f'order_{status_value}'] = self.get_orders(True, ['service'], status_value)
 
         return context
 
