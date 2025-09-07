@@ -12,7 +12,7 @@ class WalletView(LoginRequiredMixin, TemplateView):
         wallet, _ = Wallet.objects.get_or_create(user=self.request.user)
         ctx["wallet"] = wallet
 
-        transactions = WalletTransaction.objects.filter(wallet=wallet)[:10]
+        transactions = WalletTransaction.objects.filter(wallet=wallet).order_by('-created_at')[:10]
         ctx["transactions"] = transactions
 
         return ctx
