@@ -59,15 +59,27 @@ def notif_list_partial(request):
 
 @login_required
 def cart_partial(request):
-    cart = Order.objects.filter(user=request.user, is_paid=False).prefetch_related(
-        Prefetch('items', queryset=OrderItem.objects.select_related('service', 'option', 'schedule'))
-    ).first()
-    calc = OrderCalculator(cart)
+    cart = (
+        Order.objects
+        .filter(user=request.user, is_paid=False)
+        .prefetch_related(
+            Prefetch('items', queryset=OrderItem.objects.select_related('service', 'option', 'schedule'))
+        )
+        .first()
+    )
 
-    if cart is None:
-        return render(request, 'includes/cart_partial.html', {'cart': None, 'final_price': 0})
+    if cart and cart.items.exists():
+        calc = OrderCalculator(cart)
+        return render(request, 'includes/cart_partial.html', {
+            'cart': cart,
+            'final_price': calc.final_price(),
+        })
 
-    return render(request, 'includes/cart_partial.html', {'cart': cart, 'final_price': calc.final_price()})
+    return render(request, 'includes/cart_partial.html', {
+        'cart': None,
+        'final_price': 0,
+    })
+
 
 
 @login_required
