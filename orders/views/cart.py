@@ -8,7 +8,7 @@ from django.db.models import Prefetch
 from django.http import HttpRequest, JsonResponse
 from django.shortcuts import render, redirect
 from orders.forms import DiscountForm
-from orders.models import Order, OrderItem
+from orders.models import Order, OrderItem, VendorOrder
 from orders.services import OrderCalculator
 from orders.services.cart_service import CartManager, CartAction
 from services.models import Option, Schedule, Service
@@ -77,16 +77,19 @@ def add_service_to_cart(request):
 
 
 @login_required
+@transaction.atomic
 def order_checkout(request: HttpRequest):
-    order, created = Order.objects.get_or_create(is_paid=False, user=request.user)
-    order = Order.objects.prefetch_related(
-        Prefetch('items', queryset=OrderItem.objects.select_related('service', 'option', 'schedule'))
-    ).get(pk=order.pk)
+    order, _ = Order.objects.get_or_create(is_paid=False, user=request.user)
+    order = (
+        Order.objects.prefetch_related(
+            Prefetch('items', queryset=OrderItem.objects.select_related('service', 'option', 'schedule'))
+        )
+        .get(pk=order.pk)
+    )
 
     for item in order.items.all():
         if not item.service or (item.schedule and item.schedule.date < date.today()):
             return redirect('user_cart_page')
-
     if not order.items.exists():
         return redirect('user_cart_page')
 
@@ -94,48 +97,66 @@ def order_checkout(request: HttpRequest):
     cart_manager = CartManager(order)
     discount_form = DiscountForm(request.POST or None)
 
-    wallet_balance = request.user.wallet.balance
+    buyer_wallet = request.user.wallet
+    wallet_balance = buyer_wallet.balance
     final_price = calc.final_price()
     difference = max(final_price - wallet_balance, 0)
 
     if request.method == 'POST':
         if 'remove_discount' in request.POST:
             success, message = cart_manager.remove_discount_code(request.user)
-            if success:
-                messages.success(request, message)
-            else:
-                messages.error(request, message)
+            messages.success(request, message) if success else messages.error(request, message)
             return redirect('order_checkout_page')
 
         elif discount_form.is_valid():
             code = discount_form.cleaned_data['discount_code']
             if code:
                 success, message = cart_manager.apply_discount_code(request.user, code)
-                if success:
-                    messages.success(request, message)
-                else:
-                    messages.error(request, message)
+                messages.success(request, message) if success else messages.error(request, message)
                 return redirect('order_checkout_page')
 
         elif 'pay_with_wallet' in request.POST:
             if wallet_balance >= final_price:
                 with transaction.atomic():
-                    WalletTransaction.objects.create(
-                        wallet=request.user.wallet,
+                    freeze_tx = WalletTransaction.create_transaction(
+                        wallet=buyer_wallet,
+                        type=WalletTransaction.TransactionType.FREEZE,
                         amount=final_price,
-                        type='freeze',
-                        description=f"خرید سفارش #{order.items.count()}",
+                        description=f"خرید سفارش #{order.id} | مبلغ تا تایید فروشنده معلق خواهد بود "
                     )
-                    request.user.wallet.balance -= final_price
-                    request.user.wallet.save()
+
+                    providers_map = {}
+                    for item in order.items.all():
+                        provider = item.service.provider
+                        providers_map.setdefault(provider, []).append(item)
+
+                    for provider, items in providers_map.items():
+                        vendor_total = sum(i.final_price for i in items)
+
+                        vendor_order = VendorOrder.objects.create(
+                            order=order,
+                            provider=provider,
+                            total_price=vendor_total,
+                            status='pending'
+                        )
+
+                        OrderItem.objects.filter(pk__in=[i.pk for i in items]).update(vendor_order=vendor_order)
+
+                        WalletTransaction.objects.create(
+                            wallet=provider.user.wallet,
+                            related_wallet=buyer_wallet,
+                            amount=vendor_total,
+                            type=WalletTransaction.TransactionType.FREEZE,
+                            description=f"سفارش #{order.id} - VendorOrder #{vendor_order.id}"
+                        )
 
                     order.status = 'pending'
                     order.is_paid = True
+                    order.wallet_transaction = freeze_tx
                     order.tracking_code = random.randint(100000, 999999)
                     order.paid_at = now()
                     order.save()
 
-                # messages.success(request, "مبلغ از کیف پول شما کسر شد تا فروشنده سفارش را تأیید کند.")
                 request.session['payment_success'] = True
             else:
                 messages.error(request, f"موجودی کافی نیست. لطفاً {difference} تومان حساب خود را شارژ کنید.")
