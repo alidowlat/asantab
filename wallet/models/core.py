@@ -174,7 +174,7 @@ class SiteWallet(models.Model):
 
 class WalletTransaction(AmountModel):
     class TransactionType(models.TextChoices):
-        DEPOSIT = "deposit", "شارژ"
+        DEPOSIT = "deposit", "شارژ / واریز"
         WITHDRAW = "withdraw", "برداشت"
         FREEZE = "freeze", "مسدودسازی"
         RELEASE = "release", "آزادسازی"
