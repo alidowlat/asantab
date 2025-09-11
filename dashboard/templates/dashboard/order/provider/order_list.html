@@ -10,7 +10,7 @@
                     aria-selected="true"
                     class="flex items-center gap-2 rounded-lg px-6 py-2 text-sm btn-primary">
                 همه
-                <span>{{ order_items|length }}</span>
+                <span>{{ vendor_orders|length }}</span>
             </button>
         </li>
         <li role="presentation">
@@ -55,7 +55,7 @@
         <!-- همه -->
         <div class="block" id="filter-all" role="tabpanel" aria-labelledby="filter-all-tab">
             <div class="space-y-4">
-                {% for order in order_items %}
+                {% for vendor in vendor_orders %}
                     {% include 'dashboard/order/provider/order_item.html' with order=order %}
                 {% empty %}
                     <div class="text-center text-gray-400">سفارشی دریافت نکردید.</div>
@@ -66,9 +66,9 @@
         <!-- درحال بررسی -->
         <div class="hidden" id="filter-pending" role="tabpanel" aria-labelledby="filter-pending-tab">
             <div class="space-y-4">
-                {% for order in order_items %}
-                    {% if order.status == 'pending' %}
-                        {% include 'dashboard/order/provider/order_item.html' with order=order %}
+                {% for vendor in vendor_orders %}
+                    {% if vendor.status == 'pending' %}
+                        {% include 'dashboard/order/provider/order_item.html' with vendor=vendor %}
                     {% endif %}
                 {% empty %}
                     <div class="text-center text-gray-400">سفارشی دریافت نکردید.</div>
@@ -79,9 +79,9 @@
         <!-- فعلی -->
         <div class="hidden" id="filter-accepted" role="tabpanel" aria-labelledby="filter-accepted-tab">
             <div class="space-y-4">
-                {% for order in order_items %}
-                    {% if order.status == 'accepted' %}
-                        {% include 'dashboard/order/provider/order_item.html' with order=order %}
+                {% for vendor in vendor_orders %}
+                    {% if vendor.status == 'accepted' %}
+                        {% include 'dashboard/order/provider/order_item.html' with vendor=vendor %}
                     {% endif %}
                 {% empty %}
                     <div class="text-center text-gray-400">سفارشی دریافت نکردید.</div>
@@ -92,9 +92,9 @@
         <!-- تکمیل شده -->
         <div class="hidden" id="filter-delivered" role="tabpanel" aria-labelledby="filter-delivered-tab">
             <div class="space-y-4">
-                {% for order in order_items %}
-                    {% if order.status == 'completed' %}
-                        {% include 'dashboard/order/provider/order_item.html' with order=order %}
+                {% for vendor in vendor_orders %}
+                    {% if vendor.status == 'completed' %}
+                        {% include 'dashboard/order/provider/order_item.html' with vendor=vendor %}
                     {% endif %}
                 {% empty %}
                     <div class="text-center text-gray-400">سفارشی دریافت نکردید.</div>
@@ -105,9 +105,9 @@
         <!-- لغو شده -->
         <div class="hidden" id="filter-canceled" role="tabpanel" aria-labelledby="filter-canceled-tab">
             <div class="space-y-4">
-                {% for order in order_items %}
-                    {% if order.status == 'rejected' %}
-                        {% include 'dashboard/order/provider/order_item.html' with order=order %}
+                {% for vendor in vendor_orders %}
+                    {% if vendor.status == 'rejected' %}
+                        {% include 'dashboard/order/provider/order_item.html' with vendor=vendor %}
                     {% endif %}
                 {% empty %}
                     <div class="text-center text-gray-400">سفارشی دریافت نکردید.</div>
@@ -116,3 +116,74 @@
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.querySelectorAll(".vendor-order-form").forEach(form => {
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const url = this.dataset.url;
+            const csrfToken = this.querySelector("[name=csrfmiddlewaretoken]").value;
+            const action = this.dataset.action;
+
+            if (action === "reject") {
+                Swal.fire({
+                    title: "رد سفارش",
+                    input: "textarea",
+                    inputPlaceholder: "دلیل رد سفارش را وارد کنید...",
+                    inputAttributes: { "aria-label": "دلیل رد سفارش" },
+                    showCancelButton: true,
+                    confirmButtonText: "تایید",
+                    cancelButtonText: "انصراف",
+                    inputValidator: value => {
+                        if (!value) return "وارد کردن دلیل رد سفارش الزامی است.";
+                    }
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        submitAction(url, csrfToken, { rejection_reason: result.value });
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: "تایید سفارش",
+                    text: "آیا مطمئن هستید که می‌خواهید سفارش را تایید کنید؟",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "بله، تایید شود",
+                    cancelButtonText: "انصراف"
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        submitAction(url, csrfToken);
+                    }
+                });
+            }
+        });
+    });
+
+    function submitAction(url, csrfToken, extraData = {}) {
+        const formData = new FormData();
+        formData.append("csrfmiddlewaretoken", csrfToken);
+        for (const key in extraData) {
+            formData.append(key, extraData[key]);
+        }
+
+        fetch(url, {
+            method: "POST",
+            headers: { "X-Requested-With": "XMLHttpRequest" },
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            Swal.fire({
+                icon: data.status === "success" ? "success" :
+                      (data.status === "warning" ? "warning" : "error"),
+                text: data.message,
+                confirmButtonText: "باشه"
+            }).then(() => {
+                if (data.status === "success" || data.status === "warning") {
+                    window.location.reload();
+                }
+            });
+        });
+    }
+</script>

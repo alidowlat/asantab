@@ -40,11 +40,11 @@
 
                 <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap lg:w-1/2">
                     <a href="{% url 'deposit_view' %}"
-                            class="btn-primary rounded-lg w-full sm:w-auto px-4 py-2.5 whitespace-nowrap">
+                       class="btn-primary rounded-lg w-full sm:w-auto px-4 py-2.5 whitespace-nowrap">
                         افزایش موجودی
                     </a>
                     <a href="{% url 'withdraw_view' %}"
-                            class="btn-secondary text-center rounded-lg w-full sm:w-auto px-4 py-2.5 whitespace-nowrap">
+                       class="btn-secondary text-center rounded-lg w-full sm:w-auto px-4 py-2.5 whitespace-nowrap">
                         برداشت وجه
                     </a>
                 </div>
@@ -55,12 +55,14 @@
                 <h2 class="text-text mb-4 text-lg font-semibold">
                     تاریخچه تراکنش‌ها
                 </h2>
-                <a href="{% url 'recent_transactions' %}">
-                    <div class="flex cursor-pointer items-center gap-x-2 text-sm text-primary duration-200 hover:text-primary/80 lg:text-base">
-                        <p>مشاهده همه</p>
-                        <i class="i-lucide-chevrons-left"></i>
-                    </div>
-                </a>
+                {% if transactions %}
+                    <a href="{% url 'recent_transactions' %}">
+                        <div class="flex cursor-pointer items-center gap-x-2 text-sm text-primary duration-200 hover:text-primary/80 lg:text-base">
+                            <p>مشاهده همه</p>
+                            <i class="i-lucide-chevrons-left"></i>
+                        </div>
+                    </a>
+                {% endif %}
             </div>
 
             <!-- Desktop Table -->

@@ -48,7 +48,7 @@
         <div class="text-text/80">{{ provider.user.date_joined|show_date }}</div>
     </td>
     <td>
-        <a href="{% url 'impersonate_user' provider.id %}"
+        <a href="{% url 'impersonate_user' provider.user.id %}"
            class="i-mynaui-external-link h-6 w-6 text-success duration-200 hover:text-success/80">
         </a>
     </td>

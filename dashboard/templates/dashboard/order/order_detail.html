@@ -2,7 +2,7 @@
 {% load extra_filters %}
 
 {% block title %}
-    جزئیات سفارش {{ order.tracking_code }}
+    جزئیات سفارش {{ loaded_order.tracking_code }}
     | آسان تب
 {% endblock %}
 
@@ -11,7 +11,7 @@
         <div class="p-5">
             <div class="mb-16 flex justify-between">
                 <h1 class="relative w-fit font-medium lg:text-lg">
-                    جزئیات سفارش {{ order.tracking_code }}
+                    جزئیات سفارش {{ loaded_order.tracking_code }}
                     <span class="absolute right-0 top-10 h-[3px] w-full animate-fill-border rounded-full bg-primary"></span>
                 </h1>
                 <a href="{% url 'orders_page' %}" class="btn-primary flex items-center gap-1 px-4 py-1.5">
@@ -34,7 +34,7 @@
                                     شماره سفارش
                                 </div>
                                 <div class="text-sm text-text/95 md:text-base">
-                                    {{ order.tracking_code }}
+                                    {{ loaded_order.tracking_code }}
                                 </div>
                             </div>
                             <div class="flex items-center justify-between gap-x-2 md:justify-start">
@@ -53,18 +53,18 @@
                                     تاریخ پرداخت
                                 </div>
                                 <div class="flex items-center gap-1 text-text/95">
-                                    {{ order.paid_at|show_date_slash }}
+                                    {{ loaded_order.paid_at|show_date_slash }}
                                 </div>
                             </div>
                         </div>
                         <div class="flex flex-grow flex-col gap-y-4">
-                            {% with style=order.get_status_style %}
+                            {% with style=loaded_order.get_status_style %}
                                 <div class="flex items-center gap-x-2 {{ style.color }}">
                                     <div class="{{ style.icon }} size-5"></div>
                                     <p class="text-sm font-medium md:text-base">
-                                        {{ order.get_status_display }}
-                                        {% if order.status == 'rejected' %}
-                                            {{ order.rejection_reason }}
+                                        {{ loaded_order.get_status_display }}
+                                        {% if loaded_order.status == 'rejected' %}
+                                            {{ loaded_order.rejection_reason }}
                                         {% endif %}
                                     </p>
                                 </div>
@@ -73,7 +73,7 @@
                                           class="absolute inset-y-0 right-0 rounded-full {{ style.bg }}"></span>
                                 </div>
                                 <div class="flex items-center justify-between text-sm {{ style.color }} md:text-base">
-                                    <span> {{ order.updated_at.date|show_date_slash }}</span><span> ساعت {{ order.updated_at|show_time }} </span>
+                                    <span> {{ loaded_order.updated_at.date|show_date_slash }}</span><span> ساعت {{ loaded_order.updated_at|show_time }} </span>
                                 </div>
                             {% endwith %}
                         </div>
@@ -92,7 +92,7 @@
                                     class="text-sm md:text-base">تومان</span>
                             </div>
                         </div>
-                        {% if order.discount_code %}
+                        {% if loaded_order.discount_code %}
                             <div class="flex items-center justify-between gap-x-2 lg:justify-start">
                                 <div class="text-sm text-text/60 md:text-base">
                                     کد تخفیف
@@ -129,10 +129,10 @@
             <div class="mb-8">
                 <h3 class="mb-8 flex items-center gap-x-4 text-lg text-text/80">
                     <span class="h-2 w-2 rounded-full bg-primary"></span> اقلام
-                    سفارش <span class="text-sm text-text/60"> ( {{ order.items.all|length }} آیتم ) </span>
+                    سفارش <span class="text-sm text-text/60"> ( {{ loaded_order.items.all|length }} آیتم ) </span>
                 </h3>
                 <ul class="divide-y divide-border">
-                    {% for item in order.items.all %}
+                    {% for item in loaded_order.items.all %}
                         <li>
                             <div class="py-4 sm:py-6">
                                 <div class="grid grid-cols-2 items-center justify-start gap-2 xs:grid-cols-3 xs:gap-6 sm:grid-cols-4 xl:grid-cols-6">
@@ -143,16 +143,17 @@
                                         </a>
                                     </div>
                                     <div class="row-span-2 space-y-3 xs:col-span-2 sm:col-span-3 xl:col-span-5">
-                                        <a href="{{ item.service.get_absolute_url }}" class="line-clamp-2 text-sm md:text-base">{{ item.service.title }}</a>
+                                        <a href="{{ item.service.get_absolute_url }}"
+                                           class="line-clamp-2 text-sm md:text-base">{{ item.service.title }}</a>
                                         <div class="flex flex-col gap-2">
-                                                <div class="flex items-center gap-2">
-                                                    <div class="opacity-75">نوع تبلیغ:</div>
-                                                    <div>{{ item.option.title }}</div>
-                                                </div>
-                                                <div class="flex items-center gap-2">
-                                                    <div class="opacity-75">تاریخ انتخابی:</div>
-                                                    <div>{{ item.schedule.display_date|show_date }}</div>
-                                                </div>
+                                            <div class="flex items-center gap-2">
+                                                <div class="opacity-75">نوع تبلیغ:</div>
+                                                <div>{{ item.option.title }}</div>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <div class="opacity-75">تاریخ انتخابی:</div>
+                                                <div>{{ item.schedule.display_date|show_date }}</div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-x-2 xs:justify-center">
@@ -163,9 +164,6 @@
                                         </div>
                                     </div>
                                     <div class="row-span-2 xs:col-span-2 sm:col-span-3 xl:col-span-5">
-{#                                        <del class="flex items-center gap-1 text-sm text-warning xs:col-span-2 sm:col-span-3 lg:text-lg xl:col-span-5">#}
-{#                                            1,900,000#}
-{#                                        </del>#}
                                         <div class="flex items-center gap-1 text-primary xs:col-span-2 sm:col-span-3 lg:text-lg xl:col-span-5">
                                             <span class="font-bold">{{ item.final_price|rounded|three_digits }}</span>
                                             <span class="text-sm lg:text-base"> تومان</span>
@@ -175,7 +173,6 @@
                             </div>
                         </li>
                     {% endfor %}
-
                 </ul>
             </div>
         </div>
