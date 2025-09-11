@@ -5,7 +5,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
 from accounts.models import Provider
 from notifications.models import Notification
-from orders.models import Order, OrderItem
+from orders.models import Order, OrderItem, VendorOrder
 from orders.services import OrderCalculator
 from search.models import SearchQuery
 from services.models import Favorite, ServiceVisit
@@ -79,7 +79,6 @@ def cart_partial(request):
         'cart': None,
         'final_price': 0,
     })
-
 
 
 @login_required
@@ -163,9 +162,9 @@ def order_items_count(request):
 @login_required
 def received_orders_count(request):
     provider = get_object_or_404(Provider, user=request.user)
-    count = Order.objects.filter(
+    count = VendorOrder.objects.filter(
         provider=provider,
-        is_paid=True,
+        order__is_paid=True,
         status__in=['pending', 'accepted']
     ).count()
     return JsonResponse({'count': count})
