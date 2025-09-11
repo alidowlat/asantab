@@ -20,17 +20,19 @@
     <div class="hidden rounded-lg shadow lg:block mb-4 border border-primary">
         <ul class="relative space-y-2 rounded-lg bg-muted p-2">
             {% with request.resolver_match.url_name as current_url %}
-                <li>
-                    <a href="{% url 'role_list' %}"
-                       class="inline-flex w-full items-center justify-between rounded-lg p-4
+                {% if request.user.is_staff and request.user.is_superuser %}
+                    <li>
+                        <a href="{% url 'role_list' %}"
+                           class="inline-flex w-full items-center justify-between rounded-lg p-4
                    {% if current_url == 'role_list' %}bg-primary/5 text-primary
                    {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
-                        <div class="flex items-center gap-4">
-                            <div class="i-lucide-user-round size-6"></div>
-                            لیست کاربران
-                        </div>
-                    </a>
-                </li>
+                            <div class="flex items-center gap-4">
+                                <div class="i-lucide-user-round size-6"></div>
+                                لیست کاربران
+                            </div>
+                        </a>
+                    </li>
+                {% endif %}
                 <li>
                     <a href="{% url 'provider_service_list' %}"
                        class="inline-flex w-full items-center justify-between rounded-lg p-4
@@ -47,7 +49,6 @@
                             </svg>
                             خدمت های من
                         </div>
-                        <div class="notif-badge h-6 w-6 rounded-full bg-primary-btn text-center leading-6 text-white"></div>
                     </a>
                 </li>
                 <li>
