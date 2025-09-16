@@ -7,7 +7,6 @@ from accounts.models import Provider
 from accounts.services import calculate_profile_completion
 from notifications.models import Notification
 from orders.models import OrderItem, Order
-from orders.services import OrderCalculator
 
 
 class DashboardView(LoginRequiredMixin, TemplateView):
@@ -25,13 +24,12 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         ).order_by('-id')
 
         latest_orders = list(all_orders[:3])
-        calc = OrderCalculator(latest_orders[0]) if latest_orders else None
 
         context.update({
             'user': user,
             'orders': latest_orders,
+            'final_price': latest_orders[0].final_price if latest_orders else 0,
             'user_notifs': Notification.objects.filter(user=user, is_read=False),
-            'final_price': calc.final_price() if calc else 0,
             'current_orders_count': all_orders.filter(status__in=['pending', 'accepted']).count(),
             'completed_orders_count': all_orders.filter(status='completed').count(),
             'canceled_orders_count': all_orders.filter(status='rejected').count(),
