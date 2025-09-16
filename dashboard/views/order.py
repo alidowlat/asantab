@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
@@ -7,10 +8,11 @@ from django.shortcuts import redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.views.generic import ListView, DetailView, TemplateView
 from accounts.models import Provider
+from core import ActiveProviderRequiredMixin
 from orders.models import Order, OrderItem, VendorOrder
 from orders.services import OrderCalculator
 from orders.models import STATUS_CHOICES
-from wallet.models import WalletTransaction
+from wallet.models import WalletTransaction, CommissionRule, SiteWallet
 
 
 class OrderListView(LoginRequiredMixin, ListView):
@@ -34,9 +36,6 @@ class OrderListView(LoginRequiredMixin, ListView):
 
         cart_items = self.get_orders(False, ['service', 'option', 'schedule']).order_by('-created_at')
         order_items = self.get_orders(True, ['service']).order_by('-paid_at')
-
-        for order in order_items:
-            order.calculated_final_price = OrderCalculator(order).final_price()
 
         context.update({
             "cart_items": cart_items,
@@ -89,7 +88,7 @@ class OrderDetailView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class ProviderOrderListView(LoginRequiredMixin, ListView):
+class ProviderOrderListView(LoginRequiredMixin, ActiveProviderRequiredMixin, ListView):
     template_name = 'dashboard/order/provider/main.html'
     model = VendorOrder
     context_object_name = 'vendor_orders'
@@ -132,7 +131,7 @@ class ProviderOrderListView(LoginRequiredMixin, ListView):
         return super().dispatch(request, *args, **kwargs)
 
 
-class ProviderOrderDetailView(LoginRequiredMixin, DetailView):
+class ProviderOrderDetailView(LoginRequiredMixin, ActiveProviderRequiredMixin, DetailView):
     template_name = 'dashboard/order/provider/order_detail.html'
     model = VendorOrder
     context_object_name = 'vendor_order'
@@ -171,37 +170,65 @@ def handle_vendor_order_response(vendor_order, accepted: bool, rejection_reason:
     order = vendor_order.order
     buyer_wallet = order.user.wallet
     seller_wallet = vendor_order.provider.user.wallet
+    site_wallet = SiteWallet.objects.select_related("wallet").first().wallet
 
     with transaction.atomic():
         if accepted:
-            buyer_wallet.balance -= vendor_order.total_price
-            buyer_wallet.frozen_balance -= vendor_order.total_price
+            total_price = vendor_order.total_price
+            commission_rule = CommissionRule.objects.first()
+            commission = commission_rule.calculate(total_price) if commission_rule else Decimal("0")
+            seller_income = total_price - commission
+
+            buyer_wallet.balance -= total_price
+            buyer_wallet.frozen_balance -= total_price
             buyer_wallet.save(update_fields=['balance', 'frozen_balance'])
 
             WalletTransaction.objects.create(
                 wallet=buyer_wallet,
-                amount=vendor_order.total_price,
+                amount=-total_price,
                 type='transfer',
-                description=f"سفارش {order.tracking_code} - انتقال به فروشنده"
+                description=f"سفارش {order.tracking_code} - پرداخت کامل شد"
             )
+
+            # سایت: دریافت کمیسیون
+            site_wallet.balance += commission
+            site_wallet.save(update_fields=['balance'])
+
+            WalletTransaction.objects.create(
+                wallet=site_wallet,
+                amount=commission,
+                type='deposit',
+                description=f"سود از سفارش {order.tracking_code}"
+            )
+
+            # فروشنده: دریافت پس از کسر کارمزد
+            seller_wallet.balance += seller_income
+            seller_wallet.save(update_fields=['balance'])
 
             WalletTransaction.objects.create(
                 wallet=seller_wallet,
-                amount=vendor_order.total_price,
+                amount=seller_income,
                 type='deposit',
-                description=f"سفارش {order.tracking_code} - واریز به فروشنده"
+                description=f"سفارش {order.tracking_code} - واریز پس از کسر کارمزد"
             )
 
-            seller_wallet.balance += vendor_order.total_price
-            seller_wallet.save(update_fields=['balance'])
+            # فقط برای شفافیت: تراکنش کارمزد در ولت فروشنده
+            if commission > 0:
+                WalletTransaction.objects.create(
+                    wallet=seller_wallet,
+                    amount=-commission,
+                    type='commission',
+                    description=f"سفارش {order.tracking_code} - کسر کارمزد {commission} تومان"
+                )
 
             vendor_order.status = 'accepted'
             vendor_order.rejection_reason = None
             vendor_order.save(update_fields=['status', 'rejection_reason'])
 
-            return {"status": "success", "message": "سفارش تایید شد و مبلغ منتقل گردید."}
+            return {"status": "success", "message": "سفارش تایید شد، مبلغ پس از کسر کارمزد منتقل گردید."}
 
         else:
+            # اگر رد شد
             buyer_wallet.frozen_balance -= vendor_order.total_price
             buyer_wallet.balance += vendor_order.total_price
             buyer_wallet.save(update_fields=['balance', 'frozen_balance'])
@@ -210,7 +237,7 @@ def handle_vendor_order_response(vendor_order, accepted: bool, rejection_reason:
                 wallet=buyer_wallet,
                 amount=vendor_order.total_price,
                 type='release',
-                description=f"سفارش {order.tracking_code} - رد شد، مبلغ آزاد گردید"
+                description=f"سفارش {order.tracking_code} - رد شد، مبلغ آزاد شد"
             )
 
             vendor_order.status = 'rejected'
