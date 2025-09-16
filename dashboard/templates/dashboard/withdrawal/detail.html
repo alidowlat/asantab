@@ -1,0 +1,117 @@
+{% extends 'dashboard/_layout.html' %}
+{% load extra_filters %}
+
+{% block title %}
+    جزئیات درخواست برداشت {{ withdrawal.tracking_code }}
+    | آسان تب
+{% endblock %}
+
+{% block content %}
+<div class="rounded-lg bg-muted shadow">
+    <div class="p-5">
+        <div class="mb-16 flex justify-between items-center">
+            <h1 class="relative w-fit font-medium lg:text-lg">
+                درخواست برداشت از کیف پول {{ withdrawal.wallet.user.get_full_name }} - {{ withdrawal.tracking_code }}
+                <span class="absolute right-0 top-10 h-[3px] w-full animate-fill-border rounded-full bg-primary"></span>
+            </h1>
+            <a href="{% url 'admin_withdrawal_list' %}" class="btn-primary flex items-center gap-1 px-4 py-1.5">
+                برگشت
+                <span class="i-lucide-chevron-left size-5"></span>
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 rounded-lg border p-4 shadow">
+            <!-- اطلاعات کاربر: سمت راست -->
+            <div class="flex-1 flex flex-col gap-4 order-2 md:order-1 break-words">
+                <!-- ردیف اول: نام کاربر - تاریخ ثبت درخواست -->
+                <div class="flex justify-between gap-x-6 flex-wrap">
+                    <div class="flex flex-col min-w-0">
+                        <span class="text-text/60 truncate">نام کاربر</span>
+                        <span class="text-text/95 truncate">{{ withdrawal.wallet.user.get_full_name }}</span>
+                    </div>
+                    <div class="flex flex-col min-w-0">
+                        <span class="text-text/60 truncate">تاریخ ثبت درخواست</span>
+                        <span class="text-text/95 truncate">{{ withdrawal.created_at|show_date_slash }}</span>
+                    </div>
+                </div>
+
+                <!-- ردیف دوم: شماره کارت - شماره شبا -->
+                <div class="flex justify-between gap-x-6 flex-wrap">
+                    <div class="flex flex-col min-w-0">
+                        <span class="text-text/60 truncate">شماره کارت</span>
+                        <span class="text-text/95 truncate">{{ withdrawal.bank_account.card_number }}</span>
+                    </div>
+                    <div class="flex flex-col min-w-0">
+                        <span class="text-text/60 truncate">شماره شبا</span>
+                        <span class="text-text/95 truncate">{{ withdrawal.bank_account.sheba_number }}</span>
+                    </div>
+                </div>
+
+                <!-- ردیف سوم: مبلغ درخواست -->
+                <div class="flex flex-col min-w-0">
+                    <span class="text-text/60 truncate">مبلغ درخواستی</span>
+                    <div class="flex items-center gap-1 text-primary truncate">
+                        <div class="font-bold md:text-lg">{{ withdrawal.amount|three_digits }}</div>
+                        <div class="md:text-base">تومان</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- وضعیت و دکمه: سمت چپ -->
+            <div class="flex flex-col gap-4 order-1 md:order-2">
+                {% with style=withdrawal.get_status_style %}
+                    <div class="flex items-center gap-x-2 {{ style.color }}">
+                        <div>وضعیت:</div>
+                        {{ withdrawal.get_status_display }}
+                        <div class="{{ style.icon }} size-5"></div>
+                        {% if withdrawal.status == 'rejected' %}
+                            {{ withdrawal.rejection_reason }}
+                        {% endif %}
+                    </div>
+
+                    <div class="relative h-2 w-full rounded-full bg-secondary">
+                        <span style="width: {{ style.progress }}%" class="absolute inset-y-0 right-0 rounded-full {{ style.bg }}"></span>
+                    </div>
+
+                    <div class="flex items-center justify-between text-sm {{ style.color }} md:text-base">
+                        <span>{{ withdrawal.updated_at.date|show_date_slash }}</span>
+                        <span>ساعت {{ withdrawal.updated_at|show_time }}</span>
+                    </div>
+                {% endwith %}
+
+                {% if withdrawal.status == 'approved' %}
+                    <form method="post" id="withdrawal-form" class="flex justify-end mt-6">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="complete">
+                        <button type="button" id="withdrawal-btn"
+                                class="bg-green-500 rounded-md text-white flex items-center gap-1 px-4 py-1.5">
+                            درخواست را انجام دادم
+                            <span class="i-lucide-check size-5"></span>
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.getElementById("withdrawal-btn").addEventListener("click", function () {
+            Swal.fire({
+                title: "تأیید تکمیل درخواست",
+                text: "در صورتی که درخواست کاربر را به طور کامل تکمیل کرده اید، این دکمه را بزنید. این اقدام غیرقابل بازگشت است.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#16a34a",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "بله، درخواست تکمیل شد",
+                cancelButtonText: "خیر"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById("withdrawal-form").submit();
+                }
+            });
+        });
+    </script>
+{% endblock %}

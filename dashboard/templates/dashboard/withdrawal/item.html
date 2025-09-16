@@ -1,0 +1,88 @@
+{% load extra_filters %}
+<div class="block rounded-lg border p-4 shadow">
+    <div class="flex flex-col xl:flex-row xl:justify-between gap-6">
+        <!-- سمت راست: اطلاعات کاربر -->
+        <div class="flex-1 flex flex-col gap-4 order-2 xl:order-1 break-words">
+            <!-- ردیف اول: نام کاربر - تاریخ ثبت درخواست -->
+            <div class="flex justify-between gap-x-6 flex-wrap">
+                <div class="flex flex-col min-w-0">
+                    <span class="text-text/60 truncate">نام کاربر</span>
+                    <span class="text-text/95 truncate">{{ wdr.wallet.user.get_full_name }}</span>
+                </div>
+                <div class="flex flex-col min-w-0">
+                    <span class="text-text/60 truncate">تاریخ ثبت درخواست</span>
+                    <span class="text-text/95 truncate">{{ wdr.created_at|show_date_slash }}</span>
+                </div>
+            </div>
+
+            <!-- ردیف دوم: شماره حساب - شماره شبا -->
+            <div class="flex justify-between gap-x-6 flex-wrap">
+                <div class="flex flex-col min-w-0">
+                    <span class="text-text/60 truncate">شماره کارت</span>
+                    <span class="text-text/95 truncate">{{ wdr.bank_account.card_number }}</span>
+                </div>
+                <div class="flex flex-col min-w-0">
+                    <span class="text-text/60 truncate">شماره شبا</span>
+                    <span class="text-text/95 truncate">{{ wdr.bank_account.sheba_number }}</span>
+                </div>
+            </div>
+
+            <!-- ردیف سوم: مبلغ درخواست -->
+            <div class="flex flex-col min-w-0">
+                <span class="text-text/60 truncate">مبلغ درخواستی</span>
+                <div class="flex items-center gap-1 text-primary truncate">
+                    <div class="font-bold md:text-lg">{{ wdr.amount|three_digits }}</div>
+                    <div class="md:text-base">تومان</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- سمت چپ: وضعیت -->
+        <div class="flex-1 flex flex-col gap-4 order-1 xl:order-2">
+            {% with style=wdr.get_status_style %}
+                <div class="flex items-center gap-x-2 {{ style.color }}">
+                    <div>وضعیت:</div>
+                    {{ wdr.get_status_display }}
+                    <div class="{{ style.icon }} size-5"></div>
+                    {% if wdr.status == 'rejected' %}
+                        {{ wdr.rejection_reason }}
+                    {% endif %}
+                </div>
+                <div class="relative h-2 w-full rounded-full bg-secondary">
+                    <span style="width: {{ style.progress }}%" class="absolute inset-y-0 right-0 rounded-full {{ style.bg }}"></span>
+                </div>
+                <div class="flex items-center justify-between text-sm {{ style.color }} md:text-base">
+                    <span>{{ wdr.updated_at.date|show_date_slash }}</span>
+                    <span>ساعت {{ wdr.updated_at|show_time }}</span>
+                </div>
+            {% endwith %}
+        </div>
+    </div>
+
+    <!-- دکمه‌ها و لینک جزئیات پایین -->
+    <div class="flex items-center justify-between text-primary mt-6">
+        <a href="{% url 'admin_withdrawals_detail' pk=wdr.pk %}" class="flex items-center gap-x-2">
+            <p class="text-sm pl-1">مشاهده جزيیات</p>
+            <div class="i-lucide-chevrons-left size-5"></div>
+        </a>
+        {% if wdr.status == "pending" %}
+            <div class="flex justify-end gap-4 mt-4">
+                <form method="post" class="wdr-form" data-action="approved"
+                      data-url="{% url 'admin_withdrawal_action' wdr.pk 'approved' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-green-500 text-white text-sm hover:bg-green-600">
+                        تایید درخواست
+                    </button>
+                </form>
+
+                <form method="post" class="wdr-form" data-action="rejected"
+                      data-url="{% url 'admin_withdrawal_action' wdr.pk 'rejected' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-red-500 text-white text-sm hover:bg-red-600">
+                        رد درخواست
+                    </button>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+</div>

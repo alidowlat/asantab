@@ -202,6 +202,11 @@ def transaction_style(trn_type):
         "release": ("text-success", "", "bg-success/10"),
         "transfer": ("text-red-600", "-", "bg-warning/10"),
         "commission": ("text-yellow-500", "-", "bg-yellow-10"),
+
+        "pending": ("text-yellow-500", "", "bg-yellow-10"),
+        "approved": ("text-success", "", "bg-success/10"),
+        "paid": ("text-success", "", "bg-success/10"),
+        "rejected": ("text-red-600", "", "bg-warning/10"),
     }
     return mapping.get(trn_type, ("text-gray-500", ""))
 

@@ -1,9 +1,8 @@
 from django.urls import path
 
-from wallet.views import WithdrawView, WithdrawResultView, withdrawal_verify
+from wallet.views import WithdrawView, WithdrawListView
 
 urlpatterns = [
     path('withdraw/', WithdrawView.as_view(), name='withdraw_view'),
-    path('withdraw/result/<str:ref_id>/', WithdrawResultView.as_view(), name='withdraw_result_view'),
-    path('withdraw/verify/', withdrawal_verify, name='withdraw_verify'),
+    path('withdraw/history/', WithdrawListView.as_view(), name='withdrawal_history'),
 ]

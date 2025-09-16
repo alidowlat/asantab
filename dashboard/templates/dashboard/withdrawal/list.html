@@ -1,0 +1,189 @@
+<div class="mb-8">
+    <!-- Filter Tabs -->
+    <ul class="mb-8 flex flex-wrap items-center justify-center gap-2 md:justify-start" id="wdr-filter-tab"
+        data-tabs-toggle="#wdr-filter-tab-content" data-tabs-active-classes="btn-primary"
+        data-tabs-inactive-classes="btn-secondary"
+        role="tablist">
+        <li role="presentation">
+            <button id="filter-all-tab" data-tabs-target="#filter-all" type="button" role="tab"
+                    aria-controls="filter-all"
+                    aria-selected="true"
+                    class="flex items-center gap-2 rounded-lg px-6 py-2 text-sm btn-primary">
+                همه
+                <span>{{ withdrawals|length }}</span>
+            </button>
+        </li>
+        <li role="presentation">
+            <button id="filter-pending-tab" data-tabs-target="#filter-pending" type="button" role="tab"
+                    aria-controls="filter-pending"
+                    aria-selected="false"
+                    class="flex items-center gap-2 rounded-lg px-6 py-2 text-sm btn-secondary">
+                درحال بررسی
+                <span>{{ pending_withdrawals|length }}</span>
+            </button>
+        </li>
+        <li role="presentation">
+            <button id="filter-accepted-tab" data-tabs-target="#filter-accepted" type="button" role="tab"
+                    aria-controls="filter-accepted"
+                    aria-selected="false"
+                    class="flex items-center gap-2 rounded-lg px-6 py-2 text-sm btn-secondary">
+                فعلی
+                <span>{{ approved_withdrawals|length }}</span>
+            </button>
+        </li>
+        <li role="presentation">
+            <button id="filter-delivered-tab" data-tabs-target="#filter-delivered" type="button" role="tab"
+                    aria-controls="filter-delivered"
+                    aria-selected="false"
+                    class="flex items-center gap-2 rounded-lg px-6 py-2 text-sm btn-secondary">
+                تکمیل شده
+                <span>{{ paid_withdrawals|length }}</span>
+            </button>
+        </li>
+        <li role="presentation">
+            <button id="filter-canceled-tab" data-tabs-target="#filter-canceled" type="button" role="tab"
+                    aria-controls="filter-canceled"
+                    aria-selected="false"
+                    class="flex items-center gap-2 rounded-lg px-6 py-2 text-sm btn-secondary">
+                لغو شده
+                <span>{{ rejected_withdrawals|length }}</span>
+            </button>
+        </li>
+    </ul>
+    <!-- Tab Content -->
+    <div id="wdr-filter-tab-content">
+        <!-- همه -->
+        <div class="block" id="filter-all" role="tabpanel" aria-labelledby="filter-all-tab">
+            <div class="space-y-4">
+                {% for wdr in withdrawals %}
+                    {% include 'dashboard/withdrawal/item.html' with wdr=wdr %}
+                {% empty %}
+                    <div class="text-center text-gray-400">سفارشی دریافت نکردید.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- درحال بررسی -->
+        <div class="hidden" id="filter-pending" role="tabpanel" aria-labelledby="filter-pending-tab">
+            <div class="space-y-4">
+                {% for wdr in withdrawals %}
+                    {% if wdr.status == 'pending' %}
+                        {% include 'dashboard/withdrawal/item.html' with wdr=wdr %}
+                    {% endif %}
+                {% empty %}
+                    <div class="text-center text-gray-400">سفارشی دریافت نکردید.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- فعلی -->
+        <div class="hidden" id="filter-accepted" role="tabpanel" aria-labelledby="filter-accepted-tab">
+            <div class="space-y-4">
+                {% for wdr in withdrawals %}
+                    {% if wdr.status == 'approved' %}
+                        {% include 'dashboard/withdrawal/item.html' with wdr=wdr %}
+                    {% endif %}
+                {% empty %}
+                    <div class="text-center text-gray-400">سفارشی دریافت نکردید.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- تکمیل شده -->
+        <div class="hidden" id="filter-delivered" role="tabpanel" aria-labelledby="filter-delivered-tab">
+            <div class="space-y-4">
+                {% for wdr in withdrawals %}
+                    {% if wdr.status == 'paid' %}
+                        {% include 'dashboard/withdrawal/item.html' with wdr=wdr %}
+                    {% endif %}
+                {% empty %}
+                    <div class="text-center text-gray-400">سفارشی دریافت نکردید.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- لغو شده -->
+        <div class="hidden" id="filter-canceled" role="tabpanel" aria-labelledby="filter-canceled-tab">
+            <div class="space-y-4">
+                {% for wdr in withdrawals %}
+                    {% if wdr.status == 'rejected' %}
+                        {% include 'dashboard/withdrawal/item.html' with wdr=wdr %}
+                    {% endif %}
+                {% empty %}
+                    <div class="text-center text-gray-400">سفارشی دریافت نکردید.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.querySelectorAll(".wdr-form").forEach(form => {
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const url = this.dataset.url;
+            const csrfToken = this.querySelector("[name=csrfmiddlewaretoken]").value;
+            const action = this.dataset.action;
+
+            if (action === "rejected") {
+                Swal.fire({
+                    title: "رد درخواست",
+                    input: "textarea",
+                    inputPlaceholder: "دلیل رد درخواست را وارد کنید...",
+                    inputAttributes: {"aria-label": "دلیل رد درخواست"},
+                    showCancelButton: true,
+                    confirmButtonText: "تایید",
+                    cancelButtonText: "انصراف",
+                    inputValidator: value => {
+                        if (!value) return "وارد کردن دلیل رد درخواست الزامی است.";
+                    }
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        submitAction(url, csrfToken, {rejection_reason: result.value});
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: "تایید درخواست",
+                    text: "آیا مطمئن هستید که می‌خواهید درخواست را تایید کنید؟",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "بله، تایید شود",
+                    cancelButtonText: "انصراف"
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        submitAction(url, csrfToken);
+                    }
+                });
+            }
+        });
+    });
+
+    function submitAction(url, csrfToken, extraData = {}) {
+        const formData = new FormData();
+        formData.append("csrfmiddlewaretoken", csrfToken);
+        for (const key in extraData) {
+            formData.append(key, extraData[key]);
+        }
+
+        fetch(url, {
+            method: "POST",
+            headers: {"X-Requested-With": "XMLHttpRequest"},
+            body: formData
+        })
+            .then(res => res.json())
+            .then(data => {
+                Swal.fire({
+                    icon: data.status === "success" ? "success" :
+                        (data.status === "warning" ? "warning" : "error"),
+                    text: data.message,
+                    confirmButtonText: "باشه"
+                }).then(() => {
+                    if (data.status === "success" || data.status === "warning") {
+                        window.location.reload();
+                    }
+                });
+            });
+    }
+</script>

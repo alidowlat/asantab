@@ -1,15 +1,44 @@
+import secrets
+
 from django.core.exceptions import ValidationError
-from django.db import models, transaction
+from django.db import models, transaction, IntegrityError
 from wallet.models import WalletTransaction, Wallet
 from wallet.models.abstracts import AmountModel, PSPReferenceMixin, TimeStampedModel
+
+WITHDRAW_STATUS_STYLES = {
+    'pending': {
+        'color': 'text-yellow-500',
+        'bg': 'bg-yellow-500',
+        'icon': 'i-ic-baseline-pending-actions ',
+        'progress': 30
+    },
+    'approved': {
+        'color': 'text-success',
+        'bg': 'bg-success',
+        'icon': 'i-lucide-thumbs-up',
+        'progress': 60
+    },
+    'rejected': {
+        'color': 'text-red-600',
+        'bg': 'bg-red-500',
+        'icon': 'i-lucide-circle-x',
+        'progress': 100
+    },
+    'paid': {
+        'color': 'text-teal-500',
+        'bg': 'bg-teal-500',
+        'icon': 'i-lucide-circle-check',
+        'progress': 100
+    }
+}
 
 
 class WithdrawalRequest(TimeStampedModel, AmountModel):
     STATUS_CHOICES = [
         ("pending", "در انتظار بررسی"),
         ("approved", "تأیید شده"),
+        ("paid", "ارسال به درگاه"),
         ("rejected", "رد شده"),
-        ("paid", "پرداخت شده"),
     ]
 
     wallet = models.ForeignKey('wallet.Wallet', on_delete=models.CASCADE, related_name="withdrawal_requests", verbose_name='کیف پول')
@@ -18,10 +47,35 @@ class WithdrawalRequest(TimeStampedModel, AmountModel):
                                      related_name="withdrawals", verbose_name='حساب بانکی')
     sheba_number = models.CharField(max_length=24, null=True, blank=True, verbose_name="شماره شبا")
     card_number = models.CharField(max_length=16, null=True, blank=True, verbose_name="شماره کارت")
+    rejection_reason = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name='دلیل رد شدن'
+    )
+    tracking_code = models.BigIntegerField(unique=True, editable=False, blank=True, null=True)
     description = models.TextField(null=True, blank=True, verbose_name="توضیحات")
+
+    def _generate_code(self):
+        return f"{secrets.randbelow(900000) + 100000}"
+
+    def save(self, *args, **kwargs):
+        if not self.tracking_code:
+            for _ in range(10):
+                self.tracking_code = self._generate_code()
+                try:
+                    with transaction.atomic():
+                        super().save(*args, **kwargs)
+                    return
+                except IntegrityError:
+                    self.tracking_code = None
+            raise RuntimeError("failed to generate unique tracking code")
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.wallet.user} - {self.get_status_display()} >>> {self.amount}"
+
+    def get_status_style(self):
+        return WITHDRAW_STATUS_STYLES.get(self.status, {})
 
     def save(self, *args, **kwargs):
         if self.bank_account:
@@ -59,6 +113,19 @@ class WithdrawalRequest(TimeStampedModel, AmountModel):
             return
         self.status = "paid"
         self.save()
+
+        if reference_id and not WalletTransaction.objects.filter(
+                reference_id=reference_id,
+                type=WalletTransaction.TransactionType.WITHDRAW,
+                wallet=self.wallet
+        ).exists():
+            WalletTransaction.objects.create(
+                wallet=self.wallet,
+                type=WalletTransaction.TransactionType.WITHDRAW,
+                amount=self.amount,
+                description=f"Withdrawal paid: {self.id}",
+                reference_id=reference_id
+            )
 
     @transaction.atomic
     def mark_rejected(self):

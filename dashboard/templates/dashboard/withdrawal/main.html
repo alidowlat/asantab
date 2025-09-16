@@ -1,0 +1,36 @@
+{% extends 'dashboard/_layout.html' %}
+
+{% block title %}
+    درخواست های برداشت | آسان تب
+{% endblock %}
+
+{% block content %}
+    <div class="bg-muted rounded-lg shadow-sm">
+        <div class="p-5 md:p-6">
+            <!-- Header -->
+            <div class="border-border/20 mb-14 flex items-center justify-between pb-4">
+                <h1 class="relative w-fit text-lg font-medium lg:text-xl">
+                    درخواست های برداشت
+                    <span class="animate-fill-border bg-primary absolute top-full right-0 mt-2 h-[3px] w-full rounded-full"></span>
+                </h1>
+            </div>
+
+            {% if withdrawals %}
+                <div class="mb-8 flex flex-wrap items-center justify-between gap-4">
+                    <h3 class="flex items-center gap-x-4 text-lg text-text/80">
+                        <span class="h-2 w-2 rounded-full bg-primary"></span>
+                        درخواست های برداشت از کیف پول
+                    </h3>
+                </div>
+                <ul class="space-y-4 divide-y mb-8">
+                    {% include 'dashboard/withdrawal/list.html' %}
+                </ul>
+            {% elif not withdrawals %}
+                <div class="flex flex-col items-center">
+                    <img class="w-60 pb-10" src="/static/images/empty/empty-cart.svg" alt="empty page picture">
+                    <div class="text-center text-gray-400 text-lg pb-10">تا کنون درخواستی جهت برداشت از کیف پول ثبت نشده است.</div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

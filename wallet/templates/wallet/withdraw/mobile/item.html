@@ -1,0 +1,22 @@
+{% load widget_tweaks %}
+{% load extra_filters %}
+<div class="bg-background border-border/20 space-y-3 rounded-lg border p-4">
+    {% with style=wdr.status|transaction_style %}
+        <div class="flex items-center justify-between pb-2">
+            <span class="text-text/70 text-sm">وضعیت</span>
+            <span class="{{ style.2 }} {{ style.0 }} rounded-full px-3 py-1 text-xs font-medium">{{ wdr.get_status_display }}</span>
+        </div>
+        <div class="flex items-center justify-between">
+            <span class="text-text/70 text-sm">مبلغ (تومان)</span>
+            <span class="{{ style.2 }} {{ style.0 }} rounded-full px-3 py-1 text-base font-bold"
+                  dir="ltr">{{ style.1 }} {{ wdr.amount|three_digits }}</span>
+        </div>
+    {% endwith %}
+    <div class="text-text/70 flex items-center justify-between pt-2 text-sm">
+        <span>تاریخ</span>
+        <span class="font-mono ">{{ wdr.created_at|show_time }} - {{ wdr.created_at|to_jalali_simple }}</span>
+    </div>
+    <div class="text-text/95 font-bold flex border-t pt-2">
+        <span>{{ wdr.description|default:'' }}</span>
+    </div>
+</div>

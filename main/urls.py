@@ -46,6 +46,7 @@ urlpatterns = [
     path('profile/', include('dashboard.urls.service')),
     path('profile/', include('dashboard.urls.roles')),
     path('profile/', include('dashboard.urls.bank_account')),
+    path('profile/', include('dashboard.urls.withdrawal')),
     path('', include('search.urls')),
     path('orders/', include('orders.urls.cart')),
     path('contact-us/', include('tickets.urls.contact_us')),
