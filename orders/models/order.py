@@ -1,6 +1,7 @@
 from django.db import models
 import random
 from django.urls import reverse
+from orders.services import OrderCalculator
 
 STATUS_CHOICES = [
     ('pending', 'در حال بررسی'),
@@ -89,6 +90,14 @@ class Order(models.Model):
         verbose_name='کد تخفیف'
     )
 
+    @property
+    def final_price(self):
+        return OrderCalculator(self).final_price()
+
+    @final_price.setter
+    def final_price(self, value):
+        self._final_price = value
+
     def get_absolute_url(self):
         return reverse('order_detail', kwargs={'pk': self.pk})
 
@@ -136,6 +145,10 @@ class VendorOrder(models.Model):
     )
     total_price = models.DecimalField(max_digits=12, decimal_places=0, verbose_name='مبلغ کل')
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name='تاریخ بروزرسانی'
+    )
 
     def __str__(self):
         return f"VendorOrder #{self.id} for {self.provider}"
