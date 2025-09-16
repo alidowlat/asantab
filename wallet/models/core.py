@@ -248,27 +248,16 @@ class WalletTransaction(AmountModel):
         db_table = 'wallet_transactions'
 
 
-class CommissionRule(AmountModel):
-    ROLE_CHOICES = [
-        ("staff", "کارشناس"),
-        ("provider", "فروشنده"),
-        ("user", "کاربر"),
-    ]
-
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, verbose_name="نقش")
+class CommissionRule(models.Model):
+    title = models.CharField(max_length=100, verbose_name="عنوان کارمزد")
     percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0, verbose_name="درصد کمیسیون")
-    min_amount = models.DecimalField(max_digits=15, decimal_places=0, default=0, verbose_name="حداقل مبلغ تراکنش برای اعمال")
-    max_amount = models.DecimalField(max_digits=15, decimal_places=0, null=True, blank=True,
-                                     verbose_name="حداکثر مبلغ تراکنش برای اعمال")
 
-    def calculate_commission(self, amount: Decimal) -> Decimal:
-        commission = (amount * self.percentage / 100) + self.amount
-        if self.max_amount and commission > self.max_amount:
-            commission = self.max_amount
-        return commission
+    def calculate(self, amount: Decimal) -> Decimal:
+        return (amount * self.percentage) / 100
 
     def __str__(self):
-        return f"{self.role} - {self.percentage}% + {self.amount} TMN"
+        return f"{self.title} - {self.percentage}%"
+
 
     class Meta:
         verbose_name = "Commission Rule"
