@@ -2,7 +2,7 @@ from decimal import Decimal
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from django.db.models import Prefetch
+from django.db.models import Prefetch, F
 from django.http import HttpResponseForbidden, Http404, JsonResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.views.decorators.http import require_POST
@@ -178,6 +178,11 @@ def handle_vendor_order_response(vendor_order, accepted: bool, rejection_reason:
             commission_rule = CommissionRule.objects.first()
             commission = commission_rule.calculate(total_price) if commission_rule else Decimal("0")
             seller_income = total_price - commission
+
+            for item in vendor_order.items.all():
+                if item.schedule and item.schedule.capacity >= item.count:
+                    item.schedule.capacity = F('capacity') - item.count
+                    item.schedule.save(update_fields=['capacity'])
 
             buyer_wallet.balance -= total_price
             buyer_wallet.frozen_balance -= total_price
