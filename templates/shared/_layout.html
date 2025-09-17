@@ -29,12 +29,6 @@
     {% block content %}{% endblock %}
     <div data-onscrollclass="translate-y-full" class="fixed inset-x-0 bottom-0 z-20 bg-muted duration-300 lg:hidden">
         <div class="container flex items-center text-sm">
-            <div class="w-1/4 border-b-2 border-primary py-1 font-medium text-primary">
-                <a href="{% url 'index_page' %}" class="flex flex-col items-center justify-center">
-                    <i class="i-solar-home-smile-linear size-6 items-center justify-center"></i>
-                    <p class="pt-2 text-xs xs:text-sm">خانه</p>
-                </a>
-            </div>
             <div class="w-1/4 py-1">
                 <a href="{% url 'services_list_page' %}" class="flex flex-col items-center justify-center">
                     <i class="i-mingcute-shopping-bag-3-line size-6"></i>
@@ -42,9 +36,27 @@
                 </a>
             </div>
             <div class="w-1/4 py-1">
-                <a href="./checkout-cart.html" class="flex flex-col items-center justify-center">
+                <a href="{% url 'user_cart_page' %}" class="flex flex-col items-center justify-center">
                     <i class="i-lucide-shopping-cart size-6"></i>
                     <p class="pt-2 text-xs xs:text-sm">سبد خرید</p>
+                </a>
+            </div>
+            <div class="w-1/4 py-1 border-b-2 border-primary font-medium text-primary">
+                <a href="{% url 'index_page' %}" class="flex flex-col items-center justify-center">
+                    <i class="i-solar-home-smile-linear size-6 items-center justify-center"></i>
+                    <p class="pt-2 text-xs xs:text-sm">خانه</p>
+                </a>
+            </div>
+            <div class="w-1/4 py-1">
+                <a href="{% url 'my_wallet' %}" class="flex flex-col items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path>
+                        <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path>
+                        <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path>
+                    </svg>
+                    <p class="pt-2 text-xs xs:text-sm">کیف پول</p>
                 </a>
             </div>
             <div class="w-1/4 py-1">
@@ -66,41 +78,21 @@
 {% render_partial 'home.views.site_footer_component' %}
 {% include 'shared/footer_ref.html' %}
 
-<div id="favorite-drawer"
-     class="fixed inset-x-0 bottom-0 z-40 max-h-[80dvh] w-full rounded-t-xl border-t bg-muted transition-transform duration-500 left-0 right-0 translate-y-full"
-     tabindex="-1" aria-labelledby="favorite-drawer" aria-hidden="true">
-    <div class="flex h-full max-h-[80dvh] flex-col gap-4">
-        <div class="flex items-center justify-between px-4 pb-2 pt-3">
-            <div>لیست علاقه‌مندی</div>
-            <button class="btn-warning px-4 py-2 text-sm">حذف همه</button>
-        </div>
-        <!-- Items -->
-        <div class="grow overflow-y-auto">
-            <ul class="space-y-2 divide-y p-5 pl-2">
-                <li>
-                    <div class="flex gap-x-2 py-5">
-                        <div class="relative min-w-fit">
-                            <a href="./product-detail.html">
-                                <img src="/static/images/p1.png" alt="نایک زوم پگاسوس توربو مشکی" loading="lazy"
-                                     class="h-25 w-25 rounded-3xl">
-                            </a>
-                            <button class="absolute -top-2 right-0 rounded-lg border bg-muted duration-200 hover:bg-background">
-                                <div class="i-lucide-trash m-2 h-4 w-4 text-warning"></div>
-                            </button>
-                        </div>
-                        <div class="w-full space-y-4">
-                            <a href="./product-detail.html" class="line-clamp-2 text-text">نایک زوم پگاسوس توربو مشکی</a>
-                            <div class="flex items-center justify-between gap-x-2">
-                                <div class="flex items-center gap-x-2 text-primary">
-                                    <span class="text-lg font-bold">900,000</span><span class="text-sm">تومان</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </div>
-</div>
 </body>
 </html>
+
+<script>
+    function loadCartPartial() {
+        const cartElement = document.getElementById('cart-partial');
+        const url = cartElement.getAttribute('data-fetch-url');
+
+        fetch(url)
+            .then(res => res.text())
+            .then(html => {
+                cartElement.innerHTML = html;
+                showOrderItemsCount();
+            });
+    }
+
+    document.addEventListener("DOMContentLoaded", loadCartPartial);
+</script>

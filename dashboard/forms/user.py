@@ -124,6 +124,12 @@ class UpdateNationalIDForm(forms.ModelForm):
         if not national_id.isdigit() or len(national_id) != 10:
             raise ValidationError("کد ملی باید دقیقاً 10 رقم عددی باشد.")
 
+        qs = User.objects.filter(national_id=national_id)
+        if self.instance.pk:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise ValidationError("این کد ملی قبلاً در وبسایت ثبت شده است.")
+
         return national_id
 
 

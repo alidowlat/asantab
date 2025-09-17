@@ -1,6 +1,7 @@
 from django.db import models
 import random
 from django.urls import reverse
+from orders.services import OrderCalculator
 
 STATUS_CHOICES = [
     ('pending', 'در حال بررسی'),
@@ -50,14 +51,6 @@ class Order(models.Model):
         related_name='orders',
         verbose_name='کاربر'
     )
-    provider = models.ForeignKey(
-        'accounts.Provider',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='received_orders',
-        verbose_name='ارائه دهنده'
-    )
     status = models.CharField(
         max_length=10,
         choices=STATUS_CHOICES,
@@ -85,11 +78,6 @@ class Order(models.Model):
         auto_now_add=True,
         verbose_name='تاریخ ایجاد'
     )
-    rejection_reason = models.TextField(
-        null=True,
-        blank=True,
-        verbose_name='دلیل رد شدن'
-    )
     is_paid = models.BooleanField(
         default=False,
         verbose_name='پرداخت شده؟'
@@ -101,6 +89,14 @@ class Order(models.Model):
         on_delete=models.SET_NULL,
         verbose_name='کد تخفیف'
     )
+
+    @property
+    def final_price(self):
+        return OrderCalculator(self).final_price()
+
+    @final_price.setter
+    def final_price(self, value):
+        self._final_price = value
 
     def get_absolute_url(self):
         return reverse('order_detail', kwargs={'pk': self.pk})
@@ -115,14 +111,57 @@ class Order(models.Model):
         return ORDER_STATUS_STYLES.get(self.status, {})
 
     def __str__(self):
-        return f'{self.is_paid} | {self.user} - {self.provider} --> {self.status}'
+        return f'{self.is_paid} | {self.user} --> {self.status}'
+
+    class Meta:
+        verbose_name = 'Order'
+        verbose_name_plural = 'Orders'
+        db_table = 'orders'
+
+
+class VendorOrder(models.Model):
+    order = models.ForeignKey(
+        'Order',
+        on_delete=models.CASCADE,
+        related_name='vendor_orders',
+        verbose_name='سفارش اصلی'
+    )
+    provider = models.ForeignKey(
+        'accounts.Provider',
+        on_delete=models.CASCADE,
+        related_name='vendor_orders',
+        verbose_name='فروشنده'
+    )
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default='pending',
+        verbose_name='وضعیت سفارش'
+    )
+    rejection_reason = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name='دلیل رد شدن'
+    )
+    total_price = models.DecimalField(max_digits=12, decimal_places=0, verbose_name='مبلغ کل')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name='تاریخ بروزرسانی'
+    )
+
+    def __str__(self):
+        return f"VendorOrder #{self.id} for {self.provider}"
 
     def save(self, *args, **kwargs):
         if self.rejection_reason and self.status != 'rejected':
             self.status = 'rejected'
         super().save(*args, **kwargs)
 
+    def get_status_style(self):
+        return ORDER_STATUS_STYLES.get(self.status, {})
+
     class Meta:
-        verbose_name = 'Order'
-        verbose_name_plural = 'Orders'
-        db_table = 'orders'
+        verbose_name = 'Vendor Order'
+        verbose_name_plural = 'Vendor Orders'
+        db_table = 'vendor_orders'

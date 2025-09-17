@@ -1,0 +1,66 @@
+{% extends 'dashboard/_layout_clean.html' %}
+{% load extra_filters %}
+
+{% block title %}
+    نتیجه نراکنش | آسان تب
+{% endblock %}
+
+{% block content %}
+    <div class="bg-muted relative mx-auto max-w-[500px] overflow-hidden rounded-lg p-5">
+        <div>
+            <div class="relative h-10 w-full">
+                <div class="absolute -top-24 h-full w-full">
+                    <div class="relative flex h-full w-full items-center justify-center [--baseOpacity:1] [--baseSize:80px] [--duration:1.5s] [--opacityStep:0.05] [--scale:1.2] [--sizeStep:64px]">
+                        {% if is_success %}
+                            <div class="ripple bg-success/10 absolute rounded-full [--i:0]"></div>
+                            <div class="ripple bg-success/10 absolute rounded-full [--i:1]"></div>
+                            <div class="ripple bg-success/10 absolute rounded-full [--i:2]"></div>
+                            <div class="ripple bg-success/10 absolute rounded-full [--i:3]"></div>
+                        {% else %}
+                            <div class="ripple bg-warning/10 absolute rounded-full [--i:0]"></div>
+                            <div class="ripple bg-warning/10 absolute rounded-full [--i:1]"></div>
+                            <div class="ripple bg-warning/10 absolute rounded-full [--i:2]"></div>
+                            <div class="ripple bg-warning/10 absolute rounded-full [--i:3]"></div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="relative">
+
+                <h1 class="{% if is_success %}text-success{% else %}text-warning{% endif %} mb-10 flex items-center justify-center gap-2 text-center text-lg lg:text-xl">
+                    <div class="i-lucide-circle-check block size-7"></div>
+                    {{ message }}
+                </h1>
+                <ul class="mb-8 space-y-2">
+                    <li class="bg-background grid grid-cols-2 rounded-lg px-4 py-3 text-sm md:text-base">
+                        <div class="text-text/60 col-span-1">شماره سفارش</div>
+                        <div class="text-text/95 col-span-1 text-center tracking-wider break-words">
+                            {{ deposit.tracking_code|default:"ثبت نشده" }}
+                        </div>
+                    </li>
+                    <li class="bg-background grid grid-cols-2 rounded-lg px-4 py-3 text-sm md:text-base">
+                        <div class="text-text/60 col-span-1">شماره پیگیری</div>
+                        <div class="text-text/95 col-span-1 text-center tracking-wider break-words">
+                            {{ deposit.ref_id|default:"ثبت نشده" }}
+                        </div>
+                    </li>
+                    <li class="bg-background grid grid-cols-2 rounded-lg px-4 py-3 text-sm md:text-base">
+                        <div class="text-text/60 col-span-1">تاریخ</div>
+                        <div class="text-text/95 col-span-1 text-center break-words">
+                            {{ deposit.created_at|show_date_slash }}
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="flex items-center justify-center gap-2">
+                    <button class="btn-primary w-32 py-2 text-center">
+                        پیگیری
+                    </button>
+                    <a href="{% url 'my_wallet' %}" class="bg-secondary text-nowrap w-40 rounded-lg py-2 text-center">
+                        بازگشت به کیف پول
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

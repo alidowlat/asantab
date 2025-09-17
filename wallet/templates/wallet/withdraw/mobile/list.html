@@ -1,0 +1,7 @@
+{% if recent_withdrawals %}
+    <div class="grid grid-cols-1 gap-4 sm:hidden">
+        {% for wdr in recent_withdrawals %}
+            {% include 'wallet/withdraw/mobile/item.html' %}
+        {% endfor %}
+    </div>
+{% endif %}

@@ -1,0 +1,16 @@
+{% load extra_filters %}
+<tr class="bg-muted border-border/20 hover:bg-primary/20 {% if not forloop.last %}border-b{% endif %} transition-colors">
+    <td class="px-6 py-4 whitespace-nowrap">{{ wdr.created_at|show_time }} - {{ wdr.created_at|to_jalali_simple }}</td>
+    {% with style=wdr.status|transaction_style %}
+        <td class="px-6 py-4">
+            <span class="{{ style.2 }} {{ style.0 }} rounded-full px-3 py-1 text-xs font-medium">{{ wdr.get_status_display }}</span>
+        </td>
+        <td class="px-6 py-4">
+            <span class="{{ style.2 }} {{ style.0 }} rounded-full px-3 py-1 font-semibold whitespace-nowrap"
+                  dir="ltr">
+                {{ style.1 }} {{ wdr.amount|three_digits }}
+            </span>
+        </td>
+    {% endwith %}
+    <td class="px-6 py-4 font-medium">{{ wdr.description|default:'' }}</td>
+</tr>

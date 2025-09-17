@@ -84,9 +84,11 @@
             <form id="provider-form" class="flex flex-col" method="post" action="{% url 'complete_info_page_provider' %}"
                   enctype="multipart/form-data">
                 {% csrf_token %}
+
                 <a href="{% url 'index_page' %}" class="mb-10">
                     <img src="/static/images/logo.png" alt="logo" class="mx-auto h-10 xs:h-12">
                 </a>
+
                 <h1 class="mb-10 text-center font-medium xs:text-lg">
                     ورود فروشنده
                 </h1>
@@ -144,38 +146,6 @@
                         {{ form.city|add_class:"block w-full rounded-lg border bg-muted p-2.5 text-sm outline-none focus:border-primary focus:ring-primary" }}
                         {% for error in form.city.errors %}
                             <div class="flex py-3 mt-2">
-                                <i class="i-lucide-circle-alert text-warning ml-2"></i>
-                                <div class="text-warning text-sm">{{ error }}</div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <!-- card number + iban -->
-                <div class="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <div>
-                        <label class="relative block w-full rounded-lg border bg-muted shadow-sm duration-300 focus-within:border-primary">
-                            {{ form.card_number|add_class:'peer w-full text-lg rounded-lg bg-transparent p-3 text-center placeholder-transparent outline-none focus:ring-0 xs:p-4' }}
-                            <span class="pointer-events-none absolute start-3 -translate-y-1/2 rounded-full bg-muted px-2 text-xs text-text/80 transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:text-xs peer-focus:peer-placeholder-shown:top-0">
-                            شماره کارت
-                        </span>
-                        </label>
-                        {% for error in form.card_number.errors %}
-                            <div class="flex mt-5">
-                                <i class="i-lucide-circle-alert text-warning ml-2"></i>
-                                <div class="text-warning text-sm">{{ error }}</div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                    <div>
-                        <label class="relative block w-full rounded-lg border bg-muted shadow-sm duration-300 focus-within:border-primary">
-                            {{ form.iban_number|add_class:'peer w-full text-lg rounded-lg bg-transparent p-3 text-center placeholder-transparent outline-none focus:ring-0 xs:p-4' }}
-                            <span class="pointer-events-none absolute start-3 -translate-y-1/2 rounded-full bg-muted px-2 text-xs text-text/80 transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:text-xs peer-focus:peer-placeholder-shown:top-0">
-                            شماره شبا
-                        </span>
-                        </label>
-                        {% for error in form.iban_number.errors %}
-                            <div class="flex mt-5">
                                 <i class="i-lucide-circle-alert text-warning ml-2"></i>
                                 <div class="text-warning text-sm">{{ error }}</div>
                             </div>

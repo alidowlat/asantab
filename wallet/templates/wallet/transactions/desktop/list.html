@@ -1,0 +1,101 @@
+{% if transactions %}
+<div class="border-border/20 relative border overflow-x-auto overflow-y-auto hidden lg:block md:block sm:block">
+    <table class="text-text w-full text-right text-sm">
+        <thead class="text-text/70 bg-background text-xs uppercase sticky top-0">
+        <tr>
+            <th scope="col" class="px-6 py-3">تاریخ</th>
+            <th scope="col" class="px-6 py-3">وضعیت</th>
+            <th scope="col" class="px-6 py-3">مبلغ (تومان)</th>
+            <th scope="col" class="px-6 py-3">توضیح</th>
+        </tr>
+        </thead>
+        <tbody id="transaction-rows">
+        {% for trn in transactions %}
+            {% include 'wallet/transactions/desktop/item.html' %}
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+    <div class="flex justify-center items-center">
+        <img class="w-60 pb-10" src="/static/images/empty/empty-cart.svg" alt="empty page picture">
+    </div>
+    <div class="text-center text-gray-400 text-lg pb-4">درحال حاضر تراکنشی ندارید.</div>
+{% endif %}
+
+{% if is_paginated %}
+<nav id="pagination" class="!mt-10">
+    <div class="flex items-center justify-center gap-1">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" aria-label="Previous Page"
+               class="inline-flex h-10 w-10 items-center justify-center rounded-md border bg-muted p-0 text-sm">
+                <i class="i-lucide-chevron-right"></i>
+            </a>
+        {% endif %}
+
+        {% for page in page_obj.paginator.page_range %}
+            {% if page == 1 or page == page_obj.paginator.num_pages or page >= page_obj.number|add:'-1' and page <= page_obj.number|add:'1' %}
+                {% if page == page_obj.number %}
+                    <span class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-primary-btn bg-primary-btn p-0 text-sm text-white">
+                        {{ page }}
+                    </span>
+                {% else %}
+                    <a href="?page={{ page }}"
+                       class="inline-flex h-10 w-10 items-center justify-center rounded-md border bg-muted p-0 text-sm">
+                        {{ page }}
+                    </a>
+                {% endif %}
+            {% elif page == 2 and page_obj.number > 4 or page == page_obj.paginator.num_pages|add:'-1' and page_obj.number < page_obj.paginator.num_pages|add:'-3' %}
+                <div class="flex h-9 w-9 items-center justify-center">
+                    <i class="i-lucide-ellipsis text-text/80"></i>
+                </div>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" aria-label="Next Page"
+               class="inline-flex h-10 w-10 items-center justify-center rounded-md border bg-muted p-0 text-sm">
+                <i class="i-lucide-chevron-left"></i>
+            </a>
+        {% endif %}
+    </div>
+</nav>
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener("click", (e) => {
+    const link = e.target.closest("#pagination a");
+    if (!link) return;
+
+    e.preventDefault();
+    const url = link.getAttribute("href");
+
+    Swal.fire({
+        title: "لطفاً صبر کنید...",
+        text: "در حال بارگذاری تراکنش‌ها",
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    fetch(url, {headers: {"x-requested-with": "XMLHttpRequest"}})
+        .then(res => res.json())
+        .then(data => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(data.html, "text/html");
+
+            document.getElementById("transaction-rows").innerHTML =
+                doc.querySelector("#transaction-rows").innerHTML;
+
+            document.getElementById("pagination").innerHTML =
+                doc.querySelector("#pagination").innerHTML;
+
+            Swal.close();
+        })
+        .catch(() => {
+            Swal.fire("خطا!", "مشکلی در بارگذاری داده‌ها رخ داد.", "error");
+        });
+});
+</script>

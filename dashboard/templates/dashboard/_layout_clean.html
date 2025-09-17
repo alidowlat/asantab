@@ -1,0 +1,57 @@
+{% load static %}
+{% load render_partial %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock %}</title>
+    {% render_partial 'home.views.site_header_component' %}
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "آسان تب",
+            "url": "https://asantab.com",
+        {#            "description": "دیجی اوند، مرجع تخصصی کیف و کوله های لپ تاپ، ارائه‌دهنده طیف وسیعی از برندهای معتبر با قیمت‌های رقابتی و مناسب برای تجربه خریدی مطمئن و آسان."#}
+        }
+    </script>
+    <script src="{% static 'scripts/count.js' %}"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="keywords" content="فروشگاه آنلاین, خدمات تبلیغات, تبلیغ آسان">
+    <meta name="author" content="آسان تب">
+    {% include 'shared/header_ref.html' %}
+    {% block extra_header %}{% endblock %}
+</head>
+<body dir="rtl">
+<div class="flex.min-h-screen.flex-col">
+    <div id="desktop-mega-menu-overlay" class="fixed inset-0 z-20 bg-black/40 backdrop-blur-md hidden"></div>
+    <main class="flex-grow bg-background pt-[106px]">
+        <div class="container gap-4 pb-28 pt-10 lg:pb-10">
+            <!-- Content -->
+            <div class="col-span-12 lg:col-span-9">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </main>
+</div>
+{% include 'shared/footer_ref.html' %}
+</body>
+</html>
+
+
+<script>
+    function loadCartPartial() {
+        const cartElement = document.getElementById('cart-partial');
+        const url = cartElement.getAttribute('data-fetch-url');
+
+        fetch(url)
+            .then(res => res.text())
+            .then(html => {
+                cartElement.innerHTML = html;
+                showOrderItemsCount();
+            });
+    }
+
+    document.addEventListener("DOMContentLoaded", loadCartPartial);
+</script>

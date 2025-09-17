@@ -1,0 +1,156 @@
+{% extends 'dashboard/_layout.html' %}
+{% load extra_filters %}
+
+
+{% block title %}
+    شارژ کیف پول | آسان تب
+{% endblock %}
+
+{% block content %}
+    <div class="bg-muted rounded-lg shadow-sm">
+        <div class="p-5 md:p-6">
+            <!-- Header -->
+            <div class="border-border/20 flex items-center justify-between pb-4">
+                <h1 class="relative w-fit text-lg font-medium lg:text-xl">
+                    شارژ کیف پول
+                    <span class="animate-fill-border bg-primary absolute top-full right-0 mt-2 h-[3px] w-full rounded-full"></span>
+                </h1>
+                <div class="bg-muted/30 dark:bg-muted/10 flex flex-col items-center justify-between gap-6 rounded-2xl shadow-sm lg:flex-row">
+                    <div class="flex items-center gap-x-2">
+                        <div class="hidden sm:block">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                                 class="text-primary/60">
+                                <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path>
+                                <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path>
+                                <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-x-2">
+                                <span class="text-2xl font-bold">{{ wallet.balance|three_digits }}</span>
+                                <span class="text-text/80 text-base font-medium">تومان</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a href="{% url 'my_wallet' %}" class="btn-primary flex items-center gap-1 px-4 py-1.5">
+                    برگشت
+                    <span class="i-lucide-chevron-left size-5"></span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Wallet Deposit Form -->
+        <div class="bg-muted rounded-lg shadow-sm p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 py-6">
+                <!-- فرم (سمت راست) -->
+                <form method="post" action="{% url 'deposit_view' %}"
+                      class="border border-2 rounded-xl bg-background shadow-sm">
+                    {% csrf_token %}
+                    <div class="space-y-6 p-6">
+                        <div>
+                            <label for="amount-input" class="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
+                                مبلغ (تومان):
+                            </label>
+                            <div class="relative flex items-center justify-center">
+                                <input
+                                        type="text"
+                                        name="amount"
+                                        id="amount-input"
+                                        value="{{ form.amount.value|default_if_none:'' }}"
+                                        dir="ltr"
+                                        placeholder="0"
+                                        inputmode="numeric"
+                                        class="w-50 sm:w-64 rounded-xl border
+                             {% if form.amount.errors %}border-red-500 focus:border-red-500 focus:ring-red-300{% else %}border-slate-300 focus:border-primary{% endif %}
+                             bg-background py-2.5 pl-4 pr-16 text-center text-lg font-bold tracking-wider
+                             focus:ring-2 dark:text-white"/>
+                            </div>
+                            {% if form.amount.errors %}
+                                <p class="mt-2 text-sm font-medium text-red-600">
+                                    {{ form.amount.errors.0 }}
+                                </p>
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            <p class="mb-2 text-sm font-medium text-slate-600 dark:text-slate-300">مبالغ آماده:</p>
+                            <div id="preset-amounts" class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                                {% for amount in preset_amounts %}
+                                    <button type="button" data-amount="{{ amount }}"
+                                            class="chip-btn flex items-center justify-center rounded-lg border border-slate-300
+                           bg-background px-3 py-3 text-sm font-semibold shadow-sm
+                           transition-all duration-200 hover:scale-105 hover:bg-primary dark:text-white">
+                                        {{ amount|three_digits }}
+                                    </button>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-6 py-5 bg-muted/40 dark:bg-slate-800 flex justify-center">
+                        <button type="submit"
+                                class="btn-primary px-4 py-2 text-base font-bold text-white shadow-lg
+                        transition-transform duration-200 focus:ring-2 focus:ring-primary/50">
+                            ورود به درگاه پرداخت
+                        </button>
+                    </div>
+                </form>
+
+                <!-- قوانین و مقررات (سمت چپ) -->
+                <div class="bg-muted rounded-xl shadow-sm p-5">
+                    <div class="flex items-center mb-5">
+                        <i class="i-lucide-circle-alert ml-2"></i>
+                        <h3 class="text-xl font-bold">نکاتی قبل از شارژ کیف پول</h3>
+                    </div>
+                    <ul class="list-disc list-inside space-y-2 mr-1 text-sm leading-6 text-muted-foreground">
+                        <li>حداقل مبلغ شارژ کیف پول ۱۰,۰۰۰ تومان است.</li>
+                        <li>مبالغ شارژ شده غیرقابل استرداد هستند.</li>
+                        <li>تمام تراکنش‌ها از طریق درگاه پرداخت بانکی معتبر انجام می‌شود.</li>
+                        <li>مبلغ شارژ بلافاصله پس از پرداخت به موجودی شما افزوده می‌شود.</li>
+                        <li>در صورت بروز مشکل در تراکنش، حداکثر طی ۷۲ ساعت مبلغ به حساب بانکی شما برگشت داده می‌شود.</li>
+                        <li>مسئولیت وارد کردن صحیح مبلغ و اطلاعات پرداخت بر عهده کاربر است.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const input = document.getElementById("amount-input");
+        const chips = document.querySelectorAll(".chip-btn");
+
+        // تبدیل اعداد فارسی به انگلیسی
+        const persianToEnglish = (str) => str.replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d));
+
+        // جداکننده هزارگان
+        const formatNumber = (value) => {
+            value = value.replace(/,/g, ""); // حذف کاماهای قبلی
+            if (!value) return "";
+            return parseInt(value, 10).toLocaleString("en-US");
+        };
+
+        // فقط عدد انگلیسی قبول کن
+        input.addEventListener("input", (e) => {
+            let value = persianToEnglish(e.target.value);
+            value = value.replace(/[^0-9]/g, ""); // فقط عدد
+            e.target.value = formatNumber(value);
+        });
+
+        // وقتی دکمه‌های آماده کلیک میشن
+        chips.forEach(chip => {
+            chip.addEventListener("click", () => {
+                let value = chip.getAttribute("data-amount");
+                input.value = formatNumber(value);
+
+                chips.forEach(c => c.classList.remove("bg-primary", "text-white"));
+                chip.classList.add("bg-primary", "text-white");
+            });
+        });
+
+        // قبل از ارسال فرم → حذف کاماها
+        input.form.addEventListener("submit", () => {
+            input.value = input.value.replace(/,/g, "");
+        });
+    </script>
+{% endblock %}

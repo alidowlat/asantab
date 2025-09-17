@@ -131,7 +131,7 @@ class BankAccount(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.user.get_full_name()} - {self.sheba_number}"
+        return f"{self.user.get_full_name()} - {self.card_number}"
 
     class Meta:
         ordering = ('-created_at',)

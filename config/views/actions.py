@@ -5,7 +5,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
 from accounts.models import Provider
 from notifications.models import Notification
-from orders.models import Order, OrderItem
+from orders.models import Order, OrderItem, VendorOrder
 from orders.services import OrderCalculator
 from search.models import SearchQuery
 from services.models import Favorite, ServiceVisit
@@ -59,15 +59,26 @@ def notif_list_partial(request):
 
 @login_required
 def cart_partial(request):
-    cart = Order.objects.filter(user=request.user, is_paid=False).prefetch_related(
-        Prefetch('items', queryset=OrderItem.objects.select_related('service', 'option', 'schedule'))
-    ).first()
-    calc = OrderCalculator(cart)
+    cart = (
+        Order.objects
+        .filter(user=request.user, is_paid=False)
+        .prefetch_related(
+            Prefetch('items', queryset=OrderItem.objects.select_related('service', 'option', 'schedule'))
+        )
+        .first()
+    )
 
-    if cart is None:
-        return render(request, 'includes/cart_partial.html', {'cart': None, 'final_price': 0})
+    if cart and cart.items.exists():
+        calc = OrderCalculator(cart)
+        return render(request, 'includes/cart_partial.html', {
+            'cart': cart,
+            'final_price': calc.final_price(),
+        })
 
-    return render(request, 'includes/cart_partial.html', {'cart': cart, 'final_price': calc.final_price()})
+    return render(request, 'includes/cart_partial.html', {
+        'cart': None,
+        'final_price': 0,
+    })
 
 
 @login_required
@@ -151,9 +162,9 @@ def order_items_count(request):
 @login_required
 def received_orders_count(request):
     provider = get_object_or_404(Provider, user=request.user)
-    count = Order.objects.filter(
+    count = VendorOrder.objects.filter(
         provider=provider,
-        is_paid=True,
+        order__is_paid=True,
         status__in=['pending', 'accepted']
     ).count()
     return JsonResponse({'count': count})

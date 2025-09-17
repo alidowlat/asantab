@@ -7,6 +7,7 @@ from django.template.loader import render_to_string
 from django.views import View
 from django.views.decorators.http import require_POST
 from accounts.models import Provider
+from core import ActiveProviderRequiredMixin
 from locations.models import City, Province
 from services.forms import ServiceForm, ScheduleFormSet, OptionFormSet, OptionForm, ScheduleForm
 from django.views.generic import ListView
@@ -15,7 +16,7 @@ from django.urls import reverse
 from services.models import Service, Option, Schedule
 
 
-class ProviderServiceList(LoginRequiredMixin, ListView):
+class ProviderServiceList(LoginRequiredMixin, ActiveProviderRequiredMixin, ListView):
     model = Service
     template_name = 'dashboard/services/main.html'
     context_object_name = 'services'
@@ -30,7 +31,7 @@ class ProviderServiceList(LoginRequiredMixin, ListView):
         return context
 
 
-class ProviderServiceCreate(LoginRequiredMixin, View):
+class ProviderServiceCreate(LoginRequiredMixin, ActiveProviderRequiredMixin, View):
     template_name = 'dashboard/services/create.html'
 
     def get_context_data(self):
@@ -130,7 +131,7 @@ ScheduleFormSet = inlineformset_factory(
 )
 
 
-class ProviderServiceEdit(LoginRequiredMixin, View):
+class ProviderServiceEdit(LoginRequiredMixin, ActiveProviderRequiredMixin, View):
     template_name = 'dashboard/services/edit.html'
 
     def dispatch(self, request, *args, **kwargs):

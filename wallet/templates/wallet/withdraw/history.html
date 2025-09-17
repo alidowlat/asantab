@@ -1,0 +1,29 @@
+{% extends 'dashboard/_layout.html' %}
+
+{% block title %}
+    تاریخچه درخواست های برداشت | آسان تب
+{% endblock %}
+
+{% block content %}
+    <div class="bg-muted rounded-lg shadow-sm">
+        <div class="p-5 md:p-6">
+            <!-- Header -->
+            <div class="border-border/20 mb-14 flex items-center justify-between pb-4">
+                <h1 class="relative w-fit text-lg font-medium lg:text-xl">
+                    تاریخچه درخواست های برداشت
+                    <span class="animate-fill-border bg-primary absolute top-full right-0 mt-2 h-[3px] w-full rounded-full"></span>
+                </h1>
+
+                <a href="{% url 'withdraw_view' %}" class="btn-primary flex items-center gap-1 px-4 py-1.5">
+                    برگشت
+                    <span class="i-lucide-chevron-left size-5"></span>
+                </a>
+            </div>
+
+            <div id="withdrawal-history">
+                <!-- Desktop Table -->
+                {% include 'wallet/withdraw/desktop/list.html' %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

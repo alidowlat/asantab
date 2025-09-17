@@ -5,7 +5,7 @@
             <div class="relative inline-flex flex-shrink-0 items-center justify-center">
                 <span class="relative inline-flex flex-shrink-0 items-center justify-center rounded-full border">
                     <img class="h-16 w-16 {% if provider.is_verified %} border-[3px] border-primary {% endif %} rounded-full"
-                         src="{{ provider.profile_image.url }}" alt="profile">
+                         src="{% if provider.profile_image %}{{ provider.profile_image.url }}{% else %}/static/images/user.png{% endif %}" alt="profile">
                 </span>
             </div>
         </div>
@@ -48,7 +48,7 @@
         <div class="text-text/80">{{ provider.user.date_joined|show_date }}</div>
     </td>
     <td>
-        <a href="{% url 'impersonate_user' provider.id %}"
+        <a href="{% url 'impersonate_user' provider.user.id %}"
            class="i-mynaui-external-link h-6 w-6 text-success duration-200 hover:text-success/80">
         </a>
     </td>

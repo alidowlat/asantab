@@ -13,7 +13,7 @@
     </div>
     <div class="relative">
         <h1 class="mb-8 text-center text-lg lg:text-xl">جزئیات سفارش</h1>
-        <div class="mb-6">
+        <div class="mb-1">
             <div class="mb-4 w-full">
                 <form action="{% url 'order_checkout_page' %}" method="post">
                     {% csrf_token %}
@@ -44,15 +44,15 @@
                     </div>
                 </form>
             </div>
+
             <div class="flex items-center justify-between gap-x-2 py-6">
-                <div class="text-sm text-text/95 lg:text-base">
-                    قیمت کالا ها
-                </div>
-                <div class="flex items-center gap-1 text-sm text-primary lg:text-base">
+                <div class="text-sm text-text/95 lg:text-base">قیمت کالا ها</div>
+                <div class="flex items-center gap-1 text-sm lg:text-base">
                     <div class="font-bold">{{ sum|rounded|three_digits }}</div>
                     <div class="text-xs lg:text-sm">تومان</div>
                 </div>
             </div>
+
             <div class="relative rounded-lg bg-muted" data-accordion-item="">
                 <button type="button" class="w-full py-3 text-right md:py-5" data-accordion-button="">
                     <div class="flex items-center justify-between gap-2 text-sm md:text-base">
@@ -75,20 +75,16 @@
                                             <div>تعداد : {{ item.count }}</div>
                                             <div class="flex items-center gap-x-2">
                                                 <div class="flex items-center gap-2">
-                                                    <div class="flex items-center gap-2">
-                                                        <div>تاریخ رزرو :</div>
-                                                        <div>
-                                                            <div>{{ item.schedule.date|show_date }}</div>
-                                                        </div>
-                                                    </div>
+                                                    <div>تاریخ رزرو :</div>
+                                                    <div>{{ item.schedule.date|show_date }}</div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="flex items-center justify-end">
-                                        <div class="flex items-center gap-1 text-primary">
-                                            <span class="font-bold">{{ item.final_price|rounded|three_digits }}</span><span
-                                                class="text-xs">تومان</span>
+                                        <div class="flex items-center gap-1">
+                                            <span class="font-bold">{{ item.final_price|rounded|three_digits }}</span>
+                                            <span class="text-xs">تومان</span>
                                         </div>
                                     </div>
                                 </div>
@@ -97,32 +93,105 @@
                     </ul>
                 </div>
             </div>
+
             <div class="flex items-center justify-between gap-x-2 py-6">
-                <div class="text-sm text-text/95 lg:text-base">
-                    تخفیف کالا ها
-                </div>
-                <div class="flex items-center gap-1 text-sm font-medium text-warning lg:text-base">
+                <div class="text-sm text-text/95 lg:text-base">تخفیف کالا ها</div>
+                <div class="flex items-center gap-1 text-sm font-medium lg:text-base">
                     <div class="font-bold">{{ discount_amount|rounded|three_digits }}</div>
                     <div class="text-xs lg:text-sm">تومان</div>
                 </div>
             </div>
+
             <div class="flex items-center justify-between gap-x-2 py-6">
-                <div class="text-sm text-text/95 lg:text-base">
-                    مبلغ قابل پرداخت
-                </div>
-                <div class="flex items-center gap-1 text-sm font-medium text-primary lg:text-base">
+                <div class="text-sm text-text/95 lg:text-base">مبلغ قابل پرداخت</div>
+                <div class="flex items-center gap-1 text-sm font-medium lg:text-base">
                     <div class="font-bold">{{ final_price|rounded|three_digits }}</div>
                     <div class="text-xs lg:text-sm">تومان</div>
                 </div>
             </div>
-        </div>
-        <div class="space-y-4">
-            <p class="text-center text-xs text-text/80 sm:text-sm">
-                پس از تایید امکان ویرایش سبد خرید وجود ندارد
-            </p>
-            <button class="btn-primary w-full py-2.5">
-                تایید و پرداخت
-            </button>
+
+            <div class="flex items-center justify-between gap-x-2 py-6 border-t border-b">
+                <div class="text-sm text-text/95 lg:text-base">موجودی کیف پول شما</div>
+                <div class="flex items-center gap-1 text-sm font-medium text-success lg:text-base">
+                    <div class="font-bold">{{ wallet_balance|rounded|three_digits }}</div>
+                    <div class="text-xs lg:text-sm">تومان</div>
+                </div>
+            </div>
+
+            {% if wallet_balance >= final_price %}
+                <form id="walletForm" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="pay_with_wallet" value="1">
+                    <div class="space-y-6 pt-6 flex flex-col items-center">
+                        <p class="text-center text-xs text-text/80 sm:text-sm">
+                            پس از تایید امکان ویرایش سبد خرید وجود ندارد.
+                        </p>
+                        <button id="walletPayBtn" type="button" class="btn-primary w-50 py-2.5">
+                            تایید و پرداخت از کیف پول
+                        </button>
+                    </div>
+                </form>
+            {% else %}
+                <div class="space-y-6 pt-6 flex flex-col items-center">
+                    <p class="text-center text-xs text-warning sm:text-sm">
+                        موجودی شما کافی نیست. لطفاً حداقل {{ difference|rounded|three_digits }} تومان کیف پول خود را شارژ کنید.
+                    </p>
+                    <a href="{% url 'deposit_view' %}?amount={{ difference }}"
+                       class="btn-warning w-32 py-2.5 text-center">
+                        شارژ کیف پول
+                    </a>
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>
+
+{% if payment_success %}
+    <script>
+        Swal.fire({
+            title: "پرداخت موفق",
+            text: "مبلغ با موفقیت از کیف پول شما کسر شد.",
+            icon: "success",
+            showCancelButton: true,
+            confirmButtonText: "مشاهده سفارش",
+            cancelButtonText: "کیف پول",
+            allowOutsideClick: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "{% url 'orders_page' %}";
+            } else {
+                window.location.href = "{% url 'my_wallet' %}";
+            }
+        });
+    </script>
+{% endif %}
+
+<script>
+    document.getElementById("walletPayBtn").addEventListener("click", function () {
+        Swal.fire({
+            title: "تأیید پرداخت",
+            html: `
+            <p>مبلغ <b>{{ final_price|three_digits }}</b> تومان از کیف پول شما کسر می‌شود.</p>
+            <br>
+            <p>موجودی فعلی: <b>{{ wallet_balance|three_digits }}</b> تومان</p>
+            <p>موجودی پس از پرداخت: <b>{{ balance_after|three_digits }}</b> تومان</p>
+        `,
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonText: "بله، پرداخت شود",
+            cancelButtonText: "انصراف",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: "در حال پردازش...",
+                    text: "لطفاً منتظر بمانید",
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                document.getElementById("walletForm").submit();
+            }
+        });
+    });
+</script>

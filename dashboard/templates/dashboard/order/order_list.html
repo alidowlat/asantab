@@ -55,64 +55,67 @@
         <!-- همه -->
         <div class="block" id="filter-all" role="tabpanel" aria-labelledby="filter-all-tab">
             <div class="space-y-4">
-                {% for order in order_items %}
-                    {% include 'dashboard/order/order_item.html' with order=order %}
-                {% empty %}
-                    <div class="text-center text-gray-400">سفارشی یافت نشد.</div>
-                {% endfor %}
+                {% if order_items %}
+                    {% for order in order_items %}
+                        {% include 'dashboard/order/order_item.html' with order=order %}
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center pt-6 text-gray-400">سفارشی یافت نشد.</div>
+                {% endif %}
             </div>
         </div>
 
-        <!-- درحال بررسی -->
+        <!-- در حال بررسی -->
         <div class="hidden" id="filter-pending" role="tabpanel" aria-labelledby="filter-pending-tab">
             <div class="space-y-4">
-                {% for order in order_items %}
-                    {% if order.status == 'pending' %}
+                {% if pending_orders %}
+                    {% for order in pending_orders %}
                         {% include 'dashboard/order/order_item.html' with order=order %}
-                    {% endif %}
-                {% empty %}
-                    <div class="text-center text-gray-400">سفارشی یافت نشد.</div>
-                {% endfor %}
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center pt-6 text-gray-400">سفارشی یافت نشد.</div>
+                {% endif %}
             </div>
         </div>
 
         <!-- فعلی -->
         <div class="hidden" id="filter-accepted" role="tabpanel" aria-labelledby="filter-accepted-tab">
             <div class="space-y-4">
-                {% for order in order_items %}
-                    {% if order.status == 'accepted' %}
+                {% if accepted_orders %}
+                    {% for order in accepted_orders %}
                         {% include 'dashboard/order/order_item.html' with order=order %}
-                    {% endif %}
-                {% empty %}
-                    <div class="text-center text-gray-400">سفارشی یافت نشد.</div>
-                {% endfor %}
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center pt-6 text-gray-400">سفارشی یافت نشد.</div>
+                {% endif %}
             </div>
         </div>
 
         <!-- تکمیل شده -->
         <div class="hidden" id="filter-delivered" role="tabpanel" aria-labelledby="filter-delivered-tab">
             <div class="space-y-4">
-                {% for order in order_items %}
-                    {% if order.status == 'completed' %}
+                {% if completed_orders %}
+                    {% for order in completed_orders %}
                         {% include 'dashboard/order/order_item.html' with order=order %}
-                    {% endif %}
-                {% empty %}
-                    <div class="text-center text-gray-400">سفارشی یافت نشد.</div>
-                {% endfor %}
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center pt-6 text-gray-400">سفارشی یافت نشد.</div>
+                {% endif %}
             </div>
         </div>
 
         <!-- لغو شده -->
         <div class="hidden" id="filter-canceled" role="tabpanel" aria-labelledby="filter-canceled-tab">
             <div class="space-y-4">
-                {% for order in order_items %}
-                    {% if order.status == 'rejected' %}
+                {% if rejected_orders %}
+                    {% for order in rejected_orders %}
                         {% include 'dashboard/order/order_item.html' with order=order %}
-                    {% endif %}
-                {% empty %}
-                    <div class="text-center text-gray-400">سفارشی یافت نشد.</div>
-                {% endfor %}
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center pt-6 text-gray-400">سفارشی یافت نشد.</div>
+                {% endif %}
             </div>
         </div>
+
     </div>
 </div>

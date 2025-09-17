@@ -1,0 +1,21 @@
+{% load extra_filters %}
+<div class="bg-background border-border/20 space-y-3 rounded-lg border p-4">
+    {% with style=trn.type|transaction_style %}
+        <div class="flex items-center justify-between pb-2">
+            <span class="text-text/70 text-sm">وضعیت</span>
+            <span class="{{ style.2 }} {{ style.0 }} rounded-full px-3 py-1 text-xs font-medium">{{ trn.get_type_display }}</span>
+        </div>
+        <div class="flex items-center justify-between">
+            <span class="text-text/70 text-sm">مبلغ (تومان)</span>
+            <span class="{{ style.2 }} {{ style.0 }} rounded-full px-3 py-1 text-base font-bold"
+                  dir="ltr">{{ style.1 }} {{ trn.amount|three_digits }}</span>
+        </div>
+    {% endwith %}
+    <div class="text-text/70 flex items-center justify-between pt-2 text-sm">
+        <span>تاریخ</span>
+        <span class="font-mono ">{{ trn.created_at|to_jalali_simple }}</span>
+    </div>
+    <div class="text-text/95 font-bold flex border-t pt-2">
+        <span>{{ trn.description }}</span>
+    </div>
+</div>
