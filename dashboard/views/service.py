@@ -317,8 +317,17 @@ def add_schedule(request):
 @login_required
 def delete_schedule(request, pk):
     schedule = get_object_or_404(Schedule, pk=pk, service__provider_id=request.user.id)
-    try:
-        schedule.delete()
-        return JsonResponse({'success': True, 'message': 'زمان‌بندی با موفقیت حذف شد'})
-    except ProtectedError:
-        return JsonResponse({'success': False, 'error': f' زمان‌بندی "{schedule.date}" در سفارشات استفاده شده و قابل حذف نیست.'})
+
+    related_orders = schedule.orderitem_set.all()
+
+    if related_orders.filter(vendor_order__status='accepted').exists():
+        return JsonResponse({
+            'success': False,
+            'error': 'این زمان‌بندی در سفارش فعال استفاده شده و قابل حذف نیست.'
+        })
+
+    schedule.delete()
+    return JsonResponse({
+        'success': True,
+        'message': 'زمان‌بندی با موفقیت حذف شد'
+    })
