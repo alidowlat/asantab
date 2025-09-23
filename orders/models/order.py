@@ -91,6 +91,11 @@ class Order(models.Model):
     )
 
     @property
+    def provider(self):
+        first_item = self.items.select_related("service__provider").first()
+        return first_item.service.provider if first_item else None
+
+    @property
     def final_price(self):
         return OrderCalculator(self).final_price()
 
