@@ -4,13 +4,13 @@ from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
 from django.views.generic import DetailView
-
 from accounts.models import Provider
 from core import get_client_info
 from core.clean import create_visit_clean
 from reviews.models.service_review import ServiceReview, ServiceReviewReaction
 from services.helper import ServiceDataFetcher
 from services.models import Service, ServiceVisit, Favorite, Schedule
+from services.services import get_instagram_data
 
 
 class ServiceDetailView(DetailView):
@@ -28,6 +28,12 @@ class ServiceDetailView(DetailView):
         price_range = fetcher.get_price_range()
         context['min_price'] = price_range['min_price']
         context['max_price'] = price_range['max_price']
+
+        # instagram api
+        ig_data = {}
+        if service.provider.instagram_url:
+            ig_data = get_instagram_data(username=service.provider.instagram_url)
+        context['ig_data'] = ig_data
 
         # related services
         context['related_services'] = fetcher.get_related_services()
