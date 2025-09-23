@@ -29,4 +29,39 @@
             </div>
         </div>
     </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const alerts = JSON.parse('{{ alerts|safe|escapejs }}');
+            if (alerts.length > 0) {
+                alerts.forEach(alert => {
+                    Swal.fire({
+                        icon: alert.type,
+                        title: alert.message,
+                        confirmButtonText: 'باشه',
+                    });
+                });
+            }
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch("{% url 'cart_cleanup_view' %}")
+                .then(response => response.json())
+                .then(alerts => {
+                    if (alerts.length > 0) {
+                        alerts.forEach(alert => {
+                            Swal.fire({
+                                icon: alert.type === 'error' ? 'error' : 'warning',
+                                title: alert.type === 'error' ? 'خطا' : 'هشدار',
+                                text: alert.message,
+                                confirmButtonText: 'باشه'
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        });
+                    }
+                })
+                .catch(error => console.error("خطا در بررسی ظرفیت:", error));
+        });
+    </script>
 {% endblock %}

@@ -5,7 +5,7 @@
         {% else %}
             <img class="h-10 w-10 rounded-full ml-2" src="/static/images/user.png" alt="profile image">
         {% endif %}
-        <p class="line-clamp-1">{{ user.get_full_name }}</p>
+        <p class="line-clamp-1">{{ user.get_full_name|default:user.phone_number }}</p>
         {% if user.is_superuser %}
             <p class="text-sm opacity-75">(مدیر)</p>
         {% elif user.is_provider %}

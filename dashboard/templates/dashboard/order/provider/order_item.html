@@ -1,7 +1,7 @@
 {% load extra_filters %}
 <a href="{% url 'received_order_detail' pk=vendor.pk %}" class="block rounded-lg border p-4 shadow">
     <div class="mb-6 flex flex-col gap-6 xl:flex-row xl:justify-between xl:gap-16 pt-4">
-        <div class="flex flex-col gap-4 md:flex-row">
+        <div class="grid grid-cols-2">
             <div class="flex items-center justify-between gap-x-2 md:justify-start">
                 <div class="text-sm text-text/60 md:text-base">
                     شماره سفارش
@@ -12,21 +12,29 @@
             </div>
             <div class="flex items-center justify-between gap-x-2 md:justify-start">
                 <div class="text-sm text-text/60 md:text-base">
+                    تاریخ پرداخت
+                </div>
+                <div class="flex items-center gap-1 text-text/95">
+                    {{ vendor.order.paid_at|show_date_slash }}
+                </div>
+            </div>
+            <div class="flex items-center justify-between gap-x-2 md:justify-start">
+                <div class="text-sm text-text/60 md:text-base">
                     مبلغ کل
                 </div>
                 <div class="flex items-center gap-1 text-primary">
                     <div class="font-bold md:text-lg">
-                        {{ final_price|rounded|three_digits }}
+                        {{ vendor.order.final_price|rounded|three_digits }}
                     </div>
                     <div class="text-sm md:text-base">تومان</div>
                 </div>
             </div>
             <div class="flex items-center justify-between gap-x-2 md:justify-start">
                 <div class="text-sm text-text/60 md:text-base">
-                    تاریخ پرداخت
+                    خریدار
                 </div>
                 <div class="flex items-center gap-1 text-text/95">
-                    {{ vendor.order.paid_at|show_date_slash }}
+                    {{ vendor.order.user }}
                 </div>
             </div>
         </div>
@@ -64,11 +72,11 @@
                         <div class="flex flex-col gap-2 pt-2">
                             <div class="flex items-center gap-2">
                                 <div class="opacity-75">نوع تبلیغ:</div>
-                                <div>{{ item.option.title }}</div>
+                                <div>{{ item.option.title|default:'ندارد' }}</div>
                             </div>
                             <div class="flex items-center gap-2">
                                 <div class="opacity-75">رزرو انتخابی:</div>
-                                <div>{{ item.schedule.display_date|show_date_slash }}</div>
+                                <div>{{ item.schedule.display_date|show_date_slash|default:'ندارد' }}</div>
                             </div>
                         </div>
                     </div>

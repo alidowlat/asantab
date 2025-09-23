@@ -13,17 +13,24 @@
                          style="width: 209.667px; margin-left: 20px;">
                         <div class="border-gradient relative rounded-[--product-card-radius] p-px [--product-card-radius:theme(borderRadius.2xl)] before:absolute before:-inset-px before:h-[calc(100%+2px)] before:w-[calc(100%+2px)] before:rounded-[--product-card-radius] before:content-['']"
                              style="--x: 233.15625px; --y: -64px;">
-                            <a href="{{ service.get_absolute_url }}"
+                            <div
                                class="relative block overflow-hidden rounded-[calc(var(--product-card-radius)-1px)] bg-muted">
                                 <div class="mb-4 bg-secondary p-2 lg:p-4">
                                     <!-- Image -->
-                                    <img src="{{ service.image.url }}" alt="{{ service.title }}"
-                                         class="aspect-[1/1] w-full rounded-xl object-cover">
+                                    <a href="{{ service.get_absolute_url }}">
+                                        <img src="{{ service.image.url }}" alt="{{ service.title }}"
+                                             class="aspect-[1/1] w-full rounded-xl object-cover">
+                                    </a>
                                 </div>
                                 <div class="px-2 lg:px-4 mb-2">
-                                    <p class="line-clamp-2 h-10 text-sm xs:h-12 xs:text-base">
+                                    <p class="line-clamp-2 h-8 text-sm xs:text-base">
                                         {{ service.title }}
                                     </p>
+                                    <a href="{% url 'provider_detail_page' slug=service.provider.username %}"
+                                       class="flex line-clamp-2 h-6 text-xs xs:h-12 xs:text-sm text-primary hover:text-primary/80 duration-200">
+                                        <i class="i-lucide-user-round size-5"></i>
+                                        <p class="mr-1">{{ service.provider }}</p>
+                                    </a>
 
                                     <div class="gap-x-1 font-bold text-primary text-end">
                                         {#                                        <div class="h-5 text-end text-sm text-text/50 xs:text-base">#}
@@ -38,7 +45,7 @@
                                         <span class="text-xs font-light">تومان</span>
                                     </div>
                                 </div>
-                            </a>
+                            </div>
                         </div>
                     </div>
                 {% endfor %}

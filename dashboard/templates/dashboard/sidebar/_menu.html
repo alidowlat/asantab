@@ -23,48 +23,48 @@
             <span class="h-2 w-2 rounded-full bg-primary"></span>
             پنل مدیران
         </h3>
-    {% endif %}
-    <div class="hidden rounded-lg shadow lg:block mb-4 border border-primary">
-        <ul class="relative space-y-2 rounded-lg bg-muted p-2">
-            {% with request.resolver_match.url_name as current_url %}
-                {% if request.user.is_staff and request.user.is_superuser %}
-                    <li>
-                        <a href="{% url 'role_list' %}"
-                           class="inline-flex w-full items-center justify-between rounded-lg p-4
+        <div class="hidden rounded-lg shadow lg:block mb-4 border border-primary">
+            <ul class="relative space-y-2 rounded-lg bg-muted p-2">
+                {% with request.resolver_match.url_name as current_url %}
+                    {% if request.user.is_staff and request.user.is_superuser %}
+                        <li>
+                            <a href="{% url 'role_list' %}"
+                               class="inline-flex w-full items-center justify-between rounded-lg p-4
                            {% if current_url == 'role_list' %}bg-primary/5 text-primary
                            {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
-                            <div class="flex items-center gap-4">
-                                <div class="i-lucide-user-round size-6"></div>
-                                لیست کاربران
-                            </div>
-                        </a>
-                    </li>
-                {% endif %}
-                {% if request.user.is_staff and request.user.is_superuser %}
-                    <li>
-                        <a href="{% url 'admin_withdrawal_list' %}"
-                           class="inline-flex w-full items-center justify-between rounded-lg p-4
+                                <div class="flex items-center gap-4">
+                                    <div class="i-lucide-user-round size-6"></div>
+                                    لیست کاربران
+                                </div>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if request.user.is_staff and request.user.is_superuser %}
+                        <li>
+                            <a href="{% url 'admin_withdrawal_list' %}"
+                               class="inline-flex w-full items-center justify-between rounded-lg p-4
                            {% if current_url == 'admin_withdrawal_list' %}bg-primary/5 text-primary
                            {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
-                            <div class="flex items-center gap-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                     class="lucide lucide-banknote-arrow-down-icon lucide-banknote-arrow-down">
-                                    <path d="M12 18H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5"/>
-                                    <path d="m16 19 3 3 3-3"/>
-                                    <path d="M18 12h.01"/>
-                                    <path d="M19 16v6"/>
-                                    <path d="M6 12h.01"/>
-                                    <circle cx="12" cy="12" r="2"/>
-                                </svg>
-                                درخواست های برداشت
-                            </div>
-                        </a>
-                    </li>
-                {% endif %}
-            {% endwith %}
-        </ul>
-    </div>
+                                <div class="flex items-center gap-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                         class="lucide lucide-banknote-arrow-down-icon lucide-banknote-arrow-down">
+                                        <path d="M12 18H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5"/>
+                                        <path d="m16 19 3 3 3-3"/>
+                                        <path d="M18 12h.01"/>
+                                        <path d="M19 16v6"/>
+                                        <path d="M6 12h.01"/>
+                                        <circle cx="12" cy="12" r="2"/>
+                                    </svg>
+                                    درخواست های برداشت
+                                </div>
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endwith %}
+            </ul>
+        </div>
+    {% endif %}
 
     {% if request.user.providers %}
         <h3 class="hidden lg:flex flex items-center gap-x-4 mb-4 text-lg text-text/80">
@@ -270,7 +270,6 @@
                     </a>
                 </li>
             {% endwith %}
-
             <li>
                 {% url 'my_wallet' as wallet_url %}
                 <a href="{{ wallet_url }}"
@@ -288,7 +287,6 @@
                     </div>
                 </a>
             </li>
-
             <li>
                 {% url 'bank_accounts_view' as bank_url %}
                 <a href="{{ bank_url }}"
@@ -301,7 +299,6 @@
                     </div>
                 </a>
             </li>
-
             <li>
                 {% url 'orders_page' as orders_url %}
                 <a href="{{ orders_url }}"
@@ -314,7 +311,6 @@
                     </div>
                 </a>
             </li>
-
             <li>
                 {% url 'notifications_page' as notif_url %}
                 <a href="{{ notif_url }}"
@@ -328,7 +324,6 @@
                     <div class="notif-badge h-6 w-6 rounded-full bg-primary-btn text-center leading-6 text-white"></div>
                 </a>
             </li>
-
             <li>
                 {% url 'favorite_list_page' as fav_url %}
                 <a href="{{ fav_url }}"
@@ -341,7 +336,6 @@
                     </div>
                 </a>
             </li>
-
             <li>
                 {% url 'visit_list_page' as visit_url %}
                 <a href="{{ visit_url }}"
@@ -354,7 +348,6 @@
                     </div>
                 </a>
             </li>
-
             <li>
                 {% url 'account_info_page' as account_url %}
                 <a href="{{ account_url }}"
@@ -367,7 +360,6 @@
                     </div>
                 </a>
             </li>
-
             <li>
                 <a href="{% if request.user.is_provider %}{% url 'logout_provider' %}{% else %}{% url 'logout' %}{% endif %}"
                    type="button"
@@ -380,9 +372,9 @@
             </li>
         </ul>
     </div>
-    <div class="rounded-lg shadow lg:block">
-        <ul class="relative space-y-2 rounded-lg bg-muted p-2">
-            {% if completion_percent %}
+    {% if completion_percent %}
+        <div class="rounded-lg shadow lg:block">
+            <ul class="relative space-y-2 rounded-lg bg-muted p-2">
                 <li class="rounded-lg p-4 shadow">
                     <div class="flex flex-col gap-y-2">
                         <div class="flex items-center gap-x-2 text-{{ progress_color }} justify-center mb-4">
@@ -401,7 +393,7 @@
                         </button>
                     {% endif %}
                 </li>
-            {% endif %}
-        </ul>
-    </div>
+            </ul>
+        </div>
+    {% endif %}
 {% endif %}

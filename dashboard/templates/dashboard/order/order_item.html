@@ -1,61 +1,79 @@
 {% load extra_filters %}
-<a href="{{ order.get_absolute_url }}" class="block rounded-lg border p-4 shadow">
-    <div class="flex items-center justify-between pb-6">
-        <div class="flex items-center gap-x-2 text-success">
-            <div class="i-lucide-circle-check size-6"></div>
-            <p class="font-medium md:text-lg">پرداخت شده</p>
-        </div>
-        <div class="i-lucide-chevron-left size-6"></div>
-    </div>
-    <div class="mb-6 flex flex-col gap-6 xl:flex-row xl:justify-between xl:gap-16">
-        <div class="flex flex-col gap-4 md:flex-row">
-            <div class="flex items-center justify-between gap-x-2 md:justify-start">
-                <div class="text-sm text-text/60 md:text-base">
-                    شماره سفارش
-                </div>
-                <div class="text-sm text-text/95 md:text-base">
-                    {{ order.tracking_code }}
-                </div>
+<div class="block rounded-lg border p-4 shadow">
+    <div class="border-b mb-6">
+        <div class="flex items-center justify-between pb-6">
+            <div class="flex items-center gap-x-2 text-success">
+                <div class="i-lucide-circle-check size-6"></div>
+                <p class="font-medium md:text-lg">پرداخت شده</p>
             </div>
-            <div class="flex items-center justify-between gap-x-2 md:justify-start">
-                <div class="text-sm text-text/60 md:text-base">
-                    مبلغ کل
-                </div>
-                <div class="flex items-center gap-1 text-primary">
-                    <div class="font-bold md:text-lg">
-                        {{ order.final_price|rounded|three_digits }}
+            <a href="{% url 'order_detail' pk=order.pk %}" class="flex text-primary hover:text-primary/80 duration-200 items-center gap-x-2">
+                <p class="text-sm">مشاهده جزيیات</p>
+                <div class="i-lucide-chevrons-left size-5"></div>
+            </a>
+        </div>
+        <div class="mb-6 flex flex-col gap-6 xl:flex-row xl:justify-between xl:gap-16">
+            <div class="grid grid-cols-2">
+                <div class="flex items-center justify-between gap-x-2 md:justify-start">
+                    <div class="text-sm text-text/60 md:text-base">
+                        شماره سفارش
                     </div>
-                    <div class="text-sm md:text-base">تومان</div>
+                    <div class="text-sm text-text/95 md:text-base">
+                        {{ order.tracking_code }}
+                    </div>
+                </div>
+                <div class="flex items-center justify-between gap-x-2 md:justify-start">
+                    <div class="text-sm text-text/60 md:text-base">
+                        تاریخ پرداخت
+                    </div>
+                    <div class="flex items-center gap-1 text-text/95">
+                        {{ order.paid_at|show_date_slash }}
+                    </div>
+                </div>
+                <div class="flex items-center justify-between gap-x-2 md:justify-start">
+                    <div class="text-sm text-text/60 md:text-base">
+                        مبلغ کل
+                    </div>
+                    <div class="flex items-center gap-1 text-primary">
+                        <div class="font-bold md:text-lg">
+                            {{ order.final_price|rounded|three_digits }}
+                        </div>
+                        <div class="text-sm md:text-base">تومان</div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between gap-x-2 md:justify-start">
+                    <div class="text-sm text-text/60 md:text-base">
+                        فروشنده
+                    </div>
+                    {% if order.provider %}
+                        <a href="{% url 'provider_detail_page' slug=order.provider.username %}"
+                           class="flex items-center gap-1 text-primary hover:text-primary/80 duration-200">
+                            {{ order.provider }}
+                        </a>
+                    {% else %}
+                        <span class="text-muted">نامشخص</span>
+                    {% endif %}
                 </div>
             </div>
-            <div class="flex items-center justify-between gap-x-2 md:justify-start">
-                <div class="text-sm text-text/60 md:text-base">
-                    تاریخ پرداخت
-                </div>
-                <div class="flex items-center gap-1 text-text/95">
-                    {{ order.paid_at|show_date_slash }}
-                </div>
-            </div>
-        </div>
-        <div class="flex flex-grow flex-col gap-y-4">
-            {% with style=order.get_status_style %}
-                <div class="flex items-center gap-x-2 {{ style.color }}">
-                    <div class="{{ style.icon }} size-5"></div>
-                    <p class="text-sm font-medium md:text-base">
-                        {{ order.get_status_display }}
-                        {% if order.status == 'rejected' %}
-                            {{ order.rejection_reason }}
-                        {% endif %}
-                    </p>
-                </div>
-                <div class="relative h-2 w-full rounded-full bg-secondary">
+            <div class="flex flex-grow flex-col gap-y-4">
+                {% with style=order.get_status_style %}
+                    <div class="flex items-center gap-x-2 {{ style.color }}">
+                        <div class="{{ style.icon }} size-5"></div>
+                        <p class="text-sm font-medium md:text-base">
+                            {{ order.get_status_display }}
+                            {% if order.status == 'rejected' %}
+                                {{ order.rejection_reason }}
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="relative h-2 w-full rounded-full bg-secondary">
                 <span style="width: {{ style.progress }}%"
                       class="absolute inset-y-0 right-0 rounded-full {{ style.bg }}"></span>
-                </div>
-                <div class="flex items-center justify-between text-sm {{ style.color }} md:text-base">
-                    <span> {{ order.updated_at.date|show_date_slash }}</span><span> ساعت {{ order.updated_at|show_time }} </span>
-                </div>
-            {% endwith %}
+                    </div>
+                    <div class="flex items-center justify-between text-sm {{ style.color }} md:text-base">
+                        <span> {{ order.updated_at.date|show_date_slash }}</span><span> ساعت {{ order.updated_at|show_time }} </span>
+                    </div>
+                {% endwith %}
+            </div>
         </div>
     </div>
     <div class="swiper small-product-image-swiper swiper-initialized swiper-horizontal swiper-free-mode swiper-rtl swiper-backface-hidden">
@@ -70,4 +88,4 @@
             {% endfor %}
         </div>
         <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div>
-</a>
+</div>

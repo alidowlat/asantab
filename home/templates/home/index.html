@@ -82,9 +82,9 @@
                                                 <p class="line-clamp-2 h-10 text-sm xs:h-12 xs:text-base">{{ service.title }}</p>
 
                                                 <div class="gap-x-1 text-end font-bold text-primary">
-                                                    {#                                                    <div class="h-5 text-end text-sm text-text/50 xs:text-base">#}
-                                                    {#                                                        <del>2,00,000</del>#}
-                                                    {#                                                    </div>#}
+                                                    {#                      <div class="h-5 text-end text-sm text-text/50 xs:text-base">#}
+                                                    {#                          <del>2,00,000</del>#}
+                                                    {#                      </div>#}
                                                     <span class="text-sm xs:text-base">
                                                     {% if service.get_min_price and service.get_max_price %}
                                                         {{ service.get_min_price|three_digits }}

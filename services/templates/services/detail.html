@@ -53,51 +53,77 @@
                                 {% endif %}
                             </div>
                             <div>
-                                <!-- Desktop Gallery -->
+                                <!-- Desktop Image -->
                                 <div class="hidden space-y-4 lg:block">
-                                    <!-- Main image -->
-                                    <button type="button" data-modal-target="gallery-modal" data-modal-toggle="gallery-modal">
-                                        <img src="{{ service.image.url }}" alt="{{ service.title }}" loading="lazy"
-                                             class="mx-auto h-full w-full cursor-pointer rounded-xl">
-                                    </button>
-                                    <!-- Gallery -->
-                                    <div class="flex w-full items-center justify-center gap-2">
-                                        <button type="button" data-modal-target="gallery-modal" data-modal-toggle="gallery-modal"
-                                                class="relative cursor-pointer overflow-hidden rounded-xl border">
-                                            <img src="/static/images/p1.png" alt="کفش سالومون اکس تی راش Salomon XT-RUSH"
-                                                 loading="lazy" class="h-16 w-16">
-                                        </button>
-                                        <button type="button" data-modal-target="gallery-modal" data-modal-toggle="gallery-modal"
-                                                class="relative cursor-pointer overflow-hidden rounded-xl border">
-                                            <img src="/static/images/p1.png" alt="کفش سالومون اکس تی راش Salomon XT-RUSH"
-                                                 loading="lazy" class="h-16 w-16">
-                                            <span class="absolute inset-0 flex items-center justify-center backdrop-blur-md">
-                                                <div class="i-lucide-ellipsis size-6"></div>
-                                            </span>
-                                        </button>
+                                    <img src="
+
+                                            {% if ig_data.profile_pic_url_hd %}{{ ig_data.profile_pic_url_hd }}{% else %}{{ service.image.url }}{% endif %}"
+                                         alt="{{ service.title }}" loading="lazy"
+                                         class="mx-auto h-full w-full cursor-pointer rounded-xl">
+
+                                    <div class="flex flex-col items-center w-full rounded-lg border-2 px-4 py-3 text-sm text-text/60 gap-3">
+                                        <div class="text-center space-y-1 mb-2">
+                                            <div dir="ltr" class="text-base font-semibold text-text/95">
+                                                {{ ig_data.username }}
+                                            </div>
+                                            <div class="text-sm text-text/70">
+                                                {{ ig_data.full_name }}
+                                            </div>
+                                        </div>
+
+                                        <div class="flex justify-center gap-6 text-center">
+                                            <div>
+                                                <div class="text-text/95 font-medium">{{ ig_data.following }}</div>
+                                                <div class="text-text/70">Following</div>
+                                            </div>
+                                            <div>
+                                                <div class="text-text/95 font-medium">{{ ig_data.followers }}</div>
+                                                <div class="text-text/70">Followers</div>
+                                            </div>
+                                            <div>
+                                                <div class="text-text/95 font-medium">{{ ig_data.posts }}</div>
+                                                <div class="text-text/70">Posts</div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <!-- Mobile Gallery -->
-                                <div class="lg:hidden">
-                                    <div class="mb-4">
-                                        <div class="swiper product-gallery-mobile-swiper swiper-initialized swiper-horizontal swiper-rtl">
-                                            <div class="swiper-wrapper" id="swiper-wrapper-1f688ec108348efe3" aria-live="polite"
-                                                 style="transition-duration: 0ms; transition-delay: 0ms;">
-                                                <div class="swiper-slide">
-                                                    <img src="/static/images/p1.png" alt="p image"
-                                                         class="mx-auto h-[250px] rounded-lg object-cover">
+                                <!-- Mobile Image -->
+                                <div class="lg:hidden space-y-4">
+                                    <img src="
+
+
+
+                                            {% if ig_data.profile_pic_url_hd %}{{ ig_data.profile_pic_url_hd }}{% else %}{{ service.image.url }}{% endif %}"
+                                         alt="{{ service.title }}"
+                                         loading="lazy"
+                                         class="mx-auto h-[250px] rounded-lg object-cover">
+
+                                    <div class="flex justify-center">
+                                        <div class="flex flex-col items-center w-fit rounded-lg border-2 px-4 py-3 text-sm text-text/60 gap-3">
+                                            <div class="text-center space-y-1 mb-2">
+                                                <div dir="ltr" class="text-base font-semibold text-text/95">
+                                                    {{ ig_data.username }}
                                                 </div>
-                                                <div class="swiper-slide">
-                                                    <img src="/static/images/p1.png" alt="p image"
-                                                         class="mx-auto h-[250px] rounded-lg object-cover">
-                                                </div>
-                                                <div class="swiper-slide">
-                                                    <img src="/static/images/p1.png" alt="p image"
-                                                         class="mx-auto h-[250px] rounded-lg object-cover">
+                                                <div class="text-sm text-text/70">
+                                                    {{ ig_data.full_name }}
                                                 </div>
                                             </div>
-                                            <div class="swiper-pagination text-left swiper-pagination-bullets swiper-pagination-horizontal"></div>
-                                            <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div>
+
+                                            <div class="flex justify-center gap-6 text-center">
+                                                <div>
+                                                    <div class="text-text/95 font-medium">{{ ig_data.following }}</div>
+                                                    <div class="text-text/70">Following</div>
+                                                </div>
+                                                <div>
+                                                    <div class="text-text/95 font-medium">{{ ig_data.followers }}</div>
+                                                    <div class="text-text/70">Followers</div>
+                                                </div>
+                                                <div>
+                                                    <div class="text-text/95 font-medium">{{ ig_data.posts }}</div>
+                                                    <div class="text-text/70">Posts</div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -133,9 +159,12 @@
                                         <span class="h-px flex-grow bg-secondary"></span>
                                     </div>
                                     <div class="mb-4 flex items-center gap-4 border-b pb-6 text-sm font-light">
+                                        <a href="{% url 'provider_detail_page' slug=service.provider.username %}"
+                                           class="text-primary hover:text-primary/80 duration-200 font-bold">{{ service.provider.user.get_full_name }}</a>
+                                        <span class="h-4 w-px rounded-full bg-secondary"></span>
                                         <div class="text-text/95">کد کالا {{ service.code }}</div>
                                         <span class="h-4 w-px rounded-full bg-secondary"></span>
-                                        <div class="cursor-pointer text-primary">
+                                        <div class="cursor-pointer text-primary hover:text-primary/80 duration-200">
                                             {% if reviews_count %}
                                                 <button onclick="scrollToObj('reviews-section')">
                                                     {{ reviews_count }} دیدگاه
@@ -289,9 +318,16 @@
                         {#                            </div>#}
                         {#                        </div>#}
                         <div class="flex items-center gap-x-1">
-                            <span class="font-bold xl:text-xl">{{ min_price|three_digits }}</span><span class="text-xs text-text/60">تومان</span>
-                            <span class="font-bold text-2xl">-</span>
-                            <span class="font-bold xl:text-xl">{{ max_price|three_digits }}</span><span class="text-xs text-text/60">تومان</span>
+                            {% if min_price == max_price %}
+                                <span class="font-bold xl:text-xl">{{ min_price|three_digits }}</span>
+                                <span class="text-sm text-text/70">تومان</span>
+                            {% else %}
+                                <span class="font-bold xl:text-xl">{{ min_price|three_digits }}</span>
+                                <span class="text-sm text-text/70">تومان</span>
+                                <span class="font-bold text-2xl">-</span>
+                                <span class="font-bold xl:text-xl">{{ max_price|three_digits }}</span>
+                                <span class="text-sm text-text/70">تومان</span>
+                            {% endif %}
                         </div>
                     </div>
                     <div>
@@ -309,19 +345,21 @@
                                     {% endfor %}
                                 </select>
                             </div>
-                            <div>
-                                <label for="schedule-select" class="mb-2 block text-sm font-medium text-gray-700">
-                                    زمان‌ بندی
-                                </label>
-                                <select id="schedule-select"
-                                        class="block w-full rounded-lg border bg-muted p-2.5 text-sm outline-none focus:border-primary focus:ring-primary dark:placeholder-zinc-400 dark:focus:border-primary dark:focus:ring-primary">
-                                    <option value="">انتخاب زمان</option>
-                                    {% for schedule in schedules %}
-                                        <option value="{{ schedule.id }}">{{ schedule.date|show_date }}
-                                            - {{ schedule.date|show_weekday }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
+                            {% if schedules %}
+                                <div>
+                                    <label for="schedule-select" class="mb-2 block text-sm font-medium text-gray-700">
+                                        زمان‌ بندی
+                                    </label>
+                                    <select id="schedule-select"
+                                            class="block w-full rounded-lg border bg-muted p-2.5 text-sm outline-none focus:border-primary focus:ring-primary dark:placeholder-zinc-400 dark:focus:border-primary dark:focus:ring-primary">
+                                        <option value="">انتخاب زمان بندی</option>
+                                        {% for schedule in schedules %}
+                                            <option value="{{ schedule.id }}">{{ schedule.date|show_date }}
+                                                - {{ schedule.date|show_weekday }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            {% endif %}
                             <div class="flex items-center gap-x-2 xs:justify-center">
                                 <div class="cart-item-card flex h-10 w-24 items-center justify-between rounded-lg border px-2 py-1">
                                     <!-- Increase button -->

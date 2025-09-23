@@ -139,7 +139,7 @@
                 document.querySelector('[data-modal-hide="national_card_image-modal"]')?.click();
                 cropModal.classList.remove('hidden');
                 if (cropper) cropper.destroy();
-                cropper = new Cropper(cropImage, {aspectRatio: 1, viewMode: 1});
+                cropper = new Cropper(cropImage, {aspectRatio: 2, viewMode: 1});
             };
             reader.readAsDataURL(file);
         };

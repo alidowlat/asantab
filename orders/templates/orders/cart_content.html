@@ -1,3 +1,4 @@
+{% load widget_tweaks %}
 {% load extra_filters %}
 {% if orders.items.all %}
     <div class="grid grid-cols-12 gap-2 lg:gap-6">
@@ -30,8 +31,16 @@
                                         </button>
                                     </div>
                                     <div class="row-span-2 space-y-4 xs:col-span-2 sm:col-span-3 xl:col-span-5">
-                                        <a href="{{ item.service.get_absolute_url }}"
-                                           class="line-clamp-2 text-sm xs:text-lg">{{ item.service.title }}</a>
+                                        <div class="flex items-center">
+                                            <a href="{{ item.service.get_absolute_url }}"
+                                               class="line-clamp-2 text-sm xs:text-lg pl-2">{{ item.service.title }}</a>
+                                            <div class="h-4 w-0.5 bg-secondary"></div>
+                                            <a href="{% url 'provider_detail_page' slug=item.service.provider.username %}"
+                                               class="line-clamp-2 flex text-primary text-base hover:text-primary/80 duration-200 pr-2">
+                                                {{ item.service.provider.user.get_full_name }}
+                                            </a>
+                                        </div>
+
                                         <div class="space-y-2 text-text/95">
                                             <div class="flex flex-col gap-2">
                                                 <div class="flex items-center gap-2">

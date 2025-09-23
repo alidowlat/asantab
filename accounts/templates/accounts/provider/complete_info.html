@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/static/css/base.css">
     <script defer="" src="/static/scripts/theme.js"></script>
     <script src="/static/scripts/mount.js"></script>
-    <title>تکمیل اطلاعات فروشنده | آسان تب</title>
+    <title>فروشنده شوید! | آسان تب</title>
 </head>
 
 <body>
@@ -93,8 +93,40 @@
                     ورود فروشنده
                 </h1>
 
+                <!-- first name + last name -->
+                <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div>
+                        <label class="relative block w-full rounded-lg border bg-muted shadow-sm duration-300 focus-within:border-primary">
+                            {{ form.first_name|add_class:'peer w-full text-lg rounded-lg bg-transparent p-3 text-center placeholder-transparent outline-none focus:ring-0 xs:p-4' }}
+                            <span class="pointer-events-none absolute start-3 -translate-y-1/2 rounded-full bg-muted px-2 text-xs text-text/80 transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:text-xs peer-focus:peer-placeholder-shown:top-0">
+                        نام
+                    </span>
+                        </label>
+                        {% for error in form.first_name.errors %}
+                            <div class="flex py-3 mt-2">
+                                <i class="i-lucide-circle-alert text-warning ml-2"></i>
+                                <div class="text-warning text-sm">{{ error }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div>
+                        <label class="relative block w-full rounded-lg border bg-muted shadow-sm duration-300 focus-within:border-primary">
+                            {{ form.last_name|add_class:'peer w-full text-lg rounded-lg bg-transparent p-3 text-center placeholder-transparent outline-none focus:ring-0 xs:p-4' }}
+                            <span class="pointer-events-none absolute start-3 -translate-y-1/2 rounded-full bg-muted px-2 text-xs text-text/80 transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:text-xs peer-focus:peer-placeholder-shown:top-0">
+                        نام خانوادگی
+                    </span>
+                        </label>
+                        {% for error in form.last_name.errors %}
+                            <div class="flex py-3 mt-2">
+                                <i class="i-lucide-circle-alert text-warning ml-2"></i>
+                                <div class="text-warning text-sm">{{ error }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
                 <!-- username -->
-                <div class="mb-8">
+                <div class="mb-4">
                     <label class="relative block w-full rounded-lg border bg-muted shadow-sm duration-300 focus-within:border-primary">
                         {{ form.username|add_class:'peer w-full text-lg rounded-lg bg-transparent p-3 text-center placeholder-transparent outline-none focus:ring-0 xs:p-4' }}
                         <span class="pointer-events-none absolute start-3 -translate-y-1/2 rounded-full bg-muted px-2 text-xs text-text/80 transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:text-xs peer-focus:peer-placeholder-shown:top-0">
@@ -107,6 +139,16 @@
                             <div class="text-warning text-sm">{{ error }}</div>
                         </div>
                     {% endfor %}
+                </div>
+
+                <div class="bg-muted rounded-xl shadow-sm mb-14">
+                    <ul class="list-disc list-inside space-y-2 mr-1 text-sm leading-6 text-muted-foreground">
+                        <li>نام کاربری باید فقط با حروف کوچک انگلیسی نوشته شود.</li>
+                        <li>استفاده از فاصله یا کاراکترهایی مانند - . * % و… مجاز نیست؛ تنها می‌توانید از _ استفاده کنید.</li>
+                        <li>نام کاربری نباید با عدد شروع شود.</li>
+                        <li>حداقل طول نام کاربری ۳ کاراکتر و حداکثر ۳۰ کاراکتر است.</li>
+                        <li>نام کاربری پس از ثبت قابل تغییر نخواهد بود؛ در انتخاب آن دقت کنید.</li>
+                    </ul>
                 </div>
 
                 <!-- bio -->
@@ -143,36 +185,11 @@
                         <label class="mb-2 block text-sm font-medium text-text">
                             شهر محل سکونت
                         </label>
-                        {{ form.city|add_class:"block w-full rounded-lg border bg-muted p-2.5 text-sm outline-none focus:border-primary focus:ring-primary" }}
+                        <select id="id_city" name="city"
+                                class="block w-full rounded-lg border bg-muted p-2.5 text-sm outline-none focus:border-primary focus:ring-primary">
+                            <option value="">ابتدا استان را انتخاب کنید</option>
+                        </select>
                         {% for error in form.city.errors %}
-                            <div class="flex py-3 mt-2">
-                                <i class="i-lucide-circle-alert text-warning ml-2"></i>
-                                <div class="text-warning text-sm">{{ error }}</div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <!-- profile image + national card -->
-                <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <div>
-                        <label class="mb-2 block text-sm font-medium text-text">
-                            تصویر پروفایل
-                        </label>
-                        {{ form.profile_image|add_class:"block w-full rounded-lg border bg-muted p-2.5 text-sm outline-none focus:border-primary focus:ring-primary" }}
-                        {% for error in form.profile_image.errors %}
-                            <div class="flex py-3 mt-2">
-                                <i class="i-lucide-circle-alert text-warning ml-2"></i>
-                                <div class="text-warning text-sm">{{ error }}</div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                    <div>
-                        <label class="mb-2 block text-sm font-medium text-text">
-                            تصویر کارت ملی
-                        </label>
-                        {{ form.national_card_image|add_class:"block w-full rounded-lg border bg-muted p-2.5 text-sm outline-none focus:border-primary focus:ring-primary" }}
-                        {% for error in form.national_card_image.errors %}
                             <div class="flex py-3 mt-2">
                                 <i class="i-lucide-circle-alert text-warning ml-2"></i>
                                 <div class="text-warning text-sm">{{ error }}</div>
@@ -197,4 +214,49 @@
     </div>
 </div>
 </body>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const usernameInput = document.querySelector("input[name='username']");
+        if (!usernameInput) return;
+
+        const nameInputs = document.querySelectorAll("input[name='first_name'], input[name='last_name']");
+        nameInputs.forEach(input => {
+            input.addEventListener("input", function () {
+                this.value = this.value.replace(/[^آ-یa-zA-Z\s]/g, "");
+            });
+        });
+
+        usernameInput.addEventListener("input", function (e) {
+            let value = e.target.value;
+
+            // فقط حروف کوچک انگلیسی و _
+            value = value.toLowerCase().replace(/[^a-z0-9_]/g, "");
+
+            // جلوگیری از شروع با عدد
+            if (/^[0-9]/.test(value)) {
+                value = value.replace(/^[0-9]+/, "");
+            }
+
+            e.target.value = value;
+        });
+    });
+
+    document.getElementById("id_province").addEventListener("change", function () {
+        const provinceId = this.value;
+        const citySelect = document.getElementById("id_city");
+
+        if (provinceId) {
+            fetch(`/profile/services/load-cities/?province=${provinceId}`)
+                .then(response => response.json())
+                .then(data => {
+                    citySelect.innerHTML = '<option value="">انتخاب شهر</option>';
+                    data.cities.forEach(city => {
+                        citySelect.innerHTML += `<option value="${city.id}">${city.name_fa}</option>`;
+                    });
+                });
+        } else {
+            citySelect.innerHTML = '<option value="">ابتدا استان را انتخاب کنید</option>';
+        }
+    });
+</script>
 </html>

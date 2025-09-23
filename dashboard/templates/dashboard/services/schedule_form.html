@@ -11,12 +11,12 @@
 
     <div class="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4 w-full pt-4">
         {{ form.date.label_tag }}
-        {{ form.date }}
+        {{ form.date|add_class:"date-only w-full sm:max-w-[150px] rounded-lg border bg-background text-center px-3 py-2" }}
     </div>
 
     <div class="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4 w-full">
         {{ form.capacity.label_tag }}
-        {{ form.capacity|add_class:"w-full sm:max-w-[100px] rounded-lg border bg-background text-center px-3 py-2" }}
+        {{ form.capacity|add_class:"capacity-only w-full sm:max-w-[100px] rounded-lg border bg-background text-center px-3 py-2" }}
     </div>
 
     <div class="flex flex-row items-center justify-between gap-4">
@@ -41,3 +41,32 @@
     </div>
 </div>
 
+<script>
+    const persianDigits = "۰۱۲۳۴۵۶۷۸۹";
+    const arabicDigits = "٠١٢٣٤٥٦٧٨٩";
+
+    function normalizeNumbers(str) {
+        return str.replace(/[۰-۹]/g, d => persianDigits.indexOf(d))
+            .replace(/[٠-٩]/g, d => arabicDigits.indexOf(d));
+    }
+
+    // فقط اعداد
+    document.querySelectorAll(".capacity-only").forEach(input => {
+        input.setAttribute("inputmode", "numeric");
+        input.addEventListener("input", e => {
+            let value = normalizeNumbers(e.target.value);
+            value = value.replace(/[^0-9]/g, "");
+            e.target.value = value;
+        });
+    });
+
+    // تاریخ: فقط عدد و خط تیره
+    document.querySelectorAll(".date-only").forEach(input => {
+        input.setAttribute("inputmode", "numeric");
+        input.addEventListener("input", e => {
+            let value = normalizeNumbers(e.target.value);
+            value = value.replace(/[^0-9-]/g, "");
+            e.target.value = value;
+        });
+    });
+</script>
