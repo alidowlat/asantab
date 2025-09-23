@@ -119,6 +119,7 @@ if DEBUG:
 else:
     STATIC_URL = '/static/'
     STATIC_ROOT = Path("/home/asantabc/public_html/asantab/staticfiles")
+    STATICFILES_DIRS = [BASE_DIR / 'static']
     MEDIA_URL = '/media/'
     MEDIA_ROOT = Path("/home/asantabc/public_html/asantab/media")
 
