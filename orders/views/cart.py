@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.utils.timezone import now
-from django.db.models import Prefetch
+from django.db.models import Prefetch, F
 from django.http import HttpRequest, JsonResponse
 from django.shortcuts import render, redirect
 from orders.forms import DiscountForm
@@ -22,7 +22,9 @@ def user_cart(request: HttpRequest):
     ).get_or_create(is_paid=False, user=request.user)
 
     cart_manager = CartManager(order)
-    order = cart_manager.cleanup_order_if_invalid()
+
+    alerts, order = cart_manager.enforce_capacity_constraints()
+    order = cart_manager.cleanup_order_if_invalid() if order else None
     calc = OrderCalculator(order) if order else None
 
     context = {
@@ -30,6 +32,7 @@ def user_cart(request: HttpRequest):
         'sum': calc.total_price() if calc else 0,
         'discount_amount': calc.discount_amount() if calc else 0,
         'final_price': calc.final_price() if calc else 0,
+        'alerts': alerts,
     }
     return render(request, 'orders/cart.html', context)
 
@@ -39,24 +42,35 @@ def add_service_to_cart(request):
     service_id = request.GET.get('service_id')
     option_id = request.GET.get('option_id')
     count = int(request.GET.get('count', 1))
-    schedule_id = int(request.GET.get('schedule_id'))
+    schedule_id = request.GET.get('schedule_id')  # ممکنه خالی باشه
 
     if count < 1:
         return JsonResponse({'status': 'invalid_count', 'message': 'تعداد معتبر نیست'})
 
     service = Service.objects.filter(id=service_id).first()
     option = Option.objects.filter(id=option_id).first()
-    schedule = Schedule.objects.filter(id=schedule_id).first()
 
-    if not service or not option or not schedule:
+    if not service or not option:
         return JsonResponse({'status': 'not_found', 'message': 'پارامترهای ورودی نامعتبر است'})
 
-    order, created = Order.objects.get_or_create(user=request.user, is_paid=False)
+    # بررسی وضعیت schedule
+    active_schedules = service.schedules.filter(is_active=True)
 
+    if active_schedules.exists():
+        # یعنی این سرویس برنامه‌دار است → کاربر باید schedule بده
+        if not schedule_id:
+            return JsonResponse({'status': 'error', 'message': 'انتخاب زمان الزامی است'})
+        schedule = Schedule.objects.filter(id=schedule_id, service=service).first()
+        if not schedule:
+            return JsonResponse({'status': 'not_found', 'message': 'زمان انتخابی نامعتبر است'})
+    else:
+        # سرویسی که schedule نداره
+        schedule = None
+
+    order, created = Order.objects.get_or_create(user=request.user, is_paid=False)
     cart_manager = CartManager(order)
 
     final_price = option.unit_price * count
-
     success, message = cart_manager.add_to_cart(service, schedule, final_price, option, count)
 
     if not success:
@@ -116,8 +130,24 @@ def order_checkout(request: HttpRequest):
                 return redirect('order_checkout_page')
 
         elif 'pay_with_wallet' in request.POST:
+            success, alerts = cart_manager.validate_before_checkout()
+            if not success:
+                for alert in alerts:
+                    messages.error(request, alert['message'])
+                return redirect('order_checkout_page')
+
             if wallet_balance >= final_price:
                 with transaction.atomic():
+                    for item in order.items.select_related('schedule').all():
+                        if item.schedule:
+                            schedule = Schedule.objects.select_for_update().get(pk=item.schedule.pk)
+                            if schedule.capacity < item.count:
+                                messages.error(request, f"ظرفیت برای «{item.service.title}» کافی نیست.")
+                                return redirect('user_cart_page')
+
+                            schedule.capacity = F('capacity') - item.count
+                            schedule.save(update_fields=['capacity'])
+
                     freeze_tx = WalletTransaction.create_transaction(
                         wallet=buyer_wallet,
                         type=WalletTransaction.TransactionType.FREEZE,
@@ -126,13 +156,12 @@ def order_checkout(request: HttpRequest):
                     )
 
                     providers_map = {}
+
                     for item in order.items.all():
                         provider = item.service.provider
                         providers_map.setdefault(provider, []).append(item)
-
                     for provider, items in providers_map.items():
                         vendor_total = sum(i.final_price for i in items)
-
                         vendor_order = VendorOrder.objects.create(
                             order=order,
                             provider=provider,
@@ -177,6 +206,19 @@ def order_checkout(request: HttpRequest):
         del request.session['payment_success']
 
     return render(request, 'orders/checkout.html', context)
+
+
+@login_required
+@transaction.atomic
+def cart_cleanup_view(request: HttpRequest):
+    order = Order.objects.filter(user=request.user, is_paid=False).first()
+    if not order:
+        return JsonResponse([],
+                            safe=False)
+
+    cart_manager = CartManager(order)
+    alerts, _ = cart_manager.enforce_capacity_constraints()
+    return JsonResponse(alerts, safe=False)
 
 
 @login_required
