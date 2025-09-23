@@ -1,23 +1,15 @@
-# python
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
-
-# django
 *.sqlite3
 db.sqlite3
 media/
 staticfiles/
 static/images/
-
-# env
 venv
 .venv/
-
-# IDEs
 .idea/
 .vscode/
-
-# logs
 *.log
+.env
