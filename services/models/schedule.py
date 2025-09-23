@@ -16,6 +16,17 @@ class Schedule(models.Model):
         day = self.date.strftime('%A')
         return f"{self.service.title} - {self.date} ({day})"
 
+    @property
+    def used_capacity(self):
+        return sum(
+            item.count
+            for item in self.orderitem_set.filter(vendor_order__status=["pending","accepted"])
+        )
+
+    @property
+    def remaining_capacity(self):
+        return self.capacity - self.used_capacity
+
     def display_date(self):
         if self.date:
             return self.date
