@@ -26,26 +26,20 @@ class DepositService:
             "description": deposit.description,
             "mobile": getattr(deposit.wallet.user, "phone_number", ""),
         }
-        print(">>> Sending request to gateway with data:", data)
 
         try:
             resp = requests.post(url, json=data, timeout=10)
-            print(">>> Gateway raw response:", resp.status_code, resp.text)
             resp = resp.json()
         except Exception as e:
-            print(">>> ERROR in request:", e)
             deposit.mark_failed()
             return None
-        print(">>> Parsed response JSON:", resp)
 
         if resp.get("status") == "success":
             deposit.ref_id = str(resp["transid"])
             deposit.save(update_fields=["ref_id"])
             dep_check = DepositRequest.objects.get(pk=deposit.pk)
-            print(">>> Saved ref_id in DB:", dep_check.ref_id)
             return f"https://panel.aqayepardakht.ir/startpay/sandbox/{resp['transid']}"
         else:
-            print(">>> Gateway returned failure:", resp)
             deposit.mark_failed()
             return None
 
