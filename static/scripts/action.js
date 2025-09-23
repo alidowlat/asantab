@@ -575,12 +575,13 @@ function loadCartPartial() {
 function addServiceToCart(serviceId) {
     const count = parseInt(document.querySelector('.service-count').value);
     const optionId = document.getElementById('option-select').value;
-    const scheduleId = document.getElementById('schedule-select').value;
+    const scheduleSelect = document.getElementById('schedule-select');
+    const scheduleId = scheduleSelect ? scheduleSelect.value : null;
 
-    if (!optionId || !scheduleId) {
+    if (!optionId) {
         Swal.fire({
             title: "خطا",
-            text: "لطفاً نوع تبلیغ و زمان را انتخاب کنید",
+            text: "لطفاً نوع تبلیغ را انتخاب کنید",
             icon: "error",
             confirmButtonColor: "#3085d6",
             confirmButtonText: "باشه",
@@ -589,7 +590,19 @@ function addServiceToCart(serviceId) {
         return;
     }
 
-    $.get(`/services/add-to-cart?service_id=${serviceId}&option_id=${optionId}&schedule_id=${scheduleId}&count=${count}`)
+    if (scheduleSelect && !scheduleId) {
+        Swal.fire({
+            title: "خطا",
+            text: "لطفاً زمان را انتخاب کنید",
+            icon: "error",
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "باشه",
+            showCloseButton: true,
+        });
+        return;
+    }
+
+    $.get(`/services/add-to-cart?service_id=${serviceId}&option_id=${optionId}&count=${count}&schedule_id=${scheduleId || ''}`)
         .then(res => {
             Swal.fire({
                 title: "اعلان",
@@ -726,6 +739,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const formatNumberWithCommas = (value) => value.replace(/\B(?=(\d{3})+(?!\d))/g, "٬");
 
+        // تبدیل اعداد فارسی/عربی به انگلیسی
+        function normalizeDigits(str) {
+            return str.replace(/[\u06F0-\u06F9\u0660-\u0669]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d).toString());
+        }
+
+// فقط برای تاریخ: اجازه‌ی عدد و "-"
+        function bindDateFormatter(input) {
+            input.addEventListener("input", (e) => {
+                let value = normalizeDigits(e.target.value);
+                value = value.replace(/[^0-9\-]/g, "");
+                e.target.value = value;
+            });
+        }
+
+// فقط برای ظرفیت: فقط عدد
+        function bindCapacityFormatter(input) {
+            input.addEventListener("input", (e) => {
+                let value = normalizeDigits(e.target.value);
+                value = value.replace(/\D/g, "");
+                e.target.value = value;
+            });
+        }
+
+
         function bindPriceFormatter(input) {
             input.type = "text";
             input.style.direction = "ltr";
@@ -741,6 +778,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         document.querySelectorAll("input[name$='unit_price']").forEach(bindPriceFormatter);
+        document.querySelectorAll("input[name$='date']").forEach(bindDateFormatter);
+        document.querySelectorAll("input[name$='capacity']").forEach(bindCapacityFormatter);
 
         document.addEventListener("submit", e => {
             if (e.target.id === formId) {
@@ -841,6 +880,8 @@ document.addEventListener("DOMContentLoaded", () => {
                                 reindexForms(formset, prefix, formClass);
                                 updateEmptyState(wrapper, formClass, prefix);
                                 newForm.querySelectorAll("input[name$='unit_price']").forEach(bindPriceFormatter);
+                                newForm.querySelectorAll("input[name$='date']").forEach(bindDateFormatter);
+                                newForm.querySelectorAll("input[name$='capacity']").forEach(bindCapacityFormatter);
                             }
                         });
                 });
