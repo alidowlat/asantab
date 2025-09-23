@@ -62,7 +62,7 @@ def impersonate_view(request, user_id):
     request.session['is_impersonating'] = True
     request.session.modified = True
 
-    return redirect('/')
+    return redirect('dashboard_page')
 
 
 @login_required
@@ -79,4 +79,4 @@ def stop_impersonate_view(request):
     request.session.pop('is_impersonating', None)
     request.session.modified = True
 
-    return redirect('dashboard_page')
+    return redirect('role_list')
