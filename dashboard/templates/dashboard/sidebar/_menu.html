@@ -71,56 +71,56 @@
             <span class="h-2 w-2 rounded-full bg-primary"></span>
             پنل فروشندگی
         </h3>
-    {% endif %}
-    <div class="hidden rounded-lg shadow lg:block mb-4 border border-primary">
-        <ul class="relative space-y-2 rounded-lg bg-muted p-2">
-            {% if request.user.providers and request.user.providers.status != "active" %}
-                <div class="absolute inset-0 pl-4 pr-4 flex flex-col items-center justify-center gap-4 rounded-lg backdrop-blur-sm">
-                    <h5 class="text-center">پنل فروشندگی شما در انتظار تأیید مدیریت می‌باشد.</h5>
-                </div>
-            {% endif %}
-            {% with request.resolver_match.url_name as current_url %}
-                <li>
-                    <a href="{% url 'provider_service_list' %}"
-                       class="inline-flex w-full items-center justify-between rounded-lg p-4
+        <div class="hidden rounded-lg shadow lg:block mb-4 border border-primary">
+            <ul class="relative space-y-2 rounded-lg bg-muted p-2">
+                {% if request.user.providers and request.user.providers.status != "active" %}
+                    <div class="absolute inset-0 pl-4 pr-4 flex flex-col items-center justify-center gap-4 rounded-lg backdrop-blur-sm">
+                        <h5 class="text-center">پنل فروشندگی شما در انتظار تأیید مدیریت می‌باشد.</h5>
+                    </div>
+                {% endif %}
+                {% with request.resolver_match.url_name as current_url %}
+                    <li>
+                        <a href="{% url 'provider_service_list' %}"
+                           class="inline-flex w-full items-center justify-between rounded-lg p-4
                    {% if current_url == 'provider_service_list' %}bg-primary/5 text-primary
                    {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
-                        <div class="flex items-center gap-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                 class="lucide lucide-package-icon lucide-package">
-                                <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/>
-                                <path d="M12 22V12"/>
-                                <polyline points="3.29 7 12 12 20.71 7"/>
-                                <path d="m7.5 4.27 9 5.15"/>
-                            </svg>
-                            خدمت های من
-                        </div>
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'received_orders_page' %}"
-                       class="inline-flex w-full items-center justify-between rounded-lg p-4
+                            <div class="flex items-center gap-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                     class="lucide lucide-package-icon lucide-package">
+                                    <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/>
+                                    <path d="M12 22V12"/>
+                                    <polyline points="3.29 7 12 12 20.71 7"/>
+                                    <path d="m7.5 4.27 9 5.15"/>
+                                </svg>
+                                خدمت های من
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'received_orders_page' %}"
+                           class="inline-flex w-full items-center justify-between rounded-lg p-4
                    {% if current_url == 'received_orders_page' %}bg-primary/5 text-primary
                    {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
-                        <div class="flex items-center gap-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                 class="lucide lucide-store-icon lucide-store">
-                                <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/>
-                                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
-                                <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/>
-                                <path d="M2 7h20"/>
-                                <path d="M22 7v3a2 2 0 0 1-2 2a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12a2 2 0 0 1-2-2V7"/>
-                            </svg>
-                            سفارشات دریافتی
-                        </div>
-                        <div class="received-orders-badge h-6 w-6 rounded-full bg-yellow-500 text-center leading-6 text-white dark:bg-yellow-600"></div>
-                    </a>
-                </li>
-            {% endwith %}
-        </ul>
-    </div>
+                            <div class="flex items-center gap-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                     class="lucide lucide-store-icon lucide-store">
+                                    <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/>
+                                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                                    <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/>
+                                    <path d="M2 7h20"/>
+                                    <path d="M22 7v3a2 2 0 0 1-2 2a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12a2 2 0 0 1-2-2V7"/>
+                                </svg>
+                                سفارشات دریافتی
+                            </div>
+                            <div class="received-orders-badge h-6 w-6 rounded-full bg-yellow-500 text-center leading-6 text-white dark:bg-yellow-600"></div>
+                        </a>
+                    </li>
+                {% endwith %}
+            </ul>
+        </div>
+    {% endif %}
 
     <h3 class="hidden lg:flex flex items-center gap-x-4 mb-4 text-lg text-text/80">
         <span class="h-2 w-2 rounded-full bg-primary"></span>
@@ -230,9 +230,9 @@
             </li>
         </ul>
     </div>
-    <div class="rounded-lg shadow lg:block">
-        <ul class="relative space-y-2 rounded-lg bg-muted p-2">
-            {% if completion_percent %}
+    {% if completion_percent %}
+        <div class="rounded-lg shadow lg:block">
+            <ul class="relative space-y-2 rounded-lg bg-muted p-2">
                 <li class="rounded-lg p-4 shadow">
                     <div class="flex flex-col gap-y-2">
                         <div class="flex items-center gap-x-2 text-{{ progress_color }} justify-center mb-4">
@@ -251,9 +251,9 @@
                         </button>
                     {% endif %}
                 </li>
-            {% endif %}
-        </ul>
-    </div>
+            </ul>
+        </div>
+    {% endif %}
 {% else %}
     <div class="hidden rounded-lg shadow lg:block mb-4">
         <ul class="relative space-y-2 rounded-lg bg-muted p-2">
