@@ -9,6 +9,19 @@ class ProviderLoginForm(PhoneNumberCleanMixin, forms.Form):
 
 
 class ProviderCompleteInfoForm(UsernameCleanMixin, forms.ModelForm):
+    first_name = forms.CharField(
+        max_length=40,
+        required=True,
+        label="نام",
+        widget=forms.TextInput(attrs={'placeholder': 'مثلاً علی'})
+    )
+    last_name = forms.CharField(
+        max_length=40,
+        required=True,
+        label="نام خانوادگی",
+        widget=forms.TextInput(attrs={'placeholder': 'مثلاً دولت'})
+    )
+
     class Meta:
         model = Provider
         fields = [
@@ -16,26 +29,28 @@ class ProviderCompleteInfoForm(UsernameCleanMixin, forms.ModelForm):
             'bio',
             'province',
             'city',
-            'profile_image',
-            'national_card_image',
         ]
         widgets = {
             'bio': forms.Textarea(attrs={'rows': 4, 'placeholder': 'درباره خودت بنویس...'}),
             'username': forms.TextInput(attrs={'placeholder': 'مثلاً alikarimi'}),
             'province': forms.Select(),
             'city': forms.Select(),
-            'iban_number': forms.TextInput(attrs={'placeholder': 'مثلاً IR220170000000000000123456'}),
-            'card_number': forms.TextInput(attrs={'placeholder': 'مثلاً 6037991234567890'}),
         }
 
-    def clean(self):
-        cleaned_data = super().clean()
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+        if self.user:
+            self.fields["first_name"].initial = self.user.first_name
+            self.fields["last_name"].initial = self.user.last_name
 
-        if not cleaned_data.get('province'):
-            self.add_error('province', 'انتخاب استان الزامی است.')
-
-        if not cleaned_data.get('city'):
-            self.add_error('city', 'انتخاب شهر الزامی است.')
-
-        if not cleaned_data.get('username'):
-            self.add_error('username', 'وارد کردن نام کاربری الزامی است.')
+    def save(self, commit=True):
+        provider = super().save(commit=False)
+        if self.user:
+            self.user.first_name = self.cleaned_data["first_name"]
+            self.user.last_name = self.cleaned_data["last_name"]
+            if commit:
+                self.user.save(update_fields=["first_name", "last_name"])
+        if commit:
+            provider.save()
+        return provider
