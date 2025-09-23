@@ -117,9 +117,9 @@ if DEBUG:
     MEDIA_URL = '/media/'
     MEDIA_ROOT = BASE_DIR / 'media'
 else:
-    STATIC_URL = '/static/'
+    STATIC_URL = 'static/'
     STATIC_ROOT = Path("/home/asantabc/public_html/asantab/staticfiles")
-    MEDIA_URL = '/media/'
+    MEDIA_URL = 'media/'
     MEDIA_ROOT = Path("/home/asantabc/public_html/asantab/media")
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -142,6 +142,8 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8000",
     "http://127.0.0.1:8000",
     "https://panel.aqayepardakht.ir",
+    "https://www.asantab.com",
+    "https://asantab.com",
 ]
 
 LOGGING = {
