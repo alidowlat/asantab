@@ -21,7 +21,7 @@ class DepositService:
         data = {
             "pin": 'sandbox',
             "amount": int(deposit.amount),
-            "callback": "http://localhost:8000/wallet/deposit/verify/",
+            "callback": "https://asantab.com/wallet/deposit/verify/",
             "invoice_id": str(deposit.id),
             "description": deposit.description,
             "mobile": getattr(deposit.wallet.user, "phone_number", ""),
