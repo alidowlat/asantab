@@ -53,17 +53,21 @@ def provider_complete_info_view(request):
     provider, created = Provider.objects.get_or_create(user=user)
 
     if request.method == 'POST':
-        form = ProviderCompleteInfoForm(request.POST, request.FILES, instance=provider)
+        form = ProviderCompleteInfoForm(
+            request.POST,
+            request.FILES,
+            instance=provider,
+            user=user
+        )
         if form.is_valid():
-            provider = form.save(commit=False)
+            provider = form.save(commit=True)
             user.is_provider = True
             user.save(update_fields=['is_provider'])
-            provider.save()
             login(request, user)
             request.session.pop('provider_phone', None)
             return redirect('dashboard_page')
     else:
-        form = ProviderCompleteInfoForm(instance=provider)
+        form = ProviderCompleteInfoForm(instance=provider, user=user)
 
     return render(request, 'accounts/provider/complete_info.html', {'form': form})
 
