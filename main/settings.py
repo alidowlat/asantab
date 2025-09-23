@@ -1,15 +1,15 @@
 import os
 from pathlib import Path
+from decouple import config, Csv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-+3dsd!*40*i!&fp%)x&eh=ny0*q5y#am!a6r1=umkywo951-3v'
+SECRET_KEY = config("SECRET_KEY")
+DEBUG = config("DEBUG", default=False, cast=bool)
 
-DEBUG = True
-
-ALLOWED_HOSTS = ['192.168.1.7', 'localhost', '127.0.0.1']
-# ALLOWED_HOSTS = ['*']
-# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config(
+    "ALLOWED_HOSTS", default="127.0.0.1,localhost", cast=Csv()
+)
 
 INSTALLED_APPS = [
     # default apps
@@ -61,6 +61,7 @@ MIDDLEWARE = [
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'ig-cache',
     }
 }
 
@@ -83,33 +84,24 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'main.wsgi.application'
-
 AUTH_USER_MODEL = 'accounts.User'
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'asantab',
-        'USER': 'asantab_admin',
-        'PASSWORD': 'ad831901!',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'NAME': config("DB_NAME"),
+        'USER': config("DB_USER"),
+        'PASSWORD': config("DB_PASSWORD"),
+        'HOST': config("DB_HOST", default="127.0.0.1"),
+        'PORT': config("DB_PORT", default="3306"),
     }
 }
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 LANGUAGE_CODE = 'en-us'
@@ -117,29 +109,33 @@ TIME_ZONE = 'Asia/Tehran'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-
-STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-Kavenegar_API = "3755324A6D424E2B7269706C316C5939466E76777552757A56616F766E475876685254524B4464594E56673D"
+STATIC_URL = "/static/"
+MEDIA_URL = "/media/"
 
-INTERNAL_IPS = ['127.0.0.1', '0.0.0.0', 'localhost']
+if DEBUG:
+    STATICFILES_DIRS = [BASE_DIR / "static"]
+    MEDIA_ROOT = BASE_DIR / "media"
+else:
+    STATIC_ROOT = BASE_DIR / "staticfiles"
+    MEDIA_ROOT = BASE_DIR / "media"
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'asantab.supp@gmail.com'
-EMAIL_HOST_PASSWORD = 'vgqo xhkp jpft nvup'
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+Kavenegar_API = config("KAVENEGAR_API")
+BOXAPI_USERNAME = config("BOXAPI_USERNAME")
+BOXAPI_PASSWORD = config("BOXAPI_PASSWORD")
+
 MIN_WITHDRAW_AMOUNT = 100000
+
+INTERNAL_IPS = ['127.0.0.1', '0.0.0.0', 'localhost']
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8000",
@@ -154,7 +150,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': 'debug.log',
+            'filename': BASE_DIR / 'debug.log',
         },
     },
     'root': {
