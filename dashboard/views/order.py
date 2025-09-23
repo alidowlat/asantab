@@ -1,6 +1,7 @@
 from decimal import Decimal
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Prefetch, F
 from django.http import HttpResponseForbidden, Http404, JsonResponse
@@ -12,6 +13,7 @@ from core import ActiveProviderRequiredMixin
 from orders.models import Order, OrderItem, VendorOrder
 from orders.services import OrderCalculator
 from orders.models import STATUS_CHOICES
+from services.models import Schedule
 from wallet.models import WalletTransaction, CommissionRule, SiteWallet
 
 
@@ -98,7 +100,7 @@ class ProviderOrderListView(LoginRequiredMixin, ActiveProviderRequiredMixin, Lis
 
         def get_vendor_orders(status=None):
             provider = get_object_or_404(Provider, user=self.request.user)
-            queryset = VendorOrder.objects.filter(provider=provider)
+            queryset = VendorOrder.objects.filter(provider=provider).order_by('-created_at')
             if status:
                 queryset = queryset.filter(status=status)
             queryset = queryset.prefetch_related(
@@ -112,8 +114,6 @@ class ProviderOrderListView(LoginRequiredMixin, ActiveProviderRequiredMixin, Lis
 
         for status_value, _ in STATUS_CHOICES:
             context[f'order_{status_value}'] = get_vendor_orders(status_value)
-
-        context['final_price'] = sum(vendor_order.total_price for vendor_order in vendor_orders)
 
         return context
 
@@ -166,90 +166,123 @@ class ProviderOrderDetailView(LoginRequiredMixin, ActiveProviderRequiredMixin, D
         return context
 
 
+def _accept_vendor_order(vendor_order, order, buyer_wallet, seller_wallet, site_wallet):
+    """
+    قبول سفارش توسط فروشنده:
+    - انتقال مبلغ از frozen/buyer به ولت سایت و ولت فروشنده (ثبت تراکنش‌ها)
+    - تغییر وضعیت vendor_order -> accepted
+    (توجه: این تابع ظرفیت را کم نمی‌کند؛ فرض می‌کنیم ظرفیت هنگام checkout کسر شده است.)
+    """
+    total_price = vendor_order.total_price
+    commission_rule = CommissionRule.objects.first()
+    commission = commission_rule.calculate(total_price) if commission_rule else Decimal("0")
+    seller_income = Decimal(total_price) - Decimal(commission)
+
+    # ولت خریدار: برداشتن مبلغ (مطابق الگوی پروژه‌ات)
+    buyer_wallet.balance -= total_price
+    buyer_wallet.frozen_balance -= total_price
+    buyer_wallet.save(update_fields=["balance", "frozen_balance"])
+
+    WalletTransaction.objects.create(
+        wallet=buyer_wallet,
+        amount=-total_price,
+        type="transfer",
+        description=f"سفارش {order.tracking_code} - پرداخت کامل شد",
+    )
+
+    # ولت سایت: دریافت کمیسیون
+    if site_wallet:
+        site_wallet.balance = F('balance') + commission
+        site_wallet.save(update_fields=["balance"])
+        # چون از F استفاده شد، بهتره واکشی مجدد نکنیم؛ فقط تراکنش ثبت می‌کنیم.
+        WalletTransaction.objects.create(
+            wallet=site_wallet,
+            amount=commission,
+            type="deposit",
+            description=f"سود از سفارش {order.tracking_code}",
+        )
+
+    # ولت فروشنده: واریز پس از کسر کارمزد
+    seller_wallet.balance += seller_income
+    seller_wallet.save(update_fields=["balance"])
+
+    WalletTransaction.objects.create(
+        wallet=seller_wallet,
+        amount=seller_income,
+        type="deposit",
+        description=f"سفارش {order.tracking_code} - واریز پس از کسر کارمزد",
+    )
+
+    # برای شفافیت: تراکنش کارمزد در ولت فروشنده (منفی)
+    if commission > 0:
+        WalletTransaction.objects.create(
+            wallet=seller_wallet,
+            amount=-commission,
+            type="commission",
+            description=f"سفارش {order.tracking_code} - کسر کارمزد {commission} تومان",
+        )
+
+    # تغییر وضعیت vendor_order
+    vendor_order.status = "accepted"
+    vendor_order.rejection_reason = None
+    vendor_order.save(update_fields=["status", "rejection_reason"])
+
+    return {"status": "success", "message": "سفارش تایید شد و مبلغ پس از کسر کارمزد منتقل گردید."}
+
+
+def _reject_vendor_order(vendor_order, order, buyer_wallet, rejection_reason=""):
+    """
+    رد سفارش توسط فروشنده:
+    - بازگرداندن ظرفیت به schedule (افزایش capacity به اندازهٔ item.count)
+    - بازگرداندن مبلغ به کیف پول خریدار (frozen -> balance)
+    - ثبت تراکنش release
+    - تنظیم وضعیت vendor_order = rejected و ذخیره reason
+    """
+    # بازگرداندن ظرفیت (atomic update با F)
+    for item in vendor_order.items.select_related("schedule").all():
+        if item.schedule:
+            # استفاده از update با F تا همزمانی بهتر مدیریت شود
+            Schedule.objects.filter(pk=item.schedule.pk).update(capacity=F("capacity") + item.count)
+
+    # برگرداندن مبلغ به خریدار
+    buyer_wallet.frozen_balance -= vendor_order.total_price
+    buyer_wallet.balance += vendor_order.total_price
+    buyer_wallet.save(update_fields=["balance", "frozen_balance"])
+
+    WalletTransaction.objects.create(
+        wallet=buyer_wallet,
+        amount=vendor_order.total_price,
+        type="release",
+        description=f"سفارش {order.tracking_code} - رد شد، مبلغ آزاد شد",
+    )
+
+    vendor_order.status = "rejected"
+    vendor_order.rejection_reason = rejection_reason or ""
+    vendor_order.save(update_fields=["status", "rejection_reason"])
+
+    return {"status": "warning", "message": "سفارش رد شد و مبلغ آزاد گردید."}
+
+
 def handle_vendor_order_response(vendor_order, accepted: bool, rejection_reason: str = None):
+    """
+    wrapper: تمام عملیات درون تراکنش انجام میشه
+    توجه: اگر منطق پروژه‌ت اینه که ظرفیت هنگام checkout کسر میشه،
+    این توابع به خوبی با هم کار می‌کنند (accept فقط وضعیت و تراکنش‌ها رو مدیریت می‌کنه،
+    reject ظرفیت را مجدداً برمی‌گرداند).
+    """
     order = vendor_order.order
     buyer_wallet = order.user.wallet
     seller_wallet = vendor_order.provider.user.wallet
-    site_wallet = SiteWallet.objects.select_related("wallet").first().wallet
+    site_wallet_obj = SiteWallet.objects.select_related("wallet").first()
+    site_wallet = site_wallet_obj.wallet if site_wallet_obj else None
 
     with transaction.atomic():
         if accepted:
-            total_price = vendor_order.total_price
-            commission_rule = CommissionRule.objects.first()
-            commission = commission_rule.calculate(total_price) if commission_rule else Decimal("0")
-            seller_income = total_price - commission
-
-            for item in vendor_order.items.all():
-                if item.schedule and item.schedule.capacity >= item.count:
-                    item.schedule.capacity = F('capacity') - item.count
-                    item.schedule.save(update_fields=['capacity'])
-
-            buyer_wallet.balance -= total_price
-            buyer_wallet.frozen_balance -= total_price
-            buyer_wallet.save(update_fields=['balance', 'frozen_balance'])
-
-            WalletTransaction.objects.create(
-                wallet=buyer_wallet,
-                amount=-total_price,
-                type='transfer',
-                description=f"سفارش {order.tracking_code} - پرداخت کامل شد"
-            )
-
-            # سایت: دریافت کمیسیون
-            site_wallet.balance += commission
-            site_wallet.save(update_fields=['balance'])
-
-            WalletTransaction.objects.create(
-                wallet=site_wallet,
-                amount=commission,
-                type='deposit',
-                description=f"سود از سفارش {order.tracking_code}"
-            )
-
-            # فروشنده: دریافت پس از کسر کارمزد
-            seller_wallet.balance += seller_income
-            seller_wallet.save(update_fields=['balance'])
-
-            WalletTransaction.objects.create(
-                wallet=seller_wallet,
-                amount=seller_income,
-                type='deposit',
-                description=f"سفارش {order.tracking_code} - واریز پس از کسر کارمزد"
-            )
-
-            # فقط برای شفافیت: تراکنش کارمزد در ولت فروشنده
-            if commission > 0:
-                WalletTransaction.objects.create(
-                    wallet=seller_wallet,
-                    amount=-commission,
-                    type='commission',
-                    description=f"سفارش {order.tracking_code} - کسر کارمزد {commission} تومان"
-                )
-
-            vendor_order.status = 'accepted'
-            vendor_order.rejection_reason = None
-            vendor_order.save(update_fields=['status', 'rejection_reason'])
-
-            return {"status": "success", "message": "سفارش تایید شد، مبلغ پس از کسر کارمزد منتقل گردید."}
-
+            # اگر می‌خواهی قبل از accept مجدداً چک ظرفیت کنی (مثلاً بخاطر اینکه
+            # ظرفیت می‌تواند در بین checkout و accept تغییر کند) می‌تونی اینجا یک چک اضافه کنی.
+            return _accept_vendor_order(vendor_order, order, buyer_wallet, seller_wallet, site_wallet)
         else:
-            # اگر رد شد
-            buyer_wallet.frozen_balance -= vendor_order.total_price
-            buyer_wallet.balance += vendor_order.total_price
-            buyer_wallet.save(update_fields=['balance', 'frozen_balance'])
-
-            WalletTransaction.objects.create(
-                wallet=buyer_wallet,
-                amount=vendor_order.total_price,
-                type='release',
-                description=f"سفارش {order.tracking_code} - رد شد، مبلغ آزاد شد"
-            )
-
-            vendor_order.status = 'rejected'
-            vendor_order.rejection_reason = rejection_reason
-            vendor_order.save(update_fields=['status', 'rejection_reason'])
-
-            return {"status": "warning", "message": "سفارش رد شد و مبلغ آزاد گردید."}
+            return _reject_vendor_order(vendor_order, order, buyer_wallet, rejection_reason=rejection_reason)
 
 
 @require_POST
