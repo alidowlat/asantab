@@ -23,7 +23,7 @@ import home.views
 from main import settings
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('at-kashani-manager/', admin.site.urls),
     path('', include('home.urls')),
     path('', include('config.urls.actions')),
     path('wallet/', include('wallet.urls.wallet')),
