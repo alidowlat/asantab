@@ -121,7 +121,7 @@ else:
     STATIC_ROOT = Path("/home/asantabc/public_html/asantab/staticfiles")
     STATICFILES_DIRS = [BASE_DIR / 'static']
     MEDIA_URL = '/media/'
-    MEDIA_ROOT = Path("/home/asantabc/public_html/asantab/media")
+    MEDIA_ROOT = Path("/home/asantabc/public_html/media")
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
