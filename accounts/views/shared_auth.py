@@ -24,12 +24,15 @@ def phone_input_view_shared(
         form = form_class(request.POST)
         if form.is_valid():
             phone_number = form.cleaned_data['phone_number']
-            user, _ = user_model.objects.get_or_create(phone_number=phone_number)
+            user, created = user_model.objects.get_or_create(phone_number=phone_number)
+
             if user.is_provider and not is_provider_route:
                 request.session['redirect_to_provider_auth'] = phone_number
                 return redirect('auth_page_provider')
-            user.set_unusable_password()
-            user.save()
+
+            if created:
+                user.set_unusable_password()
+                user.save()(user)
             otp = set_user_otp(user)
             # send_otp(user, otp)
             request.session[session_key] = phone_number
@@ -69,6 +72,9 @@ def otp_verify_view_shared(
                 user.is_verified = True
                 user.save(update_fields=['is_verified'])
                 login(request, user)
+                if user.is_important_user:
+                    request.session['two_step_user_id'] = user.id
+                    return redirect('password_verify_page')
                 if user.is_provider:
                     provider = get_object_or_404(Provider, user=user)
                     if provider.has_completed_required_fields():
@@ -76,6 +82,36 @@ def otp_verify_view_shared(
                 return redirect(get_success_redirect)
             else:
                 form.add_error('otp', 'کد وارد شده اشتباه و یا منقضی شده است.')
+    else:
+        form = form_class()
+
+    return render(request, template, {'form': form})
+
+
+def password_verify_view_shared(
+        request,
+        form_class,
+        user_model,
+        get_success_redirect,
+        template='accounts/user/password_verify.html',
+        fallback_redirect='auth_page'
+):
+    user_id = request.session.get('two_step_user_id')
+    if not user_id:
+        return redirect(fallback_redirect)
+
+    user = get_object_or_404(user_model, id=user_id)
+
+    if request.method == 'POST':
+        form = form_class(request.POST)
+        if form.is_valid():
+            password = form.cleaned_data['password']
+            if user.check_password(password):
+                login(request, user)
+                del request.session['two_step_user_id']
+                return redirect(get_success_redirect)
+            else:
+                form.add_error('password', 'رمز عبور اشتباه است.')
     else:
         form = form_class()
 

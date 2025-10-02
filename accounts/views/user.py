@@ -1,7 +1,7 @@
-from accounts.views.shared_auth import phone_input_view_shared, otp_verify_view_shared
+from accounts.views.shared_auth import phone_input_view_shared, otp_verify_view_shared, password_verify_view_shared
 from django.shortcuts import redirect
 from django.contrib.auth import logout
-from accounts.forms import PhoneForm, OTPForm
+from accounts.forms import PhoneForm, OTPForm, PasswordVerifyForm
 from django.urls import reverse
 from django.views import View
 from accounts.models import User
@@ -28,6 +28,17 @@ def otp_verify_view(request):
         dashboard_redirect='dashboard_page',
         session_key='user_phone',
         template='accounts/user/verify.html',
+        fallback_redirect='auth_page'
+    )
+
+
+def password_verify_view(request):
+    return password_verify_view_shared(
+        request,
+        form_class=PasswordVerifyForm,
+        user_model=User,
+        get_success_redirect='dashboard_page',
+        template='accounts/user/password_verify.html',
         fallback_redirect='auth_page'
     )
 

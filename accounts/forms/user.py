@@ -14,3 +14,8 @@ class OTPForm(OTPCleanMixin, forms.Form):
             'required': 'وارد کردن کد الزامی است.',
         },
     )
+
+class PasswordVerifyForm(forms.Form):
+    password = forms.CharField(
+        label="رمز عبور"
+    )
