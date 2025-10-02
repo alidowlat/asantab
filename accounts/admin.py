@@ -15,7 +15,7 @@ class UserAdmin(BaseUserAdmin):
         (None, {'fields': ('phone_number', 'email', 'password')}),
         ('اطلاعات شخصی', {'fields': ('first_name', 'last_name', 'gender', 'birth_date', 'national_id')}),
         ('دسترسی ها',
-         {'fields': ('is_active', 'is_staff', 'is_superuser', 'is_provider', 'groups', 'user_permissions')}),
+         {'fields': ('is_active', 'is_staff', 'is_superuser', 'is_provider', 'is_verified', 'groups', 'user_permissions')}),
         ('تاریخچه', {'fields': ('last_login', 'date_joined', 'otp_create_at')}),
     )
     add_fieldsets = (

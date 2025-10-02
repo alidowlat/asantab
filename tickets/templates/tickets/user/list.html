@@ -1,0 +1,10 @@
+{% if tickets %}
+    {% for ticket in tickets %}
+        {% include 'tickets/user/item.html' %}
+    {% endfor %}
+{% else %}
+    <div class="flex-container">
+        <img class="w-60 pb-10" src="/static/images/empty/empty-favorite-list.svg" alt="empty page picture">
+        <div class="text-center text-gray-400 text-lg pb-10">موردی یافت نشد.</div>
+    </div>
+{% endif %}

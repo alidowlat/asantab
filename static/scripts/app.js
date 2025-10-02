@@ -292,7 +292,6 @@ showMoreContainers.forEach((container) => {
     }
 });
 
-
 // Lazy Load Stories
 let lazyVideos = [...document.querySelectorAll("video.lazy-story")];
 
@@ -410,3 +409,212 @@ function scrollToObj(id) {
         element.scrollIntoView({behavior: 'smooth', block: 'start'});
     }
 }
+
+// ==========================================================================
+//   Generic Wizard Component Logic
+// ==========================================================================
+function initializeWizard(wizardElement) {
+    const steps = wizardElement.querySelectorAll('[data-wizard-step]');
+    const contents = wizardElement.querySelectorAll('[data-wizard-content]');
+    const totalSteps = steps.length;
+    let currentStep = 1;
+
+    const updateWizardState = () => {
+        contents.forEach(content => {
+            const contentStep = parseInt(content.dataset.wizardContent);
+            if (contentStep === currentStep) {
+                content.classList.remove('hidden');
+                content.classList.add('active');
+            } else {
+                content.classList.add('hidden');
+                content.classList.remove('active');
+            }
+        });
+
+        steps.forEach(step => {
+            const stepNumber = parseInt(step.dataset.wizardStep);
+            step.classList.remove('active', 'completed');
+            if (stepNumber < currentStep) {
+                step.classList.add('completed');
+            } else if (stepNumber === currentStep) {
+                step.classList.add('active');
+            }
+        });
+
+        if (currentStep === 3) updateSummary();
+    };
+
+    const updateSummary = () => {
+        const subjectInput = wizardElement.querySelector('input[name="subject"]');
+        const departmentInput = wizardElement.querySelector('select[name="department"]');
+        const messageInput = wizardElement.querySelector('textarea[name="message"]');
+        const attachmentInput = wizardElement.querySelector('input[name="attachment"]');
+
+        const subject = subjectInput ? subjectInput.value.trim() : '';
+        const department = departmentInput ? departmentInput.options[departmentInput.selectedIndex]?.text : '';
+        const message = messageInput ? messageInput.value.trim() : '';
+        const attachment = attachmentInput?.files[0];
+
+        wizardElement.querySelector('#summary-subject').textContent = subject || 'وارد نشده';
+        wizardElement.querySelector('#summary-department').textContent = department || 'انتخاب نشده';
+        wizardElement.querySelector('#summary-message').textContent = message || 'پیامی نوشته نشده';
+        wizardElement.querySelector('#summary-attachment').textContent = attachment ? attachment.name : 'فایلی انتخاب نشده است.';
+    };
+
+    wizardElement.addEventListener('click', e => {
+        const target = e.target.closest('[data-wizard-next], [data-wizard-prev], [data-wizard-goto]');
+        if (!target) return;
+
+        if (target.matches('[data-wizard-next]')) {
+            if (currentStep < totalSteps) {
+                if (currentStep === 1) {
+                    const subject = wizardElement.querySelector('input[name="subject"]').value.trim();
+                    const departmentSelect = wizardElement.querySelector('select[name="department"]');
+                    const department = departmentSelect.options[departmentSelect.selectedIndex]?.value || '';
+                    if (!subject || !department) {
+                        Swal.fire({
+                            text: "لطفا همه فیلدهای مرحله اول را پر کنید.",
+                            icon: "warning",
+                            confirmButtonText: 'باشه'
+                        });
+                        return;
+                    }
+                }
+                if (currentStep === 2) {
+                    const message = wizardElement.querySelector('textarea[name="message"]').value.trim();
+                    const attachment = wizardElement.querySelector('input[name="attachment"]').files[0];
+                    if (!message && !attachment) {
+                        Swal.fire({
+                            text: "باید یا یک پیام وارد کنید یا یک فایل پیوست انتخاب کنید.",
+                            icon: "warning",
+                            confirmButtonText: 'باشه'
+                        });
+                        return;
+                    }
+                }
+                currentStep++;
+                updateWizardState();
+            }
+        } else if (target.matches('[data-wizard-prev]')) {
+            if (currentStep > 1) {
+                currentStep--;
+                updateWizardState();
+            }
+        } else if (target.matches('[data-wizard-goto]')) {
+            const goToStep = parseInt(target.dataset.wizardGoto);
+            if (goToStep > 0 && goToStep <= totalSteps) {
+                currentStep = goToStep;
+                updateWizardState();
+            }
+        }
+    });
+
+    const subjectInput = wizardElement.querySelector('input[name="subject"]');
+    const departmentInput = wizardElement.querySelector('select[name="department"]');
+    const messageInput = wizardElement.querySelector('textarea[name="message"]');
+    const fileInput = document.querySelector('input[name="attachment"]');
+    const fileNameDisplay = document.querySelector('#file-name-display');
+    const removeFileBtn = document.querySelector('#remove-file');
+
+    if (fileInput && fileNameDisplay && removeFileBtn) {
+        const maxFileSize = 4 * 1024 * 1024;
+
+        fileInput.addEventListener('change', () => {
+            const file = fileInput.files[0];
+
+            if (!file) {
+                fileNameDisplay.textContent = '';
+                fileNameDisplay.href = '#';
+                fileNameDisplay.classList.add('hidden');
+                removeFileBtn.classList.add('hidden');
+                return;
+            }
+
+            const isImage = file.type.startsWith('image/');
+            if (!isImage && file.size > maxFileSize) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطا!',
+                    text: 'حجم فایل غیرتصویری نباید بیشتر از 4 مگابایت باشد.',
+                    confirmButtonText: 'باشه'
+                });
+                fileInput.value = '';
+                fileNameDisplay.textContent = '';
+                fileNameDisplay.href = '#';
+                fileNameDisplay.classList.add('hidden');
+                removeFileBtn.classList.add('hidden');
+                return;
+            }
+
+            const fileURL = URL.createObjectURL(file);
+            fileNameDisplay.textContent = `📎 ${file.name}`;
+            fileNameDisplay.href = fileURL;
+            fileNameDisplay.classList.remove('hidden');
+            removeFileBtn.classList.remove('hidden');
+        });
+
+        removeFileBtn.addEventListener('click', () => {
+            fileInput.value = '';
+            fileNameDisplay.textContent = '';
+            fileNameDisplay.href = '#';
+            fileNameDisplay.classList.add('hidden');
+            removeFileBtn.classList.add('hidden');
+        });
+
+        fileNameDisplay.addEventListener('click', (e) => {
+            if (fileInput.files.length > 0) {
+                e.preventDefault();
+                window.open(fileNameDisplay.href, '_blank');
+            }
+        });
+    }
+
+    [subjectInput, departmentInput, messageInput].forEach(input => {
+        if (input) input.addEventListener('input', updateSummary);
+        if (input && input.tagName === 'SELECT') input.addEventListener('change', updateSummary);
+    });
+
+    wizardElement.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const formData = new FormData(wizardElement);
+
+        fetch(wizardElement.action, {
+            method: "POST",
+            headers: {"X-Requested-With": "XMLHttpRequest"},
+            body: formData
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    Swal.fire({
+                        text: data.message,
+                        icon: "success",
+                        confirmButtonText: 'باشه',
+                        timer: 2000
+                    }).then(() => {
+                        window.location.href = data.redirect_url || window.location.href;
+                    });
+                } else {
+                    Swal.fire({
+                        text: data.message,
+                        icon: "error",
+                        confirmButtonText: 'باشه'
+                    });
+                }
+            })
+            .catch(() => {
+                Swal.fire({
+                    text: "خطای سرور! دوباره تلاش کنید.",
+                    icon: "error",
+                    confirmButtonText: 'باشه',
+                });
+            });
+    });
+
+    updateWizardState();
+    updateSummary();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-wizard]').forEach(initializeWizard);
+});

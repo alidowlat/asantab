@@ -1,0 +1,46 @@
+{% load extra_filters %}
+{% for msg in messages_ordered %}
+    {% if msg.sender_type == 'user' %}
+        <!-- User's Message -->
+        <div class="flex items-start gap-x-3 sm:gap-x-4">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary sm:h-11 sm:w-11">
+                <span class="i-lucide-user-round h-6 w-6"></span>
+            </div>
+            <div class="flex-1 rounded-lg rounded-tl-none border bg-secondary border-gray-300 p-4 dark:border-gray-600 lg:p-5">
+                <div class="mb-2 flex items-center justify-between">
+                    <p class="font-semibold">
+                        شما
+                    </p>
+                    <p class="text-xs text-text/60">{{ msg.created_at|time_ago }}</p>
+                </div>
+                <p class="text-sm leading-relaxed text-text/90 sm:text-base sm:leading-loose">{{ msg.content }}</p>
+                {% if msg.attachment %}
+                    <a href="{{ msg.attachment.url }}" target="_blank"
+                       class="text-sm leading-relaxed text-primary hover:underline sm:text-base sm:leading-loose duration-200 ">
+                        مشاهده فایل پیوست: {{ msg.attachment.name|cut:'tickets/attachments/' }}
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    {% elif msg.sender_type == 'agent' %}
+        <!-- Admin Reply -->
+        <div class="flex items-start gap-x-3 sm:gap-x-4">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/15 sm:h-11 sm:w-11">
+                <span class="icon-[fluent--person-support-24-regular] h-6 w-6"></span>
+            </div>
+            <div class="flex-1 rounded-lg rounded-tl-none border border-gray-300 dark:border-gray-600 p-4 bg-primary/15 lg:p-5">
+                <div class="mb-2 flex items-center justify-between">
+                    <p class="font-semibold">پشتیبانی آسان تب</p>
+                    <p class="text-xs text-text/60">{{ msg.created_at|time_ago }}</p>
+                </div>
+                <p class="text-sm leading-relaxed text-text/90 sm:text-base sm:leading-loose">{{ msg.content }}</p>
+                {% if msg.attachment %}
+                    <a href="{{ msg.attachment.url }}" target="_blank"
+                       class="text-sm leading-relaxed text-primary hover:underline sm:text-base sm:leading-loose duration-200 ">
+                        مشاهده فایل پیوست: {{ msg.attachment.name|cut:'tickets/attachments/' }}
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+{% endfor %}

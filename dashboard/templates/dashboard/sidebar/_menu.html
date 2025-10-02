@@ -66,6 +66,30 @@
         </div>
     {% endif %}
 
+    {% if request.user.support_agent %}
+        <h3 class="hidden lg:flex flex items-center gap-x-4 mb-4 text-lg text-text/80">
+            <span class="h-2 w-2 rounded-full bg-primary"></span>
+            پنل کارشناسان
+        </h3>
+        <div class="hidden rounded-lg shadow lg:block mb-4 border border-primary">
+            <ul class="relative space-y-2 rounded-lg bg-muted p-2">
+                {% with request.resolver_match.url_name as current_url %}
+                    <li>
+                        <a href="{% url 'agent_ticket_list' %}"
+                           class="inline-flex w-full items-center justify-between rounded-lg p-4
+                           {% if current_url == 'agent_ticket_list' %}bg-primary/5 text-primary
+                           {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                            <div class="flex items-center gap-4">
+                                <div class="icon-[fluent--person-support-24-regular]"></div>
+                                تیکت های پشتیبانی
+                            </div>
+                        </a>
+                    </li>
+                {% endwith %}
+            </ul>
+        </div>
+    {% endif %}
+
     {% if request.user.providers %}
         <h3 class="hidden lg:flex flex items-center gap-x-4 mb-4 text-lg text-text/80">
             <span class="h-2 w-2 rounded-full bg-primary"></span>
@@ -166,6 +190,19 @@
                     <div class="flex items-center gap-4">
                         <div class="i-mingcute-shopping-bag-3-line size-6"></div>
                         خرید های من
+                    </div>
+                    <div class="order-item-badge h-6 w-6 rounded-full bg-yellow-500 text-center leading-6 text-white dark:bg-yellow-600"></div>
+                </a>
+            </li>
+            <li>
+                {% url 'user_ticket_list' as tickets_url %}
+                <a href="{{ tickets_url }}"
+                   class="inline-flex w-full items-center justify-between rounded-lg p-4
+                   {% if request.path|startswith:tickets_url %}bg-primary/5 text-primary
+                   {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                    <div class="flex items-center gap-4">
+                        <div class="icon-[fluent--person-support-24-regular]"></div>
+                        تیکت های من
                     </div>
                     <div class="order-item-badge h-6 w-6 rounded-full bg-yellow-500 text-center leading-6 text-white dark:bg-yellow-600"></div>
                 </a>
@@ -309,6 +346,19 @@
                         <div class="i-mingcute-shopping-bag-3-line size-6"></div>
                         سفارش‌ها
                     </div>
+                </a>
+            </li>
+            <li>
+                {% url 'user_ticket_list' as tickets_url %}
+                <a href="{{ tickets_url }}"
+                   class="inline-flex w-full items-center justify-between rounded-lg p-4
+                   {% if request.path|startswith:tickets_url %}bg-primary/5 text-primary
+                   {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                    <div class="flex items-center gap-4">
+                        <div class="icon-[fluent--person-support-24-regular]"></div>
+                        تیکت های من
+                    </div>
+                    <div class="order-item-badge h-6 w-6 rounded-full bg-yellow-500 text-center leading-6 text-white dark:bg-yellow-600"></div>
                 </a>
             </li>
             <li>

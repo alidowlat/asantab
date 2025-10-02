@@ -369,6 +369,8 @@
                 </div>
             </button>
         </div>
+    {% endif %}
+    {% if request.user.is_important_user or request.user.is_provider %}
         <div class="col-span-2 sm:col-span-1">
             <button
                     class="w-full"

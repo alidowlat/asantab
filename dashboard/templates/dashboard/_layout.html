@@ -152,47 +152,64 @@
                             </a>
                         </li>
                     {% endif %}
-                    <li class="border-t border-primary pt-2">
-                        {% url 'provider_service_list' as service_url %}
-                        <a href="{{ service_url }}"
-                           class="inline-flex w-full items-center justify-between rounded-lg p-4
+                    {% if request.user.support_agent %}
+                        <li class="border-t border-primary pt-2">
+                            {% url 'agent_ticket_list' as agent_url %}
+                            <a href="{{ agent_url }}"
+                               class="inline-flex w-full items-center justify-between rounded-lg p-4
+                           {% if request.path|startswith:agent_url %}bg-primary/5 text-primary
+                           {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                                <div class="flex items-center gap-4">
+                                    <span class="icon-[fluent--person-support-24-regular] h-6 w-6"></span>
+                                    تیکت های دریافتی
+                                </div>
+                                <div class="notif-badge h-6 w-6 rounded-full bg-primary-btn text-center leading-6 text-white"></div>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if request.user.is_provider %}
+                        <li class="border-t border-primary pt-2">
+                            {% url 'provider_service_list' as service_url %}
+                            <a href="{{ service_url }}"
+                               class="inline-flex w-full items-center justify-between rounded-lg p-4
                            {% if request.path|startswith:service_url %}bg-primary/5 text-primary
                            {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
-                            <div class="flex items-center gap-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                     class="lucide lucide-package">
-                                    <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/>
-                                    <path d="M12 22V12"/>
-                                    <polyline points="3.29 7 12 12 20.71 7"/>
-                                    <path d="m7.5 4.27 9 5.15"/>
-                                </svg>
-                                خدمت‌های من
-                            </div>
-                            <div class="notif-badge h-6 w-6 rounded-full bg-primary-btn text-center leading-6 text-white"></div>
-                        </a>
-                    </li>
-                    <li class="border-b border-primary pb-2">
-                        {% url 'received_orders_page' as received_orders_url %}
-                        <a href="{{ received_orders_url }}"
-                           class="inline-flex w-full items-center justify-between rounded-lg p-4
+                                <div class="flex items-center gap-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                         class="lucide lucide-package">
+                                        <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/>
+                                        <path d="M12 22V12"/>
+                                        <polyline points="3.29 7 12 12 20.71 7"/>
+                                        <path d="m7.5 4.27 9 5.15"/>
+                                    </svg>
+                                    خدمت‌های من
+                                </div>
+                                <div class="notif-badge h-6 w-6 rounded-full bg-primary-btn text-center leading-6 text-white"></div>
+                            </a>
+                        </li>
+                        <li class="border-b border-primary pb-2">
+                            {% url 'received_orders_page' as received_orders_url %}
+                            <a href="{{ received_orders_url }}"
+                               class="inline-flex w-full items-center justify-between rounded-lg p-4
                {% if request.path|startswith:received_orders_url %}bg-primary/5 text-primary
                {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
-                            <div class="flex items-center gap-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                     class="lucide lucide-store">
-                                    <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/>
-                                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
-                                    <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/>
-                                    <path d="M2 7h20"/>
-                                    <path d="M22 7v3a2 2 0 0 1-2 2a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12a2 2 0 0 1-2-2V7"/>
-                                </svg>
-                                سفارشات دریافتی
-                            </div>
-                            <div class="received-orders-badge h-6 w-6 rounded-full bg-yellow-500 text-center leading-6 text-white"></div>
-                        </a>
-                    </li>
+                                <div class="flex items-center gap-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                         class="lucide lucide-store">
+                                        <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/>
+                                        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                                        <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/>
+                                        <path d="M2 7h20"/>
+                                        <path d="M22 7v3a2 2 0 0 1-2 2a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12a2 2 0 0 1-2-2V7"/>
+                                    </svg>
+                                    سفارشات دریافتی
+                                </div>
+                                <div class="received-orders-badge h-6 w-6 rounded-full bg-yellow-500 text-center leading-6 text-white"></div>
+                            </a>
+                        </li>
+                    {% endif %}
                     {% url 'my_wallet' as wallet_url %}
                     <li>
                         <a href="{{ wallet_url }}"
@@ -231,6 +248,19 @@
                             <div class="flex items-center gap-4">
                                 <div class="i-mingcute-shopping-bag-3-line size-6"></div>
                                 خریدهای من
+                            </div>
+                            <div class="order-item-badge h-6 w-6 rounded-full bg-yellow-500 text-center leading-6 text-white"></div>
+                        </a>
+                    </li>
+                    {% url 'user_ticket_list' as tickets_url %}
+                    <li>
+                        <a href="{{ tickets_url }}"
+                           class="inline-flex w-full items-center justify-between rounded-lg p-4
+               {% if request.path|startswith:tickets_url %}bg-primary/5 text-primary
+               {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                            <div class="flex items-center gap-4">
+                                <div class="icon-[fluent--person-support-24-regular]"></div>
+                                تیکت های من
                             </div>
                             <div class="order-item-badge h-6 w-6 rounded-full bg-yellow-500 text-center leading-6 text-white"></div>
                         </a>
@@ -347,6 +377,19 @@
                             <div class="flex items-center gap-4">
                                 <div class="i-mingcute-shopping-bag-3-line size-6"></div>
                                 سفارش ها
+                            </div>
+                            <div class="order-item-badge h-6 w-6 rounded-full bg-yellow-500 text-center leading-6 text-white"></div>
+                        </a>
+                    </li>
+                    {% url 'user_ticket_list' as tickets_url %}
+                    <li>
+                        <a href="{{ tickets_url }}"
+                           class="inline-flex w-full items-center justify-between rounded-lg p-4
+               {% if request.path|startswith:tickets_url %}bg-primary/5 text-primary
+               {% else %}text-text/80 hover:text-primary{% endif %} duration-300">
+                            <div class="flex items-center gap-4">
+                                <div class="icon-[fluent--person-support-24-regular]"></div>
+                                تیکت های من
                             </div>
                             <div class="order-item-badge h-6 w-6 rounded-full bg-yellow-500 text-center leading-6 text-white"></div>
                         </a>

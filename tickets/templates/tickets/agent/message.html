@@ -1,0 +1,116 @@
+{% load extra_filters %}
+{% for msg in messages %}
+    {% if msg.sender_type == 'user' %}
+        <!-- User's Message -->
+        <div class="flex items-start gap-x-3 sm:gap-x-4">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary sm:h-11 sm:w-11">
+                <span class="i-lucide-user-round h-6 w-6"></span>
+            </div>
+            <div class="flex-1 rounded-lg rounded-tl-none border bg-secondary border-gray-300 p-4 dark:border-gray-600 lg:p-5">
+                <div class="mb-2 flex items-center justify-between">
+                    <p class="font-semibold">{{ msg.sender_name }}</p>
+                    <p class="text-xs text-text/60">{{ msg.created_at|time_ago }}</p>
+                </div>
+                <p class="text-sm leading-relaxed text-text/90 sm:text-base sm:leading-loose">{{ msg.content }}</p>
+                {% if msg.attachment %}
+                    <a href="{{ msg.attachment.url }}" target="_blank"
+                       class="text-sm leading-relaxed text-primary hover:underline sm:text-base sm:leading-loose duration-200 ">
+                        مشاهده فایل پیوست: {{ msg.attachment.name|cut:'tickets/attachments/' }}
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+    {% elif msg.sender_type == 'agent' and msg.sender_id == request.user.id %}
+        <!-- Agent (Self) -->
+        <div class="flex items-start gap-x-3 sm:gap-x-4">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary sm:h-11 sm:w-11">
+                <span class="i-lucide-user-round h-6 w-6"></span>
+            </div>
+            <div class="flex-1 rounded-lg rounded-tl-none border bg-secondary border-gray-300 p-4 dark:border-gray-600 lg:p-5">
+                <div class="mb-2 flex items-center justify-between">
+                    <p class="font-semibold">شما</p>
+                    <p class="text-xs text-text/60">{{ msg.created_at|time_ago }}</p>
+                </div>
+                <p class="text-sm leading-relaxed text-text/90 sm:text-base sm:leading-loose">{{ msg.content }}</p>
+                {% if msg.attachment %}
+                    <a href="{{ msg.attachment.url }}" target="_blank"
+                       class="text-sm leading-relaxed text-primary hover:underline sm:text-base sm:leading-loose duration-200 ">
+                        مشاهده فایل پیوست: {{ msg.attachment.name|cut:'tickets/attachments/' }}
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+    {% elif msg.sender_type == 'agent' %}
+        <!-- Agent (Other) -->
+        <div class="flex items-start gap-x-3 sm:gap-x-4">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/15 sm:h-11 sm:w-11">
+                <span class="icon-[fluent--person-support-24-regular] h-6 w-6"></span>
+            </div>
+            <div class="flex-1 rounded-lg rounded-tl-none border border-gray-300 dark:border-gray-600 p-4 bg-primary/15 lg:p-5">
+                <div class="mb-2 flex items-center justify-between">
+                    <p class="font-semibold">{{ msg.sender_name }}</p>
+                    <p class="text-xs text-text/60">{{ msg.created_at|time_ago }}</p>
+                </div>
+                <p class="text-sm leading-relaxed text-text/90 sm:text-base sm:leading-loose">{{ msg.content }}</p>
+                {% if msg.attachment %}
+                    <a href="{{ msg.attachment.url }}" target="_blank"
+                       class="text-sm leading-relaxed text-primary hover:underline sm:text-base sm:leading-loose duration-200 ">
+                        مشاهده فایل پیوست: {{ msg.attachment.name|cut:'tickets/attachments/' }}
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+{% endfor %}
+
+
+{#{% if ticket.assigned_to %}#}
+{#    <div class="flex justify-end">#}
+{#        <form method="post" action="{% url 'agent_ticket_action' ticket.pk %}" class="inline ticket-action-form">#}
+{#            {% csrf_token %}#}
+{#            <input type="hidden" name="action" value="reject">#}
+{#            <button type="button" class="btn-warning px-3 py-2 text-sm ml-2" data-action="reject">#}
+{#                بستن تیکت#}
+{#            </button>#}
+{#        </form>#}
+{#    </div>#}
+{#{% endif %}#}
+{#<script>#}
+{#    document.querySelectorAll('.ticket-action-form button').forEach(button => {#}
+{#        button.addEventListener('click', function () {#}
+{#            const form = this.closest('form');#}
+{#            const action = this.dataset.action;#}
+{##}
+{#            Swal.fire({#}
+{#                title: action === 'accept' ? 'میخوای تیکت رو قبول کنی؟' : 'میخوای تیکت رو رد و ببندی؟',#}
+{#                icon: 'warning',#}
+{#                showCancelButton: true,#}
+{#                confirmButtonColor: '#3085d6',#}
+{#                cancelButtonColor: '#d33',#}
+{#                confirmButtonText: 'بله',#}
+{#                cancelButtonText: 'خیر'#}
+{#            }).then((result) => {#}
+{#                if (result.isConfirmed) {#}
+{#                    const formData = new FormData(form);#}
+{#                    fetch(form.getAttribute('action'), {  // ← بجای form.action#}
+{#                        method: 'POST',#}
+{#                        body: formData,#}
+{#                        headers: {'X-Requested-With': 'XMLHttpRequest'}#}
+{#                    })#}
+{#                        .then(res => res.json())#}
+{#                        .then(data => {#}
+{#                            Swal.fire({#}
+{#                                icon: data.status === 'success' ? 'success' : 'error',#}
+{#                                text: data.message,#}
+{#                                confirmButtonText: 'تایید'#}
+{#                            }).then(() => {#}
+{#                                if (data.status === 'success') location.reload();#}
+{#                            });#}
+{#                        });#}
+{#                }#}
+{#            });#}
+{#        });#}
+{#    });#}
+{#</script>#}

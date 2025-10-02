@@ -50,6 +50,7 @@ urlpatterns = [
     path('', include('search.urls')),
     path('orders/', include('orders.urls.cart')),
     path('contact-us/', include('tickets.urls.contact_us')),
+    path('tickets/', include('tickets.urls.ticket')),
 ]
 
 django.conf.urls.handler404 = home.views.error_404

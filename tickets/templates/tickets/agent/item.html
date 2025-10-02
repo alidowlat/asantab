@@ -1,0 +1,107 @@
+{% load extra_filters %}
+<div class=" gap-x-4 rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-100 transition dark:border-gray-600 dark:bg-gray-800/50 dark:hover:bg-gray-800">
+    <div class="flex items-center justify-between border-b border-primary">
+        <!-- Left: Subject + ID -->
+        <div class="mb-4">
+            <a href="{% url 'agent_ticket_detail' pk=ticket.pk %}"
+               class="block font-semibold text-gray-800 hover:text-primary dark:text-white">
+                {{ ticket.subject }}
+            </a>
+            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                شناسه تیکت: <span class="font-mono">{{ ticket.tracking_code }}</span>
+            </p>
+        </div>
+
+        <!-- Center: Status -->
+        <div>
+        <span class="inline-block rounded-full px-3 py-1.5 text-xs font-medium {{ ticket.get_status_class }}">
+            {{ ticket.get_status_display }}
+        </span>
+        </div>
+
+        <!-- Right: Last update -->
+        <div class="text-left mb-2">
+            <p class="text-sm text-gray-500 dark:text-gray-400">آخرین بروزرسانی: {{ ticket.updated_at|time_ago }}</p>
+        </div>
+    </div>
+    <div class="flex items-center justify-between pt-4">
+        <div>
+            <p class="text-sm font-semibold text-gray-800 hover:text-primary dark:text-white">
+                نام کاربر:
+                <span class="mr-1">{{ ticket.user }}</span>
+            </p>
+            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                شماره تماس: <span class="font-mono">{{ ticket.user.phone_number }}</span>
+            </p>
+        </div>
+
+        {% if not ticket.assigned_to %}
+            <div class="flex justify-end">
+                <form method="post" action="{% url 'agent_ticket_action' ticket.pk %}" class="inline ticket-action-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="reject">
+                    <button type="button" class="btn-warning px-3 py-2 text-sm ml-2" data-action="reject">
+                        رد و بستن تیکت
+                    </button>
+                </form>
+
+                <form method="post" action="{% url 'agent_ticket_action' ticket.pk %}" class="inline ticket-action-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="accept">
+                    <button type="button" class="btn-primary px-3 py-2 text-sm mr-1" data-action="accept">
+                        قبول و پاسخگویی
+                    </button>
+                </form>
+            </div>
+        {% endif %}
+            {% if ticket.assigned_to %}
+            <div class="flex justify-end">
+                <form method="post" action="{% url 'agent_ticket_action' ticket.pk %}" class="inline ticket-action-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="reject">
+                    <button type="button" class="btn-warning px-3 py-2 text-sm ml-2" data-action="reject">
+                        بستن تیکت
+                    </button>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.ticket-action-form button').forEach(button => {
+        button.addEventListener('click', function () {
+            const form = this.closest('form');
+            const action = this.dataset.action;
+
+            Swal.fire({
+                title: action === 'accept' ? 'میخوای تیکت رو قبول کنی؟' : 'میخوای تیکت رو رد و ببندی؟',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'بله',
+                cancelButtonText: 'خیر'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const formData = new FormData(form);
+                    fetch(form.getAttribute('action'), {  // ← بجای form.action
+                        method: 'POST',
+                        body: formData,
+                        headers: {'X-Requested-With': 'XMLHttpRequest'}
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            Swal.fire({
+                                icon: data.status === 'success' ? 'success' : 'error',
+                                text: data.message,
+                                confirmButtonText: 'تایید'
+                            }).then(() => {
+                                if (data.status === 'success') location.reload();
+                            });
+                        });
+                }
+            });
+        });
+    });
+</script>
