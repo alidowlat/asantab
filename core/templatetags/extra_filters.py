@@ -1,12 +1,41 @@
 from django import template
+from django.utils import timezone
 from django.utils.timezone import now
 import pytz
 from jalali_date import date2jalali
 from jdatetime import datetime as jdatetime
 import jdatetime
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
 register = template.Library()
+
+
+@register.filter
+def time_ago(value):
+    if not value:
+        return ""
+
+    now = timezone.now()
+    diff = now - value
+
+    if diff < timedelta(minutes=1):
+        return "لحظاتی پیش"
+
+    elif diff < timedelta(hours=1):
+        minutes = int(diff.total_seconds() // 60)
+        return f"{minutes} دقیقه پیش"
+
+    elif diff < timedelta(days=1):
+        hours = int(diff.total_seconds() // 3600)
+        return f"{hours} ساعت پیش"
+
+    elif diff < timedelta(days=7):
+        days = diff.days
+        return f"{days} روز پیش"
+
+    else:
+        jdate = jdatetime.datetime.fromgregorian(datetime=value)
+        return jdate.strftime("%Y/%m/%d")
 
 
 @register.filter(name='convert_date')
