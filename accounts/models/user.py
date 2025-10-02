@@ -89,6 +89,10 @@ class User(AbstractUser):
     )
     is_verified = models.BooleanField(default=False, verbose_name="تایید شده؟")
 
+    @property
+    def is_important_user(self):
+        return self.groups.filter(name__in=["vip", "supports", "managers"]).exists()
+
     def has_completed_important_fields(self):
         return all([
             bool(self.first_name),
