@@ -32,6 +32,8 @@
         {% include 'dashboard/account/modal/profile_image_modal.html' %}
         {% include 'dashboard/account/modal/national_card_image_modal.html' %}
         {% include 'dashboard/account/modal/platform_modal.html' %}
+    {% endif %}
+    {% if request.user.is_important_user or request.user.is_provider%}
         {% include 'dashboard/account/modal/password_modal.html' %}
     {% endif %}
 
