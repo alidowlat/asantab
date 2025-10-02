@@ -51,8 +51,8 @@ def provider_list_view(request):
 def impersonate_view(request, user_id):
     target_user = get_object_or_404(User, id=user_id)
 
-    if target_user.is_superuser:
-        return HttpResponseForbidden("امکان ورود به حساب مدیر دیگر وجود ندارد.")
+    if target_user == request.user:
+        return HttpResponseForbidden("حساب انتخاب شده حساب شخص شما میباشد.")
 
     original_user_id = request.user.id
 
