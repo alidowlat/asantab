@@ -26,7 +26,7 @@
             <div class="col-span-12 lg:col-span-4">
                 <div class="flex h-full items-center justify-center gap-4 lg:justify-end">
                     <div class="relative">
-                        <img src="/static/images/images (9).avif" class="h-28 w-28 object-cover" alt="Samandehi Logo">
+                        <img src="/static/images/images%20(9).avif" class="h-28 w-28 object-cover" alt="Samandehi Logo">
                         <div class="absolute inset-0 flex items-center justify-center backdrop-blur-sm">
                             <div class="rounded-lg bg-warning px-4 py-2 text-sm text-white">
                                 اعتبار ندارد
@@ -34,7 +34,7 @@
                         </div>
                     </div>
                     <div class="relative">
-                        <img src="/static/images/images (10).avif" class="h-28 w-28 object-cover" alt="Samandehi Logo">
+                        <img src="/static/images/images%20(10).avif" class="h-28 w-28 object-cover" alt="Samandehi Logo">
                         <div class="absolute inset-0 flex items-center justify-center backdrop-blur-sm">
                             <div class="rounded-lg bg-warning px-4 py-2 text-sm text-white">
                                 اعتبار ندارد
@@ -48,15 +48,15 @@
         <div class="flex flex-col items-center justify-between gap-y-10 md:flex-row">
             <div class="flex flex-col justify-items-center gap-4 text-center">
                 <p>تلفن پشتیبانی</p>
-                <a href="#" class="flex flex-col items-center justify-between gap-4 text-sm md:flex-row">
-                    <div class="">{{ site_settings.phone_number }}</div>
+                <div class="flex flex-col items-center justify-between gap-4 text-sm md:flex-row">
+                    <a href="tel:{{ site_settings.phone_number }}">{{ site_settings.phone_number }}</a>
                     <div class="hidden h-5 w-0.5 bg-secondary lg:block"></div>
-                    <p>شنبه تا چهارشنبه ساعت 10 تا 18</p>
-                </a>
+                    <p>شنبه تا پنجشنبه ساعت 10 الی 20</p>
+                </div>
             </div>
 
             <div class="flex flex-col items-center justify-center gap-4 text-center lg:text-right">
-                <p>بلسر در شبکه های اجتماعی</p>
+                <p>آسان تب در شبکه های اجتماعی</p>
                 <div class="text-text-/70 flex items-center justify-center gap-x-6 text-center">
                     {% for link in social_links %}
                         <a href="{{ link.url }}" class="duration-150 hover:text-primary">
