@@ -35,6 +35,8 @@ class AccountView(LoginRequiredMixin, TemplateView):
             context['national_card_image_form'] = UpdateNationalCardImageForm(instance=provider)
             context['profile_image_form'] = UpdateProfileImageForm(instance=provider)
             context['platformurls_form'] = UpdatePlatformUrlsForm(instance=provider)
+
+        if user.is_provider or user.is_important_user:
             context['password_form'] = UpdatePasswordForm(user=self.request.user)
 
         initial = {}
@@ -237,7 +239,7 @@ class UpdatePasswordView(LoginRequiredMixin, View):
         return render(request, 'dashboard/account/modal/password_modal.html', {'password_form': password_form})
 
     def post(self, request):
-        if not request.user.is_provider:
+        if not (request.user.is_provider or request.user.is_important_user):
             return JsonResponse({'success': False})
 
         user = request.user
