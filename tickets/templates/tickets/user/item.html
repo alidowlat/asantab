@@ -1,24 +1,43 @@
 {% load extra_filters %}
-<div class="flex items-center justify-between gap-x-4 rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-100 transition dark:border-gray-600 dark:bg-gray-800/50 dark:hover:bg-gray-800">
-    <!-- Left: Subject + ID -->
-    <div>
-        <a href="{% url 'user_ticket_detail' pk=ticket.pk %}" class="block font-semibold text-gray-800 hover:text-primary dark:text-white">
-            {{ ticket.subject }}
-        </a>
-        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            شناسه تیکت: <span class="font-mono">{{ ticket.tracking_code }}</span>
-        </p>
+<div class="gap-x-4 rounded-lg border border-gray-200 bg-white p-4 hover:bg-gray-100 transition dark:border-gray-600 dark:bg-gray-800/50 dark:hover:bg-gray-800">
+    <div class="flex items-center justify-between">
+        <!-- Left: Subject + ID -->
+        <div class="text-nowrap">
+            <a href="{% url 'user_ticket_detail' pk=ticket.pk %}"
+               class="block font-semibold text-gray-800 hover:text-primary dark:text-white">
+                {{ ticket.subject }}
+            </a>
+            <div class="flex justify-between text-sm text-gray-500 dark:text-gray-400">
+                <p class="hidden ml-2 lg:block md:block">شناسه تیکت:</p>
+                <span class="font-mono">{{ ticket.tracking_code }}</span>
+            </div>
+        </div>
+
+        <!-- Status -->
+        <div class="hidden lg:block">
+            <span class="inline-block rounded-full px-3 py-1.5 text-xs sm:text-sm font-medium {{ ticket.get_status_class }}">
+                {{ ticket.get_status_display }}
+            </span>
+        </div>
+
+
+        <!-- Right: Last update -->
+        <div class="text-left text-nowrap">
+            <p class="text-sm text-gray-500 dark:text-gray-400">آخرین بروزرسانی: {{ ticket.updated_at|time_ago }}</p>
+        </div>
     </div>
 
-    <!-- Center: Status -->
-    <div>
-        <span class="inline-block rounded-full px-3 py-1.5 text-xs font-medium {{ ticket.get_status_class }}">
-            {{ ticket.get_status_display }}
-        </span>
-    </div>
+    <div class="lg:hidden mt-2">
+        <div class="flex justify-between border-t">
+            <p class="pt-2 text-sm text-gray-500 dark:text-gray-400">
+                وضعیت:
+            </p>
 
-    <!-- Right: Last update -->
-    <div class="text-left">
-        <p class="text-sm text-gray-500 dark:text-gray-400">آخرین بروزرسانی: {{ ticket.updated_at|time_ago }}</p>
+            <div class="mt-2">
+                <span class="inline-block rounded-full px-3 py-1 text-xs font-medium text-nowrap {{ ticket.get_status_class }}">
+                    {{ ticket.get_status_display }}
+                </span>
+            </div>
+        </div>
     </div>
 </div>

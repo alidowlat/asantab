@@ -12,8 +12,8 @@
             </a>
         </div>
         <div class="mb-6 flex flex-col gap-6 xl:flex-row xl:justify-between xl:gap-16">
-            <div class="grid grid-cols-2">
-                <div class="flex items-center justify-between gap-x-2 md:justify-start">
+            <div class="grid grid-cols-2 text-xs">
+                <div class="flex items-center justify-start gap-x-2 md:justify-start pb-4">
                     <div class="text-sm text-text/60 md:text-base">
                         شماره سفارش
                     </div>
@@ -21,15 +21,15 @@
                         {{ order.tracking_code }}
                     </div>
                 </div>
-                <div class="flex items-center justify-between gap-x-2 md:justify-start">
+                <div class="flex items-center justify-start gap-x-2 md:justify-start pb-4">
                     <div class="text-sm text-text/60 md:text-base">
                         تاریخ پرداخت
                     </div>
-                    <div class="flex items-center gap-1 text-text/95">
-                        {{ order.paid_at|show_date_slash }}
+                    <div class="flex items-center gap-1 text-text/95 text-sm">
+                        {{ order.paid_at|show_date_default }}
                     </div>
                 </div>
-                <div class="flex items-center justify-between gap-x-2 md:justify-start">
+                <div class="flex items-center justify-start gap-x-2 md:justify-start ml-2">
                     <div class="text-sm text-text/60 md:text-base">
                         مبلغ کل
                     </div>
@@ -40,13 +40,13 @@
                         <div class="text-sm md:text-base">تومان</div>
                     </div>
                 </div>
-                <div class="flex items-center justify-between gap-x-2 md:justify-start">
+                <div class="flex items-center justify-start gap-x-2 md:justify-start">
                     <div class="text-sm text-text/60 md:text-base">
                         فروشنده
                     </div>
                     {% if order.provider %}
                         <a href="{% url 'provider_detail_page' slug=order.provider.username %}"
-                           class="flex items-center gap-1 text-primary hover:text-primary/80 duration-200">
+                           class="flex items-center gap-1 md:text-base text-primary hover:text-primary/80 duration-200">
                             {{ order.provider }}
                         </a>
                     {% else %}

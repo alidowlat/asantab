@@ -107,6 +107,12 @@ def to_jalali(value):
     month_name = JALALI_MONTHS[jalali_date.month]
     return f"{jalali_date.day} {month_name} {jalali_date.year}"
 
+@register.filter(name='show_date_default')
+def to_jalali(value):
+    if not value:
+        return ''
+    jalali_date = jdatetime.datetime.fromgregorian(datetime=value)
+    return f"{jalali_date.year}/{jalali_date.month}/{jalali_date.day}"
 
 @register.filter(name='show_date_slash')
 def to_jalali(value):
