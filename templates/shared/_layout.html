@@ -29,6 +29,12 @@
     {% block content %}{% endblock %}
     <div data-onscrollclass="translate-y-full" class="fixed inset-x-0 bottom-0 z-20 bg-muted duration-300 lg:hidden">
         <div class="container flex items-center text-sm">
+            <div class="w-1/4 py-1 border-b-2 border-primary font-medium text-primary">
+                <a href="{% url 'index_page' %}" class="flex flex-col items-center justify-center">
+                    <i class="i-solar-home-smile-linear size-6 items-center justify-center"></i>
+                    <p class="pt-2 text-xs xs:text-sm">خانه</p>
+                </a>
+            </div>
             <div class="w-1/4 py-1">
                 <a href="{% url 'services_list_page' %}" class="flex flex-col items-center justify-center">
                     <i class="i-mingcute-shopping-bag-3-line size-6"></i>
@@ -41,37 +47,33 @@
                     <p class="pt-2 text-xs xs:text-sm">سبد خرید</p>
                 </a>
             </div>
-            <div class="w-1/4 py-1 border-b-2 border-primary font-medium text-primary">
-                <a href="{% url 'index_page' %}" class="flex flex-col items-center justify-center">
-                    <i class="i-solar-home-smile-linear size-6 items-center justify-center"></i>
-                    <p class="pt-2 text-xs xs:text-sm">خانه</p>
-                </a>
-            </div>
-            <div class="w-1/4 py-1">
-                <a href="{% url 'my_wallet' %}" class="flex flex-col items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
-                         stroke="currentColor"
-                         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path>
-                        <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path>
-                        <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path>
-                    </svg>
-                    <p class="pt-2 text-xs xs:text-sm">کیف پول</p>
-                </a>
-            </div>
-            <div class="w-1/4 py-1">
-                {% if request.user.is_authenticated %}
-                    <a href="{% url 'account_info_page' %}" class="flex flex-col items-center justify-center">
-                        <i class="i-lucide-user-round size-6"></i>
-                        <p class="pt-2 text-xs xs:text-sm">حساب من</p>
+            {% if request.user.is_authenticated %}
+                <div class="w-1/4 py-1">
+                    <a href="{% url 'my_wallet' %}" class="flex flex-col items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path>
+                            <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path>
+                            <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path>
+                        </svg>
+                        <p class="pt-2 text-xs xs:text-sm">کیف پول</p>
                     </a>
-                {% else %}
+                </div>
+                <div class="w-1/4 py-1">
+                    <a href="{% url 'dashboard_page' %}" class="flex flex-col items-center justify-center">
+                        <i class="i-lucide-user-round size-6"></i>
+                        <p class="pt-2 text-xs xs:text-sm">پروفایل من</p>
+                    </a>
+                </div>
+            {% else %}
+                <div class="w-1/4 py-1">
                     <a href="{% url 'auth_page' %}" class="flex flex-col items-center justify-center">
                         <i class="i-lucide-user-round size-6"></i>
                         <p class="pt-2 text-xs xs:text-sm">ورود</p>
                     </a>
-                {% endif %}
-            </div>
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>

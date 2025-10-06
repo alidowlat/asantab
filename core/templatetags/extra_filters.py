@@ -1,3 +1,5 @@
+import os
+
 from django import template
 from django.utils import timezone
 from django.utils.timezone import now
@@ -79,6 +81,17 @@ def truncate_words_smart(text, limit=40):
     return trimmed + '...'
 
 
+@register.filter
+def shorten_filename(value, max_length=30):
+    if not value:
+        return ''
+    name = os.path.basename(value)
+    base, ext = os.path.splitext(name)
+    if len(base) > max_length:
+        base = base[:max_length] + '---'
+    return f"{base}{ext}"
+
+
 @register.filter(name='cut')
 def cut(value, arg):
     return value.replace(arg, '')
@@ -107,12 +120,14 @@ def to_jalali(value):
     month_name = JALALI_MONTHS[jalali_date.month]
     return f"{jalali_date.day} {month_name} {jalali_date.year}"
 
+
 @register.filter(name='show_date_default')
 def to_jalali(value):
     if not value:
         return ''
     jalali_date = jdatetime.datetime.fromgregorian(datetime=value)
     return f"{jalali_date.year}/{jalali_date.month}/{jalali_date.day}"
+
 
 @register.filter(name='show_date_slash')
 def to_jalali(value):
