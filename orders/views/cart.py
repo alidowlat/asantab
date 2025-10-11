@@ -3,10 +3,14 @@ from datetime import date
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.urls import reverse
 from django.utils.timezone import now
 from django.db.models import Prefetch, F
 from django.http import HttpRequest, JsonResponse
 from django.shortcuts import render, redirect
+
+from core import send_tracking_code_sms
+from notifications.services import notify_user
 from orders.forms import DiscountForm
 from orders.models import Order, OrderItem, VendorOrder
 from orders.services import OrderCalculator
@@ -183,6 +187,14 @@ def order_checkout(request: HttpRequest):
                     order.is_paid = True
                     order.wallet_transaction = freeze_tx
                     order.tracking_code = random.randint(100000, 999999)
+                    send_tracking_code_sms(order.user.phone_number, order.tracking_code)
+                    notify_user(
+                        user=order.user,
+                        title='ثبت سفارش',
+                        message='سفارش شما با موفقیت ثبت شد و در انتظار تایید فروشنده قرار گرفت.',
+                        type_key='order_paid',
+                        link=reverse('orders_page'),
+                    )
                     order.paid_at = now()
                     order.save()
 
@@ -213,8 +225,7 @@ def order_checkout(request: HttpRequest):
 def cart_cleanup_view(request: HttpRequest):
     order = Order.objects.filter(user=request.user, is_paid=False).first()
     if not order:
-        return JsonResponse([],
-                            safe=False)
+        return JsonResponse([], safe=False)
 
     cart_manager = CartManager(order)
     alerts, _ = cart_manager.enforce_capacity_constraints()

@@ -112,7 +112,6 @@ $(document).ready(function () {
             },
             error: function (err) {
                 Swal.close();
-                console.log('Error:', err);
             }
         });
     }

@@ -1,3 +1,6 @@
+{% load extra_filters %}
+{% get_media_items 'payment' as payment_logos %}
+
 <footer class="mt-14 border-t bg-muted py-10">
     <div class="container">
         <!-- Top Section -->
@@ -11,7 +14,7 @@
                             <ul class="space-y-px">
                                 {% for item in box.footer_links.all %}
                                     <li>
-                                        <a href="./shop.html" class="block py-2 text-sm text-text/60 duration-200 hover:text-primary">
+                                        <a href="{{ item.url|default:'#' }}" class="block py-2 text-sm text-text/60 duration-200 hover:text-primary">
                                             {{ item.title }}
                                         </a>
                                     </li>
@@ -19,30 +22,21 @@
                             </ul>
                         </div>
                     {% endfor %}
-
                 </div>
             </div>
-            <!-- Left Section -->
-            <div class="col-span-12 lg:col-span-4">
-                <div class="flex h-full items-center justify-center gap-4 lg:justify-end">
-                    <div class="relative">
-                        <img src="/static/images/images%20(9).avif" class="h-28 w-28 object-cover" alt="Samandehi Logo">
-                        <div class="absolute inset-0 flex items-center justify-center backdrop-blur-sm">
-                            <div class="rounded-lg bg-warning px-4 py-2 text-sm text-white">
-                                اعتبار ندارد
+            {% if payment_logos %}
+                <!-- Left Section -->
+                <div class="col-span-12 lg:col-span-4">
+                    <div class="flex h-full items-center justify-center gap-4 lg:justify-end">
+                        {% for payment in payment_logos %}
+                            <div class="relative">
+                                {{ payment.payment_tag|safe }}
                             </div>
-                        </div>
-                    </div>
-                    <div class="relative">
-                        <img src="/static/images/images%20(10).avif" class="h-28 w-28 object-cover" alt="Samandehi Logo">
-                        <div class="absolute inset-0 flex items-center justify-center backdrop-blur-sm">
-                            <div class="rounded-lg bg-warning px-4 py-2 text-sm text-white">
-                                اعتبار ندارد
-                            </div>
-                        </div>
+                        {% empty %}
+                        {% endfor %}
                     </div>
                 </div>
-            </div>
+            {% endif %}
         </div>
         <!-- Bottom Section -->
         <div class="flex flex-col items-center justify-between gap-y-10 md:flex-row">

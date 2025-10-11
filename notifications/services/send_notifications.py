@@ -6,7 +6,7 @@ from django.core.mail import EmailMultiAlternatives
 
 
 def notify_user(user, title, message, type_key, link=None):
-    notif_type = NotificationType.objects.filter(key=type_key).first()
+    notif_type, _ = NotificationType.objects.get_or_create(key=type_key, title=title)
     Notification.objects.create(
         user=user,
         title=title,

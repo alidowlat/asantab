@@ -1,9 +1,40 @@
+from urllib.parse import urlencode
+
+from home.models import GlobalSEO
+
+
+def global_seo(request):
+    seo = GlobalSEO.objects.first()
+    return {'seo': seo}
+
+
+def canonical_url(request):
+    """
+    تولید URL کنونیکال تمیز و استاندارد برای تمام صفحات.
+    پارامترهای تبلیغاتی و غیرضروری حذف می‌شن تا فقط URL اصلی بمونه.
+    """
+    base_url = request.build_absolute_uri(request.path)
+
+    allowed_params = {'page'}
+
+    query_params = {
+        k: v for k, v in request.GET.items()
+        if k in allowed_params and v
+    }
+
+    # ساخت URL نهایی
+    canonical = f"{base_url}?{urlencode(query_params)}" if query_params else base_url
+
+    return {"canonical_url": canonical}
+
+
 GROUP_TRANSLATIONS = {
     "support": "پشتیبانی",
     "technical": "فنی",
     "financial": "مالی",
     "marketing": "بازاریابی",
 }
+
 
 def user_role(request):
     role = "user"

@@ -6,10 +6,12 @@ from django.db import transaction
 from django.db.models import Prefetch, F
 from django.http import HttpResponseForbidden, Http404, JsonResponse
 from django.shortcuts import redirect, get_object_or_404
+from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django.views.generic import ListView, DetailView, TemplateView
 from accounts.models import Provider
 from core import ActiveProviderRequiredMixin
+from notifications.services import notify_user
 from orders.models import Order, OrderItem, VendorOrder
 from orders.services import OrderCalculator
 from orders.models import STATUS_CHOICES
@@ -158,6 +160,17 @@ class ProviderOrderDetailView(LoginRequiredMixin, ActiveProviderRequiredMixin, D
             self.object.status = "completed"
             self.object.save(update_fields=["status"])
 
+            order = self.object.order
+            user = order.user
+
+            notify_user(
+                user=user,
+                title="تکمیل سفارش شما",
+                message=f"سفارش شما با شماره {order.id} توسط ارائه‌دهنده با موفقیت تکمیل شد.",
+                type_key="order_completed",
+                link=reverse("order_detail", kwargs={"pk": order.pk}),
+            )
+
         return redirect("received_order_detail", pk=self.object.pk)
 
     def get_context_data(self, **kwargs):
@@ -271,19 +284,55 @@ def handle_vendor_order_response(vendor_order, accepted: bool, rejection_reason:
     reject ظرفیت را مجدداً برمی‌گرداند).
     """
     order = vendor_order.order
-    buyer_wallet = order.user.wallet
-    seller_wallet = vendor_order.provider.user.wallet
+    buyer = order.user
+    buyer_wallet = buyer.wallet
+    seller = vendor_order.provider.user
+    seller_wallet = seller.wallet
     site_wallet_obj = SiteWallet.objects.select_related("wallet").first()
     site_wallet = site_wallet_obj.wallet if site_wallet_obj else None
 
     with transaction.atomic():
         if accepted:
-            # اگر می‌خواهی قبل از accept مجدداً چک ظرفیت کنی (مثلاً بخاطر اینکه
-            # ظرفیت می‌تواند در بین checkout و accept تغییر کند) می‌تونی اینجا یک چک اضافه کنی.
-            return _accept_vendor_order(vendor_order, order, buyer_wallet, seller_wallet, site_wallet)
-        else:
-            return _reject_vendor_order(vendor_order, order, buyer_wallet, rejection_reason=rejection_reason)
+            result = _accept_vendor_order(vendor_order, order, buyer_wallet, seller_wallet, site_wallet)
 
+            notify_user(
+                user=buyer,
+                title="سفارش شما تأیید شد",
+                message=f"سفارش مربوط به «{vendor_order.service.title}» توسط ارائه‌دهنده تأیید شد.",
+                type_key="order_accepted",
+                link=reverse('order_detail', args=[order.id])
+            )
+
+            notify_user(
+                user=seller,
+                title="تأیید سفارش",
+                message=f"شما سفارش کاربر {buyer.get_full_name() or buyer.phone_number} را تأیید کردید.",
+                type_key="vendor_order_accepted",
+                link=reverse('received_order_detail', args=[vendor_order.id])
+            )
+
+            return result
+        else:
+            result = _reject_vendor_order(vendor_order, order, buyer_wallet, rejection_reason=rejection_reason)
+
+            notify_user(
+                user=buyer,
+                title="سفارش شما رد شد ❌",
+                message=f"سفارش مربوط به «{vendor_order.service.title}» توسط ارائه‌دهنده رد شد."
+                        + (f" دلیل: {rejection_reason}" if rejection_reason else ""),
+                type_key="order_rejected",
+                link=reverse('order_detail', args=[order.id])
+            )
+
+            notify_user(
+                user=seller,
+                title="رد سفارش ثبت شد",
+                message=f"شما سفارش کاربر {buyer.get_full_name() or buyer.phone_number} را رد کردید.",
+                type_key="vendor_order_rejected",
+                link=reverse('vendor_order_detail', args=[vendor_order.id])
+            )
+
+            return result
 
 @require_POST
 def vendor_order_action(request, pk, action):

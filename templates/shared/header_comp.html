@@ -6,12 +6,19 @@
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script src="{% static 'scripts/count.js' %}"></script>
 <script src="{% static 'scripts/cart.js' %}"></script>
+{% get_media_items 'header_link' as header_links %}
+{% get_media_items 'other' as other_links %}
 <header class="fixed inset-x-0 top-0 z-30 bg-muted">
     <!-- Ad Banner -->
     {% if request.path == '/' %}
-        <div class="hidden lg:block">
-            <img src="/static/images/ad-banner.gif" alt="ad gif" class="inline-block w-full object-cover">
-        </div>
+        {% get_media_items 'home_gif' as gif %}
+        {% if gif %}
+            {% for gif in gif %}
+                <div class="hidden lg:block">
+                    <img src="{{ gif.image_desktop.url }}" alt="{{ gif.title }}-gif" class="inline-block w-full object-cover">
+                </div>
+            {% endfor %}
+        {% endif %}
     {% endif %}
     <!-- Desktop -->
     <div class="hidden lg:block">
@@ -213,9 +220,6 @@
 
 
 
-
-
-
                                             {% if request.user.is_provider %}{% url 'logout_provider' %}{% else %}{% url 'logout' %}{% endif %}"
                                        class="my-1 flex items-center justify-between px-5 py-3 text-warning duration-150 hover:bg-warning/10">
                                         <div class="flex items-center gap-x-3">
@@ -375,16 +379,17 @@
                 <!-- indicator -->
                 <div id="line" class="absolute bottom-0 end-0 top-full h-1 rounded-xl bg-primary transition-all duration-300"></div>
                 <!-- Mega Menu -->
-                <ul class="desktop-nav-item relative z-10" onmouseenter="desktopMegamenuShow()" onmouseleave="desktopMegamenuHidden()">
-                    <!-- category-->
-                    <div class="flex cursor-pointer items-center gap-2 pb-2 pl-2">
-                        <div class="i-lucide-align-justify h-4 w-4"></div>
-                        <div>دسته بندی‌ها</div>
-                    </div>
-                    <div id="desktop-mega-menu"
-                         class="absolute right-0 top-full h-[400px] w-[900px] overflow-hidden rounded-b-lg bg-muted hidden">
-                        <!-- menu -->
-                        {% if platforms %}
+                {% if platforms %}
+                    <ul class="desktop-nav-item relative z-10" onmouseenter="desktopMegamenuShow()"
+                        onmouseleave="desktopMegamenuHidden()">
+                        <!-- category-->
+                        <div class="flex cursor-pointer items-center gap-2 pb-2 pl-2">
+                            <div class="i-lucide-align-justify h-4 w-4"></div>
+                            <div>دسته بندی‌ها</div>
+                        </div>
+                        <div id="desktop-mega-menu"
+                             class="absolute right-0 top-full h-[400px] w-[900px] overflow-hidden rounded-b-lg bg-muted hidden">
+                            <!-- menu -->
                             <div class="flex">
                                 <!-- Right Menu (Platforms) -->
                                 <div dir="ltr" class="max-h-[400px] min-h-[400px] min-w-[200px] overflow-y-auto bg-background">
@@ -433,47 +438,41 @@
                                     </div>
                                 </div>
                             </div>
-                        {% endif %}
-                    </div>
-                </ul>
-                <ul class="desktop-nav-item">
-                    <a href="./why-us.html" class="inline-block px-2 pb-2">
-                        چرا بلسر
-                    </a>
-                </ul>
-                <ul class="desktop-nav-item" data-color="hsl(var(--warning))">
-                    <a href="./special-sale.html" class="inline-block px-2 pb-2">
-                        فروش ویژه
-                    </a>
-                </ul>
-                <ul class="desktop-nav-item z-10">
-                    <div class="group relative">
-                        <div class="flex cursor-pointer gap-2 px-2 pb-2">
-                            سایر
-                            <div class="text-primary">...</div>
                         </div>
-                        <!-- Dropdown -->
-                        <div class="absolute right-0 top-full hidden w-40 rounded-b-lg bg-muted group-hover:block">
-                            <ul class="space-y-2">
-                                <li>
-                                    <a href="./contact.html" class="z-10 block rounded-lg px-4 py-3 duration-200 hover:text-primary">
-                                        تماس با ما
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="./faq.html" class="z-10 block rounded-lg px-4 py-3 duration-200 hover:text-primary">
-                                        سوالات متداول
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="./about.html" class="z-10 block rounded-lg px-4 py-3 duration-200 hover:text-primary">
-                                        درباره ما
-                                    </a>
-                                </li>
-                            </ul>
+                    </ul>
+                {% endif %}
+                {% if header_links %}
+                    {% for link in header_links %}
+                        <ul class="desktop-nav-item">
+                            <a href="{{ link.link }}" class="inline-block px-2 pb-2">
+                                {{ link.title }}
+                            </a>
+                        </ul>
+                    {% endfor %}
+                {% endif %}
+                {% if other_links %}
+                    <ul class="desktop-nav-item z-10">
+                        <div class="group relative">
+                            <div class="flex cursor-pointer gap-2 px-2 pb-2">
+                                سایر
+                                <div class="text-primary">...</div>
+                            </div>
+                            <!-- Dropdown -->
+                            <div class="absolute right-0 top-full hidden w-40 rounded-b-lg bg-muted group-hover:block">
+                                <ul class="space-y-2">
+                                    {% for link in other_links %}
+                                        <li>
+                                            <a href="{{ link.link|default:'' }}"
+                                               class="z-10 block rounded-lg px-4 py-3 duration-200 hover:text-primary">
+                                                {{ link.title }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                </ul>
+                    </ul>
+                {% endif %}
                 {% if request.session.is_impersonating %}
                     <a href="{% url 'stop_impersonate' %}" class="btn btn-warning">
                         بازگشت به حساب اصلی

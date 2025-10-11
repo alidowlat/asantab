@@ -1,3 +1,4 @@
+from decouple import config
 from zeep import Client
 from kavenegar import *
 from django.utils import timezone
@@ -35,10 +36,26 @@ def is_valid_otp(user, input_otp):
 def send_tracking_code_sms(mobile, tracking_code):
     mobile = [mobile, ]
     try:
-        api = KavenegarAPI("5A6C536F412B49547747672F7141754F6B764C3251647A43754E6B4533476856704A4E69664834596962453D")
+        api = KavenegarAPI(config("KAVENEGAR_API"))
         params = {
             'receptor': mobile,
-            'template': 'Order',
+            'template': 'order',
+            'token': tracking_code,
+        }
+        response = api.verify_lookup(params)
+    except APIException as e:
+        print(e)
+    except HTTPException as e:
+        print(e)
+
+
+def send_sms_order(mobile, tracking_code):
+    mobile = [mobile, ]
+    try:
+        api = KavenegarAPI(config("KAVENEGAR_API"))
+        params = {
+            'receptor': mobile,
+            'template': 'order',
             'token': tracking_code,
         }
         response = api.verify_lookup(params)
@@ -51,7 +68,7 @@ def send_tracking_code_sms(mobile, tracking_code):
 def send_otp(mobile, otp):
     mobile = [mobile, ]
     try:
-        api = KavenegarAPI("3755324A6D424E2B7269706C316C5939466E76777552757A56616F766E475876685254524B4464594E56673D")
+        api = KavenegarAPI(config("KAVENEGAR_API"))
         params = {
             'receptor': mobile,
             'template': 'verify',
@@ -67,7 +84,7 @@ def send_otp(mobile, otp):
 def send_otp_rest(mobile, otp):
     mobile = [mobile, ]
     try:
-        api = KavenegarAPI("5A6C536F412B49547747672F7141754F6B764C3251647A43754E6B4533476856704A4E69664834596962453D")
+        api = KavenegarAPI(config("KAVENEGAR_API"))
         params = {
             'sender': '1000400090007',
             'receptor': mobile,

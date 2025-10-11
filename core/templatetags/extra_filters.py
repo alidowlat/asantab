@@ -9,6 +9,8 @@ from jdatetime import datetime as jdatetime
 import jdatetime
 from datetime import datetime, date, timedelta
 
+from home.models import MediaItem
+
 register = template.Library()
 
 
@@ -80,6 +82,10 @@ def truncate_words_smart(text, limit=40):
 
     return trimmed + '...'
 
+
+@register.simple_tag
+def get_media_items(section):
+    return MediaItem.objects.filter(section=section, is_active=True).order_by('order')
 
 @register.filter
 def shorten_filename(value, max_length=30):

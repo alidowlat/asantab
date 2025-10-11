@@ -5,21 +5,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}{% endblock %}</title>
+
+    <title>{% block title %}{{ seo.site_title }}{% endblock %}</title>
     {% render_partial 'home.views.site_header_component' %}
+    <meta name="description" content="{{ seo.meta_description }}">
+    <meta name="keywords" content="{{ seo.meta_keywords }}">
+    <meta name="author" content="آسان تب">
+
+    <link rel="canonical" href="{{ canonical_url }}">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ seo.site_title }}">
+    <meta property="og:description" content="{{ seo.meta_description }}">
+    {% if seo.og_image %}
+        <meta property="og:image" content="{{ seo.og_image.url }}">
+    {% endif %}
+    <meta property="og:url" content="{{ canonical_url }}">
+    <meta property="og:site_name" content="Asan Tab">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ seo.site_title }}">
+    <meta name="twitter:description" content="{{ seo.meta_description }}">
+    {% if seo.og_image %}
+        <meta name="twitter:image" content="{{ seo.og_image.url }}">
+    {% endif %}
+
     <script type="application/ld+json">
         {
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            "name": "آسان تب",
-            "url": "https://asantab.com",
-        {#            "description": "دیجی اوند، مرجع تخصصی کیف و کوله های لپ تاپ، ارائه‌دهنده طیف وسیعی از برندهای معتبر با قیمت‌های رقابتی و مناسب برای تجربه خریدی مطمئن و آسان."#}
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "آسان تب",
+          "url": "https://asantab.com",
+        {% if seo.og_image %}
+            "logo": "{{ seo.og_image.url|default:'' }}"
+        {% endif %}
         }
     </script>
     <script src="{% static 'scripts/count.js' %}"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <meta name="keywords" content="فروشگاه آنلاین, خدمات تبلیغات, تبلیغ آسان">
-    <meta name="author" content="آسان تب">
+
+    {#    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">#}
+    <meta name="robots" content="index, follow">
+
     {% include 'shared/header_ref.html' %}
     {% block extra_header %}{% endblock %}
 </head>
@@ -94,6 +120,5 @@
                 showOrderItemsCount();
             });
     }
-
     document.addEventListener("DOMContentLoaded", loadCartPartial);
 </script>

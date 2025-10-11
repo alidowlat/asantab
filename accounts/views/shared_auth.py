@@ -1,8 +1,11 @@
 from django.contrib.auth import login
 from django.shortcuts import redirect, render, get_object_or_404
+from django.urls import reverse
+
 from accounts.models import Provider
-from core import is_valid_otp, set_user_otp
+from core import is_valid_otp, set_user_otp, send_otp
 from core.cache import delete_inactive_users
+from notifications.services import notify_user
 
 
 def phone_input_view_shared(
@@ -32,9 +35,10 @@ def phone_input_view_shared(
 
             if created:
                 user.set_unusable_password()
-                user.save()(user)
+                user.save()
+
             otp = set_user_otp(user)
-            # send_otp(user, otp)
+            send_otp(user.phone_number, otp)
             request.session[session_key] = phone_number
             return redirect(get_redirect_name)
     else:
@@ -69,10 +73,21 @@ def otp_verify_view_shared(
         if form.is_valid():
             otp = form.cleaned_data['otp']
             if is_valid_otp(user, otp):
+                is_first_verification = not user.is_verified
+                if is_first_verification:
+                    notify_user(
+                        user=user,
+                        title="تکمیل حساب کاربری",
+                        message="خوش آمدید! لطفا نسبت به تکمیل حساب کاربری خود اقدام کنید.",
+                        type_key="complete_profile",
+                        link=reverse('account_info_page')
+                    )
+
                 user.is_verified = True
                 user.save(update_fields=['is_verified'])
                 login(request, user)
-                if user.is_important_user:
+
+                if user.is_important_user and user.has_usable_password():
                     request.session['two_step_user_id'] = user.id
                     return redirect('password_verify_page')
                 if user.is_provider:

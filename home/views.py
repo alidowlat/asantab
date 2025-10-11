@@ -1,4 +1,6 @@
-from django.db.models import Prefetch, Count, F
+from itertools import zip_longest
+
+from django.db.models import Prefetch, Count, F, Sum
 from django.db.models.functions import Lower
 from django.views.generic import TemplateView
 from django.shortcuts import render
@@ -13,18 +15,38 @@ from services.models import Service, Platform, Favorite
 class HomeView(TemplateView):
     template_name = 'home/index.html'
 
+    def chunked(self, iterable, n):
+        args = [iter(iterable)] * n
+        return [list(filter(None, group)) for group in zip_longest(*args)]
+
     def get_context_data(self, **kwargs):
-        context = super(HomeView, self).get_context_data(**kwargs)
-        request = self.request
+        context = super().get_context_data(**kwargs)
 
         model_fields = [
-            ('featured_services', Service.objects.filter(is_unique=True, is_active=True, status='approved').order_by('-id')[:5]),
-            ('newest_services', Service.objects.filter(is_active=True, status='approved').order_by('-id')[:10]),
-            ('blog', Post.objects.filter(is_active=True).order_by('-created_at')[:8]),
+            ('featured_services',
+             Service.objects.filter(is_unique=True, is_active=True, status='approved').order_by('-id')[:5]),
+
+            ('newest_services',
+             Service.objects.filter(is_active=True, status='approved').order_by('-id')[:10]),
+
+            ('most_viewed_services',
+             Service.objects.annotate(
+                 visit_count=Count('visits', distinct=True)
+             ).filter(is_active=True, status='approved').order_by('-visit_count', '-id')[:10]),
+
+            ('most_sold_services',
+             Service.objects.annotate(
+                 total_sold=Sum('orderitem__count')
+             ).filter(is_active=True, status='approved', total_sold__gt=0).order_by('-total_sold', '-id')[:12]),
+
+            ('blog',
+             Post.objects.filter(is_active=True).order_by('-created_at')[:8]),
         ]
 
         for field_name, queryset in model_fields:
             context[field_name] = queryset
+
+        context['most_sold_chunks'] = self.chunked(context['most_sold_services'], 3)
 
         return context
 
