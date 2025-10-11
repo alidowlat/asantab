@@ -3,16 +3,13 @@ from zeep import Client
 from kavenegar import *
 from django.utils import timezone
 import random
-
+from accounts.models import User
 from main.settings import Kavenegar_API
 
 
-def get_random_otp(length=5):
-    return ''.join(random.choices('0123456789', k=length))
-
-
-def set_user_otp(user):
-    otp = get_random_otp()
+def set_user_otp(user_id):
+    user = User.objects.get(id=user_id)
+    otp = ''.join(random.choices('0123456789', k=5))
     user.otp = otp
     user.otp_create_at = timezone.now()
     user.save(update_fields=['otp', 'otp_create_at'])
