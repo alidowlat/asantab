@@ -38,7 +38,7 @@ def phone_input_view_shared(
                 user.save()
 
             otp = set_user_otp(user)
-            user.save()
+            user.refresh_from_db()
             send_otp(user.phone_number, otp)
             request.session[session_key] = phone_number
             return redirect(get_redirect_name)
