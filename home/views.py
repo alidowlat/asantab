@@ -1,11 +1,11 @@
 from itertools import zip_longest
-
 from django.db.models import Prefetch, Count, F, Sum
 from django.db.models.functions import Lower
 from django.views.generic import TemplateView
 from django.shortcuts import render
 from blog.models import Post
 from config.models import SiteSetting, FooterBox, SocialLink, MainCategory
+from home.models import InfoItem
 from notifications.models import Notification
 from orders.models import Order, OrderItem
 from search.models import SearchQuery
@@ -118,6 +118,18 @@ def site_footer_component(request):
 
 def about_us(request):
     return render(request, 'home/about.html')
+
+
+def FAQ(request):
+    faq = InfoItem.objects.filter(type='faq', is_active=True).order_by('-id')
+
+    return render(request, 'home/faq.html', {'faq': faq})
+
+
+def rules(request):
+    rules = InfoItem.objects.filter(type='rules', is_active=True).order_by('-id')
+
+    return render(request, 'home/rules.html', {'rules': rules})
 
 
 def error_404(request, exception):

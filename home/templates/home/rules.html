@@ -1,0 +1,87 @@
+{% extends 'shared/_layout.html' %}
+
+{% block title %}
+    قوانین و مقررات | آسان تب
+{% endblock %}
+
+{% block content %}
+    <main class="flex-grow bg-background pt-[106px]">
+        <div class="relative">
+            <!-- Background -->
+            <div class="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden [mask-image:radial-gradient(transparent_15%,white)]">
+                <svg class="absolute left-0 top-0 h-full w-full stroke-black/20 stroke-[2] [mask-image:linear-gradient(transparent_5%,white,transparent_85%)] dark:stroke-white/20"
+                     data-n-ids="{&quot;1a4MN34vH0:0&quot;:&quot;1a4MN34vH0:0&quot;}">
+                    <rect width="100%" height="100%" stroke-width="0" fill="url(#grid-pattern-1a4MN34vH0:0)"></rect>
+                    <svg>
+                        <rect stroke-width="0" width="95" height="95" x="97" y="97"
+                              class="pointer-events-auto fill-black/5 transition duration-500 hover:fill-black/10 dark:fill-white/5 dark:hover:fill-white/10"></rect>
+                        <rect stroke-width="0" width="95" height="95" x="385" y="193"
+                              class="pointer-events-auto fill-black/5 transition duration-500 hover:fill-black/10 dark:fill-white/5 dark:hover:fill-white/10"></rect>
+                        <rect stroke-width="0" width="95" height="95" x="193" y="289"
+                              class="pointer-events-auto fill-black/5 transition duration-500 hover:fill-black/10 dark:fill-white/5 dark:hover:fill-white/10"></rect>
+                        <rect stroke-width="0" width="95" height="95" x="673" y="289"
+                              class="pointer-events-auto fill-black/5 transition duration-500 hover:fill-black/10 dark:fill-white/5 dark:hover:fill-white/10"></rect>
+                        <rect stroke-width="0" width="95" height="95" x="481" y="385"
+                              class="pointer-events-auto fill-black/5 transition duration-500 hover:fill-black/10 dark:fill-white/5 dark:hover:fill-white/10"></rect>
+                        <rect stroke-width="0" width="95" height="95" x="1249" y="97"
+                              class="pointer-events-auto fill-black/5 transition duration-500 hover:fill-black/10 dark:fill-white/5 dark:hover:fill-white/10"></rect>
+                        <rect stroke-width="0" width="95" height="95" x="1" y="481"
+                              class="pointer-events-auto fill-black/5 transition duration-500 hover:fill-black/10 dark:fill-white/5 dark:hover:fill-white/10"></rect>
+                        <rect stroke-width="0" width="95" height="95" x="577" y="481"
+                              class="pointer-events-auto fill-black/5 transition duration-500 hover:fill-black/10 dark:fill-white/5 dark:hover:fill-white/10"></rect>
+                        <rect stroke-width="0" width="95" height="95" x="1441" y="385"
+                              class="pointer-events-auto fill-black/5 transition duration-500 hover:fill-black/10 dark:fill-white/5 dark:hover:fill-white/10"></rect>
+                        <rect stroke-width="0" width="95" height="95" x="1057" y="289"
+                              class="pointer-events-auto fill-black/5 transition duration-500 hover:fill-black/10 dark:fill-white/5 dark:hover:fill-white/10"></rect>
+                        <rect stroke-width="0" width="95" height="95" x="961" y="481"
+                              class="pointer-events-auto fill-black/5 transition duration-500 hover:fill-black/10 dark:fill-white/5 dark:hover:fill-white/10"></rect>
+                        <rect stroke-width="0" width="95" height="95" x="1249" y="577"
+                              class="pointer-events-auto fill-black/5 transition duration-500 hover:fill-black/10 dark:fill-white/5 dark:hover:fill-white/10"></rect>
+                    </svg>
+                    <defs>
+                        <pattern id="grid-pattern-1a4MN34vH0:0" viewBox="0 0 64 64" width="96" height="96"
+                                 patternUnits="userSpaceOnUse">
+                            <path d="M64 0H0V64" fill="none"></path>
+                        </pattern>
+                    </defs>
+                </svg>
+            </div>
+            <div class="container relative pt-10">
+                <div>
+                    <!-- Most Quested -->
+                    <div class="mb-10">
+                        <!-- Title -->
+                        <div class="mb-10 flex flex-col items-center gap-6">
+                            <div class="flex size-12 items-center justify-center rounded-full bg-primary/15 p-2 text-primary">
+                                <i class="i-solar-fire-outline size-8"></i>
+                            </div>
+                            <p class="text-lg font-medium">قوانین و مقررات</p>
+                        </div>
+                        <!-- Questions -->
+                        {% if rules %}
+                            <ul class="space-y-2">
+                                {% for rule in rules %}
+                                    <li class="relative rounded-lg border-b bg-muted" data-accordion-item="">
+                                        <button type="button" class="w-full px-4 py-3 text-right md:px-6 md:py-5"
+                                                data-accordion-button="">
+                                            <div class="flex items-center justify-between gap-2 text-sm md:text-base">
+                                                <span>{{ rule.title }}</span>
+                                                <div class="min-w-fit">
+                                                    <span class="i-lucide-chevron-left duration-300" data-accordion-chevron=""></span>
+                                                </div>
+                                            </div>
+                                        </button>
+                                        <div class="relative max-h-0 overflow-hidden transition-all duration-300"
+                                             data-accordion-content="">
+                                            <div class="flex px-4 py-2 text-sm text-text/80 lg:text-base">{{ rule.content|safe }}</div>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

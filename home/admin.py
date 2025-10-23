@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from .models import MediaItem, GlobalSEO
+from .models import MediaItem, GlobalSEO, InfoItem
 
 
 @admin.register(MediaItem)
@@ -45,4 +45,5 @@ class MediaItemAdmin(admin.ModelAdmin):
     link_display.short_description = 'لینک ارجاعی'
 
 
+admin.site.register(InfoItem)
 admin.site.register(GlobalSEO)

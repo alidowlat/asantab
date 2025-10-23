@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 
+from config.models import SiteSetting
 from tickets.forms import ContactUsForm
 
 
@@ -22,4 +23,9 @@ def contact_us(request):
             return JsonResponse({"success": False, "errors": errors})
     else:
         form = ContactUsForm()
-    return render(request, "tickets/contact_us.html", {"form": form})
+
+    context = {
+        "form": form,
+        'site_settings': SiteSetting.objects.get(is_main=True),
+    }
+    return render(request, "tickets/contact_us.html", context)

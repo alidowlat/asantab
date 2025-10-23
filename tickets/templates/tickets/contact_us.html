@@ -61,7 +61,7 @@
                     <div class="col-span-5 border-b border-t bg-muted px-6 py-10 lg:col-span-3 lg:rounded-l lg:border-l">
                         <div class="mb-10">
                             قبل از مطرح کردن هرگونه سوال ، بخش
-                            <a href="./faq.html" class="text-primary hover:underline">سوالات متداول</a>
+                            <a href="#" class="text-primary hover:underline">سوالات متداول</a>
                             را مطالعه نمایید.
                         </div>
                         <form id="contactForm" class="grid grid-cols-2 gap-2" action="{% url 'contact_us_page' %}" method="post"
@@ -112,7 +112,7 @@
                                 <div class="flex flex-col items-center justify-between gap-10 sm:flex-row">
                                     <div class="text-sm text-text/60">
                                         با ارسال این، تأیید می‌کنم که
-                                        <a href="./rules.html" class="text-primary hover:underline">قوانین و مقررات</a> را خوانده‌ام.
+                                        <a href="#" class="text-primary hover:underline">قوانین و مقررات</a> را خوانده‌ام.
                                     </div>
                                     <button type="submit" class="btn-primary rounded-full px-6 py-2">ارسال پیام</button>
                                 </div>
@@ -120,44 +120,42 @@
                         </form>
                     </div>
 
-                    <!-- Text -->
-                    <div class="col-span-5 px-4 lg:col-span-2">
-                        <div class="flex justify-center">
-                            <h1 class="relative mb-6 hidden w-fit text-xl font-medium lg:block">
-                                تماس با ما
-                                <span class="absolute right-0 top-10 h-[3px] w-full animate-fill-border rounded-full bg-primary"></span>
-                            </h1>
-                        </div>
-                        <ul class="space-y-6">
-                            <li>
-                                <!-- Email -->
-                                <div class="flex flex-col gap-y-4">
-                                    <p class="text-text/90">آدرس ایمیل</p>
-                                    <a href="#" class="text-primary"> info@blesser.com </a>
-                                </div>
-                            </li>
+                    {% if site_settings %}
+                        <div class="col-span-5 px-4 lg:col-span-2">
+                            <div class="flex justify-center">
+                                <h1 class="relative mb-6 hidden w-fit text-xl font-medium lg:block">
+                                    تماس با ما
+                                    <span class="absolute right-0 top-10 h-[3px] w-full animate-fill-border rounded-full bg-primary"></span>
+                                </h1>
+                            </div>
+                            <ul class="space-y-6">
+                                <li>
+                                    <!-- Email -->
+                                    <div class="flex flex-col gap-y-4">
+                                        <p class="text-text/90">آدرس ایمیل</p>
+                                        <a href="mailto:{{ site_settings.contact_email }}"
+                                           class="text-primary">{{ site_settings.contact_email }}</a>
+                                    </div>
+                                </li>
 
-                            <li>
-                                <!-- phone -->
-                                <div class="flex flex-col gap-y-4">
-                                    <p class="text-text/90">تلفن پشتیبانی</p>
-                                    <a dir="ltr" href="#" class="text-primary">
-                                        021 - 0000000
-                                    </a>
-                                </div>
-                            </li>
-                            <li>
-                                <!-- phone -->
-                                <div class="flex flex-col gap-y-4">
-                                    <p class="min-w-fit text-text/90">آدرس دفتر مرکزی</p>
-                                    <a href="#" class="text-primary">
-                                        استان تهران شهر تهران - خیابان گاندی جنوبی - نبش خیابان
-                                        ۲۱ - پلاک ۲۸
-                                    </a>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
+                                <li>
+                                    <!-- phone -->
+                                    <div class="flex flex-col gap-y-4">
+                                        <p class="text-text/90">تلفن پشتیبانی</p>
+                                        <a dir="ltr" href="tel:{{ site_settings.phone_number }}"
+                                           class="text-primary">{{ site_settings.phone_number }}</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <!-- phone -->
+                                    <div class="flex flex-col gap-y-4">
+                                        <p class="min-w-fit text-text/90">آدرس دفتر مرکزی</p>
+                                        <p class="text-primary">{{ site_settings.address|default:'' }}</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -193,7 +191,7 @@
                             timer: 2000
                         }).then(() => {
                             if (data.redirect_url) window.location.href = data.redirect_url;
-                            else location.reload(); // اگر redirect_url نبود صفحه reload شود
+                            else location.reload();
                         });
                         form.reset();
                     } else if (data.errors) {

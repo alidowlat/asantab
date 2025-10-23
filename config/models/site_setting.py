@@ -10,6 +10,7 @@ class SiteSetting(models.Model):
     contact_email = models.EmailField(null=True, blank=True, verbose_name="ایمیل وب سایت")
     phone_number = models.CharField(max_length=11, null=True, blank=True, verbose_name="شماره تماس وب سایت")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="آخرین آپدیت")
+    address = models.TextField(null=True, blank=True, verbose_name="آدرس دفتر مرکزی")
     is_main = models.BooleanField(default=False, unique=True, verbose_name='تنظیمات اصلی؟')
 
     class Meta:

@@ -1,10 +1,12 @@
 from django.http import JsonResponse
-from core.otp import set_user_otp
+from core.otp import set_user_otp, send_otp
 from accounts.models import User
 
 
-
 def resend_otp_view(request):
+    if request.method != 'POST':
+        return JsonResponse({'status': 'invalid method'}, status=405)
+
     phone = request.session.get('user_phone')
     if not phone:
         return JsonResponse({'status': 'no phone'}, status=400)
@@ -13,10 +15,8 @@ def resend_otp_view(request):
     if not user:
         return JsonResponse({'status': 'not found'}, status=404)
 
-    if request.method != 'POST':
-        return JsonResponse({'status': 'invalid method'}, status=405)
-
-    success = set_user_otp(user)
-    if not success:
+    if not set_user_otp(user):
         return JsonResponse({'status': 'error'}, status=500)
+
+    send_otp(user, user.otp)
     return JsonResponse({'status': 'ok'})

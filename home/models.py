@@ -1,3 +1,4 @@
+from ckeditor.fields import RichTextField
 from django.db import models
 
 
@@ -102,3 +103,24 @@ class GlobalSEO(models.Model):
         verbose_name = 'Global SEO'
         verbose_name_plural = 'Global SEO Settings'
         db_table = 'global_seo'
+
+
+class InfoItem(models.Model):
+    TYPE_CHOICES = (
+        ('faq', 'سوالات متداول'),
+        ('rules', 'قوانین و مقررات'),
+    )
+
+    type = models.CharField(max_length=10, choices=TYPE_CHOICES)
+    title = models.CharField(max_length=255)
+    content = RichTextField(verbose_name='محتوای متن')
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = 'Info Item'
+        verbose_name_plural = 'Info Items'
+        db_table = 'info_item'
+
+    def __str__(self):
+        return self.title
