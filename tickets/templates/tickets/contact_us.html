@@ -61,7 +61,7 @@
                     <div class="col-span-5 border-b border-t bg-muted px-6 py-10 lg:col-span-3 lg:rounded-l lg:border-l">
                         <div class="mb-10">
                             قبل از مطرح کردن هرگونه سوال ، بخش
-                            <a href="#" class="text-primary hover:underline">سوالات متداول</a>
+                            <a href="{% url 'faq_page' %}" class="text-primary hover:underline">سوالات متداول</a>
                             را مطالعه نمایید.
                         </div>
                         <form id="contactForm" class="grid grid-cols-2 gap-2" action="{% url 'contact_us_page' %}" method="post"
@@ -112,7 +112,7 @@
                                 <div class="flex flex-col items-center justify-between gap-10 sm:flex-row">
                                     <div class="text-sm text-text/60">
                                         با ارسال این، تأیید می‌کنم که
-                                        <a href="#" class="text-primary hover:underline">قوانین و مقررات</a> را خوانده‌ام.
+                                        <a href="{% url 'rules_page' %}" class="text-primary hover:underline">قوانین و مقررات</a> را خوانده‌ام.
                                     </div>
                                     <button type="submit" class="btn-primary rounded-full px-6 py-2">ارسال پیام</button>
                                 </div>
