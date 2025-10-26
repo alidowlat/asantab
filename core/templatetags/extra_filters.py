@@ -1,5 +1,4 @@
 import os
-
 from django import template
 from django.utils import timezone
 from django.utils.timezone import now
@@ -8,10 +7,16 @@ from jalali_date import date2jalali
 from jdatetime import datetime as jdatetime
 import jdatetime
 from datetime import datetime, date, timedelta
-
+from config.context_processors import user_role
 from home.models import MediaItem
 
 register = template.Library()
+
+
+@register.simple_tag
+def get_user_role(user):
+    info = user_role(user=user)
+    return info['user_role']
 
 
 @register.filter
@@ -86,6 +91,7 @@ def truncate_words_smart(text, limit=40):
 @register.simple_tag
 def get_media_items(section):
     return MediaItem.objects.filter(section=section, is_active=True).order_by('order')
+
 
 @register.filter
 def shorten_filename(value, max_length=30):

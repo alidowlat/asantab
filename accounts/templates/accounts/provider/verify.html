@@ -88,7 +88,7 @@
             <form class="flex flex-col" method="post" action="">
                 {% csrf_token %}
                 <a href="{% url 'index_page' %}" class="mb-10">
-                    <img src="/static/images/logo.png" alt="logo" class="mx-auto h-10 xs:h-12">
+                    <img src="{{ site_settings.transparent_logo.url }}" alt="logo" class="mx-auto h-10 xs:h-12">
                 </a>
 
                 <h1 class="mb-8 text-center font-medium xs:text-lg">

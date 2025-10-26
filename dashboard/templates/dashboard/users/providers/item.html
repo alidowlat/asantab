@@ -5,7 +5,9 @@
             <div class="relative inline-flex flex-shrink-0 items-center justify-center">
                 <span class="relative inline-flex flex-shrink-0 items-center justify-center rounded-full border">
                     <img class="h-16 w-16 {% if provider.is_verified %} border-[3px] border-primary {% endif %} rounded-full"
-                         src="{% if provider.profile_image %}{{ provider.profile_image.url }}{% else %}/static/images/user.png{% endif %}" alt="profile">
+                         src="
+                                 {% if provider.profile_image %}{{ provider.profile_image.url }}{% else %}/static/images/user.png{% endif %}"
+                         alt="profile">
                 </span>
             </div>
         </div>
@@ -47,9 +49,111 @@
     <td>
         <div class="text-text/80">{{ provider.user.date_joined|show_date }}</div>
     </td>
-    <td>
+    <td class="space-y-2">
         <a href="{% url 'impersonate_user' provider.user.id %}"
            class="i-mynaui-external-link h-6 w-6 text-success duration-200 hover:text-success/80">
         </a>
+        <button class="show-provider i-carbon-search h-6 w-6 text-primary duration-200 hover:text-primary/80"
+                data-id="{{ provider.id }}">
+        </button>
     </td>
 </tr>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function getCSRFToken() {
+        return document.cookie
+            .split('; ')
+            .find(row => row.startsWith('csrftoken='))
+            ?.split('=')[1];
+    }
+
+    document.addEventListener('click', async (e) => {
+        if (e.target.classList.contains('show-provider')) {
+            const id = e.target.dataset.id;
+
+            const res = await fetch(`/profile/roles/providers/${id}/`);
+            const data = await res.json();
+
+            if (res.ok && data.user) {
+                const html = `
+                <div class="text-right space-y-4">
+                    <img src="${data.provider.profile_image || '/static/images/default-profile.png'}"
+                         alt="تصویر پروفایل"
+                         class="w-24 h-24 rounded-full mx-auto mb-4 border">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <p><strong>نام:</strong> ${data.user.full_name}</p>
+                        <p><strong>نام کاربری:</strong> ${data.provider.username}</p>
+                        <p><strong>بیوگرافی:</strong> ${data.provider.bio || '—'}</p>
+                        <p><strong>کد ملی:</strong> ${data.provider.national_id || '—'}</p>
+                        <p><strong>تاریخ تولد:</strong> ${data.provider.birth_date || '—'}</p>
+                        <p><strong>استان:</strong> ${data.provider.province_name || '—'}</p>
+                        <p><strong>شهر:</strong> ${data.provider.city_name || '—'}</p>
+                        <p><strong>شماره تلفن:</strong> ${data.user.phone_number}</p>
+                        <p><strong>وضعیت فعلی:</strong> ${data.provider.status}</p>
+                        <p><strong>تاریخ عضویت:</strong> ${data.user.date_joined}</p>
+
+                        ${data.provider.instagram_url ? `
+                            <p><strong>اینستاگرام:</strong>
+                                <a href="${data.provider.instagram_url}" target="_blank" class="text-blue-600">
+                                    ${data.provider.instagram_url}
+                                </a>
+                            </p>` : ''}
+
+                        ${data.provider.telegram_url ? `
+                            <p><strong>تلگرام:</strong>
+                                <a href="${data.provider.telegram_url}" target="_blank" class="text-blue-600">
+                                    ${data.provider.telegram_url}
+                                </a>
+                            </p>` : ''}
+                    </div>
+
+                    ${data.provider.national_card_image ? `
+                        <div class="mt-4 text-center">
+                            <strong>کارت ملی:</strong>
+                            <img src="${data.provider.national_card_image}"
+                                 alt="کارت ملی"
+                                 class="w-32 mt-2 rounded-lg border mx-auto">
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+
+                Swal.fire({
+                    title: 'جزئیات فروشنده',
+                    html: html,
+                    showCancelButton: true,
+                    confirmButtonText: 'فعال سازی',
+                    cancelButtonText: 'فعال سازی',
+                    showCloseButton: true,
+                    preConfirm: async () => {
+                        const csrf = getCSRFToken();
+                        const response = await fetch(`/profile/roles/providers/${id}/`, {
+                            method: 'POST',
+                            headers: {'X-CSRFToken': csrf, 'Content-Type': 'application/x-www-form-urlencoded'},
+                            body: new URLSearchParams({action: 'approve'}),
+                        });
+                        const resData = await response.json();
+                        if (resData.status !== 'success') throw new Error(resData.message);
+                        return resData.message;
+                    },
+                }).then(async (result) => {
+                    if (result.isDismissed && result.dismiss === Swal.DismissReason.cancel) {
+                        const csrf = getCSRFToken();
+                        await fetch(`/profile/roles/providers/${id}/`, {
+                            method: 'POST',
+                            headers: {'X-CSRFToken': csrf, 'Content-Type': 'application/x-www-form-urlencoded'},
+                            body: new URLSearchParams({action: 'reject'}),
+                        });
+                        Swal.fire('رد شد!', '', 'error').then(() => location.reload());
+                    } else if (result.value) {
+                        Swal.fire('تأیید شد!', result.value, 'success').then(() => location.reload());
+                    }
+                });
+            } else {
+                Swal.fire('خطا!', 'اطلاعات فروشنده یافت نشد.', 'error');
+            }
+        }
+    });
+</script>

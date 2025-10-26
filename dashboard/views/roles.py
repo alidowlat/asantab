@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from accounts.models import Provider
 
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, JsonResponse
 
 User = get_user_model()
 
@@ -44,6 +44,50 @@ def provider_list_view(request):
         "providers": providers,
     }
     return render(request, "dashboard/users/providers/main.html", context)
+
+
+@login_required
+@user_passes_test(is_admin)
+def provider_detail_manager(request, provider_id):
+    provider = get_object_or_404(Provider.objects.select_related("user"), id=provider_id)
+    user = provider.user
+
+    if request.method == "GET":
+        return JsonResponse({
+            "user": {
+                "full_name": user.get_full_name(),
+                "phone_number": user.phone_number,
+                "date_joined": user.date_joined.strftime("%Y-%m-%d"),
+            },
+            "provider": {
+                "username": provider.username,
+                "bio": provider.bio,
+                "province_name": provider.province.name_fa if provider.province else None,
+                "city_name": provider.city.name_fa if provider.city else None,
+                "profile_image": provider.profile_image.url if provider.profile_image else None,
+                "national_card_image": provider.national_card_image.url if provider.national_card_image else None,
+                "instagram_url": provider.instagram_url,
+                "telegram_url": provider.telegram_url,
+                "birth_date": user.birth_date.strftime("%Y-%m-%d") if user.birth_date else None,
+                "national_id": user.national_id,
+                "status": provider.get_status_display(),
+            }
+        })
+
+    if request.method == "POST":
+        action = request.POST.get("action")
+        if action == "approve":
+            provider.status = "active"
+            provider.is_verified = True
+            provider.save(update_fields=["is_verified", "status"])
+            return JsonResponse({"status": "success", "message": "فروشنده تأیید شد"})
+        elif action == "reject":
+            provider.status = "rejected"
+            provider.is_verified = False
+            provider.save(update_fields=["is_verified", "status"])
+            return JsonResponse({"status": "error", "message": "فروشنده رد شد"})
+        return JsonResponse({"status": "warning", "message": "درخواست نامعتبر است"})
+    return None
 
 
 @login_required

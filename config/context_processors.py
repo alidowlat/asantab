@@ -1,5 +1,5 @@
 from urllib.parse import urlencode
-
+from config.models import SiteSetting
 from home.models import GlobalSEO
 
 
@@ -36,23 +36,39 @@ GROUP_TRANSLATIONS = {
 }
 
 
-def user_role(request):
-    role = "user"
+def user_role(request=None, user=None):
+    if user is None and request:
+        user = request.user
+
+    role = "کاربر"
     role_names = ""
 
-    if request.user.is_authenticated:
-        if getattr(request.user, "is_provider", False):
+    if user.is_authenticated:
+        if getattr(user, "is_provider", False):
             role = "فروشنده"
-        elif request.user.is_superuser:
+        elif user.is_superuser:
             role = "مدیر"
         else:
-            groups = request.user.groups.all()
+            groups = user.groups.all()
             if groups.exists():
-                role = "کارشناس"
+                role = "ک"
                 translated = [GROUP_TRANSLATIONS.get(g.name, g.name) for g in groups]
                 role_names = " - ".join(translated)
 
+    if role_names:
+        full_role = f"{role}. {role_names}"
+    else:
+        full_role = role
+
     return {
-        "user_role": role,
+        "user_role": full_role,
         "user_groups": role_names,
     }
+
+
+def site_settings(request):
+    try:
+        site_settings = SiteSetting.objects.get(is_main=True)
+    except SiteSetting.DoesNotExist:
+        site_settings = None
+    return {'site_settings': site_settings}

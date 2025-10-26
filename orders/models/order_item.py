@@ -15,6 +15,14 @@ class OrderItem(models.Model):
     count = models.PositiveIntegerField(verbose_name='تعداد')
     final_price = models.PositiveIntegerField(verbose_name='قیمت نهایی')
 
+    def __str__(self):
+        parts = [f"{self.service.title}"]
+        if self.option:
+            parts.append(f"({self.option.title})")
+        if self.schedule:
+            parts.append(f"- {self.schedule}")
+        return f"{' '.join(parts)} × {self.count}"
+
     class Meta:
         verbose_name = 'Order Item'
         verbose_name_plural = 'Order Items'

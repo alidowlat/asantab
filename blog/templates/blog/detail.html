@@ -54,10 +54,17 @@
                                         data-modal-target="share-modal" data-modal-toggle="share-modal">
                                     <div class="i-lucide-share-2 size-6"></div>
                                 </button>
-                                <a href="#" class="duration-150 hover:text-primary">
+                                <a href="https://twitter.com/intent/tweet?url=asantab.com{{ post.get_absolute_url }}"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   class="duration-150 hover:text-primary">
                                     <i class="i-carbon-logo-twitter h-7 w-7"></i>
                                 </a>
-                                <a href="#" class="duration-150 hover:text-primary">
+
+                                <a href="https://t.me/share/url?url=asantab.com{{ post.get_absolute_url }}"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   class="duration-150 hover:text-primary">
                                     <i class="i-file-icons-telegram h-5 w-5"></i>
                                 </a>
                             </div>

@@ -83,6 +83,7 @@ TEMPLATES = [
                 'config.context_processors.user_role',
                 'config.context_processors.canonical_url',
                 'config.context_processors.global_seo',
+                'config.context_processors.site_settings',
             ],
         },
     },

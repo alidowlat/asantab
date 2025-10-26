@@ -1,3 +1,4 @@
+{% load extra_filters %}
 <div class="flex items-center justify-center lg:hidden">
     <div class="flex flex-col items-center justify-center gap-y-4">
         <div class="relative">
@@ -13,13 +14,7 @@
         </div>
         <div class="flex gap-2 items-start mb-5">
             <p class="">{{ user.get_full_name|default:user.phone_number }}</p>
-            {% if user.is_superuser %}
-                <p class="opacity-75">(مدیر)</p>
-            {% elif user.is_provider %}
-                <p class="opacity-75">(فروشنده)</p>
-            {% else %}
-                <p class="opacity-75">(کاربر)</p>
-            {% endif %}
+            <p class="opacity-75">{% get_user_role user %}</p>
         </div>
         <div>
             <button type="button" data-drawer-target="profile-drawer" data-drawer-show="profile-drawer"
