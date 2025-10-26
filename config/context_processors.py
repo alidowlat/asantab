@@ -56,9 +56,9 @@ def user_role(request=None, user=None):
                 role_names = " - ".join(translated)
 
     if role_names:
-        full_role = f"{role}. {role_names}"
+        full_role = f"({role}. {role_names})"
     else:
-        full_role = role
+        full_role = f"({role})"
 
     return {
         "user_role": full_role,
