@@ -19,7 +19,7 @@ def set_user_otp(user):
     return otp
 
 
-def is_otp_expired(user, expiry_seconds=180):
+def is_otp_expired(user, expiry_seconds=600):
     if not user.otp_create_at:
         return True
     diff = timezone.now() - user.otp_create_at

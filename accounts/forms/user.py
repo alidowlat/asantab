@@ -2,7 +2,7 @@ from django import forms
 from core.clean import OTPCleanMixin, PhoneNumberCleanMixin
 
 
-class PhoneForm(PhoneNumberCleanMixin ,forms.Form):
+class PhoneForm(PhoneNumberCleanMixin, forms.Form):
     phone_number = forms.CharField(
         max_length=11,
     )
@@ -15,7 +15,6 @@ class OTPForm(OTPCleanMixin, forms.Form):
         },
     )
 
+
 class PasswordVerifyForm(forms.Form):
-    password = forms.CharField(
-        label="رمز عبور"
-    )
+    password = forms.CharField(widget=forms.PasswordInput)

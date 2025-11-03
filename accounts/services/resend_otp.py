@@ -18,5 +18,5 @@ def resend_otp_view(request):
     if not set_user_otp(user):
         return JsonResponse({'status': 'error'}, status=500)
 
-    send_otp(user, user.otp)
+    send_otp(user.phone_number, user.otp)
     return JsonResponse({'status': 'ok'})

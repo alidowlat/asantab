@@ -1,6 +1,6 @@
 from accounts.models import Provider
 from django import forms
-from core.clean import UsernameCleanMixin, PhoneNumberCleanMixin
+from core.clean import UsernameCleanMixin, PhoneNumberCleanMixin, PasswordCleanMixin
 
 
 class ProviderLoginForm(PhoneNumberCleanMixin, forms.Form):
@@ -54,3 +54,23 @@ class ProviderCompleteInfoForm(UsernameCleanMixin, forms.ModelForm):
         if commit:
             provider.save()
         return provider
+
+
+class ProviderForgotPhoneForm(forms.Form):
+    phone_number = forms.CharField(max_length=20)
+
+
+class ProviderResetWithOTPForm(PasswordCleanMixin, forms.Form):
+    otp = forms.CharField(
+        required=True,
+        error_messages={'required': 'کد تأیید الزامی است.'},
+        max_length=5
+    )
+    new_password = forms.CharField(widget=forms.PasswordInput)
+    confirm_password = forms.CharField(widget=forms.PasswordInput)
+
+    def clean_otp(self):
+        otp = self.cleaned_data.get('otp')
+        if not otp:
+            raise forms.ValidationError("فیلد کد تأیید نمی‌تواند خالی باشد.")
+        return otp

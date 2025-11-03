@@ -62,7 +62,7 @@ class User(AbstractUser):
         blank=True,
         verbose_name="کد تایید"
     )
-    otp_create_at = models.DateTimeField(auto_now=True)
+    otp_create_at = models.DateTimeField(auto_now=True, null=True, blank=True)
     is_provider = models.BooleanField(
         default=False,
         verbose_name="فروشنده است؟"
