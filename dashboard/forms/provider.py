@@ -4,36 +4,57 @@ from accounts.models import Provider
 from core.clean import UsernameCleanMixin, IbanNumberCleanMixin, CardNumberCleanMixin, PasswordCleanMixin, PlatformLinkCleanMixin
 from django.conf import settings
 from locations.models import City
+from django.core.exceptions import ValidationError
 
 
-class UpdatePlatformUrlsForm(PlatformLinkCleanMixin, forms.ModelForm):
+class FixedPrefixURLInput(forms.TextInput):
+    def __init__(self, prefix, *args, **kwargs):
+        self.prefix = prefix
+        super().__init__(*args, **kwargs)
+
+    def format_value(self, value):
+        if value is None:
+            value = ''
+        if not value.startswith(self.prefix):
+            value = self.prefix
+        return value
+
+
+class UpdatePlatformUrlsForm(forms.ModelForm):
+    instagram_url = forms.CharField(
+        required=False,
+        widget=FixedPrefixURLInput(prefix='https://instagram.com/', attrs={
+            'class': 'modal-input peer w-full rounded-lg bg-transparent p-2 placeholder-transparent outline-none focus:ring-0 xs:px-4 xs:py-3',
+            'dir': 'ltr',
+            'readonly': False
+        })
+    )
+    telegram_url = forms.CharField(
+        required=False,
+        widget=FixedPrefixURLInput(prefix='https://t.me/', attrs={
+            'class': 'modal-input peer w-full rounded-lg bg-transparent p-2 placeholder-transparent outline-none focus:ring-0 xs:px-4 xs:py-3',
+            'dir': 'ltr',
+            'readonly': False
+        })
+    )
+
     class Meta:
         model = Provider
         fields = ['instagram_url', 'telegram_url']
-        widgets = {
-            'instagram_url': forms.URLInput(attrs={
-                'class': 'modal-input peer w-full rounded-lg bg-transparent p-2 placeholder-transparent outline-none focus:ring-0 xs:px-4 xs:py-3',
-                'dir': 'ltr',
-                'value': 'https://',
-                'readonly': False
-            }),
-            'telegram_url': forms.URLInput(attrs={
-                'class': 'modal-input peer w-full rounded-lg bg-transparent p-2 placeholder-transparent outline-none focus:ring-0 xs:px-4 xs:py-3',
-                'dir': 'ltr',
-                'value': 'https://',
-                'readonly': False
-            }),
-        }
-        error_messages = {
-            'instagram_url': {
-                'required': 'وارد کردن این فیلد الزامی است.',
-                'invalid': 'آدرس وارد شده معتبر نیست.',
-            },
-            'telegram_url': {
-                'required': 'وارد کردن این فیلد الزامی است.',
-                'invalid': 'آدرس وارد شده معتبر نیست.',
-            }
-        }
+
+    def clean_instagram_url(self):
+        url = self.cleaned_data.get('instagram_url', '')
+        prefix = 'https://instagram.com/'
+        if url and not url.startswith(prefix):
+            raise ValidationError(f'آدرس باید با {prefix} شروع شود.')
+        return url
+
+    def clean_telegram_url(self):
+        url = self.cleaned_data.get('telegram_url', '')
+        prefix = 'https://t.me/'
+        if url and not url.startswith(prefix):
+            raise ValidationError(f'آدرس باید با {prefix} شروع شود.')
+        return url
 
 
 class UpdateUsernameForm(UsernameCleanMixin, forms.ModelForm):

@@ -57,11 +57,11 @@ class Provider(models.Model):
         except Provider.DoesNotExist:
             pass
 
-        if self.profile_image:
-            name_part = getattr(self, 'username', None) or getattr(self, 'slug', None) or self.__class__.__name__.lower()
+        if hasattr(self.profile_image, 'file'):
+            name_part = getattr(self, 'username', None) or getattr(self, 'slug', None)
             self.profile_image = compress_and_convert_to_webp(self.profile_image, name_part, quality=50)
 
-        if self.national_card_image:
+        if hasattr(self.national_card_image, 'file'):
             name_part = f"national_card_{self.username}"
             self.national_card_image = compress_and_convert_to_webp(self.national_card_image, name_part)
 
@@ -85,4 +85,3 @@ class Provider(models.Model):
         verbose_name = 'Provider'
         verbose_name_plural = 'Providers'
         db_table = 'providers'
-

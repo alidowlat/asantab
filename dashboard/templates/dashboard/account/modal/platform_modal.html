@@ -38,7 +38,8 @@
                         <div class="flex">
                             <i class="hidden i-lucide-circle-alert text-warning ml-2"></i>
                             <p class="error-text h-5 text-sm text-warning">
-                                {% if platformurls_form.instagram_url.errors %}{{ platformurls_form.instagram_url.errors.0 }}{% endif %}
+                                {% if platformurls_form.instagram_url.errors %}
+                                    {{ platformurls_form.instagram_url.errors.0 }}{% endif %}
                             </p>
                         </div>
                     </div>
@@ -71,3 +72,42 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const instagramInput = document.getElementById('{{ platformurls_form.instagram_url.id_for_label }}');
+        const telegramInput = document.getElementById('{{ platformurls_form.telegram_url.id_for_label }}');
+
+        const PREFIX_INSTAGRAM = 'https://instagram.com/';
+        const PREFIX_TELEGRAM = 'https://t.me/';
+
+        function enforcePrefix(input, prefix) {
+            if (!input.value.startsWith(prefix)) {
+                input.value = prefix;
+            }
+
+            input.addEventListener('keydown', (e) => {
+                const start = input.selectionStart;
+                if ((e.key === 'Backspace' && start <= prefix.length) ||
+                    (e.key === 'Delete' && start < prefix.length)) {
+                    e.preventDefault();
+                }
+            });
+
+            input.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const pasteText = e.clipboardData.getData('text');
+                input.value = prefix + pasteText.replace(prefix, '');
+            });
+
+            input.addEventListener('input', () => {
+                if (!input.value.startsWith(prefix)) {
+                    input.value = prefix;
+                }
+            });
+        }
+
+        if (instagramInput) enforcePrefix(instagramInput, PREFIX_INSTAGRAM);
+        if (telegramInput) enforcePrefix(telegramInput, PREFIX_TELEGRAM);
+    });
+</script>

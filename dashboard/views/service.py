@@ -135,7 +135,7 @@ class ProviderServiceEdit(LoginRequiredMixin, ActiveProviderRequiredMixin, View)
     template_name = 'dashboard/services/edit.html'
 
     def dispatch(self, request, *args, **kwargs):
-        self.service = get_object_or_404(Service, slug=kwargs['slug'], provider_id=request.user.id)
+        self.service = get_object_or_404(Service, slug=kwargs['slug'], provider_id=request.user.providers.id)
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self):
