@@ -23,7 +23,7 @@ class FixedPrefixURLInput(forms.TextInput):
 class UpdatePlatformUrlsForm(forms.ModelForm):
     instagram_url = forms.CharField(
         required=False,
-        widget=FixedPrefixURLInput(prefix='https://instagram.com/', attrs={
+        widget=forms.TextInput(attrs={
             'class': 'modal-input peer w-full rounded-lg bg-transparent p-2 placeholder-transparent outline-none focus:ring-0 xs:px-4 xs:py-3',
             'dir': 'ltr',
             'readonly': False
@@ -41,13 +41,6 @@ class UpdatePlatformUrlsForm(forms.ModelForm):
     class Meta:
         model = Provider
         fields = ['instagram_url', 'telegram_url']
-
-    def clean_instagram_url(self):
-        url = self.cleaned_data.get('instagram_url', '')
-        prefix = 'https://instagram.com/'
-        if url and not url.startswith(prefix):
-            raise ValidationError(f'آدرس باید با {prefix} شروع شود.')
-        return url
 
     def clean_telegram_url(self):
         url = self.cleaned_data.get('telegram_url', '')

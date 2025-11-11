@@ -75,10 +75,8 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const instagramInput = document.getElementById('{{ platformurls_form.instagram_url.id_for_label }}');
         const telegramInput = document.getElementById('{{ platformurls_form.telegram_url.id_for_label }}');
 
-        const PREFIX_INSTAGRAM = 'https://instagram.com/';
         const PREFIX_TELEGRAM = 'https://t.me/';
 
         function enforcePrefix(input, prefix) {
@@ -107,7 +105,6 @@
             });
         }
 
-        if (instagramInput) enforcePrefix(instagramInput, PREFIX_INSTAGRAM);
         if (telegramInput) enforcePrefix(telegramInput, PREFIX_TELEGRAM);
     });
 </script>

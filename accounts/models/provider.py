@@ -37,7 +37,7 @@ class Provider(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name='وضعیت')
     is_verified = models.BooleanField(default=False, verbose_name='تایید شده؟')
     is_profile_complete = models.BooleanField(default=False, verbose_name='پروفایل تکمیل شده؟')
-    instagram_url = models.URLField(blank=True, null=True)
+    instagram_url = models.CharField(max_length=75, blank=True, null=True)
     telegram_url = models.URLField(blank=True, null=True)
     date_joined = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ عضویت')
 
