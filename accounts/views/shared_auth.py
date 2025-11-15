@@ -13,7 +13,7 @@ def phone_input_view_shared(
         form_class,
         user_model,
         get_redirect_name,
-        session_key='user_phone',
+        session_key=f"user_phone",
         template='accounts/user/auth.html',
         already_authenticated_template='home/index.html',
         is_provider_route=False

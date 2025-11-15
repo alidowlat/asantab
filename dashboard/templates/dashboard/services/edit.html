@@ -9,7 +9,7 @@
 
 {% block extra_header %}
     <script src="/static/scripts/uploadImage.js"></script>
-{#    <script src="/static/scripts/action.js"></script>#}
+    {#    <script src="/static/scripts/action.js"></script>#}
 {% endblock %}
 
 
@@ -55,7 +55,29 @@
                         <span class="text-lg">
                             {{ service_form.platform_link.label_tag }}
                         </span>
-                        {{ service_form.platform_link|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full" }}
+                        <div class="relative w-full">
+                            <label for="{{ service_form.platform_username.id_for_label }}" class="sr-only">Username</label>
+
+                            <div class="absolute inset-y-0 left-0 flex items-center">
+                                <div class="flex items-center bg-transparent px-2 py-1 rounded-l-lg">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                         class="lucide lucide-at-sign-icon text-gray-500">
+                                        <circle cx="12" cy="12" r="4"/>
+                                        <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/>
+                                    </svg>
+
+                                    <span class="block w-px h-6 bg-gray-300 mx-2"></span>
+                                </div>
+                            </div>
+
+                            {{ service_form.platform_username|add_class:"bg-background rounded-lg border px-4 py-2.5 focus:border-primary outline-none w-full pl-14 text-center pl-4 ml-2" }}
+
+                            {% if service_form.platform_username.errors %}
+                                <p class="mt-1 text-sm text-red-500">{{ service_form.platform_username.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                        <input type="hidden" name="platform_link" value="{{ service_form.instance.platform_link }}">
 
                         <span class="text-lg">
                             {{ service_form.category.label_tag }}

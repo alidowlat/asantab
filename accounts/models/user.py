@@ -91,7 +91,7 @@ class User(AbstractUser):
 
     @property
     def is_important_user(self):
-        return self.groups.filter(name__in=["vip", "supports", "managers"]).exists()
+        return self.groups.filter(name__in=["vip", "support", "managers"]).exists()
 
     def has_completed_important_fields(self):
         return all([

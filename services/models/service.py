@@ -26,7 +26,7 @@ class Service(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending', verbose_name='وضعیت')
     platform = models.ForeignKey('services.Platform', on_delete=models.CASCADE, null=True, related_name='services',
                                  verbose_name='پلتفرم')
-    platform_link = models.URLField(max_length=120, null=True, verbose_name="لینک بستر تبلیغاتی")
+    platform_link = models.CharField(max_length=80, null=True, verbose_name="لینک بستر تبلیغاتی")
     category = models.ForeignKey('services.Category', on_delete=models.SET_NULL, null=True, related_name='services',
                                  verbose_name='دسته بندی')
     profession = models.ManyToManyField('services.Profession', related_name='services', verbose_name='صنف')

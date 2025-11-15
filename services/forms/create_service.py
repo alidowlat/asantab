@@ -8,6 +8,7 @@ from services.models import (
 
 class ServiceForm(forms.ModelForm):
     province = forms.ModelChoiceField(queryset=Province.objects.all(), required=True)
+    platform_username = forms.CharField(required=False)
 
     class Meta:
         model = Service
@@ -17,6 +18,41 @@ class ServiceForm(forms.ModelForm):
             'category', 'profession', 'tags',
             'is_active'
         ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        instance = kwargs.get('instance')
+        if instance and instance.platform and instance.platform_link:
+            prefix_map = {
+                'instagram': 'https://instagram.com/',
+                'telegram': 'https://t.me/',
+                'youtube': 'https://youtube.com/',
+            }
+
+            prefix = prefix_map.get(instance.platform.slug.lower())
+            if prefix and instance.platform_link.startswith(prefix):
+                self.fields['platform_username'].initial = instance.platform_link[len(prefix):]
+            else:
+                self.fields['platform_username'].initial = instance.platform_link
+
+    def clean(self):
+        cleaned = super().clean()
+        platform = cleaned.get('platform')
+        username = cleaned.get('platform_username', '').strip()
+
+        if not platform or not username:
+            return cleaned
+
+        prefix_map = {
+            'instagram': 'https://instagram.com/',
+            'telegram': 'https://t.me/',
+            'youtube': 'https://youtube.com/',
+        }
+        prefix = prefix_map.get(platform.slug.lower(), '')
+        cleaned['platform_link'] = prefix + username.lstrip('@/')
+
+        return cleaned
 
 
 class ScheduleForm(forms.ModelForm):

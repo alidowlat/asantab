@@ -6,7 +6,7 @@ class Platform(models.Model):
     slug = models.SlugField(default="", null=False, db_index=True, blank=True, max_length=35, unique=True)
 
     def __str__(self):
-        return f'{self.title} - {self.slug}'
+        return f'{self.title}'
 
     class Meta:
         verbose_name = 'Platform'

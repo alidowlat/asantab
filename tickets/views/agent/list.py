@@ -17,7 +17,7 @@ class AgentTicketListView(ExpertRequiredMixin, LoginRequiredMixin, ListView):
     def get_queryset(self):
         user = self.request.user
         return Ticket.objects.filter(
-            status__in=["open", "assigned"]
+            status__in=["open", "assigned", "answered"]
         ).filter(
             models.Q(assigned_to__isnull=True) | models.Q(assigned_to=user)
         ).order_by("-created_at")

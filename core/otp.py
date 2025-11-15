@@ -16,6 +16,7 @@ def set_user_otp(user):
     user.otp = otp
     user.otp_create_at = timezone.now()
     user.save(update_fields=['otp', 'otp_create_at'])
+    user.refresh_from_db()
     return otp
 
 

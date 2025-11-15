@@ -3,7 +3,7 @@
     <div class="flex items-center justify-between border-b">
         <!-- Left: Subject + ID -->
         <div class="text-nowrap mb-2">
-            <a href="{% url 'user_ticket_detail' pk=ticket.pk %}"
+            <a href="{% url 'agent_ticket_detail' pk=ticket.pk %}"
                class="block font-semibold text-gray-800 hover:text-primary dark:text-white">
                 {{ ticket.subject }}
             </a>

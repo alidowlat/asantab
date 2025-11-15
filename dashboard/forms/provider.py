@@ -1,7 +1,7 @@
 import os
 from django import forms
 from accounts.models import Provider
-from core.clean import UsernameCleanMixin, IbanNumberCleanMixin, CardNumberCleanMixin, PasswordCleanMixin, PlatformLinkCleanMixin
+from core.clean import UsernameCleanMixin, PasswordCleanMixin
 from django.conf import settings
 from locations.models import City
 from django.core.exceptions import ValidationError
