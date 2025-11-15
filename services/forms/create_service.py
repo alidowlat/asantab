@@ -8,7 +8,7 @@ from services.models import (
 
 class ServiceForm(forms.ModelForm):
     province = forms.ModelChoiceField(queryset=Province.objects.all(), required=True)
-    platform_username = forms.CharField(required=False)
+    platform_username = forms.CharField(required=True)
 
     class Meta:
         model = Service
