@@ -55,7 +55,7 @@
                             <div>
                                 <!-- Desktop Image -->
                                 <div class="hidden space-y-4 lg:block">
-                                    <img src="{% if ig_data.profile_pic_url_hd %}{{ ig_data.profile_pic_url_hd }}{% else %}{{ service.image.url }}{% endif %}"
+                                    <img src="{% if ig_data.avatar %}{{ ig_data.avatar }}{% else %}{{ service.image.url }}{% endif %}"
                                          alt="{{ service.title }}" loading="lazy"
                                          class="mx-auto h-full w-full cursor-pointer rounded-xl">
 
