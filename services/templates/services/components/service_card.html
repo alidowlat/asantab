@@ -7,11 +7,12 @@
         <div onclick="window.open('{{ service.slug }}')"
              class="mb-4 bg-secondary p-2 lg:p-4 cursor-pointer">
             <!-- Special Sale Percentage  -->
-            <div class="absolute right-2 top-0 rounded-b-full bg-warning px-1 py-1.5 text-center text-sm font-medium text-white md:text-base">
-                20%
-            </div>
+            {#            <div class="absolute right-2 top-0 rounded-b-full bg-warning px-1 py-1.5 text-center text-sm font-medium text-white md:text-base">#}
+            {#                20%#}
+            {#            </div>#}
             <!-- Image -->
-            <img src="{{ service.image.url }}" draggable="false" alt="service image"
+            <img src="{% if service.image %}{{ service.image.url }}{% else %}/static/images/empty-image.png{% endif %}"
+                 draggable="false" alt="service image"
                  class="aspect-[1/1] w-full rounded-xl object-cover">
         </div>
         <div class="mb-2 px-2 lg:px-4">

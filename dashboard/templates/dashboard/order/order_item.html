@@ -83,7 +83,7 @@
             {% for item in order.items.all %}
                 <div class="swiper-slide" style="width: 109px; margin-left: 10px;" role="group"
                      aria-label="{{ forloop.counter }} / {{ forloop.last }}">
-                    <img src="{{ item.service.image.url }}" alt="{{ item.service.title }} image" class="size-18 rounded-md">
+                    <img src="{% if item.service.image %}{{ item.service.image.url }}{% else %}/static/images/empty-image.png{% endif %}" alt="{{ item.service.title }} image" class="size-18 rounded-md">
                 </div>
             {% endfor %}
         </div>

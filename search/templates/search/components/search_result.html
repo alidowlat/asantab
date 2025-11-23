@@ -6,7 +6,7 @@
                  aria-label="{{ forloop.counter }} / {{ results.services|length }}">
                 <a href="{{ service.get_absolute_url }}"
                    class="flex items-center gap-x-2 rounded-xl border p-2 hover:border-border/50">
-                    <img src="{{ service.image.url }}" alt="search pic"
+                    <img src="{% if service.image %}{{ service.image.url }}{% else %}/static/images/empty-image.png{% endif %}" alt="search pic"
                          class="h-20 w-20 rounded-lg object-cover">
                     <p class="line-clamp-2 text-text/95">{{ service.title }}</p>
                 </a>

@@ -1,4 +1,9 @@
 import os
+from uuid import uuid4
+
+import requests
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.utils.text import slugify
 
 
@@ -8,3 +13,4 @@ def get_image_upload_to(instance, filename):
     slug_name = slugify(name_part)
     filename = f"{slug_name}.webp"
     return os.path.join(model_name, slug_name, filename)
+

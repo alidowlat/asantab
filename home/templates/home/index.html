@@ -80,12 +80,12 @@
                                             <a href="{{ service.get_absolute_url }}"
                                                class="relative block overflow-hidden rounded-[calc(var(--product-card-radius)-1px)] bg-muted">
                                                 <div class="mb-4 bg-secondary p-2 lg:p-4">
-                                                    <!-- Special Sale Percentage  -->
-                                                    <div class="absolute right-2 top-0 rounded-b-full bg-warning px-1 py-1.5 text-center text-sm font-medium text-white md:text-base">
-                                                        50%
-                                                    </div>
+{#                                                    <!-- Special Sale Percentage  -->#}
+{#                                                    <div class="absolute right-2 top-0 rounded-b-full bg-warning px-1 py-1.5 text-center text-sm font-medium text-white md:text-base">#}
+{#                                                        50%#}
+{#                                                    </div>#}
                                                     <!-- Image -->
-                                                    <img src="{{ service.image.url }}" alt="Blesser"
+                                                    <img src="{% if service.image %}{{ service.image.url }}{% else %}/static/images/empty-image.png{% endif %}" alt="{{ service.title }}"
                                                          class="aspect-[1/1] w-full rounded-xl object-cover">
                                                 </div>
                                                 <div class="mb-1 px-2 lg:px-4">
@@ -139,7 +139,7 @@
                                 <div class="flex flex-wrap items-center justify-center gap-2">
                                     <a href="{{ service.get_absolute_url }}"
                                        class="relative flex size-24 items-center justify-center rounded-full bg-secondary">
-                                        <img src="{{ service.image.url }}" alt="product" class="size-20 rounded-full object-cover">
+                                        <img src="{% if service.image %}{{ service.image.url }}{% else %}/static/images/empty-image.png{% endif %}" alt="product" class="size-20 rounded-full object-cover">
                                         {#                                        <div class="absolute bottom-0 right-0">#}
                                         {#                                            <div class="flex w-10 items-center justify-center rounded-full bg-warning py-px text-sm font-medium text-white">#}
                                         {#                                                %65#}
@@ -245,7 +245,7 @@
                         {% for service in most_viewed_services %}
                             <a href="{{ service.get_absolute_url }}" class="bg flex grow flex-col gap-6 px-4 py-2 lg:px-2">
                                 <!-- Image -->
-                                <img src="{{ service.image.url }}" alt="{{ service.title }}-image" class="rounded-lg">
+                                <img src="{% if service.image %}{{ service.image.url }}{% else %}/static/images/empty-image.png{% endif %}" alt="{{ service.title }}-image" class="rounded-lg">
                                 <div class="gap-x-1 font-bold">
                                     <span class="text-sm font-normal">{{ service.title }}</span>
                                 </div>
@@ -281,7 +281,7 @@
                                             <a href="{{ service.get_absolute_url }}"
                                                class="relative flex items-center gap-2 py-3 after:absolute after:left-0 after:top-full after:h-px after:w-2/3 after:rounded-full after:bg-secondary after:content-['']">
                                                 <div class="min-w-fit">
-                                                    <img src="{{ service.image.url }}" alt="hot sale" class="h-22 w-22 rounded-lg">
+                                                    <img src="{% if service.image %}{{ service.image.url }}{% else %}/static/images/empty-image.png{% endif %}" alt="hot sale" class="h-22 w-22 rounded-lg">
                                                 </div>
 
                                                 <div>

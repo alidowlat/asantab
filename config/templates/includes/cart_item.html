@@ -9,7 +9,7 @@
                 <div class="i-lucide-trash m-2 h-4 w-4 text-warning"></div>
             </button>
             <a href="{{ item.service.get_absolute_url }}">
-                <img class="h-[85px] w-[85px] rounded-md" src="{{ item.service.image.url }}"
+                <img class="h-[85px] w-[85px] rounded-md" src="{% if item.service.image %}{{ item.service.image.url }}{% else %}/static/images/empty-image.png{% endif %}"
                      alt="{{ item.service.title }}">
             </a>
         </div>

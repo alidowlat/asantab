@@ -22,7 +22,7 @@
                                 <div class="grid grid-cols-2 items-center justify-start gap-2 xs:grid-cols-3 xs:gap-6 sm:grid-cols-4 xl:grid-cols-6">
                                     <div class="relative row-span-2 min-w-fit xs:mx-auto">
                                         <a href="{{ item.service.get_absolute_url }}">
-                                            <img src="{{ item.service.image.url }}" alt="{{ item.title }}"
+                                            <img src="{% if item.service.image %}{{ item.service.image.url }}{% else %}/static/images/empty-image.png{% endif %}" alt="{{ item.title }}"
                                                  class="h-25 w-25 rounded-lg object-cover sm:h-28 sm:w-28">
                                         </a>
                                         <button onclick="removeCartItem({{ item.id }})"

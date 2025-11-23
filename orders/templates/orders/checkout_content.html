@@ -68,7 +68,7 @@
                             <li>
                                 <div class="space-y-4 rounded-lg bg-secondary/50 p-2 md:p-4">
                                     <div class="flex items-start gap-4">
-                                        <img src="{{ item.service.image.url }}" class="aspect-1 w-[75px] rounded-lg"
+                                        <img src="{% if item.service.image %}{{ item.service.image.url }}{% else %}/static/images/empty-image.png{% endif %}" class="aspect-1 w-[75px] rounded-lg"
                                              alt="{{ item.service.title }}">
                                         <div class="space-y-2">
                                             <div class="line-clamp-1">{{ item.service.title }}</div>

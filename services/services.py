@@ -1,6 +1,10 @@
-import requests
 from django.conf import settings
 from django.core.cache import cache
+from urllib.parse import urlparse
+from uuid import uuid4
+import requests
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 
 
 def get_instagram_data(username: str) -> dict:
@@ -20,6 +24,10 @@ def get_instagram_data(username: str) -> dict:
             return {}
 
         u = r.json().get("response", {}).get("body", {}).get("data", {}).get("user", {})
+
+        avatar_url = u.get("profile_pic_url_hd") or u.get("avatar")
+        local_avatar = download_instagram_avatar(avatar_url)
+
         data = {
             "username": u.get("username"),
             "full_name": u.get("full_name"),
@@ -28,12 +36,33 @@ def get_instagram_data(username: str) -> dict:
             "following": u.get("edge_follow", {}).get("count"),
             "posts": u.get("edge_owner_to_timeline_media", {}).get("count"),
             "profile_url": u.get("external_url"),
-            "avatar": u.get("profile_pic_url_hd"),
+            "avatar": local_avatar,
             "is_verified": u.get("is_verified", False),
         }
-
         cache.set(cache_key, data, 7200)
 
         return data
     except Exception:
         return {}
+
+
+def extract_instagram_data(platform_link: str):
+    if not platform_link:
+        return {}
+
+    parsed = urlparse(platform_link)
+    username = parsed.path.strip("/")
+
+    if not username:
+        return {}
+
+    return get_instagram_data(username=username)
+
+
+def download_instagram_avatar(url):
+    if not url:
+        return None
+    response = requests.get(url, timeout=5)
+    filename = f"instagram/{uuid4()}.jpg"
+    saved_path = default_storage.save(filename, ContentFile(response.content))
+    return default_storage.url(saved_path)

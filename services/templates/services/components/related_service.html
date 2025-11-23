@@ -18,7 +18,7 @@
                                 <div class="mb-4 bg-secondary p-2 lg:p-4">
                                     <!-- Image -->
                                     <a href="{{ service.get_absolute_url }}">
-                                        <img src="{{ service.image.url }}" alt="{{ service.title }}"
+                                        <img src="{% if service.image %}{{ service.image.url }}{% else %}/static/images/empty-image.png{% endif %}" alt="{{ service.title }}"
                                              class="aspect-[1/1] w-full rounded-xl object-cover">
                                     </a>
                                 </div>

@@ -1,4 +1,3 @@
-from django.db.models import Q, Count, Min, Max
 from django.http import HttpRequest, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
@@ -9,9 +8,8 @@ from core import get_client_info
 from core.clean import create_visit_clean
 from reviews.models.service_review import ServiceReview, ServiceReviewReaction
 from services.helper import ServiceDataFetcher
-from services.models import Service, ServiceVisit, Favorite, Schedule
-from services.services import get_instagram_data
-
+from services.models import Service, ServiceVisit, Favorite
+from services.services import extract_instagram_data
 
 class ServiceDetailView(DetailView):
     template_name = 'services/detail.html'
@@ -30,10 +28,7 @@ class ServiceDetailView(DetailView):
         context['max_price'] = price_range['max_price']
 
         # instagram api
-        ig_data = {}
-        if service.provider.instagram_url:
-            ig_data = get_instagram_data(username=service.provider.instagram_url)
-        context['ig_data'] = ig_data
+        context['ig_data'] = extract_instagram_data(service.platform_link)
 
         # related services
         context['related_services'] = fetcher.get_related_services()
@@ -92,7 +87,6 @@ class ProviderDetailView(DetailView):
         context['related_services'] = related_services
 
         return context
-
 
 
 def add_service_review(request: HttpRequest):

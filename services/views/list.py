@@ -2,7 +2,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Max, Min, Count
 from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_POST
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView
 from accounts.models import Provider
 from config.views import apply_filters
 from locations.models import City
