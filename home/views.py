@@ -1,6 +1,7 @@
 from itertools import zip_longest
 from django.db.models import Prefetch, Count, F, Sum
 from django.db.models.functions import Lower
+from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django.shortcuts import render
 from blog.models import Post
@@ -49,6 +50,11 @@ class HomeView(TemplateView):
         context['most_sold_chunks'] = self.chunked(context['most_sold_services'], 3)
 
         return context
+
+
+def test(request):
+    from django.conf import settings
+    return HttpResponse(settings.MEDIA_ROOT)
 
 
 def site_header_component(request):
