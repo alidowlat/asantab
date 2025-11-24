@@ -60,9 +60,4 @@ def extract_instagram_data(platform_link: str):
 
 
 def download_instagram_avatar(url):
-    if not url:
-        return None
-    response = requests.get(url, timeout=5)
-    filename = f"instagram/{uuid4()}.jpg"
-    saved_path = default_storage.save(filename, ContentFile(response.content))
-    return default_storage.url(saved_path)
+    return url
