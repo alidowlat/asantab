@@ -151,7 +151,7 @@ def create_visit_clean(
     if not model.objects.filter(**filter_kwargs).exists():
         model.objects.create(
             **filter_kwargs,
-            user=user,
+            user=user if user.is_authenticated else None,
             user_agent=user_agent,
             referer=referer,
         )
