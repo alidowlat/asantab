@@ -9,24 +9,32 @@ from django.core.files.storage import default_storage
 
 def get_instagram_data(username: str) -> dict:
     cache_key = f"ig_profile_{username}"
-    data = cache.get(cache_key)
-    if data:
-        return data
+    cached = cache.get(cache_key)
+    if cached:
+        return cached
 
     try:
         r = requests.post(
             "https://boxapi.ir/api/instagram/user/get_web_profile_info",
             auth=(settings.BOXAPI_USERNAME, settings.BOXAPI_PASSWORD),
             json={"username": username},
-            timeout=10
+            timeout=15
         )
+
         if not r.ok:
             return {}
 
         u = r.json().get("response", {}).get("body", {}).get("data", {}).get("user", {})
 
         avatar_url = u.get("profile_pic_url_hd") or u.get("avatar")
-        local_avatar = download_instagram_avatar(avatar_url)
+
+        avatar_cache_key = f"ig_avatar_{avatar_url}"
+        avatar_local = cache.get(avatar_cache_key)
+
+        if not avatar_local:
+            avatar_local = download_instagram_avatar(avatar_url)
+            if avatar_local:
+                cache.set(avatar_cache_key, avatar_local, 86400)
 
         data = {
             "username": u.get("username"),
@@ -36,14 +44,15 @@ def get_instagram_data(username: str) -> dict:
             "following": u.get("edge_follow", {}).get("count"),
             "posts": u.get("edge_owner_to_timeline_media", {}).get("count"),
             "profile_url": u.get("external_url"),
-            "avatar": local_avatar,
+            "avatar": avatar_local,
             "is_verified": u.get("is_verified", False),
         }
-        cache.set(cache_key, data, 7200)
 
+        cache.set(cache_key, data, 7200)
         return data
     except Exception:
         return {}
+
 
 
 def extract_instagram_data(platform_link: str):
@@ -60,13 +69,17 @@ def extract_instagram_data(platform_link: str):
 
 
 def download_instagram_avatar(url):
-    print("DOWNLOADING --- URL:", url)
     if not url:
-        print("NO URL")
         return None
-    r = requests.get(url, timeout=5, headers={"User-Agent": "Mozilla/5.0"})
-    print("STATUS:", r.status_code)
-    name = f"instagram/{uuid4()}.jpg"
-    path = default_storage.save(name, ContentFile(r.content))
-    print("SAVED:", path)
-    return default_storage.url(path)
+
+    for _ in range(3):
+        try:
+            r = requests.get(url, timeout=10, headers={"User-Agent": "Mozilla/5.0"})
+            if r.ok:
+                name = f"instagram/{uuid4()}.jpg"
+                path = default_storage.save(name, ContentFile(r.content))
+                return default_storage.url(path)
+        except Exception:
+            continue
+
+    return None
