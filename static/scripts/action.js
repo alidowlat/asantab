@@ -604,6 +604,20 @@ function addServiceToCart(serviceId) {
 
     $.get(`/services/add-to-cart?service_id=${serviceId}&option_id=${optionId}&count=${count}&schedule_id=${scheduleId || ''}`)
         .then(res => {
+            if (res.status === "not_auth") {
+                Swal.fire({
+                    title: 'ابتدا وارد حساب شوید',
+                    text: res.message,
+                    icon: "warning",
+                    confirmButtonText: "ورود",
+                }).then(r => {
+                    if (r.isConfirmed) {
+                        window.location.href = res.login_url;
+                    }
+                });
+                return;
+            }
+
             Swal.fire({
                 title: "اعلان",
                 text: res.message,

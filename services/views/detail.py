@@ -9,7 +9,8 @@ from core.clean import create_visit_clean
 from reviews.models.service_review import ServiceReview, ServiceReviewReaction
 from services.helper import ServiceDataFetcher
 from services.models import Service, ServiceVisit, Favorite
-from services.services import extract_instagram_data
+from services.services import extract_instagram_data, get_instagram_data
+
 
 class ServiceDetailView(DetailView):
     template_name = 'services/detail.html'
@@ -71,6 +72,11 @@ class ServiceDetailView(DetailView):
             user=user, reaction='dislike').values_list('review_id', flat=True))
 
         return liked_ids, disliked_ids
+
+
+def get_ig_data_api(request, username):
+    data = get_instagram_data(username)
+    return JsonResponse(data or {})
 
 
 class ProviderDetailView(DetailView):

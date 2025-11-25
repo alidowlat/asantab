@@ -22,7 +22,10 @@
                                 <div class="grid grid-cols-2 items-center justify-start gap-2 xs:grid-cols-3 xs:gap-6 sm:grid-cols-4 xl:grid-cols-6">
                                     <div class="relative row-span-2 min-w-fit xs:mx-auto">
                                         <a href="{{ item.service.get_absolute_url }}">
-                                            <img src="{% if item.service.image %}{{ item.service.image.url }}{% else %}/static/images/empty-image.png{% endif %}" alt="{{ item.title }}"
+                                            <img src="
+
+                                                    {% if item.service.image %}{{ item.service.image.url }}{% else %}/static/images/empty-image.png{% endif %}"
+                                                 alt="{{ item.title }}"
                                                  class="h-25 w-25 rounded-lg object-cover sm:h-28 sm:w-28">
                                         </a>
                                         <button onclick="removeCartItem({{ item.id }})"
@@ -125,7 +128,7 @@
             <div class="fixed inset-x-0 bottom-0 z-20 rounded-t-xl bg-muted px-4 pb-20 pt-4 transition-all duration-300 lg:hidden"
                  data-onscrollclass="translate-y-1/2">
                 <div>
-                    <a href=""
+                    <a href="{% url 'order_checkout_page' %}"
                        class="inline-flex h-10 w-full items-center justify-center gap-x-2 whitespace-nowrap rounded-md bg-primary-btn px-4 py-2 text-sm font-medium text-white ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
                         ادامه | {{ final_price|rounded|three_digits }}
                         <span class="text-xs"> تومان </span>

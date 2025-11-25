@@ -13,46 +13,53 @@ def get_instagram_data(username: str) -> dict:
     if cached:
         return cached
 
-    try:
-        r = requests.post(
-            "https://boxapi.ir/api/instagram/user/get_web_profile_info",
-            auth=(settings.BOXAPI_USERNAME, settings.BOXAPI_PASSWORD),
-            json={"username": username},
-            timeout=15
-        )
+    for _ in range(3):
+        try:
+            r = requests.post(
+                "https://boxapi.ir/api/instagram/user/get_web_profile_info",
+                auth=(settings.BOXAPI_USERNAME, settings.BOXAPI_PASSWORD),
+                json={"username": username},
+                timeout=8
+            )
 
-        if not r.ok:
-            return {}
+            if not r.ok:
+                continue
 
-        u = r.json().get("response", {}).get("body", {}).get("data", {}).get("user", {})
+            u = r.json().get("response", {}).get("body", {}).get("data", {}).get("user", {})
 
-        avatar_url = u.get("profile_pic_url_hd") or u.get("avatar")
+            if not u:
+                continue
 
-        avatar_cache_key = f"ig_avatar_{avatar_url}"
-        avatar_local = cache.get(avatar_cache_key)
+            avatar_url = u.get("profile_pic_url_hd") or u.get("avatar")
 
-        if not avatar_local:
-            avatar_local = download_instagram_avatar(avatar_url)
-            if avatar_local:
-                cache.set(avatar_cache_key, avatar_local, 86400)
+            avatar_cache_key = f"ig_avatar_{avatar_url}"
+            avatar_local = cache.get(avatar_cache_key)
 
-        data = {
-            "username": u.get("username"),
-            "full_name": u.get("full_name"),
-            "biography": u.get("biography"),
-            "followers": u.get("edge_followed_by", {}).get("count"),
-            "following": u.get("edge_follow", {}).get("count"),
-            "posts": u.get("edge_owner_to_timeline_media", {}).get("count"),
-            "profile_url": u.get("external_url"),
-            "avatar": avatar_local,
-            "is_verified": u.get("is_verified", False),
-        }
+            if not avatar_local:
+                avatar_local = download_instagram_avatar(avatar_url)
+                if avatar_local:
+                    cache.set(avatar_cache_key, avatar_local, 86400)
 
-        cache.set(cache_key, data, 7200)
-        return data
-    except Exception:
-        return {}
+            data = {
+                "username": u.get("username"),
+                "full_name": u.get("full_name"),
+                "biography": u.get("biography"),
+                "followers": u.get("edge_followed_by", {}).get("count"),
+                "following": u.get("edge_follow", {}).get("count"),
+                "posts": u.get("edge_owner_to_timeline_media", {}).get("count"),
+                "profile_url": u.get("external_url"),
+                "avatar": avatar_local,
+                "is_verified": u.get("is_verified", False),
+            }
 
+            cache.set(cache_key, data, 7200)
+            return data
+
+        except Exception:
+            continue
+
+    cache.set(cache_key, {}, 300)
+    return {}
 
 
 def extract_instagram_data(platform_link: str):

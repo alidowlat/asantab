@@ -41,12 +41,18 @@ def user_cart(request: HttpRequest):
     return render(request, 'orders/cart.html', context)
 
 
-@login_required
 def add_service_to_cart(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({
+            'status': 'not_auth',
+            'message': 'برای افزودن به سبد خرید ابتدا وارد حساب شوید.',
+            'login_url': reverse('auth_page')
+        })
+
     service_id = request.GET.get('service_id')
     option_id = request.GET.get('option_id')
     count = int(request.GET.get('count', 1))
-    schedule_id = request.GET.get('schedule_id')  # ممکنه خالی باشه
+    schedule_id = request.GET.get('schedule_id')
 
     if count < 1:
         return JsonResponse({'status': 'invalid_count', 'message': 'تعداد معتبر نیست'})
@@ -57,18 +63,15 @@ def add_service_to_cart(request):
     if not service or not option:
         return JsonResponse({'status': 'not_found', 'message': 'پارامترهای ورودی نامعتبر است'})
 
-    # بررسی وضعیت schedule
     active_schedules = service.schedules.filter(is_active=True)
 
     if active_schedules.exists():
-        # یعنی این سرویس برنامه‌دار است → کاربر باید schedule بده
         if not schedule_id:
             return JsonResponse({'status': 'error', 'message': 'انتخاب زمان الزامی است'})
         schedule = Schedule.objects.filter(id=schedule_id, service=service).first()
         if not schedule:
             return JsonResponse({'status': 'not_found', 'message': 'زمان انتخابی نامعتبر است'})
     else:
-        # سرویسی که schedule نداره
         schedule = None
 
     order, created = Order.objects.get_or_create(user=request.user, is_paid=False)

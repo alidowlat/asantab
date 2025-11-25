@@ -55,40 +55,49 @@
                             <div>
                                 <!-- Desktop Image -->
                                 <div class="hidden space-y-4 lg:block">
-                                    <img src="{% if ig_data.avatar %}{{ ig_data.avatar }}{% elif service.image %}{{ service.image.url }}{% else %}/static/images/empty-image.png{% endif %}"
-                                         alt="{{ service.title }}" loading="lazy"
-                                         class="mx-auto h-full w-full cursor-pointer rounded-xl">
-                                    {% if ig_data %}
-                                        <div class="flex flex-col items-center w-full rounded-lg border-2 px-4 py-3 text-sm text-text/60 gap-3">
-                                            <div class="text-center space-y-1 mb-2">
-                                                <div dir="ltr" class="text-base font-semibold text-text/95">
-                                                    {{ ig_data.username }}
-                                                </div>
-                                                <div class="text-sm text-text/70">
-                                                    {{ ig_data.full_name }}
-                                                </div>
-                                            </div>
+                                    <img id="service-image-{{ service.id }}"
+                                         src="
 
-                                            <div class="flex justify-center gap-6 text-center">
-                                                <div>
-                                                    <div class="text-text/95 font-medium">{{ ig_data.following }}</div>
-                                                    <div class="text-text/70">Following</div>
-                                                </div>
-                                                <div>
-                                                    <div class="text-text/95 font-medium">{{ ig_data.followers }}</div>
-                                                    <div class="text-text/70">Followers</div>
-                                                </div>
-                                                <div>
-                                                    <div class="text-text/95 font-medium">{{ ig_data.posts }}</div>
-                                                    <div class="text-text/70">Posts</div>
-                                                </div>
+                                                 {% if service.image %}{{ service.image.url }}{% else %}/static/images/empty-image.png{% endif %}"
+                                         alt="{{ service.title }}" loading="lazy"
+                                         data-instagram-username="{{ ig_data.username }}"
+                                         class="mx-auto h-full w-full cursor-pointer rounded-xl">
+
+                                    <div id="ig-data-{{ service.id }}"
+                                         class="hidden flex flex-col items-center w-full rounded-lg border-2 px-4 py-3 text-sm text-text/60 gap-3">
+                                        <div class="text-center space-y-1 mb-2">
+                                            <div dir="ltr" class="text-base font-semibold text-text/95"
+                                                 id="ig-username-{{ service.id }}"></div>
+                                            <div class="text-sm text-text/70" id="ig-fullname-{{ service.id }}"></div>
+                                        </div>
+
+                                        <div class="flex justify-center gap-6 text-center">
+                                            <div>
+                                                <div class="text-text/95 font-medium" id="ig-following-{{ service.id }}"></div>
+                                                <div class="text-text/70">Following</div>
+                                            </div>
+                                            <div>
+                                                <div class="text-text/95 font-medium" id="ig-followers-{{ service.id }}"></div>
+                                                <div class="text-text/70">Followers</div>
+                                            </div>
+                                            <div>
+                                                <div class="text-text/95 font-medium" id="ig-posts-{{ service.id }}"></div>
+                                                <div class="text-text/70">Posts</div>
                                             </div>
                                         </div>
-                                    {% endif %}
+                                    </div>
                                 </div>
+
+
                                 <!-- Mobile Image -->
                                 <div class="lg:hidden space-y-4">
-                                    <img src="{% if ig_data.avatar %}{{ ig_data.avatar }}{% elif service.image %}{{ service.image.url }}{% else %}/static/images/empty-image.png{% endif %}"
+                                    <img src="
+
+
+
+
+
+                                            {% if ig_data.avatar %}{{ ig_data.avatar }}{% elif service.image %}{{ service.image.url }}{% else %}/static/images/empty-image.png{% endif %}"
                                          alt="{{ service.title }}"
                                          loading="lazy"
                                          class="mx-auto h-[250px] rounded-lg object-cover">
@@ -416,4 +425,68 @@
             }
         }
     </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM Loaded!');
+
+            const services = Array.from(document.querySelectorAll('[id^="service-image-"]'));
+            console.log('Found service images:', services.length);
+
+            const queue = [...services]; // صف درخواست‌ها
+            const MAX_CONCURRENT = 3; // همزمان ۳ درخواست
+
+            let activeCount = 0;
+
+            const processQueue = () => {
+                if (queue.length === 0) return;
+                if (activeCount >= MAX_CONCURRENT) return;
+
+                const img = queue.shift();
+                activeCount++;
+
+                const serviceId = img.id.split('-')[2];
+                const username = img.dataset.instagramUsername;
+
+                if (!username) {
+                    console.warn(`Username not found for service ${serviceId}`);
+                    activeCount--;
+                    processQueue();
+                    return;
+                }
+
+                const url = `/services/ig/${username}/`;
+                console.log(`Fetching: ${url}`);
+
+                fetch(url)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!data || !Object.keys(data).length) {
+                            console.warn(`Empty IG data for: ${username}`);
+                        } else {
+                            const igDataDiv = document.getElementById(`ig-data-${serviceId}`);
+                            if (igDataDiv) {
+                                if (data.avatar) img.src = data.avatar;
+                                document.getElementById(`ig-username-${serviceId}`).textContent = data.username || '';
+                                document.getElementById(`ig-fullname-${serviceId}`).textContent = data.full_name || '';
+                                document.getElementById(`ig-following-${serviceId}`).textContent = data.following || 0;
+                                document.getElementById(`ig-followers-${serviceId}`).textContent = data.followers || 0;
+                                document.getElementById(`ig-posts-${serviceId}`).textContent = data.posts || 0;
+                                igDataDiv.classList.remove('hidden');
+                            }
+                        }
+                    })
+                    .catch(err => console.error(`Error fetching ${username}:`, err))
+                    .finally(() => {
+                        activeCount--;
+                        processQueue(); // پردازش درخواست بعدی در صف
+                    });
+
+                processQueue(); // پردازش درخواست‌های بعدی تا پر شدن MAX_CONCURRENT
+            };
+
+            processQueue();
+        });
+        </script>
+
 {% endblock %}
