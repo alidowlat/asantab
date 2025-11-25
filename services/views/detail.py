@@ -29,7 +29,7 @@ class ServiceDetailView(DetailView):
         context['max_price'] = price_range['max_price']
 
         # instagram api
-        context['ig_data'] = extract_instagram_data(service.platform_link)
+        # context['ig_data'] = extract_instagram_data(service.platform_link)
 
         # related services
         context['related_services'] = fetcher.get_related_services()
@@ -76,6 +76,7 @@ class ServiceDetailView(DetailView):
 
 def get_ig_data_api(request, username):
     data = get_instagram_data(username)
+    print(data)
     return JsonResponse(data or {})
 
 

@@ -13,6 +13,31 @@ from home.models import MediaItem
 register = template.Library()
 
 
+@register.filter
+def extract_username(value):
+    if not value:
+        return ""
+
+    value = value.strip()
+
+    if value.startswith("@"):
+        value = value[1:]
+
+    patterns = [
+        "https://instagram.com/",
+        "https://www.instagram.com/",
+        "http://instagram.com/",
+        "http://www.instagram.com/",
+        "instagram.com/",
+        "www.instagram.com/",
+    ]
+
+    for p in patterns:
+        if value.startswith(p):
+            value = value[len(p):]
+
+    return value.split("/")[0]
+
 @register.simple_tag
 def get_user_role(user):
     info = user_role(user=user)
