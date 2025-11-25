@@ -76,7 +76,6 @@ class ServiceDetailView(DetailView):
 
 def get_ig_data_api(request, username):
     data = get_instagram_data(username)
-    print(data)
     return JsonResponse(data or {})
 
 
