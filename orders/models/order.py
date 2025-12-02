@@ -170,3 +170,31 @@ class VendorOrder(models.Model):
         verbose_name = 'Vendor Order'
         verbose_name_plural = 'Vendor Orders'
         db_table = 'vendor_orders'
+
+
+class OrderContent(models.Model):
+    order_item = models.ForeignKey('orders.OrderItem', on_delete=models.CASCADE, related_name='contents')
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        desc = (self.description[:20] + '...') if self.description and len(self.description) > 20 else self.description
+        return f"{self.order_item.order.user} - {desc}"
+
+    class Meta:
+        verbose_name = 'Order Content'
+        verbose_name_plural = 'Order Contents'
+        db_table = 'order_contents'
+
+
+class OrderContentFile(models.Model):
+    content = models.ForeignKey('orders.OrderContent', on_delete=models.CASCADE, related_name='files')
+    file = models.FileField(upload_to='order_contents/')
+
+    def __str__(self):
+        return f"{self.content.id} - {self.file.name.split('/')[-1]}"
+
+    class Meta:
+        verbose_name = 'Order Content File'
+        verbose_name_plural = 'Order Contents Files'
+        db_table = 'order_content_files'

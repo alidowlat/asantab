@@ -5,14 +5,16 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Prefetch, F
 from django.http import HttpResponseForbidden, Http404, JsonResponse
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse
+from django.views import View
 from django.views.decorators.http import require_POST
 from django.views.generic import ListView, DetailView, TemplateView
 from accounts.models import Provider
 from core import ActiveProviderRequiredMixin
+from dashboard.forms import OrderContentForm
 from notifications.services import notify_user
-from orders.models import Order, OrderItem, VendorOrder
+from orders.models import Order, OrderItem, VendorOrder, OrderContentFile, OrderContent
 from orders.services import OrderCalculator
 from orders.models import STATUS_CHOICES
 from services.models import Schedule
@@ -90,6 +92,62 @@ class OrderDetailView(LoginRequiredMixin, TemplateView):
         context['discount_amount'] = calc.discount_amount()
         context['final_price'] = calc.final_price()
         return context
+
+
+class OrderContentCreateView(LoginRequiredMixin, View):
+    def get(self, request, item_id):
+        item = get_object_or_404(OrderItem, id=item_id, order__user=request.user)
+
+        content = OrderContent.objects.filter(order_item=item).exists()
+        if content:
+            return redirect('order_detail', pk=item.order.pk)
+
+        form = OrderContentForm()
+        context = {
+            'form': form,
+            'item': item,
+        }
+        return render(request, 'dashboard/order/order_item_content_form.html', context)
+
+    def post(self, request, item_id):
+        item = get_object_or_404(OrderItem, id=item_id, order__user=request.user)
+
+        content = OrderContent.objects.filter(order_item=item).exists()
+        if content:
+            return redirect('order_detail', pk=item.order.pk)
+
+        form = OrderContentForm(request.POST)
+        if form.is_valid():
+            content = form.save(commit=False)
+            content.order_item = item
+            content.save()
+
+            files = request.FILES.getlist('files[]')
+
+            for f in files:
+                OrderContentFile.objects.create(content=content, file=f)
+
+            return redirect('order_detail', pk=item.order.pk)
+
+        context = {
+            'form': form,
+            'item': item,
+        }
+        return render(request, 'dashboard/order/order_item_content_form.html', context)
+
+
+class OrderContentDetailView(LoginRequiredMixin, View):
+    def get(self, request, item_id):
+        item = get_object_or_404(OrderItem, id=item_id, order__user=request.user)
+        content = get_object_or_404(OrderContent, order_item=item)
+        files = content.files.all()
+
+        context = {
+            'item': item,
+            'content': content,
+            'files': files,
+        }
+        return render(request, 'dashboard/order/order_item_content_detail.html', context)
 
 
 class ProviderOrderListView(LoginRequiredMixin, ActiveProviderRequiredMixin, ListView):
@@ -179,6 +237,26 @@ class ProviderOrderDetailView(LoginRequiredMixin, ActiveProviderRequiredMixin, D
         return context
 
 
+class ProviderOrderContentDetailView(LoginRequiredMixin, View):
+    def get(self, request, item_id):
+        item = get_object_or_404(
+            OrderItem,
+            id=item_id,
+            vendor_order__provider=request.user.providers
+        )
+
+        content = get_object_or_404(OrderContent, order_item=item)
+        files = content.files.all()
+
+        context = {
+            'item': item,
+            'content': content,
+            'files': files,
+        }
+        return render(request, 'dashboard/order/order_item_content_detail.html', context)
+
+
+
 def _accept_vendor_order(vendor_order, order, buyer_wallet, seller_wallet, site_wallet):
     """
     قبول سفارش توسط فروشنده:
@@ -191,7 +269,6 @@ def _accept_vendor_order(vendor_order, order, buyer_wallet, seller_wallet, site_
     commission = commission_rule.calculate(total_price) if commission_rule else Decimal("0")
     seller_income = Decimal(total_price) - Decimal(commission)
 
-    # ولت خریدار: برداشتن مبلغ (مطابق الگوی پروژه‌ات)
     buyer_wallet.balance -= total_price
     buyer_wallet.frozen_balance -= total_price
     buyer_wallet.save(update_fields=["balance", "frozen_balance"])
@@ -203,11 +280,9 @@ def _accept_vendor_order(vendor_order, order, buyer_wallet, seller_wallet, site_
         description=f"سفارش {order.tracking_code} - پرداخت کامل شد",
     )
 
-    # ولت سایت: دریافت کمیسیون
     if site_wallet:
         site_wallet.balance = F('balance') + commission
         site_wallet.save(update_fields=["balance"])
-        # چون از F استفاده شد، بهتره واکشی مجدد نکنیم؛ فقط تراکنش ثبت می‌کنیم.
         WalletTransaction.objects.create(
             wallet=site_wallet,
             amount=commission,
@@ -215,7 +290,6 @@ def _accept_vendor_order(vendor_order, order, buyer_wallet, seller_wallet, site_
             description=f"سود از سفارش {order.tracking_code}",
         )
 
-    # ولت فروشنده: واریز پس از کسر کارمزد
     seller_wallet.balance += seller_income
     seller_wallet.save(update_fields=["balance"])
 
@@ -226,7 +300,6 @@ def _accept_vendor_order(vendor_order, order, buyer_wallet, seller_wallet, site_
         description=f"سفارش {order.tracking_code} - واریز پس از کسر کارمزد",
     )
 
-    # برای شفافیت: تراکنش کارمزد در ولت فروشنده (منفی)
     if commission > 0:
         WalletTransaction.objects.create(
             wallet=seller_wallet,
@@ -235,7 +308,6 @@ def _accept_vendor_order(vendor_order, order, buyer_wallet, seller_wallet, site_
             description=f"سفارش {order.tracking_code} - کسر کارمزد {commission} تومان",
         )
 
-    # تغییر وضعیت vendor_order
     vendor_order.status = "accepted"
     vendor_order.rejection_reason = None
     vendor_order.save(update_fields=["status", "rejection_reason"])
@@ -298,7 +370,7 @@ def handle_vendor_order_response(vendor_order, accepted: bool, rejection_reason:
             notify_user(
                 user=buyer,
                 title="سفارش شما تأیید شد",
-                message=f"سفارش مربوط به «{vendor_order.service.title}» توسط ارائه‌دهنده تأیید شد.",
+                message=f"سفارش مربوطه توسط ارائه‌دهنده تأیید شد.",
                 type_key="order_accepted",
                 link=reverse('order_detail', args=[order.id])
             )
@@ -318,7 +390,7 @@ def handle_vendor_order_response(vendor_order, accepted: bool, rejection_reason:
             notify_user(
                 user=buyer,
                 title="سفارش شما رد شد ❌",
-                message=f"سفارش مربوط به «{vendor_order.service.title}» توسط ارائه‌دهنده رد شد."
+                message=f"سفارش مربوطه توسط ارائه‌دهنده رد شد."
                         + (f" دلیل: {rejection_reason}" if rejection_reason else ""),
                 type_key="order_rejected",
                 link=reverse('order_detail', args=[order.id])
@@ -333,6 +405,7 @@ def handle_vendor_order_response(vendor_order, accepted: bool, rejection_reason:
             )
 
             return result
+
 
 @require_POST
 def vendor_order_action(request, pk, action):

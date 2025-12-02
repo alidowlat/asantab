@@ -63,7 +63,7 @@ def add_service_to_cart(request):
     if not service or not option:
         return JsonResponse({'status': 'not_found', 'message': 'پارامترهای ورودی نامعتبر است'})
 
-    active_schedules = service.schedules.filter(is_active=True)
+    active_schedules = service.schedules.filter(is_active=True, capacity__gt=0)
 
     if active_schedules.exists():
         if not schedule_id:

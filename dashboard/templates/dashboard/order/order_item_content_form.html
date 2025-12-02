@@ -1,0 +1,175 @@
+{% extends 'dashboard/_layout.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+    محتوای کاربر در ({{ item.service }}) | آسان تب
+{% endblock %}
+
+{% block content %}
+    <div class="rounded-lg bg-muted shadow">
+        <div class="p-5">
+            <div class="mb-16 flex justify-between">
+                <h1 class="relative w-fit font-medium lg:text-lg">
+                    محتوای کاربر در سفارش: {{ item }}
+                    <span class="absolute right-0 top-10 h-[3px] w-full animate-fill-border rounded-full bg-primary"></span>
+                </h1>
+            </div>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mt-10">
+                    <div class="space-y-6">
+                        <div>
+                            <label for="{{ form.description.id_for_label }}" class="form-label">متن پیام شما</label>
+                            {{ form.description|add_class:"form-textarea" }}
+                            {% if form.description.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.description.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <label class="form-label">آپلود فایل پیوست</label>
+
+                            <label for="id_files"
+                                   class="file-upload-wrapper border-2 border-dotted border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer flex flex-col items-center justify-center p-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                     class="lucide lucide-cloud-upload-icon">
+                                    <path d="M12 13v8"/>
+                                    <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/>
+                                    <path d="m8 17 4-4 4 4"/>
+                                </svg>
+                                <p class="mt-2 text-sm font-medium text-text/80 dark:text-text/70 text-center">
+                                    برای آپلود کلیک کنید یا فایل را بکشید و رها کنید
+                                </p>
+                                <p class="mt-1 text-xs text-text/60 dark:text-text/50 text-center">
+                                    PNG, JPG, ZIP, PDF — حداکثر 5 مگابایت
+                                </p>
+                            </label>
+
+                            <input type="file"
+                                   name="files[]"
+                                   id="id_files"
+                                   class="hidden"
+                                   multiple/>
+
+                            <div id="uploaded-files-list" class="mt-4 space-y-2"></div>
+                        </div>
+                        <div class="flex justify-end">
+                            <button type="submit" id="submit-btn"
+                                    class="btn-primary mt-6 inline-flex w-32 items-center justify-center gap-x-2 px-5 py-2.5 text-sm font-medium sm:w-auto">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                     class="lucide lucide-send">
+                                    <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"></path>
+                                    <path d="m21.854 2.147-10.94 10.939"></path>
+                                </svg>
+                                <span>ارسال</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const fileInput = document.querySelector('#id_files');
+            const filesList = document.querySelector('#uploaded-files-list');
+            const maxFileSize = 5 * 1024 * 1024;
+            let storedFiles = [];
+
+            function renderFiles() {
+                filesList.innerHTML = "";
+                storedFiles.forEach((file, index) => {
+                    const fileURL = URL.createObjectURL(file);
+                    const item = document.createElement("div");
+                    item.className = "flex items-center justify-between bg-gray-100 dark:bg-gray-800 p-2 rounded";
+                    item.innerHTML = `
+                <a href="${fileURL}" target="_blank"
+                   class="text-sm font-medium text-primary hover:underline">
+                    📎 ${file.name}
+                </a>
+
+                <button type="button" data-index="${index}"
+                        class="text-red-500 hover:text-red-700 text-lg font-bold">
+                    &times;
+                </button>
+            `;
+                    filesList.appendChild(item);
+                });
+            }
+
+            fileInput.addEventListener("change", function () {
+                const selectedFiles = Array.from(this.files);
+                const newValidFiles = [];
+                let hasError = false;
+                selectedFiles.forEach(file => {
+                    if (file.size > maxFileSize) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "خطا!",
+                            text: `حجم فایل ${file.name} بیشتر از 5 مگابایت است`,
+                            confirmButtonText: "باشه"
+                        });
+                        hasError = true;
+                    } else {
+                        newValidFiles.push(file);
+                    }
+                });
+                if (hasError) {
+                    return;
+                }
+                storedFiles = [...storedFiles, ...newValidFiles];
+                const dt = new DataTransfer();
+                storedFiles.forEach(f => dt.items.add(f));
+                fileInput.files = dt.files;
+                renderFiles();
+            });
+
+            filesList.addEventListener("click", function (e) {
+                if (e.target.tagName === "BUTTON") {
+                    const index = e.target.dataset.index;
+                    storedFiles.splice(index, 1);
+                    const dt = new DataTransfer();
+                    storedFiles.forEach(f => dt.items.add(f));
+                    fileInput.files = dt.files;
+                    renderFiles();
+                }
+            });
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const form = document.querySelector("form");
+            const submitBtn = document.querySelector("#submit-btn");
+
+            submitBtn.addEventListener("click", function (e) {
+                e.preventDefault();
+
+                Swal.fire({
+                    title: "ثبت نهایی",
+                    text: "آیا از ثبت این محتوا مطمئن هستید؟ این عملیات غیرقابل بازگشت است.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "بله، ثبت شود",
+                    cancelButtonText: "انصراف"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            icon: "success",
+                            title: "محتوا ارسال شد",
+                            text: "محتوای شما با موفقیت برای فروشنده ثبت شد.",
+                            timer: 3500,
+                            timerProgressBar: true,
+                            showConfirmButton: false,
+                        });
+                        setTimeout(() => {
+                            form.submit();
+                        }, 3500);
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

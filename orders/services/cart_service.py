@@ -100,15 +100,16 @@ class CartManager:
 
         if item:
             new_count = item.count + count
-            if new_count > remaining_capacity:
-                item.count = remaining_capacity
+            if remaining_capacity is not None:
+                if new_count > remaining_capacity:
+                    item.count = remaining_capacity
+                    item.final_price = item.count * option.unit_price
+                    item.save(update_fields=['count', 'final_price'])
+                    self._recalculate_order()
+                    return False, f"تعداد به حداکثر ظرفیت ({remaining_capacity}) محدود شد."
+                item.count = new_count
                 item.final_price = item.count * option.unit_price
                 item.save(update_fields=['count', 'final_price'])
-                self._recalculate_order()
-                return False, f"تعداد به حداکثر ظرفیت ({remaining_capacity}) محدود شد."
-            item.count = new_count
-            item.final_price = item.count * option.unit_price
-            item.save(update_fields=['count', 'final_price'])
         else:
             OrderItem.objects.create(
                 order=self.order,

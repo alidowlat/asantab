@@ -3,6 +3,30 @@ from django.core.exceptions import ValidationError
 from khayyam import JalaliDate
 from accounts.models import User
 from core.convertors import fa_to_en_digits
+from orders.models import OrderContent
+
+
+class OrderContentForm(forms.ModelForm):
+    # files = forms.FileField(required=False, widget=forms.ClearableFileInput(attrs={'multiple': True}))
+
+    class Meta:
+        model = OrderContent
+        fields = ['description']
+
+        widgets = {
+            "description": forms.Textarea(attrs={
+                "rows": 5,
+                "id": "description-section",
+                "class": "block w-full rounded-lg bg-background border border-border p-2.5 text-sm text-text shadow-sm focus:border-emerald-500 focus:ring-emerald-500 dark:focus:border-emerald-500 dark:focus:ring-emerald-500 dark:placeholder-text/50 sm:text-base",
+                "placeholder": "لطفا جزئیات محتوای مد نظر خود را با دقت شرح دهید...",
+            }),
+        }
+
+        error_messages = {
+            'description': {
+                'required': 'وارد کردن این فیلد الزامی است.',
+            },
+        }
 
 
 class UpdateEmailForm(forms.ModelForm):

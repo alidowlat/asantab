@@ -61,7 +61,8 @@
                                 <div class="text-sm text-text/60 md:text-base">
                                     فروشنده
                                 </div>
-                                <a href="{% url 'provider_detail_page' slug=loaded_order.provider.username %}" class="flex items-center gap-1 text-primary hover:text-primary/80 duration-200">
+                                <a href="{% url 'provider_detail_page' slug=loaded_order.provider.username %}"
+                                   class="flex items-center gap-1 text-primary hover:text-primary/80 duration-200">
                                     {{ loaded_order.provider }}
                                 </a>
                             </div>
@@ -89,6 +90,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="mb-8">
                 <div class="rounded-lg border p-4 shadow">
                     <div class="mb-6 flex flex-col flex-wrap gap-4 md:flex-row">
@@ -147,7 +149,9 @@
                                 <div class="grid grid-cols-2 items-center justify-start gap-2 xs:grid-cols-3 xs:gap-6 sm:grid-cols-4 xl:grid-cols-6">
                                     <div class="row-span-2 min-w-fit xs:mx-auto">
                                         <a href="{{ item.service.get_absolute_url }}">
-                                            <img src="{% if item.service.image %}{{ item.service.image.url }}{% else %}/static/images/empty-image.png{% endif %}" alt="{{ item.service.title }}"
+                                            <img src="
+                                                    {% if item.service.image %}{{ item.service.image.url }}{% else %}/static/images/empty-image.png{% endif %}"
+                                                 alt="{{ item.service.title }}"
                                                  class="size-18 rounded-lg object-cover">
                                         </a>
                                     </div>
@@ -191,12 +195,34 @@
                                             </p>
                                         </div>
                                         <div class="relative h-2 w-full rounded-full bg-secondary">
-                                    <span style="width: {{ style.progress }}%"
-                                          class="absolute inset-y-0 right-0 rounded-full {{ style.bg }}"></span>
+                                            <span style="width: {{ style.progress }}%"
+                                                  class="absolute inset-y-0 right-0 rounded-full {{ style.bg }}">
+                                            </span>
                                         </div>
                                         <div class="flex items-center justify-between text-sm {{ style.color }} md:text-base">
                                             <span>{{ item.vendor_order.updated_at.date|show_date_slash }}</span>
                                             <span>ساعت {{ item.vendor_order.updated_at|show_time }}</span>
+                                        </div>
+                                        <div class="flex justify-end mt-6">
+                                            {% if not item.contents.exists %}
+                                                <a href="{% url 'order_item_content_add' item.pk %}"
+                                                   class="bg-emerald-500 rounded-lg inline-flex w-1/3 items-center justify-center gap-x-2 px-5 py-1.5 text-sm font-medium sm:w-auto">
+                                                    <span>بارگذاری محتوا</span>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                         stroke-linejoin="round"
+                                                         class="lucide lucide-arrow-up-from-line-icon lucide-arrow-up-from-line">
+                                                        <path d="m18 9-6-6-6 6"/>
+                                                        <path d="M12 3v14"/>
+                                                        <path d="M5 21h14"/>
+                                                    </svg>
+                                                </a>
+                                            {% else %}
+                                                <a href="{% url 'order_item_content_view' item.pk %}"
+                                                   class="btn-primary inline-flex w-1/3 items-center justify-center gap-x-2 px-3 py-1.5 text-sm font-medium sm:w-auto">
+                                                    <span class="text-sm">مشاهده محتوای ارسالی</span>
+                                                </a>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 {% endwith %}
